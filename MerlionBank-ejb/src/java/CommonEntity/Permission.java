@@ -6,10 +6,13 @@
 package CommonEntity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 /**
  *
@@ -21,6 +24,41 @@ public class Permission implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String systemName;
+
+    public String getSystemName() {
+        return systemName;
+    }
+
+    public void setSystemName(String systemName) {
+        this.systemName = systemName;
+    }
+
+    public boolean isValidity() {
+        return validity;
+    }
+
+    public void setValidity(boolean validity) {
+        this.validity = validity;
+    }
+
+    public ArrayList<StaffRole> getStaffRoles() {
+        return staffRoles;
+    }
+
+    public void setStaffRoles(ArrayList<StaffRole> staffRoles) {
+        this.staffRoles = staffRoles;
+    }
+
+    public Permission(Long id, String systemName, boolean validity) {
+        this.id = id;
+        this.systemName = systemName;
+        this.validity = validity;
+    }
+    private boolean validity;
+    
+    @ManyToMany(cascade={CascadeType.ALL},mappedBy="permissions")
+    private ArrayList<StaffRole> staffRoles = new ArrayList<StaffRole>();
 
     public Long getId() {
         return id;
