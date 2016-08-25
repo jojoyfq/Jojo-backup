@@ -6,37 +6,57 @@
 package CommonEntity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 
 /**
  *
- * @author apple
+ * @author a0113893
  */
 @Entity
-public class Staff implements Serializable {
+public class StaffRole implements Serializable {
     private static final long serialVersionUID = 1L;
-    @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-    private Collection<Message> messages =new ArrayList<Message>();
-    //@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-    private Collection<StaffRole> staffRoles = new ArrayList<StaffRole>();
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    private String id;
-    private String password;
-   
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+    private String name;
+    private String role;
     
-    public String getId() {
+    @ManyToOne
+    private Staff staff=new Staff();
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -50,10 +70,10 @@ public class Staff implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Staff)) {
+        if (!(object instanceof StaffRole)) {
             return false;
         }
-        Staff other = (Staff) object;
+        StaffRole other = (StaffRole) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -62,8 +82,7 @@ public class Staff implements Serializable {
 
     @Override
     public String toString() {
-        return "CommonEntity.Staff[ id=" + id + " ]";
+        return "CommonEntity.StaffRole[ id=" + id + " ]";
     }
-
-   
+    
 }
