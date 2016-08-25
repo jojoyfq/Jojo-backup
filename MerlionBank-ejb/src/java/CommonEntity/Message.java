@@ -26,6 +26,7 @@ public class Message implements Serializable {
     
 @ManyToOne
     private Staff staff=new Staff();
+
     public String getContent() {
         return content;
     }
