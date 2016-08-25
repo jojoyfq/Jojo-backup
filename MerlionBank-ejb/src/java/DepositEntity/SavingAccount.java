@@ -5,11 +5,13 @@
  */
 package DepositEntity;
 
+import CommonEntity.Customer;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -21,7 +23,12 @@ public class SavingAccount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    private Long accountNumber;
+    private String password;
+    private String status; //activated, require activation, archived, below balance
+    @OneToOne(mappedBy="savingAccount")
+    private Customer customer;
+    
     public Long getId() {
         return id;
     }
@@ -33,7 +40,7 @@ public class SavingAccount implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (getId() != null ? getId().hashCode() : 0);
         return hash;
     }
 
@@ -44,7 +51,7 @@ public class SavingAccount implements Serializable {
             return false;
         }
         SavingAccount other = (SavingAccount) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -52,7 +59,63 @@ public class SavingAccount implements Serializable {
 
     @Override
     public String toString() {
-        return "DepositEntity.SavingAccount[ id=" + id + " ]";
+        return "DepositEntity.SavingAccount[ id=" + getId() + " ]";
+    }
+
+    /**
+     * @return the accountNumber
+     */
+    public Long getAccountNumber() {
+        return accountNumber;
+    }
+
+    /**
+     * @param accountNumber the accountNumber to set
+     */
+    public void setAccountNumber(Long accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
     
 }
