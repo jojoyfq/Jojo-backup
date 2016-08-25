@@ -22,7 +22,9 @@ public class StaffRole implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    private String staffName;
+    private String password;
+    
     public String getName() {
         return name;
     }
