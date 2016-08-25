@@ -7,6 +7,7 @@ package DepositEntity;
 
 import CommonEntity.Customer;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,8 @@ public class SavingAccount implements Serializable {
     private Long id;
     private Long accountNumber;
     private String password;
+    private BigDecimal balance;
+    private BigDecimal availableBalance; 
     private String status; //activated, require activation, archived, below balance
     @OneToOne(mappedBy="savingAccount")
     private Customer customer;
@@ -117,5 +120,46 @@ public class SavingAccount implements Serializable {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
+    /**
+     * @return the balance
+     */
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    /**
+     * @param balance the balance to set
+     */
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
+    
+    public BigDecimal getAvailableBalance() {
+        return availableBalance;
+    }
+
+
+    public void setAvailableBalance(BigDecimal availableBalance) {
+        this.availableBalance = availableBalance;
+    }
+    
+    public Boolean deductAmt(BigDecimal amount){
+        
+        if( this.availableBalance.doubleValue() >= amount.doubleValue()){
+            this.availableBalance.subtract(amount);
+            return true;}
+        else
+            return false;            
+        }
+    
+    public 
+            
+            
+        
+    }
+
+ 
     
 }

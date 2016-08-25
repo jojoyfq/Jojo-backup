@@ -6,21 +6,31 @@
 package DepositEntity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
 
 /**
  *
  * @author ruijia
  */
 @Entity
-public class test implements Serializable {
+public class FixedDepositAccount implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long accountNumber;
+    private BigDecimal amount;
+    private Date startDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date endDate;
+    private Double interestRate;
+   
 
     public Long getId() {
         return id;
@@ -40,19 +50,19 @@ public class test implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof test)) {
+        if (!(object instanceof FixedDepositAccount)) {
             return false;
         }
-        test other = (test) object;
+        FixedDepositAccount other = (FixedDepositAccount) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
     }
-//bellatao //ruijia //fenzi
+
     @Override
     public String toString() {
-        return "DepositEntity.test[ id=" + id + " ]";
+        return "DepositEntity.FixedDepositAccount[ id=" + id + " ]";
     }
     
 }
