@@ -6,11 +6,15 @@
 package CommonEntity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
 
 /**
  *
@@ -22,37 +26,22 @@ public class StaffRole implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String staffName;
-    private String password;
+    private String roleName;
+
+    public StaffRole(Long id, String roleName, String password) {
+        this.id = id;
+        this.roleName = roleName;
+        this.password = password;
+    }
     
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Staff getStaff() {
-        return staff;
-    }
-
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
-    private String name;
-    private String role;
-    
-    @ManyToOne
-    private Staff staff=new Staff();
+      
+   @ManyToMany(cascade={CascadeType.ALL},mappedBy="staffRoles")
+   private ArrayList<Staff> staffList=new ArrayList<Staff> ();
+   
+   @ManyToMany(cascade={CascadeType.ALL})
+   @JoinTable(name="StaffRole_Permission")
+   private ArrayList<Permission> permissions = new ArrayList<Permission>();
+   
 
     public Long getId() {
         return id;
@@ -61,6 +50,36 @@ public class StaffRole implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public ArrayList<Staff> getStaffList() {
+        return staffList;
+    }
+
+    public void setStaffList(ArrayList<Staff> staffList) {
+        this.staffList = staffList;
+    }
+    private String password;
+  
+ 
+
+  
+ 
 
     @Override
     public int hashCode() {

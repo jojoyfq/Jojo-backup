@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 /**
@@ -24,12 +26,50 @@ public class Staff implements Serializable {
     private static final long serialVersionUID = 1L;
     @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private Collection<Message> messages =new ArrayList<Message>();
+    
     //@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-    private Collection<StaffRole> staffRoles = new ArrayList<StaffRole>();
+    @ManyToMany(cascade={CascadeType.ALL})
+    @JoinTable(name="Staff_StaffRole")
+    private ArrayList<StaffRole> staffRoles = new ArrayList<StaffRole>();
+    
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private String id;
+
+    public Collection<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Collection<Message> messages) {
+        this.messages = messages;
+    }
+
+    public ArrayList<StaffRole> getStaffRoles() {
+        return staffRoles;
+    }
+
+    public void setStaffRoles(ArrayList<StaffRole> staffRoles) {
+        this.staffRoles = staffRoles;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    private String staffName;
     private String password;
+   
    
     
     public String getId() {
