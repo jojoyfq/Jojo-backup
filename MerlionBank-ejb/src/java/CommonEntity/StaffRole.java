@@ -7,7 +7,6 @@ package CommonEntity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,49 +14,49 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+
 
 /**
  *
- * @author apple
+ * @author a0113893
  */
 @Entity
-public class Staff implements Serializable {
+public class StaffRole implements Serializable {
     private static final long serialVersionUID = 1L;
-    @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-    private Collection<Message> messages =new ArrayList<Message>();
-    
-    //@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-    @ManyToMany(cascade={CascadeType.ALL})
-    @JoinTable(name="Staff_StaffRole")
-    private ArrayList<StaffRole> staffRoles = new ArrayList<StaffRole>();
-    
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String roleName;
 
-    public Collection<Message> getMessages() {
-        return messages;
+    public StaffRole(Long id, String roleName, String password) {
+        this.id = id;
+        this.roleName = roleName;
+        this.password = password;
+    }
+    
+      
+   @ManyToMany(cascade={CascadeType.ALL},mappedBy="staffRoles")
+   private ArrayList<Staff> staffList=new ArrayList<Staff> ();
+   
+   @ManyToMany(cascade={CascadeType.ALL})
+   @JoinTable(name="StaffRole_Permission")
+   private ArrayList<Permission> permissions = new ArrayList<Permission>();
+   
+
+    public Long getId() {
+        return id;
     }
 
-    public void setMessages(Collection<Message> messages) {
-        this.messages = messages;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public ArrayList<StaffRole> getStaffRoles() {
-        return staffRoles;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setStaffRoles(ArrayList<StaffRole> staffRoles) {
-        this.staffRoles = staffRoles;
-    }
-
-    public String getStaffName() {
-        return staffName;
-    }
-
-    public void setStaffName(String staffName) {
-        this.staffName = staffName;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     public String getPassword() {
@@ -67,18 +66,20 @@ public class Staff implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    private String staffName;
-    private String password;
-   
-   
-    
-    public String getId() {
-        return id;
+
+    public ArrayList<Staff> getStaffList() {
+        return staffList;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setStaffList(ArrayList<Staff> staffList) {
+        this.staffList = staffList;
     }
+    private String password;
+  
+ 
+
+  
+ 
 
     @Override
     public int hashCode() {
@@ -90,10 +91,10 @@ public class Staff implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Staff)) {
+        if (!(object instanceof StaffRole)) {
             return false;
         }
-        Staff other = (Staff) object;
+        StaffRole other = (StaffRole) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -102,8 +103,7 @@ public class Staff implements Serializable {
 
     @Override
     public String toString() {
-        return "CommonEntity.Staff[ id=" + id + " ]";
+        return "CommonEntity.StaffRole[ id=" + id + " ]";
     }
-
-   
+    
 }
