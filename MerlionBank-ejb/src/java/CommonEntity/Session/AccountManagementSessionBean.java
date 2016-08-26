@@ -11,11 +11,16 @@ import Exception.UserExistException;
 import Other.Session.sendEmail;
 import Other.Session.GeneratePassword;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
@@ -56,12 +61,23 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         String password = GeneratePassword.createPassword();
         String tempPassword = password;
         
+        try {
+            SendEmail(name, email, tempPassword);
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            Logger.getLogger(AccountManagementSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        password = passwordHash(password + salt);
+        System.out.println("Password after hash&salt: " + password);
+        
+        
      
     }
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    private void SendEmail(String name, String email, String password, String companyName) throws MessagingException {
+    private void SendEmail(String name, String email, String password) throws MessagingException {
         String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Activation";
         System.out.println("Inside send email");
 
@@ -76,4 +92,24 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println(content);
         sendEmail.run(email, subject, content);
     }
+    
+    private String passwordHash(String pass) {
+        String md5 = null;
+
+        try {
+            //Create MessageDigest object for MD5
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            //Update input string in message digest
+            digest.update(pass.getBytes(), 0, pass.length());
+
+            //Converts message digest value in base 16 (hex) 
+            md5 = new BigInteger(1, digest.digest()).toString(16);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md5;
+    }
+
 }
