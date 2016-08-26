@@ -19,7 +19,8 @@ import javax.ejb.Stateless;
 public class AccountManagementSessionBean implements AccountManagementSessionBeanLocal {
     
     public Customer Create(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, Double riskRating, OnlineAccount onlineAccount) {
-     create user 
+    int n1=1;
+   
              
         return null;  
     }
