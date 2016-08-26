@@ -69,5 +69,89 @@ public class FixedDepositAccount implements Serializable {
     public String toString() {
         return "DepositEntity.FixedDepositAccount[ id=" + id + " ]";
     }
+
+    /**
+     * @return the accountNumber
+     */
+    public Long getAccountNumber() {
+        return accountNumber;
+    }
+
+    /**
+     * @param accountNumber the accountNumber to set
+     */
+    public void setAccountNumber(Long accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    /**
+     * @return the amount
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /**
+     * @param amount the amount to set
+     */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * @return the startDate
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @return the endDate
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * @param endDate the endDate to set
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    /**
+     * @return the interestRate
+     */
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    /**
+     * @param interestRate the interestRate to set
+     */
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
     
 }
