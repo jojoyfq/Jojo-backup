@@ -40,7 +40,25 @@ public class Customer implements Serializable {
     private Double riskRating;
   
     @OneToOne(cascade={CascadeType.ALL})
+    
+    
    private OnlineAccount onlineAccount;//same as IC
+
+    public Customer(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, Double riskRating, OnlineAccount onlineAccount) {
+        this.IC = IC;
+        this.name = name;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+        this.addresss = addresss;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.occupation = occupation;
+        this.familyInfo = familyInfo;
+        this.financialAsset = financialAsset;
+        this.financialGoal = financialGoal;
+        this.riskRating = riskRating;
+        this.onlineAccount = onlineAccount;
+    }
  //  public OnlineAccount getOnlineAccountNumber(){
  //  return onlineAccountNumber;
  //  }
