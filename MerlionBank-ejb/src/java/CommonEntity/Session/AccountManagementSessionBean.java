@@ -6,6 +6,7 @@
 package CommonEntity.Session;
 
 import CommonEntity.OnlineAccount;
+import CommonEntity.Customer;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.ejb.Stateless;
@@ -18,19 +19,7 @@ import javax.ejb.Stateless;
 public class AccountManagementSessionBean implements AccountManagementSessionBeanLocal {
     
     public Customer Create(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, Double riskRating, OnlineAccount onlineAccount) {
-        this.IC = IC;
-        this.name = name;
-        this.gender = gender;
-        this.dateOfBirth = dateOfBirth;
-        this.addresss = addresss;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.occupation = occupation;
-        this.familyInfo = familyInfo;
-        this.financialAsset = financialAsset;
-        this.financialGoal = financialGoal;
-        this.riskRating = riskRating;
-        this.onlineAccount = onlineAccount;
+     return null;  
     }
 
     // Add business logic below. (Right-click in editor and choose
