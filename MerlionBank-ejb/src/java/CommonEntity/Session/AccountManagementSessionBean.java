@@ -72,22 +72,9 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("Password after hash&salt:" + password);
         
         System.out.println("In Creating company admin account");
-            Customer companyAdminAccount = new CompanyAdminAccount(username, password, salt, department, company, "Admin");
-            companyAdminAccount.setContactNo(phoneNo);
-            department.getAccount().add(companyAdminAccount);
-            company.getAccount().add(companyAdminAccount);
+            Customer customer = new Customer(IC,name,gender,dateOfBirth,addresss,email,phoneNumber,occupation,familyInfo, null,financialGoal, 0.0000, onlineAccount);
             System.out.println("Account successfully created");
-            CompanyAdmin companyAdmin = new CompanyAdmin(firstName, lastName, email, companyAdminAccount);
-            companyAdminAccount.setCompanyAdmin(companyAdmin);
-            System.out.println("User successfully created!");
-            title.getUser().add(companyAdmin);
-            companyAdmin.setTitle(title);
-            System.out.println("User Title associated!");
-            em.persist(companyAdminAccount);
-            em.persist(companyAdmin);
-            em.merge(title);
-            em.merge(department);
-            em.merge(company);
+            
             System.out.println("Company admin account, account ID: " + companyAdminAccount.getId());
             return companyAdminAccount;
      
