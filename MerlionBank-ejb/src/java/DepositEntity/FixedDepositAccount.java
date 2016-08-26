@@ -5,6 +5,7 @@
  */
 package DepositEntity;
 
+import CommonEntity.Customer;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 
 /**
@@ -26,11 +28,14 @@ public class FixedDepositAccount implements Serializable {
     private Long id;
     private Long accountNumber;
     private BigDecimal amount;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
     private Double interestRate;
-   
+    @ManyToOne 
+    private Customer customer;
+    
 
     public Long getId() {
         return id;
