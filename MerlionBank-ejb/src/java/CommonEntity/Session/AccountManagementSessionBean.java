@@ -69,7 +69,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         }
 
         password = passwordHash(password + salt);
-        System.out.println("Password after hash&salt: " + password);
+        System.out.println("Password after hash&salt:" + password);
         
         
      
