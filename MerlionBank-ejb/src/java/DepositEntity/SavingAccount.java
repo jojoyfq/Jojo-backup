@@ -153,8 +153,16 @@ public class SavingAccount implements Serializable {
         else
             return false;            
         }
-    //test pull request test
-    public 
+    
+   
+    public SavingAccount(Long accountNumber, String password, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer) {
+        this.accountNumber = accountNumber;
+        this.password = password;
+        this.balance = balance;
+        this.availableBalance = availableBalance;
+        this.status = status;
+        this.customer = customer;
+    }
             
             
         
