@@ -66,9 +66,7 @@ public class Customer implements Serializable {
         this.riskRating = riskRating;
         this.onlineAccount = onlineAccount;
     }
- //  public OnlineAccount getOnlineAccountNumber(){
- //  return onlineAccountNumber;
- //  }
+
     public String getIC() {
         return IC;
     }
