@@ -19,7 +19,9 @@ import javax.ejb.Stateless;
 public class AccountManagementSessionBean implements AccountManagementSessionBeanLocal {
     
     public Customer Create(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, Double riskRating, OnlineAccount onlineAccount) {
-     return null;  
+     create user 
+             
+        return null;  
     }
 
     // Add business logic below. (Right-click in editor and choose
