@@ -71,11 +71,16 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         password = passwordHash(password + salt);
         System.out.println("Password after hash&salt:" + password);
         
-        
+        System.out.println("In Creating company admin account");
+            Customer customer = new Customer(IC,name,gender,dateOfBirth,addresss,email,phoneNumber,occupation,familyInfo, null,financialGoal, 0.0000, onlineAccount);
+            System.out.println("Account successfully created");
+            
+            System.out.println("Company admin account, account ID: " + companyAdminAccount.getId());
+            return companyAdminAccount;
      
     }
 
-    // Add business logic below. (Right-click in editor and choose
+    // Add business logiac below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     private void SendEmail(String name, String email, String password) throws MessagingException {
         String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Activation";

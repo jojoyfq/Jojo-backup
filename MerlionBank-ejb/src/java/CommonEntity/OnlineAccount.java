@@ -22,6 +22,7 @@ public class OnlineAccount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String onlineAccountNumber;
+    private String accountStatus;
 
     public String getOnlineAccountNumber() {
         return onlineAccountNumber;
