@@ -7,6 +7,7 @@ package CommonEntity.Session;
 
 import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
+import DepositEntity.SavingAccount;
 import Exception.UserExistException;
 import Other.Session.sendEmail;
 import Other.Session.GeneratePassword;
@@ -40,7 +41,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     @PersistenceContext
     private EntityManager em;
 //    private GoogleMail gm;
-    public void createAccount(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, Double riskRating, OnlineAccount onlineAccount) throws UserExistException {
+    public void createAccount(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal) throws UserExistException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -71,16 +72,20 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         password = passwordHash(password + salt);
         System.out.println("Password after hash&salt:" + password);
         
-        System.out.println("In Creating company admin account");
-            Customer customer = new Customer(IC,name,gender,dateOfBirth,addresss,email,phoneNumber,occupation,familyInfo, null,financialGoal, 0.0000, onlineAccount);
-            System.out.println("Account successfully created");
-            
-            System.out.println("Company admin account, account ID: " + companyAdminAccount.getId());
-            return companyAdminAccount;
-     
+        
+     System.out.println("In Creating debit account");
+      OnlineAccount onlineAccount= new OnlineAccount (IC,"inactive");
+        em.persist(onlineAccount);
+            Customer customer = new Customer(IC,name,gender,dateOfBirth,addresss,email,phoneNumber,occupation,familyInfo, null,financialGoal, 0.0000, onlineAccount);          
+            em.persist(customer);
+            long savingAccoutNumber= Math.round(Math.random()*100000000);;
+            SavingAccount savingAccount= new SavingAccount(savingAccoutNumber, null, null, "inactive", customer);
+            em.persist(savingAccount);
+            System.out.println("Debit Account successfully created");
+
     }
 
-    // Add business logiac below. (Right-click in editor and choose
+    // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     private void SendEmail(String name, String email, String password) throws MessagingException {
         String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Activation";
