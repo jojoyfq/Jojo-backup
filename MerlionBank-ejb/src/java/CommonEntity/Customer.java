@@ -9,7 +9,9 @@ import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -47,8 +49,15 @@ public class Customer implements Serializable {
     
     @OneToOne(cascade = {CascadeType.ALL})
     private SavingAccount savingAccount;
+    
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
+    private List<Case> cases= new ArrayList<Case>();
+    
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
     private FixedDepositAccount fixedDepositeAccount;
+   
+    
+  //  @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
     
 
     public Customer(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, Double riskRating, OnlineAccount onlineAccount) {
