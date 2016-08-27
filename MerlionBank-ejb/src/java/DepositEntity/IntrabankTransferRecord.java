@@ -58,5 +58,19 @@ public class IntrabankTransferRecord extends TransferRecord implements Serializa
     public String toString() {
         return "DepositEntity.IntrabankTransferRecord[ id=" + id + " ]";
     }
+
+    /**
+     * @return the receipientAccount
+     */
+    public SavingAccount getReceipientAccount() {
+        return receipientAccount;
+    }
+
+    /**
+     * @param receipientAccount the receipientAccount to set
+     */
+    public void setReceipientAccount(SavingAccount receipientAccount) {
+        this.receipientAccount = receipientAccount;
+    }
     
 }

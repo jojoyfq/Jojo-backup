@@ -35,8 +35,7 @@ public class TransactionRecord implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date transactionTime;
     @ManyToOne
-    private SavingAccount savingAccount;
-    
+    private SavingAccount savingAccount; //in intrabank transfer, this is the giver's acct by default
     
     
     public Long getId() {

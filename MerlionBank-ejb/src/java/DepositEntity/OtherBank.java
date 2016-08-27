@@ -6,26 +6,26 @@
 package DepositEntity;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.OneToOne;
 
 /**
  *
  * @author ruijia
  */
-@Inheritance(strategy=InheritanceType.JOINED)
 @Entity
-public class TransferRecord extends TransactionRecord implements Serializable {
+public class OtherBank implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String thOtherAccountNumber;
-    private String transferMethod;//intrabank, interbank, cheque
+    private String bankName;
+    @OneToOne(cascade ={CascadeType.ALL})
+    private InterbankFASTRecord interbankFASTRecord;
     
     
 
@@ -47,10 +47,10 @@ public class TransferRecord extends TransactionRecord implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TransferRecord)) {
+        if (!(object instanceof OtherBank)) {
             return false;
         }
-        TransferRecord other = (TransferRecord) object;
+        OtherBank other = (OtherBank) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -59,35 +59,35 @@ public class TransferRecord extends TransactionRecord implements Serializable {
 
     @Override
     public String toString() {
-        return "DepositEntity.TransferRecord[ id=" + id + " ]";
+        return "DepositEntity.OtherBank[ id=" + id + " ]";
     }
 
     /**
-     * @return the thOtherAccountNumber
+     * @return the bankName
      */
-    public String getThOtherAccountNumber() {
-        return thOtherAccountNumber;
+    public String getBankName() {
+        return bankName;
     }
 
     /**
-     * @param thOtherAccountNumber the thOtherAccountNumber to set
+     * @param bankName the bankName to set
      */
-    public void setThOtherAccountNumber(String thOtherAccountNumber) {
-        this.thOtherAccountNumber = thOtherAccountNumber;
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
     }
 
     /**
-     * @return the transferMethod
+     * @return the interbankFASTRecord
      */
-    public String getTransferMethod() {
-        return transferMethod;
+    public InterbankFASTRecord getInterbankFASTRecord() {
+        return interbankFASTRecord;
     }
 
     /**
-     * @param transferMethod the transferMethod to set
+     * @param interbankFASTRecord the interbankFASTRecord to set
      */
-    public void setTransferMethod(String transferMethod) {
-        this.transferMethod = transferMethod;
+    public void setInterbankFASTRecord(InterbankFASTRecord interbankFASTRecord) {
+        this.interbankFASTRecord = interbankFASTRecord;
     }
     
 }

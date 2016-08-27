@@ -27,15 +27,18 @@ public class SavingAccount implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long accountNumber;
-    private String password;
     private BigDecimal balance;
     private BigDecimal availableBalance; 
-    private String status; //activated, require activation, archived, below balance
+    private String status; //activated, inactive, terminated, below balance
     @OneToOne(mappedBy="savingAccount")
     private Customer customer;
+    
     @OneToMany(cascade = {CascadeType.ALL},mappedBy="savingAccount")
     private TransactionRecord transactionRecord;
+    
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "receipientSavingAccount")
+    private IntrabankTransferRecord intrabankTransferToMe;
+    
     
     public Long getId() {
         return id;
@@ -84,20 +87,7 @@ public class SavingAccount implements Serializable {
         this.accountNumber = accountNumber;
     }
 
-    /**
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+ 
     /**
      * @return the status
      */
@@ -160,13 +150,40 @@ public class SavingAccount implements Serializable {
         }
     
    
-    public SavingAccount(Long accountNumber, String password, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer) {
+    public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer) {
         this.accountNumber = accountNumber;
-        this.password = password;
         this.balance = balance;
         this.availableBalance = availableBalance;
         this.status = status;
         this.customer = customer;
+    }
+
+    /**
+     * @return the transactionRecord
+     */
+    public TransactionRecord getTransactionRecord() {
+        return transactionRecord;
+    }
+
+    /**
+     * @param transactionRecord the transactionRecord to set
+     */
+    public void setTransactionRecord(TransactionRecord transactionRecord) {
+        this.transactionRecord = transactionRecord;
+    }
+
+    /**
+     * @return the intrabankTransferToMe
+     */
+    public IntrabankTransferRecord getIntrabankTransferToMe() {
+        return intrabankTransferToMe;
+    }
+
+    /**
+     * @param intrabankTransferToMe the intrabankTransferToMe to set
+     */
+    public void setIntrabankTransferToMe(IntrabankTransferRecord intrabankTransferToMe) {
+        this.intrabankTransferToMe = intrabankTransferToMe;
     }
             
             
@@ -175,4 +192,3 @@ public class SavingAccount implements Serializable {
 
  
     
-}
