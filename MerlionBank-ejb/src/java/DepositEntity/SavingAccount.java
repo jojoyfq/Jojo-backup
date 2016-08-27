@@ -8,10 +8,12 @@ package DepositEntity;
 import CommonEntity.Customer;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -31,6 +33,9 @@ public class SavingAccount implements Serializable {
     private String status; //activated, require activation, archived, below balance
     @OneToOne(mappedBy="savingAccount")
     private Customer customer;
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy="savingAccount")
+    private TransactionRecord transactionRecord;
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "receipientSavingAccount")
     
     public Long getId() {
         return id;

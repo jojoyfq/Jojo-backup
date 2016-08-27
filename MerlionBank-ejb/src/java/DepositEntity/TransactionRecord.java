@@ -71,5 +71,77 @@ public class TransactionRecord implements Serializable {
     public String toString() {
         return "DepositEntity.TransactionRecord[ id=" + id + " ]";
     }
+
+    /**
+     * @return the amount
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /**
+     * @param amount the amount to set
+     */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * @return the isDebit
+     */
+    public Boolean getIsDebit() {
+        return isDebit;
+    }
+
+    /**
+     * @param isDebit the isDebit to set
+     */
+    public void setIsDebit(Boolean isDebit) {
+        this.isDebit = isDebit;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return the transactionTime
+     */
+    public Date getTransactionTime() {
+        return transactionTime;
+    }
+
+    /**
+     * @param transactionTime the transactionTime to set
+     */
+    public void setTransactionTime(Date transactionTime) {
+        this.transactionTime = transactionTime;
+    }
+
+    /**
+     * @return the savingAccount
+     */
+    public SavingAccount getSavingAccount() {
+        return savingAccount;
+    }
+
+    /**
+     * @param savingAccount the savingAccount to set
+     */
+    public void setSavingAccount(SavingAccount savingAccount) {
+        this.savingAccount = savingAccount;
+    }
+    
+    
     
 }
