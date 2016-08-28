@@ -21,6 +21,7 @@ import javax.persistence.ManyToMany;
  * @author a0113893
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class StaffRole implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
