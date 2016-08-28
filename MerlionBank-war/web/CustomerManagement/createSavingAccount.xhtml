@@ -17,7 +17,7 @@ and open the template in the editor.
         </h:head>
         <h:body>
             <h:form>
-                <h:panelGrid columns="2" id="matchGrid" cellpadding="5">                   
+                <h:panelGrid columns="2" id="createSavingAccount" cellpadding="5">                   
                     <h:outputLabel for="ic" value="IC:" />
                     <p:password id="ic" value="#{CommonInfraManagedBean.IC}" label="ic" required="true" />
  
@@ -52,7 +52,7 @@ and open the template in the editor.
                     <p:password id="financialGoal" value="#{CommonInfraManagedBean.FinancialGoal}" label="financialGoal" required="true" />
                 </h:panelGrid>
  
-                <p:commandButton update="matchGrid" value="Submit" />
+                <p:commandButton update="createSavingAccount" value="Submit" />
             </h:form>
         </h:body>
     </f:view>
