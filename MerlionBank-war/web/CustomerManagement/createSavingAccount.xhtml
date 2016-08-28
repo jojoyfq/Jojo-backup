@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <h:head>
+            <title>Create Saving Account</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        </h:head>
+        <h:body>
+            <h:form>
+                <h:panelGrid columns="2" id="matchGrid" cellpadding="5">                   
+                    <h:outputLabel for="ic" value="IC:" />
+                    <p:password id="ic" value="#{CommonInfraManagedBean.IC}" label="ic" required="true" />
+ 
+                    <h:outputLabel for="name" value="Name:" />
+                    <p:password id="name" value="#{CommonInfraManagedBean.Name}" label="name" required="true" />
+                    
+                    <h:outputLabel for="gender" value="Gender:" />
+                    <p:password id="gender" value="#{CommonInfraManagedBean.Gender}" label="gender" required="true" />
+                    
+                    <h:outputLabel for="dateOfBirth" value="Date of Birth:" />
+                    <p:password id="dateOfBirth" value="#{CommonInfraManagedBean.DateOfBirth}" label="dateOfBirth" required="true" />
+                    
+                    <h:outputLabel for="address" value="Address:" />
+                    <p:password id="address" value="#{CommonInfraManagedBean.Address}" label="address" required="true" />
+                    
+                    <h:outputLabel for="email" value="Email:" />
+                    <p:password id="email" value="#{CommonInfraManagedBean.Email}" label="email" required="true" />
+                    
+                    <h:outputLabel for="phoneNumber" value="Phone Number:" />
+                    <p:password id="phoneNumber" value="#{CommonInfraManagedBean.PhoneNumber}" label="phoneNumber" required="true" />
+                    
+                    <h:outputLabel for="occupation" value="Occupation:" />
+                    <p:password id="occupation" value="#{CommonInfraManagedBean.Occupation}" label="occupation" required="true" />
+                    
+                    <h:outputLabel for="familyInfo" value="Family Information:" />
+                    <p:password id="familyInfo" value="#{CommonInfraManagedBean.FamilyInfo}" label="familyInfo" required="true" />
+                    
+                    <h:outputLabel for="financialAsset" value="Financial Asset:" />
+                    <p:password id="financialAsset" value="#{CommonInfraManagedBean.FinancialAsset}" label="financialAsset" required="true" />
+                    
+                    <h:outputLabel for="financialGoal" value="Financial Goal:" />
+                    <p:password id="financialGoal" value="#{CommonInfraManagedBean.FinancialGoal}" label="financialGoal" required="true" />
+                </h:panelGrid>
+ 
+                <p:commandButton update="matchGrid" value="Submit" />
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
