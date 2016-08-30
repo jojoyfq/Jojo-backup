@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
@@ -29,6 +31,8 @@ public class StaffRole implements Serializable {
     private Long id;
     private String roleName;
 
+    public StaffRole(){
+    }
     public StaffRole(Long id, String roleName, String password) {
         this.id = id;
         this.roleName = roleName;

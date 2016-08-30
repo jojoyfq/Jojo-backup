@@ -44,8 +44,8 @@ public class CaseEntity implements Serializable {
     @OneToMany(cascade={CascadeType.ALL},mappedBy="caseEntity")
     private List<Issue> issues;
     
-    @ManyToOne
-    private CaseStaff caseStaff;
+   // @ManyToOne
+    //private CaseStaff caseStaff;
     
     public Date getCaseCreatedTime() {
         return caseCreatedTime;
@@ -81,13 +81,13 @@ public class CaseEntity implements Serializable {
         this.issues = issues;
     }
     
-    public CaseStaff getCaseStaff() {
-        return caseStaff;
-    }
-
-    public void setCaseStaff(CaseStaff caseStaff) {
-        this.caseStaff = caseStaff;
-    }
+//    public CaseStaff getCaseStaff() {
+//        return caseStaff;
+//    }
+//
+//    public void setCaseStaff(CaseStaff caseStaff) {
+//        this.caseStaff = caseStaff;
+//    }
     public CaseEntity(){
      //   this.issues = new ArrayList<Issue>();
 }
@@ -117,10 +117,10 @@ public class CaseEntity implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Case)) {
+        if (!(object instanceof CaseEntity)) {
             return false;
         }
-        Case other = (Case) object;
+        CaseEntity other = (CaseEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

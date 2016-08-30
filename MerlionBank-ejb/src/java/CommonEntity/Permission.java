@@ -49,6 +49,8 @@ public class Permission implements Serializable {
     public void setStaffRoles(ArrayList<StaffRole> staffRoles) {
         this.staffRoles = staffRoles;
     }
+    public Permission(){
+    }
 
     public Permission(Long id, String systemName, boolean validity) {
         this.id = id;

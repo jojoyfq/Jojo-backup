@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package CounterServiceEntity;
-
+/*
 import CommonEntity.Customer;
 import CommonEntity.StaffRole;
 import java.io.Serializable;
@@ -19,7 +19,7 @@ import javax.persistence.ManyToOne;
  *
  * @author ruijia
  */
-@Entity
+/*@Entity
 public class CounterServiceRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -83,57 +83,57 @@ public class CounterServiceRecord implements Serializable {
     /**
      * @return the serviceType
      */
-    public String getServiceType() {
+    /*public String getServiceType() {
         return serviceType;
     }
 
     /**
      * @param serviceType the serviceType to set
      */
-    public void setServiceType(String serviceType) {
+    /*public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
 
     /**
      * @return the serviceCharge
      */
-    public BigDecimal getServiceCharge() {
+    /*public BigDecimal getServiceCharge() {
         return serviceCharge;
     }
 
     /**
      * @param serviceCharge the serviceCharge to set
      */
-    public void setServiceCharge(BigDecimal serviceCharge) {
+    /*public void setServiceCharge(BigDecimal serviceCharge) {
         this.serviceCharge = serviceCharge;
     }
 
     /**
      * @return the description
      */
-    public String getDescription() {
+    /*public String getDescription() {
         return description;
     }
 
     /**
      * @param description the description to set
      */
-    public void setDescription(String description) {
+    /*public void setDescription(String description) {
         this.description = description;
     }
 
     /**
      * @return the customer
      */
-    public Customer getCustomer() {
+    /*public Customer getCustomer() {
         return customer;
     }
 
     /**
      * @param customer the customer to set
      */
-    public void setCustomer(Customer customer) {
+    /*public void setCustomer(Customer customer) {
         this.customer = customer;
-    }
+    //}
     
-}
+}*/

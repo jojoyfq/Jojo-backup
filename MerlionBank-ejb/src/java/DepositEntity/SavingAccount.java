@@ -8,6 +8,8 @@ package DepositEntity;
 import CommonEntity.Customer;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,11 +35,27 @@ public class SavingAccount implements Serializable {
     @OneToOne(mappedBy="savingAccount")
     private Customer customer;
     
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy="savingAccount")
-    private TransactionRecord transactionRecord;
+//    @OneToMany(cascade = {CascadeType.ALL},mappedBy="savingAccount")
+//    private List<TransactionRecord> transactionRecords = new ArrayList<TransactionRecord>();
+//
+//    public List<TransactionRecord> getTransactionRecords() {
+//        return transactionRecords;
+//    }
+//
+//    public void setTransactionRecords(List<TransactionRecord> transactionRecords) {
+//        this.transactionRecords = transactionRecords;
+//    }
     
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "receipientSavingAccount")
-    private IntrabankTransferRecord intrabankTransferToMe;
+   // @OneToMany(cascade = {CascadeType.ALL},mappedBy = "receipientSavingAccount")
+   // private List<IntrabankTransferRecord> intrabankTransferRecords = new ArrayList<IntrabankTransferRecord>();
+
+   // public List<IntrabankTransferRecord> getIntrabankTransferRecords() {
+   //     return intrabankTransferRecords;
+   // }
+
+   // public void setIntrabankTransferRecords(List<IntrabankTransferRecord> intrabankTransferRecords) {
+   //     this.intrabankTransferRecords = intrabankTransferRecords;
+   // }
     
     
     public Long getId() {
@@ -149,7 +167,8 @@ public class SavingAccount implements Serializable {
             return false;            
         }
     
-   
+   public SavingAccount(){
+   }
     public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer) {
         this.accountNumber = accountNumber;
         this.balance = balance;
@@ -161,30 +180,12 @@ public class SavingAccount implements Serializable {
     /**
      * @return the transactionRecord
      */
-    public TransactionRecord getTransactionRecord() {
-        return transactionRecord;
-    }
-
-    /**
-     * @param transactionRecord the transactionRecord to set
-     */
-    public void setTransactionRecord(TransactionRecord transactionRecord) {
-        this.transactionRecord = transactionRecord;
-    }
+  
 
     /**
      * @return the intrabankTransferToMe
      */
-    public IntrabankTransferRecord getIntrabankTransferToMe() {
-        return intrabankTransferToMe;
-    }
-
-    /**
-     * @param intrabankTransferToMe the intrabankTransferToMe to set
-     */
-    public void setIntrabankTransferToMe(IntrabankTransferRecord intrabankTransferToMe) {
-        this.intrabankTransferToMe = intrabankTransferToMe;
-    }
+   
             
             
         

@@ -5,7 +5,7 @@
  */
 package CommonEntity;
 
-import DepositEntity.FixedDepositAccount;
+//import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -30,38 +30,65 @@ public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String IC;
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    private String ic;
     private String name;
     private String gender;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfBirth;
     private String addresss;
     private String email;
-    private Long phoneNumber;
+    private String phoneNumber;
     private String occupation; //company info
     private String familyInfo;
     private BigDecimal financialAsset;
     private String financialGoal;
-    private Double riskRating;
+    private String riskRating;
   
     @OneToOne(cascade={CascadeType.ALL}) 
-   private OnlineAccount onlineAccount;//same as IC
+   private OnlineAccount onlineAccount;//same as ic
     
     @OneToOne(cascade = {CascadeType.ALL})
     private SavingAccount savingAccount;
     
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
-    private List<Case> cases= new ArrayList<Case>();
+    private List<CaseEntity> cases= new ArrayList<CaseEntity>();
     
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
-    private FixedDepositAccount fixedDepositeAccount;
+//    @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
+//    private List<FixedDepositAccount> fixedDepositeAccounts=new ArrayList<FixedDepositAccount>();
+
+    public List<CaseEntity> getCases() {
+        return cases;
+    }
+
+    public void setCases(List<CaseEntity> cases) {
+        this.cases = cases;
+    }
+
+//    public List<FixedDepositAccount> getFixedDepositeAccounts() {
+//        return fixedDepositeAccounts;
+//    }
+
+//    public void setFixedDepositeAccounts(List<FixedDepositAccount> fixedDepositeAccounts) {
+//        this.fixedDepositeAccounts = fixedDepositeAccounts;
+//    }
    
     
   //  @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
+    public Customer (){
+    };
     
 
-    public Customer(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, Double riskRating, OnlineAccount onlineAccount) {
-        this.IC = IC;
+    public Customer(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, String riskRating, OnlineAccount onlineAccount) {
+        this.ic = IC;
         this.name = name;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
@@ -76,12 +103,12 @@ public class Customer implements Serializable {
         this.onlineAccount = onlineAccount;
     }
 
-    public String getIC() {
-        return IC;
+    public String getIc() {
+        return ic;
     }
 
-    public void setIC(String IC) {
-        this.IC = IC;
+    public void setIc(String ic) {
+        this.ic = ic;
     }
  
 
@@ -90,7 +117,7 @@ public class Customer implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (getIC() != null ? getIC().hashCode() : 0);
+        hash += (getIc() != null ? getIc().hashCode() : 0);
         return hash;
     }
 
@@ -101,7 +128,7 @@ public class Customer implements Serializable {
             return false;
         }
         Customer other = (Customer) object;
-        if ((this.getIC() == null && other.getIC() != null) || (this.getIC() != null && !this.IC.equals(other.IC))) {
+        if ((this.getIc() == null && other.getIc() != null) || (this.getIc() != null && !this.ic.equals(other.ic))) {
             return false;
         }
         return true;
@@ -109,7 +136,7 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Customer[ id=" + getIC() + " ]";
+        return "entity.Customer[ id=" + getIc() + " ]";
     }
 
     /**
@@ -185,14 +212,14 @@ public class Customer implements Serializable {
     /**
      * @return the phoneNumber
      */
-    public Long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
     /**
      * @param phoneNumber the phoneNumber to set
      */
-    public void setPhoneNumber(Long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -255,14 +282,14 @@ public class Customer implements Serializable {
     /**
      * @return the riskRating
      */
-    public Double getRiskRating() {
+    public String getRiskRating() {
         return riskRating;
     }
 
     /**
      * @param riskRating the riskRating to set
      */
-    public void setRiskRating(Double riskRating) {
+    public void setRiskRating(String riskRating) {
         this.riskRating = riskRating;
     }
 
@@ -297,15 +324,6 @@ public class Customer implements Serializable {
     /**
      * @return the fixedDepositeAccount
      */
-    public FixedDepositAccount getFixedDepositeAccount() {
-        return fixedDepositeAccount;
-    }
-
-    /**
-     * @param fixedDepositeAccount the fixedDepositeAccount to set
-     */
-    public void setFixedDepositeAccount(FixedDepositAccount fixedDepositeAccount) {
-        this.fixedDepositeAccount = fixedDepositeAccount;
-    }
+   
     
 }

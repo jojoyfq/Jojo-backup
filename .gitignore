@@ -14,3 +14,8 @@ hs_err_pid*
 /nbproject/private/
 /MerlionBank-war/nbproject/private/
 /MerlionBank-ejb/build/
+/MerlionBank-ejb/dist/
+/dist/
+/build/
+/MerlionBank-war/build/
+/MerlionBank-war/dist/

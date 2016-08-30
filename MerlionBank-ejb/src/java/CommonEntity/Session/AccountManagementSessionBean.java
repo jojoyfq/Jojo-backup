@@ -8,6 +8,8 @@ package CommonEntity.Session;
 import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
+//import Exception.AccountTypeNotExistException;
+//import Exception.PasswordTooSimpleException;
 import Exception.UserExistException;
 import Other.Session.sendEmail;
 import Other.Session.GeneratePassword;
@@ -41,17 +43,18 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     @PersistenceContext
     private EntityManager em;
 //    private GoogleMail gm;
-    public void createAccount(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, Long phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal) throws UserExistException {
+    @Override
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String addresss, String email, String phoneNumber, String occupation, String familyInfo, String financialAsset, String financialGoal){// throws UserExistException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
         
-        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.IC=:IC");
-        q.setParameter("customer", IC);
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
         if (!temp.isEmpty()) {
             System.out.println("User " + name + " exists!");
-            throw new UserExistException("User " + name + " exists!");
+           //throw new UserExistException("User " + name + " exists!");
         }
          System.out.println("Username passes check!");
          
@@ -74,17 +77,19 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         
         
      System.out.println("In Creating debit account");
-      OnlineAccount onlineAccount= new OnlineAccount (IC,"inactive");
+      OnlineAccount onlineAccount= new OnlineAccount (ic,"inactive",password);
         em.persist(onlineAccount);
-            Customer customer = new Customer(IC,name,gender,dateOfBirth,addresss,email,phoneNumber,occupation,familyInfo, null,financialGoal, 0.0000, onlineAccount);          
+            Customer customer = new Customer(ic,name,gender,dateOfBirth,addresss,email,phoneNumber,occupation,familyInfo, null,financialGoal, "0.0000", onlineAccount);          
             em.persist(customer);
+            System.out.println("Create Customer successfully");
             long savingAccoutNumber= Math.round(Math.random()*100000000);;
             SavingAccount savingAccount= new SavingAccount(savingAccoutNumber, null, null, "inactive", customer);
             em.persist(savingAccount);
             System.out.println("Debit Account successfully created");
 
     }
-
+    
+    
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     private void SendEmail(String name, String email, String password) throws MessagingException {
@@ -122,4 +127,65 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         return md5;
     }
 
+    //Change password
+  /*  @Override
+    public boolean resetPassword(String IC, String name, Date dateOfBirth,string oldPass) throws AccountTypeNotExistException, PasswordTooSimpleException {
+       Customer customer = em.find(Customer.class, IC);
+            if (customer == null) {
+                return false;//cannot find account
+            }
+            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + companyAdminAccount.getSalt()).equals(companyAdminAccount.getPassword())) {
+                if (!checkPasswordComplexity(newPassword)) {
+                    throw new PasswordTooSimpleException("password is too simple");
+                }
+                newPassword = passwordHash(newPassword + companyAdminAccount.getSalt());
+                companyAdminAccount.setPassword(newPassword);
+            } else {
+                return false;//invalid input
+            }
+
+            em.merge(companyAdminAccount);
+            em.flush();
+            return true;
+        } else if (accountType.equals("User")) {
+            CompanyUserAccount companyUserAccount = em.find(CompanyUserAccount.class, id);
+            if (companyUserAccount == null) {
+                return false;//cannot find account
+            }
+            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + companyUserAccount.getSalt()).equals(companyUserAccount.getPassword())) {
+                if (!checkPasswordComplexity(newPassword)) {
+                    throw new PasswordTooSimpleException("password is too simple");
+                }
+                newPassword = passwordHash(newPassword + companyUserAccount.getSalt());
+                companyUserAccount.setPassword(newPassword);
+            } else {
+                return false;//invalid input
+            }
+
+            em.merge(companyUserAccount);
+            em.flush();
+            return true;
+        } else if (accountType.equals("SystemAdmin")) {
+            SystemAdminAccount systemAdminAccount = em.find(SystemAdminAccount.class, id);
+            if (systemAdminAccount == null) {
+                return false;//cannot find account
+            }
+            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + systemAdminAccount.getSalt()).equals(systemAdminAccount.getPassword())) {
+                if (!checkPasswordComplexity(newPassword)) {
+                    throw new PasswordTooSimpleException("password is too simple");
+                }
+                newPassword = passwordHash(newPassword + systemAdminAccount.getSalt());
+                systemAdminAccount.setPassword(newPassword);
+            } else {
+                return false;//invalid input
+            }
+
+            em.merge(systemAdminAccount);
+            em.flush();
+            return true;
+        } else {
+            throw new AccountTypeNotExistException("Account type " + accountType + " is incorrect, please check");
+        }
+    }*/
 }
+

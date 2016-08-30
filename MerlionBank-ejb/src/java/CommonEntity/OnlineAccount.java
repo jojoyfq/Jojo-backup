@@ -21,8 +21,26 @@ public class OnlineAccount implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
     private String onlineAccountNumber;
     private String accountStatus;
+    private String password;
+    
+    public OnlineAccount(){
+    }
+    public OnlineAccount(String onlineAccountNumber, String accountStatus, String password) {
+        this.onlineAccountNumber = onlineAccountNumber;
+        this.accountStatus = accountStatus;
+        this.password = password;
+    }
 
     public String getOnlineAccountNumber() {
         return onlineAccountNumber;

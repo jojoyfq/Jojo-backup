@@ -5,6 +5,8 @@
  */
 package CommonEntity.Session;
 
+import Exception.UserExistException;
+import java.util.Date;
 import javax.ejb.Local;
 
 /**
@@ -12,6 +14,6 @@ import javax.ejb.Local;
  * @author a0113893
  */
 @Local
-public interface AccountManagementSessionBeanLocal {
-    
-}
+public interface AccountManagementSessionBeanLocal  {
+     public void createSavingAccount(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, String phoneNumber, String occupation, String familyInfo, String financialAsset, String financialGoal);//throws UserExistException;
+             }
