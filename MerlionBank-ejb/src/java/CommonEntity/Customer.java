@@ -44,7 +44,7 @@ public class Customer implements Serializable {
     private String gender;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfBirth;
-    private String addresss;
+    private String address;
     private String email;
     private String phoneNumber;
     private String occupation; //company info
@@ -87,12 +87,12 @@ public class Customer implements Serializable {
     };
     
 
-    public Customer(String IC, String name, String gender, Date dateOfBirth, String addresss, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, String riskRating, OnlineAccount onlineAccount) {
+    public Customer(String IC, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, String riskRating, OnlineAccount onlineAccount) {
         this.ic = IC;
         this.name = name;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
-        this.addresss = addresss;
+        this.address = address;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.occupation = occupation;
@@ -182,17 +182,17 @@ public class Customer implements Serializable {
     }
 
     /**
-     * @return the addresss
+     * @return the address
      */
-    public String getAddresss() {
-        return addresss;
+    public String getAddress() {
+        return address;
     }
 
     /**
-     * @param addresss the addresss to set
+     * @param addresss the address to set
      */
-    public void setAddresss(String addresss) {
-        this.addresss = addresss;
+    public void setAddress(String addresss) {
+        this.address = address;
     }
 
     /**

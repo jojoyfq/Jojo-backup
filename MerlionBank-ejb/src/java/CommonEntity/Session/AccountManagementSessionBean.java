@@ -44,7 +44,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     private EntityManager em;
 //    private GoogleMail gm;
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String addresss, String email, String phoneNumber, String occupation, String familyInfo, String financialAsset, String financialGoal){// throws UserExistException {
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialAsset, String financialGoal){// throws UserExistException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -79,7 +79,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
      System.out.println("In Creating debit account");
       OnlineAccount onlineAccount= new OnlineAccount (ic,"inactive",password);
         em.persist(onlineAccount);
-            Customer customer = new Customer(ic,name,gender,dateOfBirth,addresss,email,phoneNumber,occupation,familyInfo, null,financialGoal, "0.0000", onlineAccount);          
+            Customer customer = new Customer(ic,name,gender,dateOfBirth,address,email,phoneNumber,occupation,familyInfo, null,financialGoal, "0.0000", onlineAccount);          
             em.persist(customer);
             System.out.println("Create Customer successfully");
             long savingAccoutNumber= Math.round(Math.random()*100000000);;
@@ -89,6 +89,123 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     }
     
+    @Override
+    public void updateProfile(String ic, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialAsset, String financialGoal) throws UserExistException {
+       Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
+            customer.setDateOfBirth(dateOfBirth);
+            customer.setAddress(address);
+            customer.setEmail(email);
+            customer.setPhoneNumber(phoneNumber);
+            customer.setOccupation(occupation);
+            customer.setFamilyInfo(familyInfo);
+            BigDecimal asset=new BigDecimal(financialAsset); 
+            customer.setFinancialAsset(asset);
+            customer.setFinancialGoal(financialGoal);
+            em.merge(customer);
+            em.flush();
+    }
+//            
+//            }
+//            CompanyAdmin companyAdmin = companyAdminAccount.getCompanyAdmin();
+//            if (firstName != null && !firstName.equals(companyAdmin.getFirstName())) {
+//                companyAdmin.setFirstName(firstName);
+//            }
+//            if (lastName != null && !lastName.equals(companyAdmin.getLastName())) {
+//                companyAdmin.setLastName(lastName);
+//            }
+//            if (email != null && !email.equals(companyAdmin.getEmail())) {
+//                companyAdmin.setEmail(email);
+//            }
+//            if (contactNo != null && !contactNo.equals(companyAdminAccount.getContactNo())) {
+//                companyAdminAccount.setContactNo(contactNo);
+//            }
+//
+//            em.merge(companyAdminAccount);
+//            em.merge(companyAdmin);
+//            em.flush();
+//            return true;
+//        } else if (accountType.equals("User")) {
+//            System.out.println("Inside session bean");
+//            CompanyUserAccount companyUserAccount = em.find(CompanyUserAccount.class, accountId);
+//            if (companyUserAccount == null) {
+//                return false;//cannot find account
+//            }
+//            if (username != null && !username.equals(companyUserAccount.getUsername())) {
+//                Query query = em.createQuery("SELECT c FROM CompanyUserAccount c WHERE c.username = :user");
+//                query.setParameter("user", username);
+//                List<CompanyUserAccount> companyUserAccountList = query.getResultList();
+//                if (!companyUserAccountList.isEmpty()) {
+//                    throw new UserExistException("Username already exists!");
+//                }
+//                companyUserAccount.setUsername(username);
+//            }
+//            CompanyUser companyUser = companyUserAccount.getCompanyUser();
+//            if (firstName != null && !firstName.equals(companyUser.getFirstName())) {
+//                companyUser.setFirstName(firstName);
+//            }
+//            if (lastName != null && !lastName.equals(companyUser.getLastName())) {
+//                companyUser.setLastName(lastName);
+//            }
+//            if (email != null && !email.equals(companyUser.getEmail())) {
+//                companyUser.setEmail(email);
+//            }
+//            if (contactNo != null && !contactNo.equals(companyUserAccount.getContactNo())) {
+//                companyUserAccount.setContactNo(contactNo);
+//            }
+//
+//            em.merge(companyUserAccount);
+//            em.merge(companyUser);
+//            em.flush();
+//            return true;
+//        } else if (accountType.equals("SystemAdmin")) {
+//            SystemAdminAccount systemAdminAccount = em.find(SystemAdminAccount.class, accountId);
+//            if (systemAdminAccount == null) {
+//                return false;//cannot find account
+//            }
+//            if (username != null && !username.equals(systemAdminAccount.getUsername())) {
+//                Query query = em.createQuery("SELECT c FROM SystemAdminAccount c WHERE c.username = :user");
+//                query.setParameter("user", username);
+//                List<SystemAdminAccount> systemAdminAccountList = query.getResultList();
+//                if (!systemAdminAccountList.isEmpty()) {
+//                    throw new UserExistException("Username already exists!");
+//                }
+//                systemAdminAccount.setUsername(username);
+//            }
+//            SystemAdmin systemAdmin = systemAdminAccount.getSystemAdmin();
+//            if (firstName != null && !firstName.equals(systemAdmin.getFirstName())) {
+//                systemAdmin.setFirstName(firstName);
+//            }
+//            if (lastName != null && !lastName.equals(systemAdmin.getLastName())) {
+//                systemAdmin.setLastName(lastName);
+//            }
+//            if (email != null && !email.equals(systemAdmin.getEmail())) {
+//                systemAdmin.setEmail(email);
+//            }
+//            if (contactNo != null && !contactNo.equals(systemAdminAccount.getContactNo())) {
+//                systemAdminAccount.setContactNo(contactNo);
+//            }
+//
+//            em.merge(systemAdminAccount);
+//            em.merge(systemAdmin);
+//            em.flush();
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+
+    
+    
+    @Override
+    public Customer diaplayCustomer(String ic) {
+
+            Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
+            return customer;
+    }
     
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
