@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view>
+        <head>
+            <title>Modify My Profile</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        </head>
+        <h:body>
+            <div>Modify My Profile</div>
+            <h:form id="form">
+                <p:growl id="msgs" showDetail="true"/>
+
+                <p:panelGrid columns="2" id="ModifyUserProfile">                   
+
+                    <h:outputLabel for="ic" value="IC:" /> 
+                    <h:outputLabel value="#{logInManagedBean.ic}" />
+
+                    <h:outputLabel for="ic" value="IC2: " />
+        <p:inplace id="ic" editor="true">
+            <p:inputText value="#{logInManagedBean.ic}" required="true" label="text" />
+        </p:inplace>
+         
+
+
+                    <h:outputLabel for="name" value="Name:" /> 
+                    <h:outputLabel value="#{logInManagedBean.customerName}" />
+
+                    <h:outputLabel for="gender" value="Gender:" /> 
+                    <h:outputLabel value=" #{logInManagedBean.customerGender}" /> 
+
+                    <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
+                    <p:calendar id="customerDateOfBirth" value="#{logInManagedBean.customerDateOfBirth}" showOn="button" required="true" />
+
+
+
+                    <h:outputLabel for="email" value="Email:" /> 
+                    <p:inputText value="#{logInManagedBean.customerEmail}" />
+
+
+                    <h:outputLabel for="phoneNumber" value="Phone Number:" /> 
+                    <p:inputText value="#{logInManagedBean.customerPhoneNumber}" />
+
+                    <h:outputLabel for="address" value="Address is:" /> 
+                    <p:inputText id="customerAddress" value="#{logInManagedBean.customerAddress}" label="customerAddress" required="true" />
+
+
+                    <h:outputLabel for="occupation" value="Occupation:" /> 
+                    <p:inputText value="#{logInManagedBean.customerOccupation}" />
+
+                    <h:outputLabel for="familyInfo" value="Family Information:" /> 
+                    <p:inputText value="#{logInManagedBean.customerFamilyInfo}" />
+
+                    <h:outputLabel for="financialAsset" value="Financial Asset:" /> 
+                    <p:inputText value="#{logInManagedBean.customerFinancialAsset}" />
+
+                    <h:outputLabel for="financialGoal" value="Financial Goal:" /> 
+                    <p:inputText value="#{logInManagedBean.customerFinancialGoal}"/>
+
+                    <p:commandButton update="ModifyUserProfile" actionListener="#{logInManagedBean.modifyProfile}" value="Edit" />
+                </p:panelGrid>
+
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

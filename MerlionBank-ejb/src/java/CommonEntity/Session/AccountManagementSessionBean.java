@@ -8,6 +8,7 @@ package CommonEntity.Session;
 import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
+import Exception.PasswordTooSimpleException;
 //import Exception.AccountTypeNotExistException;
 //import Exception.PasswordTooSimpleException;
 import Exception.UserExistException;
@@ -77,7 +78,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         
         
      System.out.println("In Creating debit account");
-      OnlineAccount onlineAccount= new OnlineAccount (ic,"inactive",password);
+      OnlineAccount onlineAccount= new OnlineAccount (ic,"inactive",salt,password);
         em.persist(onlineAccount);
             Customer customer = new Customer(ic,name,gender,dateOfBirth,address,email,phoneNumber,occupation,familyInfo, null,financialGoal, "0.0000", onlineAccount);          
             em.persist(customer);
@@ -90,7 +91,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
     
     @Override
-    public void updateProfile(String ic, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialAsset, String financialGoal) throws UserExistException {
+    public void updateProfile(String ic, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException {
        Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
             q.setParameter("ic", ic);
             Customer customer = (Customer)q.getSingleResult();
@@ -100,8 +101,6 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             customer.setPhoneNumber(phoneNumber);
             customer.setOccupation(occupation);
             customer.setFamilyInfo(familyInfo);
-            BigDecimal asset=new BigDecimal(financialAsset); 
-            customer.setFinancialAsset(asset);
             customer.setFinancialGoal(financialGoal);
             em.merge(customer);
             em.flush();
@@ -244,65 +243,164 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         return md5;
     }
 
-    //Change password
-  /*  @Override
-    public boolean resetPassword(String IC, String name, Date dateOfBirth,string oldPass) throws AccountTypeNotExistException, PasswordTooSimpleException {
-       Customer customer = em.find(Customer.class, IC);
+    //Activate account- 1st step verify account details
+    @Override
+    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth,String phoneNumber){
+      Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
             if (customer == null) {
-                return false;//cannot find account
+                return "invalid account";//cannot find account
             }
-            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + companyAdminAccount.getSalt()).equals(companyAdminAccount.getPassword())) {
-                if (!checkPasswordComplexity(newPassword)) {
+            if (!fullName.equals(customer.getName())){
+                return "invalid account";
+            }
+            else if(!dateOfBirth.equals(customer.getDateOfBirth())){
+                return "invalid account";
+            }
+            else if (!phoneNumber.equals(customer.getPhoneNumber())){
+                return "invalid account";
+            }
+            else 
+                return ic;             
+    }
+    
+    //Activate account - 2nd step verify account balance
+    @Override
+    public String verifyAccountBalance(String ic){
+       Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
+            int amount=customer.getSavingAccount().getBalance().intValueExact();
+            if (amount>=500) {
+                return ic;
+            }
+            else return "invalid amount";
+    }
+    
+    //Activate account - 3rd intial password reset
+    private String updatePassword (String ic, String oldPassword, String newPassword,String confirmPassword)throws PasswordTooSimpleException{
+    Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
+            if (!passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
+                return "invalid old password";
+            }
+            else if (!oldPassword.equals(confirmPassword)){
+                return "Does not match with new password";
+            }
+           else if (passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())&& oldPassword.equals(confirmPassword)){
+           if (!checkPasswordComplexity(newPassword)) {
                     throw new PasswordTooSimpleException("password is too simple");
                 }
-                newPassword = passwordHash(newPassword + companyAdminAccount.getSalt());
-                companyAdminAccount.setPassword(newPassword);
-            } else {
-                return false;//invalid input
-            }
+                String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
+                customer.getOnlineAccount().setPassword(resetPassword);
+                em.flush();
+                return ic;
+           }
+           else return "invalid details";
+    } 
 
-            em.merge(companyAdminAccount);
-            em.flush();
-            return true;
-        } else if (accountType.equals("User")) {
-            CompanyUserAccount companyUserAccount = em.find(CompanyUserAccount.class, id);
-            if (companyUserAccount == null) {
-                return false;//cannot find account
-            }
-            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + companyUserAccount.getSalt()).equals(companyUserAccount.getPassword())) {
-                if (!checkPasswordComplexity(newPassword)) {
-                    throw new PasswordTooSimpleException("password is too simple");
-                }
-                newPassword = passwordHash(newPassword + companyUserAccount.getSalt());
-                companyUserAccount.setPassword(newPassword);
-            } else {
-                return false;//invalid input
-            }
-
-            em.merge(companyUserAccount);
-            em.flush();
-            return true;
-        } else if (accountType.equals("SystemAdmin")) {
-            SystemAdminAccount systemAdminAccount = em.find(SystemAdminAccount.class, id);
-            if (systemAdminAccount == null) {
-                return false;//cannot find account
-            }
-            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + systemAdminAccount.getSalt()).equals(systemAdminAccount.getPassword())) {
-                if (!checkPasswordComplexity(newPassword)) {
-                    throw new PasswordTooSimpleException("password is too simple");
-                }
-                newPassword = passwordHash(newPassword + systemAdminAccount.getSalt());
-                systemAdminAccount.setPassword(newPassword);
-            } else {
-                return false;//invalid input
-            }
-
-            em.merge(systemAdminAccount);
-            em.flush();
-            return true;
-        } else {
-            throw new AccountTypeNotExistException("Account type " + accountType + " is incorrect, please check");
+   
+    //Password complexity check
+    @Override
+    public boolean checkPasswordComplexity(String password) {
+        if (password.length() < 8) {
+            return false;
         }
-    }*/
+
+        char pw[] = password.toCharArray();
+        boolean alphabet = false;
+        boolean digit = false;
+        for (int i = 0; i < pw.length; i++) {
+            if (Character.isLetter(pw[i])) {
+                alphabet = true;
+            }
+            if (Character.isDigit(pw[i])) {
+                digit = true;
+            }
+            if (alphabet && digit) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    //Activate account - 4th step update account status
+    private boolean updateAccountStatus(String ic){
+        Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
+            customer.getOnlineAccount().setAccountStatus("active");
+            em.flush();
+            customer.getSavingAccount().setStatus("active");
+            em.flush();
+            return true;
+            
+    }
+    
+    
+    //Change password
+//  @Override
+//    public boolean resetPasswordVerifyAccount(String IC, String name, Date dateOfBirth,String oldPassword) throws PasswordTooSimpleException {
+//       Customer customer = em.find(Customer.class, IC);
+//            if (customer == null) {
+//                return false;//cannot find account
+//            }
+//            
+//            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + companyAdminAccount.getSalt()).equals(companyAdminAccount.getPassword())) {
+//                if (!checkPasswordComplexity(newPassword)) {
+//                    throw new PasswordTooSimpleException("password is too simple");
+//                }
+//                newPassword = passwordHash(newPassword + companyAdminAccount.getSalt());
+//                companyAdminAccount.setPassword(newPassword);
+//            } else {
+//                return false;//invalid input
+//            }
+//
+//            em.merge(companyAdminAccount);
+//            em.flush();
+//            return true;
+//        } else if (accountType.equals("User")) {
+//            CompanyUserAccount companyUserAccount = em.find(CompanyUserAccount.class, id);
+//            if (companyUserAccount == null) {
+//                return false;//cannot find account
+//            }
+//            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + companyUserAccount.getSalt()).equals(companyUserAccount.getPassword())) {
+//                if (!checkPasswordComplexity(newPassword)) {
+//                    throw new PasswordTooSimpleException("password is too simple");
+//                }
+//                newPassword = passwordHash(newPassword + companyUserAccount.getSalt());
+//                companyUserAccount.setPassword(newPassword);
+//            } else {
+//                return false;//invalid input
+//            }
+//
+//            em.merge(companyUserAccount);
+//            em.flush();
+//            return true;
+//        } else if (accountType.equals("SystemAdmin")) {
+//            SystemAdminAccount systemAdminAccount = em.find(SystemAdminAccount.class, id);
+//            if (systemAdminAccount == null) {
+//                return false;//cannot find account
+//            }
+//            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + systemAdminAccount.getSalt()).equals(systemAdminAccount.getPassword())) {
+//                if (!checkPasswordComplexity(newPassword)) {
+//                    throw new PasswordTooSimpleException("password is too simple");
+//                }
+//                newPassword = passwordHash(newPassword + systemAdminAccount.getSalt());
+//                systemAdminAccount.setPassword(newPassword);
+//            } else {
+//                return false;//invalid input
+//            }
+//
+//            em.merge(systemAdminAccount);
+//            em.flush();
+//            return true;
+//        } else {
+//            throw new AccountTypeNotExistException("Account type " + accountType + " is incorrect, please check");
+//        }
+//    }
 }
+
 

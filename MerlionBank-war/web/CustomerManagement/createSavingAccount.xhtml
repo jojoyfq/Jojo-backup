@@ -10,16 +10,16 @@ and open the template in the editor.
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-    <f:view>
+   <f:view>
         <h:head>
-            <title>Create Saving Account</title>
+            <title>Update Profile</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         </h:head>
         <h:body>
             <h:form>
                 <h:panelGrid columns="2" id="createSavingAccount" cellpadding="5">                   
-                    <h:outputLabel for="IC" value="IC:" />
-                    <p:inputText id="IC" value="#{commonInfraManagedBean.ic}" label="IC" required="true" />
+                    <h:outputLabel for="ic" value="IC:" />
+                    <p:inputText id="ic" value="#{commonInfraManagedBean.ic}" label="IC" required="true" />
  
                     <h:outputLabel for="customerName" value="Name:" />
                     <p:inputText id="customerName" value="#{commonInfraManagedBean.customerName}" label="customerName" required="true" />

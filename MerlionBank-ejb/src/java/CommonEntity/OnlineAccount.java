@@ -32,15 +32,43 @@ public class OnlineAccount implements Serializable {
     }
     private String onlineAccountNumber;
     private String accountStatus;
+    private String salt;
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     private String password;
     
     public OnlineAccount(){
     }
-    public OnlineAccount(String onlineAccountNumber, String accountStatus, String password) {
+
+    public OnlineAccount(String onlineAccountNumber, String accountStatus, String salt, String password) {
         this.onlineAccountNumber = onlineAccountNumber;
         this.accountStatus = accountStatus;
+        this.salt = salt;
         this.password = password;
     }
+  
 
     public String getOnlineAccountNumber() {
         return onlineAccountNumber;
@@ -87,3 +115,4 @@ private Customer customer;
     }
     
 }
+

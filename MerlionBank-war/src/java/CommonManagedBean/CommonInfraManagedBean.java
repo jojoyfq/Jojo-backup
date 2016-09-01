@@ -7,6 +7,7 @@ package CommonManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import Exception.UserExistException;
 import java.io.IOException;
 import java.io.Serializable;
 import javax.ejb.EJB;
@@ -40,6 +41,7 @@ public class CommonInfraManagedBean implements Serializable {
     private String customerFamilyInfo;
     private String customerFinancialAsset;
     private String customerFinancialGoal;
+    //private Customer selectedCustomer;
 
     public Customer getCustomer() {
         return customer;
@@ -97,13 +99,7 @@ public class CommonInfraManagedBean implements Serializable {
         this.customerEmail = customerEmail;
     }
 
-    public String getCustomerPhoneNumber() {
-        return customerPhoneNumber;
-    }
-
-    public void setCustomerPhoneNumber(String customerPhoneNumber) {
-        this.customerPhoneNumber = customerPhoneNumber;
-    }
+   
 
     public String getCustomerOccupation() {
         return customerOccupation;
@@ -172,8 +168,8 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
-//             
-            amsbl.createSavingAccount(ic, customerName, customerGender,  customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialAsset, customerFinancialGoal);//throws UserExistException;
+             //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
+                amsbl.createSavingAccount(ic, customerName, customerGender,  customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialAsset, customerFinancialGoal);//throws UserExistException;
        
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
@@ -183,5 +179,50 @@ public class CommonInfraManagedBean implements Serializable {
 //            
             
        }
+//        public void viewOneCustomer() throws IOException {
+//        //this.ic = selectedCustomer.getIc();
+//        selectedCustomer = amsbl.diaplayCustomer(ic);
+//        System.out.println("Username is " + selectedCustomer.getName());
+//        
+//        this.ic = selectedCustomer.getIc();
+//        this.customerName = selectedCustomer.getName();
+//        this.customerGender = selectedCustomer.getGender();
+//        this.customerDateOfBirth = selectedCustomer.getDateOfBirth();
+//        this.customerAddress = selectedCustomer.getEmail();
+//        this.customerPhoneNumber = selectedCustomer.getPhoneNumber();
+//        this.customerOccupation = selectedCustomer.getOccupation();
+//        this.customerFamilyInfo = selectedCustomer.getFamilyInfo();
+//        this.customerFinancialGoal = selectedCustomer.getFinancialGoal();
+//        
+//
+//       // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerLION-war/GRNSWeb/admin/updateUser.xhtml");
+//    }
+
+//       public void modifyProfile(ActionEvent event){
+//           try{ if (FacesContext.getCurrentInstance().getResponseComplete()) {
+//            System.out.println("lala");
+//            return;
+//            }
+////            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
+////            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
+////            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
+////            customerDateOfBirth = (Date) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerDateOfBirth");
+////            customerAddress = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerAddress");
+////            customerEmail = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerEmail");
+////            customerPhoneNumber = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerPhoneNumber");
+////            customerOccupation = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerOccupation");
+////            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
+////            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
+////            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
+//            amsbl.updateProfile(ic,customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation,  customerFamilyInfo, customerFinancialAsset, customerFinancialGoal);
+//           }catch (UserExistException ex) {
+//            System.out.println("Username already exists");
+//        }
+//        }
+
+    /**
+     * @param customerPhoneNumber the customerPhoneNumber to set
+     */
+    
   }
 
