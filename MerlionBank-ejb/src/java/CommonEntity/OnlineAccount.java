@@ -33,6 +33,9 @@ public class OnlineAccount implements Serializable {
     private String onlineAccountNumber;
     private String accountStatus;
     private String salt;
+    private String authenticationCode;
+
+    
 
     public String getSalt() {
         return salt;
@@ -112,6 +115,14 @@ private Customer customer;
     @Override
     public String toString() {
         return "entity.OnlineAccount[ id=" + onlineAccountNumber + " ]";
+    }
+    
+    public String getAuthenticationCode() {
+        return authenticationCode;
+    }
+
+    public void setAuthenticationCode(String authenticationCode) {
+        this.authenticationCode = authenticationCode;
     }
     
 }

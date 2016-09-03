@@ -31,6 +31,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import java.util.Map;
+import java.util.HashMap;
+
+import com.twilio.sdk.resource.instance.Account;
+import com.twilio.sdk.TwilioRestClient;
+import com.twilio.sdk.TwilioRestException;
+import com.twilio.sdk.resource.factory.MessageFactory;
+import com.twilio.sdk.resource.instance.Message;
+import java.util.ArrayList;
+import static java.util.Collections.list;
+import java.util.List;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+
 /**
  *
  * @author a0113893
@@ -45,7 +60,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     private EntityManager em;
 //    private GoogleMail gm;
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialAsset, String financialGoal){// throws UserExistException {
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType)throws UserExistException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -55,7 +70,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         List<Customer> temp = new ArrayList(q.getResultList());
         if (!temp.isEmpty()) {
             System.out.println("User " + name + " exists!");
-           //throw new UserExistException("User " + name + " exists!");
+            for (int i=0;i<temp.size();i++){
+                if (!temp.get(i).getStatus().equals("terminated"))
+                    throw new UserExistException("User " + name + " exists!");
+            }
+           
         }
          System.out.println("Username passes check!");
          
@@ -66,36 +85,43 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         String password = GeneratePassword.createPassword();
         String tempPassword = password;
         
-        try {
+        
+        password = passwordHash(password + salt);
+        System.out.println("Password after hash&salt:" + password);
+        
+        
+     System.out.println("In Creating saving account");
+      OnlineAccount onlineAccount= new OnlineAccount (ic,"inactive",salt,password);
+        em.persist(onlineAccount);
+            Customer customer = new Customer(ic,name,gender,dateOfBirth,address,email,phoneNumber,occupation,familyInfo, null, "0.0000", onlineAccount,"inactive");          
+            em.persist(customer);
+            System.out.println("Create Customer successfully");
+            long savingAccoutNumber= Math.round(Math.random()*1000000000);
+            BigDecimal initialValue=new BigDecimal("0.0000");
+            SavingAccount savingAccount= new SavingAccount(savingAccoutNumber, initialValue, initialValue, "inactive", customer,savingAccountType);
+            em.persist(savingAccount);
+            List<SavingAccount> savingAccounts=new ArrayList<SavingAccount>();
+            savingAccounts.add(0,savingAccount);
+            customer.setSavingAccounts(savingAccounts);
+            em.persist(customer);
+            em.flush();
+            System.out.println("Debit Account successfully created");
+            
+            try {
             SendEmail(name, email, tempPassword);
         } catch (MessagingException ex) {
             System.out.println("Error sending email.");
             Logger.getLogger(AccountManagementSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        password = passwordHash(password + salt);
-        System.out.println("Password after hash&salt:" + password);
-        
-        
-     System.out.println("In Creating debit account");
-      OnlineAccount onlineAccount= new OnlineAccount (ic,"inactive",salt,password);
-        em.persist(onlineAccount);
-            Customer customer = new Customer(ic,name,gender,dateOfBirth,address,email,phoneNumber,occupation,familyInfo, null,financialGoal, "0.0000", onlineAccount);          
-            em.persist(customer);
-            System.out.println("Create Customer successfully");
-            long savingAccoutNumber= Math.round(Math.random()*100000000);;
-            SavingAccount savingAccount= new SavingAccount(savingAccoutNumber, null, null, "inactive", customer);
-            em.persist(savingAccount);
-            System.out.println("Debit Account successfully created");
 
     }
     
     @Override
-    public void updateProfile(String ic, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException {
+    public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException {
        Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
             q.setParameter("ic", ic);
             Customer customer = (Customer)q.getSingleResult();
-            customer.setDateOfBirth(dateOfBirth);
             customer.setAddress(address);
             customer.setEmail(email);
             customer.setPhoneNumber(phoneNumber);
@@ -105,98 +131,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             em.merge(customer);
             em.flush();
     }
-//            
-//            }
-//            CompanyAdmin companyAdmin = companyAdminAccount.getCompanyAdmin();
-//            if (firstName != null && !firstName.equals(companyAdmin.getFirstName())) {
-//                companyAdmin.setFirstName(firstName);
-//            }
-//            if (lastName != null && !lastName.equals(companyAdmin.getLastName())) {
-//                companyAdmin.setLastName(lastName);
-//            }
-//            if (email != null && !email.equals(companyAdmin.getEmail())) {
-//                companyAdmin.setEmail(email);
-//            }
-//            if (contactNo != null && !contactNo.equals(companyAdminAccount.getContactNo())) {
-//                companyAdminAccount.setContactNo(contactNo);
-//            }
-//
-//            em.merge(companyAdminAccount);
-//            em.merge(companyAdmin);
-//            em.flush();
-//            return true;
-//        } else if (accountType.equals("User")) {
-//            System.out.println("Inside session bean");
-//            CompanyUserAccount companyUserAccount = em.find(CompanyUserAccount.class, accountId);
-//            if (companyUserAccount == null) {
-//                return false;//cannot find account
-//            }
-//            if (username != null && !username.equals(companyUserAccount.getUsername())) {
-//                Query query = em.createQuery("SELECT c FROM CompanyUserAccount c WHERE c.username = :user");
-//                query.setParameter("user", username);
-//                List<CompanyUserAccount> companyUserAccountList = query.getResultList();
-//                if (!companyUserAccountList.isEmpty()) {
-//                    throw new UserExistException("Username already exists!");
-//                }
-//                companyUserAccount.setUsername(username);
-//            }
-//            CompanyUser companyUser = companyUserAccount.getCompanyUser();
-//            if (firstName != null && !firstName.equals(companyUser.getFirstName())) {
-//                companyUser.setFirstName(firstName);
-//            }
-//            if (lastName != null && !lastName.equals(companyUser.getLastName())) {
-//                companyUser.setLastName(lastName);
-//            }
-//            if (email != null && !email.equals(companyUser.getEmail())) {
-//                companyUser.setEmail(email);
-//            }
-//            if (contactNo != null && !contactNo.equals(companyUserAccount.getContactNo())) {
-//                companyUserAccount.setContactNo(contactNo);
-//            }
-//
-//            em.merge(companyUserAccount);
-//            em.merge(companyUser);
-//            em.flush();
-//            return true;
-//        } else if (accountType.equals("SystemAdmin")) {
-//            SystemAdminAccount systemAdminAccount = em.find(SystemAdminAccount.class, accountId);
-//            if (systemAdminAccount == null) {
-//                return false;//cannot find account
-//            }
-//            if (username != null && !username.equals(systemAdminAccount.getUsername())) {
-//                Query query = em.createQuery("SELECT c FROM SystemAdminAccount c WHERE c.username = :user");
-//                query.setParameter("user", username);
-//                List<SystemAdminAccount> systemAdminAccountList = query.getResultList();
-//                if (!systemAdminAccountList.isEmpty()) {
-//                    throw new UserExistException("Username already exists!");
-//                }
-//                systemAdminAccount.setUsername(username);
-//            }
-//            SystemAdmin systemAdmin = systemAdminAccount.getSystemAdmin();
-//            if (firstName != null && !firstName.equals(systemAdmin.getFirstName())) {
-//                systemAdmin.setFirstName(firstName);
-//            }
-//            if (lastName != null && !lastName.equals(systemAdmin.getLastName())) {
-//                systemAdmin.setLastName(lastName);
-//            }
-//            if (email != null && !email.equals(systemAdmin.getEmail())) {
-//                systemAdmin.setEmail(email);
-//            }
-//            if (contactNo != null && !contactNo.equals(systemAdminAccount.getContactNo())) {
-//                systemAdminAccount.setContactNo(contactNo);
-//            }
-//
-//            em.merge(systemAdminAccount);
-//            em.merge(systemAdmin);
-//            em.flush();
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-
-    
-    
+   
     @Override
     public Customer diaplayCustomer(String ic) {
 
@@ -271,7 +206,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
        Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
             q.setParameter("ic", ic);
             Customer customer = (Customer)q.getSingleResult();
-            int amount=customer.getSavingAccount().getBalance().intValueExact();
+            int amount=customer.getSavingAccounts().get(0).getBalance().intValueExact();
             if (amount>=500) {
                 return ic;
             }
@@ -279,7 +214,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
     
     //Activate account - 3rd intial password reset
-    private String updatePassword (String ic, String oldPassword, String newPassword,String confirmPassword)throws PasswordTooSimpleException{
+    @Override
+    public String updatePassword (String ic, String oldPassword, String newPassword,String confirmPassword)throws PasswordTooSimpleException{
     Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
             q.setParameter("ic", ic);
             Customer customer = (Customer)q.getSingleResult();
@@ -331,76 +267,110 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
             q.setParameter("ic", ic);
             Customer customer = (Customer)q.getSingleResult();
+            customer.setStatus("active");
+            em.persist(customer);
             customer.getOnlineAccount().setAccountStatus("active");
             em.flush();
-            customer.getSavingAccount().setStatus("active");
+            customer.getSavingAccounts().get(0).setStatus("active");
             em.flush();
             return true;
             
     }
     
+    //forget password- 1st step verify account details
+    @Override
+    public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOfBirth, String email){
+      Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
+            if (customer == null) {
+                return "invalid account";//cannot find account
+            }
+            if (!fullName.equals(customer.getName())){
+                return "invalid account";
+            }
+            else if(!dateOfBirth.equals(customer.getDateOfBirth())){
+                return "invalid account";
+            }
+            else if (!email.equals(customer.getEmail())){
+                return "invalid account";
+            }
+            else 
+                return ic;             
+    }
     
-    //Change password
-//  @Override
-//    public boolean resetPasswordVerifyAccount(String IC, String name, Date dateOfBirth,String oldPassword) throws PasswordTooSimpleException {
-//       Customer customer = em.find(Customer.class, IC);
-//            if (customer == null) {
-//                return false;//cannot find account
-//            }
-//            
-//            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + companyAdminAccount.getSalt()).equals(companyAdminAccount.getPassword())) {
-//                if (!checkPasswordComplexity(newPassword)) {
-//                    throw new PasswordTooSimpleException("password is too simple");
-//                }
-//                newPassword = passwordHash(newPassword + companyAdminAccount.getSalt());
-//                companyAdminAccount.setPassword(newPassword);
-//            } else {
-//                return false;//invalid input
-//            }
-//
-//            em.merge(companyAdminAccount);
-//            em.flush();
-//            return true;
-//        } else if (accountType.equals("User")) {
-//            CompanyUserAccount companyUserAccount = em.find(CompanyUserAccount.class, id);
-//            if (companyUserAccount == null) {
-//                return false;//cannot find account
-//            }
-//            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + companyUserAccount.getSalt()).equals(companyUserAccount.getPassword())) {
-//                if (!checkPasswordComplexity(newPassword)) {
-//                    throw new PasswordTooSimpleException("password is too simple");
-//                }
-//                newPassword = passwordHash(newPassword + companyUserAccount.getSalt());
-//                companyUserAccount.setPassword(newPassword);
-//            } else {
-//                return false;//invalid input
-//            }
-//
-//            em.merge(companyUserAccount);
-//            em.flush();
-//            return true;
-//        } else if (accountType.equals("SystemAdmin")) {
-//            SystemAdminAccount systemAdminAccount = em.find(SystemAdminAccount.class, id);
-//            if (systemAdminAccount == null) {
-//                return false;//cannot find account
-//            }
-//            if (oldPassword != null && newPassword != null && passwordHash(oldPassword + systemAdminAccount.getSalt()).equals(systemAdminAccount.getPassword())) {
-//                if (!checkPasswordComplexity(newPassword)) {
-//                    throw new PasswordTooSimpleException("password is too simple");
-//                }
-//                newPassword = passwordHash(newPassword + systemAdminAccount.getSalt());
-//                systemAdminAccount.setPassword(newPassword);
-//            } else {
-//                return false;//invalid input
-//            }
-//
-//            em.merge(systemAdminAccount);
-//            em.flush();
-//            return true;
-//        } else {
-//            throw new AccountTypeNotExistException("Account type " + accountType + " is incorrect, please check");
-//        }
-//    }
+    //send 2FA
+    //forget password- 2nd send 2FA
+    @Override
+    public String sendTwoFactorAuthentication(String ic) throws TwilioRestException{
+        Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
+        String ACCOUNT_SID = "AC0607da3843c85473703f3f5078a21a52";
+        String AUTH_TOKEN = "79993c87540fe09ba96d8f1990d78eed";
+        TwilioRestClient client = new TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN);
+
+        Account account = client.getAccount();
+
+        MessageFactory messageFactory = account.getMessageFactory();
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("To", customer.getPhoneNumber())); // Replace with a valid phone number for your account.
+        params.add(new BasicNameValuePair("From", "+12013451118")); // Replace with a valid phone number for your account.
+        String oTP="Math.round(Math.random()*100000)";
+        customer.getOnlineAccount().setAuthenticationCode(oTP);
+        em.flush();
+        params.add(new BasicNameValuePair("Body", oTP));
+        
+        try {
+      Message message = messageFactory.create(params);
+    } catch (TwilioRestException e) {
+      System.out.println(e.getErrorMessage());
+    }
+        //Message sms = messageFactory.create(params);
+        
+        return ic;
+    }
+    
+    //verify 2FA
+    //forget password- 3rd step verify 2FA
+    @Override
+    public String verifyTwoFactorAuthentication(String ic,String inputCode){
+      Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult(); 
+            
+            if (customer.getOnlineAccount().getAuthenticationCode().equals(inputCode)){
+                return ic;
+            }
+            else return "invalid 2FA";
+        
+    }
+    
+    @Override
+    public String updateForgetPassword (String ic, String newPassword,String confirmPassword)throws PasswordTooSimpleException{
+    Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
+            q.setParameter("ic", ic);
+            Customer customer = (Customer)q.getSingleResult();
+           if (newPassword.equals(confirmPassword)){
+           if (!checkPasswordComplexity(newPassword)) {
+                    throw new PasswordTooSimpleException("password is too simple");
+                }
+                String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
+                customer.getOnlineAccount().setPassword(resetPassword);
+                em.flush();
+                return ic;
+           }
+           else if (!newPassword.equals(confirmPassword)){
+                return "Does not match with new password";
+            }
+           else return "invalid details";
+    } 
+    
+    
+    
+    
+    
+    
 }
 
 

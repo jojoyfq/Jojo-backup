@@ -8,9 +8,13 @@ package CommonManagedBean;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import Exception.UserExistException;
+//import Logger.MyLogger;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 //import javax.faces.bean.SessionScoped;
@@ -20,6 +24,7 @@ import javax.inject.Named;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 
 /**
  *
@@ -45,6 +50,17 @@ public class LogInManagedBean implements Serializable {
     private String customerFinancialAsset;
     private String customerFinancialGoal;
     private Customer selectedCustomer;
+    private String birthdate;
+
+    public String getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+    }
+    
+    private final static Logger LOGGER = Logger.getLogger(LogInManagedBean.class.getName());
 
     public Customer getCustomer() {
         return customer;
@@ -154,6 +170,13 @@ public class LogInManagedBean implements Serializable {
      * Creates a new instance of LogInManagedBean
      */
     public LogInManagedBean() {
+//        try {
+//            MyLogger.setup();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//     //       throw new RuntimeException("Problems with creating the log files");
+//        }
+//        LOGGER.setLevel(Level.INFO);
     }
 
     @PostConstruct
@@ -166,7 +189,27 @@ public class LogInManagedBean implements Serializable {
         }
 
     }
-
+//   private void warnMsg(String message) {
+//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, "");
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, msg);
+//        context.getExternalContext().getFlash().setKeepMessages(true);
+//        LOGGER.info("MESSAGE INFO: " + message);
+//    }
+//      private void faceMsg(String message) {
+//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, message, "");
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, msg);
+//        context.getExternalContext().getFlash().setKeepMessages(true);
+//        LOGGER.info("MESSAGE INFO: " + message);
+//    }
+//        private void errorMsg(String message) {
+//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, message, "");
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, msg);
+//        context.getExternalContext().getFlash().setKeepMessages(true);
+//        LOGGER.info("MESSAGE INFO: " + message);
+//    }
     public void viewOneCustomer() throws IOException {
         //this.ic = selectedCustomer.getIc();
         selectedCustomer = amsbl.diaplayCustomer(ic);
@@ -176,6 +219,9 @@ public class LogInManagedBean implements Serializable {
         this.customerName = selectedCustomer.getName();
         this.customerGender = selectedCustomer.getGender();
         this.customerDateOfBirth = selectedCustomer.getDateOfBirth();
+         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+         this.birthdate = sdf.format(customerDateOfBirth);
+        this.birthdate = customerDateOfBirth.toString();
         this.customerEmail = selectedCustomer.getEmail();
         this.customerAddress = selectedCustomer.getAddress();
         this.customerPhoneNumber = selectedCustomer.getPhoneNumber();
@@ -196,8 +242,8 @@ public class LogInManagedBean implements Serializable {
         // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerLION-war/GRNSWeb/admin/updateUser.xhtml");
     }
 
-    public void modifyProfile(ActionEvent event) {
-        //try {
+    public void modifyProfile(ActionEvent event) throws UserExistException{
+        try {
             if (FacesContext.getCurrentInstance().getResponseComplete()) {
                 System.out.println("lala");
                 return;
@@ -214,10 +260,21 @@ public class LogInManagedBean implements Serializable {
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
             System.out.println("Phone Number is: " + customerPhoneNumber);
-            amsbl.updateProfile(ic, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
-        } //catch (UserExistException ex) {
-      //      System.out.println("Username already exists");
-        //}
-  //  }
+            if(ic!=null && customerName !=null && customerGender!=null && customerDateOfBirth !=null && customerAddress != null && customerEmail != null && customerPhoneNumber!=null
+                    && customerOccupation!=null && customerFamilyInfo != null && customerFinancialGoal !=null){
+        amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
+            }else{
+               System.out.println("Please fill in correct information!");
+               
+//            FacesMessage msg = new FacesMessage("Nothing edited for: ", ((OrganizationUnit) event.getObject()).getDepartmentName());
+//            FacesContext.getCurrentInstance().addMessage(null, msg);
+
+            }
+        
+         //   amsbl.updateProfile(ic, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
+        } catch (UserExistException ex) {
+          System.out.println("Username already exists");
+        }
+    }
 
 }

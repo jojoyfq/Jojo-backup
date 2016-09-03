@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>MerlionBank-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <included-library dirs="200">libs.twilio-java-sdk_5.11.0.classpath</included-library>
             <source-roots>
                 <root id="src.dir" name="源包"/>
             </source-roots>

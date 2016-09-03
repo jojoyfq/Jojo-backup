@@ -15,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -32,9 +33,20 @@ public class SavingAccount implements Serializable {
     private BigDecimal balance;
     private BigDecimal availableBalance; 
     private String status; //activated, inactive, terminated, below balance
-    @OneToOne(mappedBy="savingAccount")
+    //@OneToOne(mappedBy="savingAccount")
+    //private Customer customer;
+    @ManyToOne
     private Customer customer;
+    private String productType;
     
+    public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, String productType) {
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.availableBalance = availableBalance;
+        this.status = status;
+        this.customer = customer;
+        this.productType = productType;
+    }
 //    @OneToMany(cascade = {CascadeType.ALL},mappedBy="savingAccount")
 //    private List<TransactionRecord> transactionRecords = new ArrayList<TransactionRecord>();
 //
@@ -56,7 +68,8 @@ public class SavingAccount implements Serializable {
    // public void setIntrabankTransferRecords(List<IntrabankTransferRecord> intrabankTransferRecords) {
    //     this.intrabankTransferRecords = intrabankTransferRecords;
    // }
-    
+
+ 
     
     public Long getId() {
         return id;
@@ -169,13 +182,7 @@ public class SavingAccount implements Serializable {
     
    public SavingAccount(){
    }
-    public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer) {
-        this.accountNumber = accountNumber;
-        this.balance = balance;
-        this.availableBalance = availableBalance;
-        this.status = status;
-        this.customer = customer;
-    }
+    
 
     /**
      * @return the transactionRecord

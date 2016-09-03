@@ -6,7 +6,9 @@
 package CommonEntity.Session;
 
 import CommonEntity.Customer;
+import Exception.PasswordTooSimpleException;
 import Exception.UserExistException;
+import com.twilio.sdk.TwilioRestException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -17,11 +19,22 @@ import javax.ejb.Local;
  */
 @Local
 public interface AccountManagementSessionBeanLocal  {
-     public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialAsset, String financialGoal);//throws UserExistException;
+  //Create Account   
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType)throws UserExistException;//throws UserExistException;
+   //Update Account Details  
      public Customer diaplayCustomer(String ic); 
-     public void updateProfile(String ic, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException;
-    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth,String phoneNumber);
+     public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException;
+   
+//Activation function
+     public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth,String phoneNumber);
 public String verifyAccountBalance(String ic);
 public boolean checkPasswordComplexity(String password);
+public String updatePassword (String ic, String oldPassword, String newPassword,String confirmPassword)throws PasswordTooSimpleException;
+
+//Forget Password
+public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOfBirth, String email);
+public String sendTwoFactorAuthentication(String ic) throws TwilioRestException;
+public String verifyTwoFactorAuthentication(String ic,String inputCode);
+public String updateForgetPassword (String ic, String newPassword,String confirmPassword)throws PasswordTooSimpleException;
 }
 

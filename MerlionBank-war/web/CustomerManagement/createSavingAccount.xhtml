@@ -22,7 +22,7 @@ and open the template in the editor.
                     <p:inputText id="ic" value="#{commonInfraManagedBean.ic}" label="IC" required="true" />
  
                     <h:outputLabel for="customerName" value="Name:" />
-                    <p:inputText id="customerName" value="#{commonInfraManagedBean.customerName}" label="customerName" required="true" />
+                    <p:inputText id="customerName" value="#{commonInfraManagedBean.customerName}" label="customerName" required="true" requiredMessage="Please input your username"/>
                     
                     <h:outputLabel for="customerGender" value="Gender:" />
                     <p:inputText id="customerGender" value="#{commonInfraManagedBean.customerGender}" label="customerGender" required="true" />
@@ -46,11 +46,11 @@ and open the template in the editor.
                     <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
                     <p:inputText id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" />
                     
-                    <h:outputLabel for="customerFinancialAsset" value="Financial Asset:" />
-                    <p:inputText id="customerFinancialAsset" value="#{commonInfraManagedBean.customerFinancialAsset}" label="customerFinancialAsset" required="true" />
+                    <h:outputLabel for="savingAccountType" value="Saving Account Type:" />
+                    <p:inputText id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}" label="savingAccountType" required="true" />
                     
-                    <h:outputLabel for="customerFinancialGoal" value="Financial Goal:" />
-                    <p:inputText id="customerFinancialGoal" value="#{commonInfraManagedBean.customerFinancialGoal}" label="customerFinancialGoal" required="true" />
+<!--                    <h:outputLabel for="customerFinancialGoal" value="Financial Goal:" />
+                    <p:inputText id="customerFinancialGoal" value="{commonInfraManagedBean.customerFinancialGoal}" label="customerFinancialGoal" required="true" />-->
                 </h:panelGrid>
  
                 <p:commandButton update="createSavingAccount" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />

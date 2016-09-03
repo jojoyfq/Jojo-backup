@@ -10,6 +10,7 @@ import DepositEntity.SavingAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -45,6 +46,8 @@ public class Customer implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dateOfBirth;
     private String address;
+
+    
     private String email;
     private String phoneNumber;
     private String occupation; //company info
@@ -52,12 +55,36 @@ public class Customer implements Serializable {
     private BigDecimal financialAsset;
     private String financialGoal;
     private String riskRating;
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
   
     @OneToOne(cascade={CascadeType.ALL}) 
    private OnlineAccount onlineAccount;//same as ic
     
-    @OneToOne(cascade = {CascadeType.ALL})
-    private SavingAccount savingAccount;
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<SavingAccount> savingAccounts;
+
+    public List<SavingAccount> getSavingAccounts() {
+        return savingAccounts;
+    }
+
+    public void setSavingAccounts(List<SavingAccount> savingAccounts) {
+        this.savingAccounts = savingAccounts;
+    }
+
+
+  
+   
+    
+    //@OneToOne(cascade = {CascadeType.ALL})
+    //private SavingAccount savingAccount;
     
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
     private List<CaseEntity> cases= new ArrayList<CaseEntity>();
@@ -87,7 +114,7 @@ public class Customer implements Serializable {
     };
     
 
-    public Customer(String IC, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String financialGoal, String riskRating, OnlineAccount onlineAccount) {
+    public Customer(String IC, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String riskRating, OnlineAccount onlineAccount,String status) {
         this.ic = IC;
         this.name = name;
         this.gender = gender;
@@ -98,9 +125,9 @@ public class Customer implements Serializable {
         this.occupation = occupation;
         this.familyInfo = familyInfo;
         this.financialAsset = financialAsset;
-        this.financialGoal = financialGoal;
         this.riskRating = riskRating;
         this.onlineAccount = onlineAccount;
+        this.status=status;
     }
 
     public String getIc() {
@@ -188,10 +215,7 @@ public class Customer implements Serializable {
         return address;
     }
 
-    /**
-     * @param addresss the address to set
-     */
-    public void setAddress(String addresss) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
@@ -310,16 +334,7 @@ public class Customer implements Serializable {
     /**
      * @return the savingAccount
      */
-    public SavingAccount getSavingAccount() {
-        return savingAccount;
-    }
-
-    /**
-     * @param savingAccount the savingAccount to set
-     */
-    public void setSavingAccount(SavingAccount savingAccount) {
-        this.savingAccount = savingAccount;
-    }
+   
 
     /**
      * @return the fixedDepositeAccount
@@ -327,4 +342,5 @@ public class Customer implements Serializable {
    
     
 }
+
 

@@ -37,6 +37,23 @@ public class CommonInfraManagedBean implements Serializable {
     private String customerAddress;
     private String customerEmail;
     private String customerPhoneNumber;
+    private String savingAccountType;
+
+    public String getSavingAccountType() {
+        return savingAccountType;
+    }
+
+    public void setSavingAccountType(String savingAccountType) {
+        this.savingAccountType = savingAccountType;
+    }
+
+    public String getCustomerPhoneNumber() {
+        return customerPhoneNumber;
+    }
+
+    public void setCustomerPhoneNumber(String customerPhoneNumber) {
+        this.customerPhoneNumber = customerPhoneNumber;
+    }
     private String customerOccupation;
     private String customerFamilyInfo;
     private String customerFinancialAsset;
@@ -152,7 +169,7 @@ public class CommonInfraManagedBean implements Serializable {
          customer = new Customer();
          
      }
-       public void setAllVariables(ActionEvent event) throws IOException{
+       public void setAllVariables(ActionEvent event) throws UserExistException, IOException{
             if (FacesContext.getCurrentInstance().getResponseComplete()) {
             System.out.println("lala");
             return;
@@ -169,7 +186,7 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
              //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
-                amsbl.createSavingAccount(ic, customerName, customerGender,  customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialAsset, customerFinancialGoal);//throws UserExistException;
+                amsbl.createSavingAccount(ic, customerName, customerGender,  customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
        
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
