@@ -8,7 +8,7 @@ package Exception;
 
 /**
  *
- * @author chongyangsun
+ * @author a0113893
  */
 public class PasswordTooSimpleException extends Exception {
 

@@ -6,6 +6,7 @@
 package CommonEntity.Session;
 
 import CommonEntity.Customer;
+import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserExistException;
@@ -22,7 +23,7 @@ import javax.ejb.Local;
 @Local
 public interface AccountManagementSessionBeanLocal  {
   //Create Account   
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType)throws UserExistException;//throws UserExistException;
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType)throws UserExistException,EmailNotSendException;//throws UserExistException;
    //Update Account Details  
      public Customer diaplayCustomer(String ic); 
      public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException;

@@ -8,6 +8,7 @@ package CommonEntity.Session;
 import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
+import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 //import Exception.AccountTypeNotExistException;
@@ -62,7 +63,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     private EntityManager em;
 //    private GoogleMail gm;
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType)throws UserExistException {
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType)throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -110,12 +111,14 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             em.flush();
             System.out.println("Debit Account successfully created");
             
-            try {
+           try {
             SendEmail(name, email, tempPassword);
         } catch (MessagingException ex) {
             System.out.println("Error sending email.");
-            Logger.getLogger(AccountManagementSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new EmailNotSendException("Error sending email.");
         }
+
+        
 
 
     }
