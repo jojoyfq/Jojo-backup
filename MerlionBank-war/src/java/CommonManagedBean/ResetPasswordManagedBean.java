@@ -8,6 +8,8 @@ package CommonManagedBean;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import Exception.PasswordTooSimpleException;
+import Exception.UserNotActivatedException;
+import Exception.UserNotExistException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
@@ -51,7 +53,7 @@ public class ResetPasswordManagedBean implements Serializable {
         customer = new Customer();
     }
 
-    public void verifyCustomerDetails(ActionEvent event) throws IOException {
+    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
         if (customerIc != null && customerName != null && dateOfBirth != null && customerEmail != null) {
             String msg = amsbl.forgetPasswordVerifyDetail(customerIc, customerName, dateOfBirth, customerEmail);
             System.out.println(msg);

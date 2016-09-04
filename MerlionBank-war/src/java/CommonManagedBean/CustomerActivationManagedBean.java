@@ -7,6 +7,8 @@ package CommonManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import Exception.UserAlreadyActivatedException;
+import Exception.UserNotExistException;
 //import Logger.MyLogger;
 import java.io.IOException;
 //import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
@@ -114,7 +116,7 @@ public class CustomerActivationManagedBean implements Serializable {
         context.getExternalContext().getFlash().setKeepMessages(true);
         LOGGER.info("MESSAGE INFO: " + message);
     }
-    public void checkVerificationDetails(ActionEvent event) {
+    public void checkVerificationDetails(ActionEvent event) throws UserNotExistException, UserAlreadyActivatedException{
         String result = amsbl.activateAccountVerifyDetail(customerIc, customerName, customerDateOfBirth, customerPhoneNumber);
         if (result.equals("invalid account")) {
             this.errorMsg("Please enter the correct information!");
