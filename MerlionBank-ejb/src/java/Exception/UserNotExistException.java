@@ -10,14 +10,14 @@ package Exception;
  *
  * @author a0113893
  */
-public class PasswordTooSimpleException extends Exception {
+public class UserNotExistException extends Exception{
+    private static final long serialVersionUID = 1L;
 
-    public PasswordTooSimpleException() {
+    public UserNotExistException() {
         super();
     }
     
-    public PasswordTooSimpleException(String msg) {
+    public UserNotExistException(String msg) {
         super(msg);
     }
-}    
-
+}

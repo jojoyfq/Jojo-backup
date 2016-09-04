@@ -10,14 +10,14 @@ package Exception;
  *
  * @author a0113893
  */
-public class UserExistException extends Exception{
+public class EmailNotSendException extends Exception{
     private static final long serialVersionUID = 1L;
 
-    public UserExistException() {
+    public EmailNotSendException() {
         super();
     }
     
-    public UserExistException(String msg) {
+    public EmailNotSendException(String msg) {
         super(msg);
     }
 }
