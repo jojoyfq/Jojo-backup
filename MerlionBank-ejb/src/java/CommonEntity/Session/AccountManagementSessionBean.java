@@ -11,9 +11,11 @@ import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
+import Exception.UserAlreadyActivatedException;
 //import Exception.AccountTypeNotExistException;
 //import Exception.PasswordTooSimpleException;
 import Exception.UserExistException;
+import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import Other.Session.sendEmail;
 import Other.Session.GeneratePassword;
@@ -72,7 +74,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
         if (!temp.isEmpty()) {
-            System.out.println("User " + name + " exists!");
+            System.out.println("User " + ic + " exists!");
             for (int i=0;i<temp.size();i++){
                 if (temp.get(i).getStatus().equals("active"))
                     throw new UserExistException("User " + ic + " exists!");
@@ -124,10 +126,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
     
     @Override
-    public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException {
-       Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
+    public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal){
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+            Customer customer = temp.get(temp.size()-1);
             customer.setAddress(address);
             customer.setEmail(email);
             customer.setPhoneNumber(phoneNumber);
@@ -140,10 +143,10 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
    
     @Override
     public Customer diaplayCustomer(String ic) {
-
-            Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+            Customer customer = temp.get(temp.size()-1);
             return customer;
     }
     
@@ -186,21 +189,42 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     
     //Activate account- 1st step verify account details
     @Override
-    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth,String phoneNumber){
-      Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
-            if (customer == null) {
-                return "invalid account";//cannot find account
+    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth,String phoneNumber)throws UserNotExistException,UserAlreadyActivatedException{
+      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty()) {
+            System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");
+        }
+        
+            int size=temp.size();
+            Customer customer=temp.get(size-1);
+            if (customer.getStatus().equals("terminated")){
+                 System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
             }
+            else if (customer.getStatus().equals("active")){
+                 System.out.println("Username " + ic + "You have already activated your account!"); 
+             throw new UserAlreadyActivatedException("You have already activated your account!");
+            }
+            else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
+                System.out.println("Username " + ic + "Acount locked"); 
+            throw new UserAlreadyActivatedException("You have already activated your account!");
+            }
+            else {
+              System.out.println("Username " + ic + " IC check pass!");  
+            }               
+        
+           
             if (!fullName.equals(customer.getName())){
-                return "invalid account";
+                throw new UserNotExistException("Username " + ic + "invaid account details");
             }
             else if(!dateOfBirth.equals(customer.getDateOfBirth())){
-                return "invalid account";
+                 throw new UserNotExistException("Username " + ic + "invaid account details");
             }
             else if (!phoneNumber.equals(customer.getPhoneNumber())){
-                return "invalid account";
+                 throw new UserNotExistException("Username " + ic + "invaid account details");
             }
             else 
                 return ic;             
@@ -209,9 +233,10 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     //Activate account - 2nd step verify account balance
     @Override
     public String verifyAccountBalance(String ic){
-       Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
+       Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+            Customer customer = temp.get(temp.size()-1);
             int amount=customer.getSavingAccounts().get(0).getBalance().intValueExact();
             if (amount>=500) {
                 return ic;
@@ -222,9 +247,10 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     //Activate account - 3rd intial password reset
     @Override
     public String updatePassword (String ic, String oldPassword, String newPassword,String confirmPassword)throws PasswordTooSimpleException{
-    Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
+    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+            Customer customer = temp.get(temp.size()-1);
             if (!passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
                 return "invalid old password";
             }
@@ -270,9 +296,10 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     
     //Activate account - 4th step update account status
     private boolean updateAccountStatus(String ic){
-        Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+            Customer customer = temp.get(temp.size()-1);
             customer.setStatus("active");
             em.persist(customer);
             customer.getOnlineAccount().setAccountStatus("active");
@@ -285,21 +312,38 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     
     //forget password- 1st step verify account details
     @Override
-    public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOfBirth, String email){
-      Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
-            if (customer == null) {
-                return "invalid account";//cannot find account
+    public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOfBirth, String email) throws UserNotExistException,UserNotActivatedException {
+      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty()) {
+            System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");
+        }
+        
+            int size=temp.size();
+            Customer customer=temp.get(size-1);
+            if (customer.getStatus().equals("terminated")){
+                 System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
             }
+            else if (customer.getStatus().equals("inactive")){
+                 System.out.println("Username " + ic + "You have not activated your account!"); 
+             throw new UserNotActivatedException("You have not activated your account!");
+            }
+            else {
+              System.out.println("Username " + ic + " IC check pass!");  
+            }               
+            
+           
             if (!fullName.equals(customer.getName())){
-                return "invalid account";
+                throw new UserNotExistException("Username " + ic + "invaid account details");
             }
             else if(!dateOfBirth.equals(customer.getDateOfBirth())){
-                return "invalid account";
+                throw new UserNotExistException("Username " + ic + "invaid account details");
             }
             else if (!email.equals(customer.getEmail())){
-                return "invalid account";
+                throw new UserNotExistException("Username " + ic + "invaid account details");
             }
             else 
                 return ic;             
@@ -309,9 +353,10 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     //forget password- 2nd send 2FA
     @Override
     public String sendTwoFactorAuthentication(String ic) throws TwilioRestException{
-        Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+            Customer customer = temp.get(temp.size()-1);
         String ACCOUNT_SID = "AC0607da3843c85473703f3f5078a21a52";
         String AUTH_TOKEN = "79993c87540fe09ba96d8f1990d78eed";
         TwilioRestClient client = new TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN);
@@ -341,9 +386,10 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     //forget password- 3rd step verify 2FA
     @Override
     public String verifyTwoFactorAuthentication(String ic,String inputCode){
-      Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult(); 
+      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+            Customer customer = temp.get(temp.size()-1);
             
             if (customer.getOnlineAccount().getAuthenticationCode().equals(inputCode)){
                 return ic;
@@ -354,9 +400,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     
     @Override
     public String updateForgetPassword (String ic, String newPassword,String confirmPassword)throws PasswordTooSimpleException{
-    Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
-            q.setParameter("ic", ic);
-            Customer customer = (Customer)q.getSingleResult();
+   Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+            Customer customer = temp.get(temp.size()-1);
+            
            if (newPassword.equals(confirmPassword)){
            if (!checkPasswordComplexity(newPassword)) {
                     throw new PasswordTooSimpleException("password is too simple");
