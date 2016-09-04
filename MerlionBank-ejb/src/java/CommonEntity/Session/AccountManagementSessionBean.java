@@ -8,10 +8,12 @@ package CommonEntity.Session;
 import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
+import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 //import Exception.AccountTypeNotExistException;
 //import Exception.PasswordTooSimpleException;
 import Exception.UserExistException;
+import Exception.UserNotExistException;
 import Other.Session.sendEmail;
 import Other.Session.GeneratePassword;
 import java.math.BigDecimal;
@@ -71,12 +73,13 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         if (!temp.isEmpty()) {
             System.out.println("User " + name + " exists!");
             for (int i=0;i<temp.size();i++){
-                if (!temp.get(i).getStatus().equals("terminated"))
-                    throw new UserExistException("User " + name + " exists!");
-            }
-           
+                if (temp.get(i).getStatus().equals("active"))
+                    throw new UserExistException("User " + ic + " exists!");
+                else if (temp.get(i).getStatus().equals("inactive"))
+                    throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");    
+            }           
         }
-         System.out.println("Username passes check!");
+         System.out.println("customer does not exist!");
          
          for (int i = 0; i < SALT_LENGTH; i++) {
             int index = (int) (RANDOM.nextDouble() * letters.length());
@@ -177,7 +180,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         }
         return md5;
     }
-
+    
     //Activate account- 1st step verify account details
     @Override
     public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth,String phoneNumber){
@@ -366,10 +369,40 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
            else return "invalid details";
     } 
     
-    
-    
-    
-    
+  //log in- 1st step verify details  
+  @Override
+    public String checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty()) {
+            System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");
+        }
+        
+            int size=temp.size();
+            Customer customer=temp.get(size-1);
+            if (customer.getStatus().equals("terminated")){
+                 System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
+            }
+            else if (customer.getStatus().equals("inactive")){
+                 System.out.println("Username " + ic + " please activate your account!");     
+            }
+            else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
+            System.out.println("Username " + ic + " Account locked! Please Reset Password!"); 
+            }
+            else {
+              System.out.println("Username " + ic + " IC check pass!");  
+            }               
+        
+       if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
+                return "invalid old password";
+            } 
+       else return ic;
+        
+    }  
+     
     
 }
 

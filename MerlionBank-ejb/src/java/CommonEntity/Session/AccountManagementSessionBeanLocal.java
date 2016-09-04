@@ -6,8 +6,10 @@
 package CommonEntity.Session;
 
 import CommonEntity.Customer;
+import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserExistException;
+import Exception.UserNotExistException;
 import com.twilio.sdk.TwilioRestException;
 import java.util.Date;
 import java.util.List;
@@ -36,5 +38,9 @@ public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOf
 public String sendTwoFactorAuthentication(String ic) throws TwilioRestException;
 public String verifyTwoFactorAuthentication(String ic,String inputCode);
 public String updateForgetPassword (String ic, String newPassword,String confirmPassword)throws PasswordTooSimpleException;
+
+//Log in
+public String checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException;
+
 }
 
