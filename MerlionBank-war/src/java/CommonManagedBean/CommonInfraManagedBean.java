@@ -7,6 +7,7 @@ package CommonManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import Exception.EmailNotSendException;
 import Exception.UserExistException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -67,10 +68,10 @@ public class CommonInfraManagedBean implements Serializable {
          customer = new Customer();
          
      }
-       public void setAllVariables(ActionEvent event) throws UserExistException, IOException{
+       public void setAllVariables(ActionEvent event) throws UserExistException, EmailNotSendException,IOException{
             if (FacesContext.getCurrentInstance().getResponseComplete()) {
             System.out.println("lala");
-            return;
+            return; 
         }
 //            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
 //            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 

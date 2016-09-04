@@ -10,14 +10,14 @@ package Exception;
  *
  * @author a0113893
  */
-public class UserExistException extends Exception{
+public class UserAlreadyActivatedException extends Exception{
     private static final long serialVersionUID = 1L;
 
-    public UserExistException() {
+    public UserAlreadyActivatedException() {
         super();
     }
     
-    public UserExistException(String msg) {
+    public UserAlreadyActivatedException(String msg) {
         super(msg);
     }
 }
