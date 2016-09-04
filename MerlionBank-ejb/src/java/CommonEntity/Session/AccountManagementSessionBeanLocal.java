@@ -33,7 +33,7 @@ public String updatePassword (String ic, String oldPassword, String newPassword,
 
 //Forget Password
 public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOfBirth, String email);
-public String sendTwoFactorAuthentication(String ic) throws TwilioRestException;
+public String sendTwoFactorAuthentication(String ic)throws TwilioRestException;
 public String verifyTwoFactorAuthentication(String ic,String inputCode);
 public String updateForgetPassword (String ic, String newPassword,String confirmPassword)throws PasswordTooSimpleException;
 }

@@ -117,6 +117,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     }
     
+
+    
     @Override
     public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException {
        Query q = em.createQuery("SELECT b FROM Customer b WHERE b.ic=:ic");
@@ -316,7 +318,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("To", customer.getPhoneNumber())); // Replace with a valid phone number for your account.
         params.add(new BasicNameValuePair("From", "+12013451118")); // Replace with a valid phone number for your account.
-        String oTP="Math.round(Math.random()*100000)";
+        Long number=Math.round(Math.random()*1000000);
+        String oTP=""+number;
         customer.getOnlineAccount().setAuthenticationCode(oTP);
         em.flush();
         params.add(new BasicNameValuePair("Body", oTP));
