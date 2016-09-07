@@ -420,6 +420,13 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
                 String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
                 customer.getOnlineAccount().setPassword(resetPassword);
                 em.flush();
+                OnlineAccount onlineAccount=customer.getOnlineAccount();
+        onlineAccount.setAccountStatus("locked");
+        em.persist(onlineAccount);
+        em.flush();
+        customer.setStatus("active");
+        em.flush();  
+        customer.setOnlineAccount(onlineAccount);
                 return ic;
            }
            else if (!newPassword.equals(confirmPassword)){
@@ -462,13 +469,25 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         
        if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
 
-                Long i= Long.parseLong("1");
-
+                Long i=Long.parseLong("1");
            return i;
             } 
        else return customer.getId();
-    } 
-
+    }
+    
+    public Long lockAccount(Long customerId){
+      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", customerId);
+        Customer customer=(Customer)q.getSingleResult(); 
+        customer.setStatus("locked");
+        em.flush();
+        OnlineAccount onlineAccount=customer.getOnlineAccount();
+        onlineAccount.setAccountStatus("locked");
+        em.persist(onlineAccount);
+        em.flush();
+        customer.setOnlineAccount(onlineAccount);
+        return customer.getId();
+    }
 
 }   
 
