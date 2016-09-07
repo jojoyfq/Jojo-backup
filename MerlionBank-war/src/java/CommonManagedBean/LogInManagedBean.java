@@ -7,7 +7,10 @@ package CommonManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import Exception.PasswordNotMatchException;
 import Exception.UserExistException;
+import Exception.UserNotActivatedException;
+import Exception.UserNotExistException;
 //import Logger.MyLogger;
 import java.io.IOException;
 import java.io.Serializable;
@@ -51,7 +54,155 @@ public class LogInManagedBean implements Serializable {
     private String customerFinancialGoal;
     private Customer selectedCustomer;
     private String birthdate;
+    private String customerPassword;
+    private final int max_attempts = 5;
+    private int logInAttempts;
 
+    public int getLogInAttempts() {
+        return logInAttempts;
+    }
+
+    public void setLogInAttempts(int logInAttempts) {
+        this.logInAttempts = logInAttempts;
+    }
+    
+    /**
+     * Creates a new instance of LogInManagedBean
+     */
+    public LogInManagedBean() {
+//        try {
+//            MyLogger.setup();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//     //       throw new RuntimeException("Problems with creating the log files");
+//        }
+//        LOGGER.setLevel(Level.INFO);
+    }
+
+    @PostConstruct
+    public void init() {
+        selectedCustomer = new Customer();
+        try {
+            this.viewOneCustomer();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+
+    }
+    
+//   private void warnMsg(String message) {
+//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, "");
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, msg);
+//        context.getExternalContext().getFlash().setKeepMessages(true);
+//        LOGGER.info("MESSAGE INFO: " + message);
+//    }
+//      private void faceMsg(String message) {
+//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, message, "");
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, msg);
+//        context.getExternalContext().getFlash().setKeepMessages(true);
+//        LOGGER.info("MESSAGE INFO: " + message);
+//    }
+//        private void errorMsg(String message) {
+//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, message, "");
+//        FacesContext context = FacesContext.getCurrentInstance();
+//        context.addMessage(null, msg);
+//        context.getExternalContext().getFlash().setKeepMessages(true);
+//        LOGGER.info("MESSAGE INFO: " + message);
+//    }
+    public void customerLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException {
+      try{  if(customerName != null && customerPassword != null){
+          Long logInId =  amsbl.checkLogin(ic,customerPassword);
+          //logInAttempts = 0;
+          if(logInId.toString().equals("1")){
+          System.out.println("Password does not match");
+          logInAttempts++;
+          System.out.println("number attempts:" +logInAttempts);
+          if(logInAttempts == max_attempts){
+              System.out.println("Your account has been locked out.");
+           }
+          }else{
+              logInAttempts = 0;
+          System.out.println("Log In Successful!");
+          }
+        }else{
+            System.out.println("Please dont leave blanks!");
+        }
+      }catch(UserNotExistException ex){
+            System.out.println("acccccounnnt does not exist!!!!!!");
+      }catch(PasswordNotMatchException ex1){
+          System.out.println(ex1);
+      }catch( UserNotActivatedException ex2){
+          System.out.println(ex2);
+      }
+    }
+    public void viewOneCustomer() throws IOException {
+        //this.ic = selectedCustomer.getIc();
+        selectedCustomer = amsbl.diaplayCustomer(ic);
+        System.out.println("Username is " + selectedCustomer);
+
+        // this.ic = selectedCustomer.getIc();
+        this.customerName = selectedCustomer.getName();
+        this.customerGender = selectedCustomer.getGender();
+        this.customerDateOfBirth = selectedCustomer.getDateOfBirth();
+         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+         this.birthdate = sdf.format(customerDateOfBirth);
+        this.birthdate = customerDateOfBirth.toString();
+        this.customerEmail = selectedCustomer.getEmail();
+        this.customerAddress = selectedCustomer.getAddress();
+        this.customerPhoneNumber = selectedCustomer.getPhoneNumber();
+        this.customerOccupation = selectedCustomer.getOccupation();
+        this.customerFamilyInfo = selectedCustomer.getFamilyInfo();
+        this.customerFinancialGoal = selectedCustomer.getFinancialGoal();
+        System.out.println(customerName);
+        System.out.println(customerGender);
+        System.out.println(customerDateOfBirth);
+        System.out.println(customerAddress);
+        System.out.println(customerPhoneNumber);
+        System.out.println(customerOccupation);
+        System.out.println(customerFamilyInfo);
+        System.out.println(customerFinancialGoal);
+        System.out.println(selectedCustomer.getId());
+        System.out.println(selectedCustomer.getIc());
+
+        // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerLION-war/GRNSWeb/admin/updateUser.xhtml");
+    }
+    
+    public void modifyProfile(ActionEvent event) throws UserExistException{
+        try {
+            if (FacesContext.getCurrentInstance().getResponseComplete()) {
+                System.out.println("lala");
+                return;
+            }
+//            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
+//            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
+//            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
+//            customerDateOfBirth = (Date) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerDateOfBirth");
+//            customerAddress = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerAddress");
+//            customerEmail = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerEmail");
+//            customerPhoneNumber = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerPhoneNumber");
+//            customerOccupation = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerOccupation");
+//            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
+//            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
+//            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
+            System.out.println("Phone Number is: " + customerPhoneNumber);
+            if(ic!=null && customerName !=null && customerGender!=null && customerDateOfBirth !=null && customerAddress != null && customerEmail != null && customerPhoneNumber!=null
+                    && customerOccupation!=null && customerFamilyInfo != null && customerFinancialGoal !=null){
+        amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
+            }else{
+               System.out.println("Please fill in correct information!");
+               
+//            FacesMessage msg = new FacesMessage("Nothing edited for: ", ((OrganizationUnit) event.getObject()).getDepartmentName());
+//            FacesContext.getCurrentInstance().addMessage(null, msg);
+
+            }
+        
+         //   amsbl.updateProfile(ic, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
+        } catch (UserExistException ex) {
+          System.out.println("Username already exists");
+        }
+    }
     public String getBirthdate() {
         return birthdate;
     }
@@ -165,116 +316,11 @@ public class LogInManagedBean implements Serializable {
     public void setSelectedCustomer(Customer selectedCustomer) {
         this.selectedCustomer = selectedCustomer;
     }
-
-    /**
-     * Creates a new instance of LogInManagedBean
-     */
-    public LogInManagedBean() {
-//        try {
-//            MyLogger.setup();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//     //       throw new RuntimeException("Problems with creating the log files");
-//        }
-//        LOGGER.setLevel(Level.INFO);
+    public String getCustomerPassword() {
+        return customerPassword;
     }
 
-    @PostConstruct
-    public void init() {
-        selectedCustomer = new Customer();
-        try {
-            this.viewOneCustomer();
-        } catch (Exception ex) {
-            System.out.println(ex);
-        }
-
+    public void setCustomerPassword(String customerPassword) {
+        this.customerPassword = customerPassword;
     }
-//   private void warnMsg(String message) {
-//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, "");
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        context.addMessage(null, msg);
-//        context.getExternalContext().getFlash().setKeepMessages(true);
-//        LOGGER.info("MESSAGE INFO: " + message);
-//    }
-//      private void faceMsg(String message) {
-//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, message, "");
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        context.addMessage(null, msg);
-//        context.getExternalContext().getFlash().setKeepMessages(true);
-//        LOGGER.info("MESSAGE INFO: " + message);
-//    }
-//        private void errorMsg(String message) {
-//        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, message, "");
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        context.addMessage(null, msg);
-//        context.getExternalContext().getFlash().setKeepMessages(true);
-//        LOGGER.info("MESSAGE INFO: " + message);
-//    }
-    public void viewOneCustomer() throws IOException {
-        //this.ic = selectedCustomer.getIc();
-        selectedCustomer = amsbl.diaplayCustomer(ic);
-        System.out.println("Username is " + selectedCustomer);
-
-        // this.ic = selectedCustomer.getIc();
-        this.customerName = selectedCustomer.getName();
-        this.customerGender = selectedCustomer.getGender();
-        this.customerDateOfBirth = selectedCustomer.getDateOfBirth();
-         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-         this.birthdate = sdf.format(customerDateOfBirth);
-        this.birthdate = customerDateOfBirth.toString();
-        this.customerEmail = selectedCustomer.getEmail();
-        this.customerAddress = selectedCustomer.getAddress();
-        this.customerPhoneNumber = selectedCustomer.getPhoneNumber();
-        this.customerOccupation = selectedCustomer.getOccupation();
-        this.customerFamilyInfo = selectedCustomer.getFamilyInfo();
-        this.customerFinancialGoal = selectedCustomer.getFinancialGoal();
-        System.out.println(customerName);
-        System.out.println(customerGender);
-        System.out.println(customerDateOfBirth);
-        System.out.println(customerAddress);
-        System.out.println(customerPhoneNumber);
-        System.out.println(customerOccupation);
-        System.out.println(customerFamilyInfo);
-        System.out.println(customerFinancialGoal);
-        System.out.println(selectedCustomer.getId());
-        System.out.println(selectedCustomer.getIc());
-
-        // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerLION-war/GRNSWeb/admin/updateUser.xhtml");
-    }
-
-    public void modifyProfile(ActionEvent event) throws UserExistException{
-        try {
-            if (FacesContext.getCurrentInstance().getResponseComplete()) {
-                System.out.println("lala");
-                return;
-            }
-//            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
-//            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
-//            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
-//            customerDateOfBirth = (Date) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerDateOfBirth");
-//            customerAddress = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerAddress");
-//            customerEmail = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerEmail");
-//            customerPhoneNumber = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerPhoneNumber");
-//            customerOccupation = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerOccupation");
-//            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
-//            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
-//            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
-            System.out.println("Phone Number is: " + customerPhoneNumber);
-            if(ic!=null && customerName !=null && customerGender!=null && customerDateOfBirth !=null && customerAddress != null && customerEmail != null && customerPhoneNumber!=null
-                    && customerOccupation!=null && customerFamilyInfo != null && customerFinancialGoal !=null){
-        amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
-            }else{
-               System.out.println("Please fill in correct information!");
-               
-//            FacesMessage msg = new FacesMessage("Nothing edited for: ", ((OrganizationUnit) event.getObject()).getDepartmentName());
-//            FacesContext.getCurrentInstance().addMessage(null, msg);
-
-            }
-        
-         //   amsbl.updateProfile(ic, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
-        } catch (UserExistException ex) {
-          System.out.println("Username already exists");
-        }
-    }
-
 }

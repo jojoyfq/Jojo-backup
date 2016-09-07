@@ -125,6 +125,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     }
     
+
+    
     @Override
     public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal){
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
@@ -216,18 +218,23 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
               System.out.println("Username " + ic + " IC check pass!");  
             }               
         
-           
+            System.out.println(customer.getDateOfBirth());
             if (!fullName.equals(customer.getName())){
-                throw new UserNotExistException("Username " + ic + "invaid account details");
+                //throw new UserNotExistException("Username " + ic + "invaid account details");
+                return customer.getName();
+               
             }
+            
             else if(!dateOfBirth.equals(customer.getDateOfBirth())){
                  throw new UserNotExistException("Username " + ic + "invaid account details");
+                //return "date";
             }
             else if (!phoneNumber.equals(customer.getPhoneNumber())){
                  throw new UserNotExistException("Username " + ic + "invaid account details");
-            }
-            else 
-                return ic;             
+                //return customer.getPhoneNumber();
+            }else
+                return ic;
+                
     }
     
     //Activate account - 2nd step verify account balance
@@ -367,7 +374,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("To", customer.getPhoneNumber())); // Replace with a valid phone number for your account.
         params.add(new BasicNameValuePair("From", "+12013451118")); // Replace with a valid phone number for your account.
-        String oTP="Math.round(Math.random()*100000)";
+        Long number=Math.round(Math.random()*1000000);
+        String oTP=""+number;
         customer.getOnlineAccount().setAuthenticationCode(oTP);
         em.flush();
         params.add(new BasicNameValuePair("Body", oTP));
@@ -421,8 +429,9 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     } 
     
   //log in- 1st step verify details  
-  @Override
-    public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException {
+
+ @Override
+    public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -435,11 +444,13 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             Customer customer=temp.get(size-1);
             if (customer.getStatus().equals("terminated")){
                  System.out.println("Username " + ic + " does not exist!");
-            throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
+          //  throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
             }
             else if (customer.getStatus().equals("inactive")){
                  System.out.println("Username " + ic + " please activate your account!"); 
-                 throw new UserNotExistException("Username " + ic + " please activate your account!");
+
+                //throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+
             }
             else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
             System.out.println("Username " + ic + " Account locked! Please Reset Password!"); 
@@ -450,12 +461,17 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             }               
         
        if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
-                Long i=1L;
+
+                Long i= Long.parseLong("1");
+
            return i;
             } 
        else return customer.getId();
     } 
+
+
 }   
+
      
     
 
