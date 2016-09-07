@@ -25,7 +25,7 @@ import javax.persistence.OneToMany;
 public class Staff implements Serializable {
     private static final long serialVersionUID = 1L;
     @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-    private Collection<Message> messages =new ArrayList<Message>();
+    private Collection<MessageEntity> messages =new ArrayList<MessageEntity>();
     
     //@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     @ManyToMany(cascade={CascadeType.ALL})
@@ -34,13 +34,13 @@ public class Staff implements Serializable {
     
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    private String id;
+    private Long id;
 
-    public Collection<Message> getMessages() {
+    public Collection<MessageEntity> getMessages() {
         return messages;
     }
 
-    public void setMessages(Collection<Message> messages) {
+    public void setMessages(Collection<MessageEntity> messages) {
         this.messages = messages;
     }
 
@@ -72,11 +72,11 @@ public class Staff implements Serializable {
    
    
     
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

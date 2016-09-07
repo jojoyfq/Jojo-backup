@@ -43,7 +43,7 @@ public String verifyTwoFactorAuthentication(String ic,String inputCode);
 public String updateForgetPassword (String ic, String newPassword,String confirmPassword)throws PasswordTooSimpleException;
 
 //Log in
-public String checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException;
+public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException;
 
 }
 

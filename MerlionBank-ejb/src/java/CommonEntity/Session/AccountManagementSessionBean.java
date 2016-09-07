@@ -422,7 +422,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     
   //log in- 1st step verify details  
   @Override
-    public String checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException {
+    public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -438,23 +438,26 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
             }
             else if (customer.getStatus().equals("inactive")){
-                 System.out.println("Username " + ic + " please activate your account!");     
+                 System.out.println("Username " + ic + " please activate your account!"); 
+                 throw new UserNotExistException("Username " + ic + " please activate your account!");
             }
             else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
             System.out.println("Username " + ic + " Account locked! Please Reset Password!"); 
+            throw new UserNotExistException("Username " + ic + " Account locked! Please Reset Password!");
             }
             else {
               System.out.println("Username " + ic + " IC check pass!");  
             }               
         
        if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
-                return "invalid old password";
+                Long i=1L;
+           return i;
             } 
-       else return ic;
-        
-    }  
+       else return customer.getId();
+    } 
+}   
      
     
-}
+
 
 
