@@ -7,6 +7,7 @@ package CommonManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import Exception.EmailNotSendException;
 import Exception.UserExistException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -39,7 +40,62 @@ public class CommonInfraManagedBean implements Serializable {
     private String customerPhoneNumber;
     private String savingAccountType;
 
-    public String getSavingAccountType() {
+
+    private String customerOccupation;
+    private String customerFamilyInfo;
+    private String customerFinancialAsset;
+    private String customerFinancialGoal;
+    //private Customer selectedCustomer;
+
+    
+    
+  //  private final static Logger LOGGER = Logger.getLogger(CommonInfraManagedBean.class.getName());
+    /**
+     * Creates a new instance of CommonInfraManaged
+     */
+   
+   //  public CommonInfraManagedBean() {
+   //     try {
+   //         MyLogger.setup();
+   //     } catch (IOException e) {
+   //         e.printStackTrace();
+   //         throw new RuntimeException("Problems with creating the log files");
+   //     }
+   //     LOGGER.setLevel(Level.INFO);
+   // }
+    @PostConstruct
+     public void init() {
+         customer = new Customer();
+         
+     }
+       public void setAllVariables(ActionEvent event) throws UserExistException, EmailNotSendException,IOException{
+            if (FacesContext.getCurrentInstance().getResponseComplete()) {
+            System.out.println("lala");
+            return; 
+        }
+//            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
+//            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
+//            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
+//            customerDateOfBirth = (Date) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerDateOfBirth");
+//            customerAddress = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerAddress");
+//            customerEmail = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerEmail");
+//            customerPhoneNumber = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerPhoneNumber");
+//            customerOccupation = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerOccupation");
+//            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
+//            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
+//            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
+             //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
+                amsbl.createSavingAccount(ic, customerName, customerGender,  customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
+       
+//            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
+//            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
+//            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
+//            
+//            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+//            
+            
+       }
+           public String getSavingAccountType() {
         return savingAccountType;
     }
 
@@ -54,12 +110,6 @@ public class CommonInfraManagedBean implements Serializable {
     public void setCustomerPhoneNumber(String customerPhoneNumber) {
         this.customerPhoneNumber = customerPhoneNumber;
     }
-    private String customerOccupation;
-    private String customerFamilyInfo;
-    private String customerFinancialAsset;
-    private String customerFinancialGoal;
-    //private Customer selectedCustomer;
-
     public Customer getCustomer() {
         return customer;
     }
@@ -149,53 +199,6 @@ public class CommonInfraManagedBean implements Serializable {
     public void setCustomerFinancialGoal(String customerFinancialGoal) {
         this.customerFinancialGoal = customerFinancialGoal;
     }
-    
-  //  private final static Logger LOGGER = Logger.getLogger(CommonInfraManagedBean.class.getName());
-    /**
-     * Creates a new instance of CommonInfraManaged
-     */
-   
-   //  public CommonInfraManagedBean() {
-   //     try {
-   //         MyLogger.setup();
-   //     } catch (IOException e) {
-   //         e.printStackTrace();
-   //         throw new RuntimeException("Problems with creating the log files");
-   //     }
-   //     LOGGER.setLevel(Level.INFO);
-   // }
-    @PostConstruct
-     public void init() {
-         customer = new Customer();
-         
-     }
-       public void setAllVariables(ActionEvent event) throws UserExistException, IOException{
-            if (FacesContext.getCurrentInstance().getResponseComplete()) {
-            System.out.println("lala");
-            return;
-        }
-//            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
-//            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
-//            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
-//            customerDateOfBirth = (Date) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerDateOfBirth");
-//            customerAddress = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerAddress");
-//            customerEmail = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerEmail");
-//            customerPhoneNumber = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerPhoneNumber");
-//            customerOccupation = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerOccupation");
-//            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
-//            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
-//            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
-             //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
-                amsbl.createSavingAccount(ic, customerName, customerGender,  customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
-       
-//            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
-//            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
-//            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
-//            
-//            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-//            
-            
-       }
 //        public void viewOneCustomer() throws IOException {
 //        //this.ic = selectedCustomer.getIc();
 //        selectedCustomer = amsbl.diaplayCustomer(ic);
