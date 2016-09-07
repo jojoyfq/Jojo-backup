@@ -15,4 +15,5 @@ import javax.ejb.Local;
 @Local
 public interface TransferSessionBeanLocal {
      public Boolean intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount);
+     public Boolean addPayee(Long payeeAccount, String payeeName, Long customerID);
 }

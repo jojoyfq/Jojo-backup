@@ -6,11 +6,11 @@
 package CommonEntity;
 
 //import DepositEntity.FixedDepositAccount;
+import DepositEntity.Payee;
 import DepositEntity.SavingAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -70,7 +70,10 @@ public class Customer implements Serializable {
     
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<SavingAccount> savingAccounts;
-
+    
+    @OneToMany(cascade={CascadeType.PERSIST})
+    private List<Payee> payees =new ArrayList<Payee>();
+    
     public List<SavingAccount> getSavingAccounts() {
         return savingAccounts;
     }
@@ -78,13 +81,6 @@ public class Customer implements Serializable {
     public void setSavingAccounts(List<SavingAccount> savingAccounts) {
         this.savingAccounts = savingAccounts;
     }
-
-
-  
-   
-    
-    //@OneToOne(cascade = {CascadeType.ALL})
-    //private SavingAccount savingAccount;
     
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
     private List<CaseEntity> cases= new ArrayList<CaseEntity>();
@@ -99,7 +95,15 @@ public class Customer implements Serializable {
     public void setCases(List<CaseEntity> cases) {
         this.cases = cases;
     }
+    
+    public List<Payee> getPayees(){
+        return payees;
+    }
 
+    public void setPayees(List<Payee> payees) {
+        this.payees = payees;
+    }
+    
 //    public List<FixedDepositAccount> getFixedDepositeAccounts() {
 //        return fixedDepositeAccounts;
 //    }

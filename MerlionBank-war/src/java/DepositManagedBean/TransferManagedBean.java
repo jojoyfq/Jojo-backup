@@ -33,7 +33,12 @@ public class TransferManagedBean implements Serializable{
     private Long giverAccountNumLong;
     private String giverAccountNumString;
     private boolean checkStatus;
+    private Long payeeAccount;
+    private String payeeAccountString;
+    private String payeeName;
+    private Long customerID;
 
+   
     
 
     public TransferManagedBean() {
@@ -53,7 +58,7 @@ public class TransferManagedBean implements Serializable{
         try{
             amountBD = new BigDecimal(amountString);
             recipientAccountNumLong = Long.parseLong(recipientAccountNumString);  
-            setGiverAccountNumString("908668721");
+            setGiverAccountNumString("892951459");
             setGiverAccountNumLong(Long.parseLong(giverAccountNumString));
             System.out.print(amountBD);
             System.out.print(recipientAccountNumLong);
@@ -67,7 +72,24 @@ public class TransferManagedBean implements Serializable{
             }
             
         } catch (Exception e){
-            System.out.print("OneTimeTransfer Encount Error");
+            System.out.print("OneTimeTransfer Encounter Error");
+        }
+    }
+    
+    public void addPayee(ActionEvent event)throws IOException{
+        boolean checkAddPayeeStatus;
+        customerID = Long.parseLong("2");
+        try{
+            payeeAccount = Long.parseLong(payeeAccountString);
+            checkAddPayeeStatus = tfsb.addPayee(payeeAccount, payeeName,customerID);
+            if(checkAddPayeeStatus) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/DepositManagement/addNewPayeeSuccess.xhtml");
+            }else {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/DepositManagement/addNewPayee.xhtml");
+            }
+            
+        } catch(Exception e){
+            System.out.print("Add Payee Encounter Error");
         }
     }
     
@@ -151,5 +173,37 @@ public class TransferManagedBean implements Serializable{
 
     public void setCheckStatus(boolean checkStatus) {
         this.checkStatus = checkStatus;
+    }
+    
+    public Long getPayeeAccount() {
+        return payeeAccount;
+    }
+
+    public void setPayeeAccount(Long payeeAccount) {
+        this.payeeAccount = payeeAccount;
+    }
+
+    public String getPayeeName() {
+        return payeeName;
+    }
+
+    public void setPayeeName(String payeeName) {
+        this.payeeName = payeeName;
+    }
+    
+    public String getPayeeAccountString() {
+        return payeeAccountString;
+    }
+
+    public void setPayeeAccountString(String payeeAccountString) {
+        this.payeeAccountString = payeeAccountString;
+    }
+    
+    public Long getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(Long customerID) {
+        this.customerID = customerID;
     }
 }
