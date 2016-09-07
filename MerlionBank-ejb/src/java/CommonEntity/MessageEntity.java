@@ -23,12 +23,22 @@ public class MessageEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String subject;
+    private String status;
 
-    public MessageEntity(String subject, String content, Staff staff, Customer customer) {
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public MessageEntity(String subject, String content, Staff staff, Customer customer,String status) {
         this.subject = subject;
         this.content = content;
         this.staff = staff;
         this.customer = customer;
+        this.status=status;
     }
 
     public String getSubject() {

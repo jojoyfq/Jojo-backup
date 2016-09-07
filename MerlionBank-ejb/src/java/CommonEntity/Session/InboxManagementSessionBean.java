@@ -9,6 +9,7 @@ import CommonEntity.Customer;
 import CommonEntity.MessageEntity;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
+import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import Other.Session.sendEmail;
 import java.util.ArrayList;
@@ -25,7 +26,35 @@ import javax.persistence.Query;
 @Stateless
 public class InboxManagementSessionBean implements InboxManagementSessionBeanLocal {
  private EntityManager em;
-    // staff send customer message
+ 
+ //1st - staff choose customer before send message
+ @Override
+ public Long verifyCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException{
+     Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", customerIc);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty()) {
+            System.out.println("Username " + customerIc + " does not exist!");
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+        }
+        
+            int size=temp.size();
+            Customer customer=temp.get(size-1);
+            if (customer.getStatus().equals("terminated")){
+                 System.out.println("Username " + customerIc + " does not exist!");
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");    
+            }
+            else if (customer.getStatus().equals("inactive")){
+                 System.out.println("Username " + customerIc + "Customer has not activated his or her account!"); 
+             throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
+            }
+            else {
+              System.out.println("Username " + customerIc + " IC check pass!");  
+            }
+            return customer.getId();
+            
+ }
+    // 2nd- staff send customer message
   @Override  
  public boolean sendMessage(Long customerId,String staffID, String subject,String content)throws EmailNotSendException{
       Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
@@ -37,7 +66,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         q.setParameter("id", customerId);
         Customer customer = (Customer)q.getSingleResult();
         
-        MessageEntity internalMessage = new MessageEntity (subject,content,staff,customer);
+        MessageEntity internalMessage = new MessageEntity (subject,content,staff,customer,"new");
         em.persist(internalMessage);
         
          try {
@@ -63,4 +92,28 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         sendEmail.run(email, subject, content);
     }
     
+ // customer view list of message
+ @Override
+ public List viewAllMessage(Long customerId){
+    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", customerId);
+        Customer customer = (Customer)q.getSingleResult();      
+        return customer.getMessages();
+     
+ }
+ 
+// customer update status from new to read
+ @Override
+ public boolean readMessage(Long customerId, Long messageID){
+     
+ }
+ 
+ @Override
+ public boolean deleteMessage(Long customerID, Long messageID){
+     
+     
+ }
+ 
+ 
+ 
 }
