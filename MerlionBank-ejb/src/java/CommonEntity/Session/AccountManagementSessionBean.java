@@ -429,6 +429,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     } 
     
   //log in- 1st step verify details  
+
  @Override
     public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
@@ -447,7 +448,9 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             }
             else if (customer.getStatus().equals("inactive")){
                  System.out.println("Username " + ic + " please activate your account!"); 
+
                 //throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+
             }
             else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
             System.out.println("Username " + ic + " Account locked! Please Reset Password!"); 
@@ -458,13 +461,19 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             }               
         
        if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
+
                 Long i= Long.parseLong("1");
+
            return i;
             } 
        else return customer.getId();
     } 
+
+
+}   
+
      
     
-}
+
 
 
