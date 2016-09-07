@@ -57,6 +57,7 @@ public class Customer implements Serializable {
     private String riskRating;
     private String status;
 
+    
     public String getStatus() {
         return status;
     }
@@ -64,6 +65,8 @@ public class Customer implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<MessageEntity> messages;
   
     @OneToOne(cascade={CascadeType.ALL}) 
    private OnlineAccount onlineAccount;//same as ic
