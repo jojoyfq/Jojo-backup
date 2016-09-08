@@ -7,6 +7,7 @@ package CommonEntity.Session;
 
 import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
@@ -45,6 +46,7 @@ import com.twilio.sdk.TwilioRestException;
 import com.twilio.sdk.resource.factory.MessageFactory;
 import com.twilio.sdk.resource.instance.Message;
 import java.util.ArrayList;
+import java.util.Calendar;
 import static java.util.Collections.list;
 import java.util.List;
 import org.apache.http.NameValuePair;
@@ -111,6 +113,15 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             customer.setSavingAccounts(savingAccounts);
             em.persist(customer);
             em.flush();
+            //log an action
+            CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Create a new Saving Account",customer);
+            em.persist(action);
+            List<CustomerAction> customerActions=new ArrayList<CustomerAction>();
+            customerActions.add(0,action);
+            customer.setCustomerActions(customerActions);
+            em.persist(customer);
+            em.flush();
+            
             System.out.println("Debit Account successfully created");
             
            try {
@@ -140,6 +151,14 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             customer.setFamilyInfo(familyInfo);
             customer.setFinancialGoal(financialGoal);
             em.merge(customer);
+            em.flush();
+            
+            CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Update Profile",customer);
+            em.persist(action);
+            List<CustomerAction> customerActions=customer.getCustomerActions();
+            customerActions.add(action);
+            customer.setCustomerActions(customerActions);
+            em.persist(customer);
             em.flush();
     }
    
@@ -313,6 +332,15 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             em.flush();
             customer.getSavingAccounts().get(0).setStatus("active");
             em.flush();
+            
+            CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Activate Account",customer);
+            em.persist(action);
+            List<CustomerAction> customerActions=customer.getCustomerActions();
+            customerActions.add(action);
+            customer.setCustomerActions(customerActions);
+            em.persist(customer);
+            em.flush();
+            
             return true;
             
     }
@@ -427,6 +455,15 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         customer.setStatus("active");
         em.flush();  
         customer.setOnlineAccount(onlineAccount);
+        
+         CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Reset Password",customer);
+            em.persist(action);
+            List<CustomerAction> customerActions=customer.getCustomerActions();
+            customerActions.add(action);
+            customer.setCustomerActions(customerActions);
+            em.persist(customer);
+            em.flush();
+            
                 return ic;
            }
            else if (!newPassword.equals(confirmPassword)){
@@ -472,7 +509,16 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
                 Long i=Long.parseLong("1");
            return i;
             } 
-       else return customer.getId();
+       
+        CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Successful Login",customer);
+            em.persist(action);
+            List<CustomerAction> customerActions=customer.getCustomerActions();
+            customerActions.add(action);
+            customer.setCustomerActions(customerActions);
+            em.persist(customer);
+            em.flush();
+            
+       return customer.getId();
     }
     
     public Long lockAccount(Long customerId){

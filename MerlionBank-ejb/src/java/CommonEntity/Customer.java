@@ -6,6 +6,7 @@
 package CommonEntity;
 
 //import DepositEntity.FixedDepositAccount;
+import CustomerRelationshipEntity.CaseEntity;
 import DepositEntity.SavingAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -81,6 +82,17 @@ public class Customer implements Serializable {
     
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<SavingAccount> savingAccounts;
+    
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<CustomerAction> customerActions;
+
+    public List<CustomerAction> getCustomerActions() {
+        return customerActions;
+    }
+
+    public void setCustomerActions(List<CustomerAction> customerActions) {
+        this.customerActions = customerActions;
+    }
 
     public List<SavingAccount> getSavingAccounts() {
         return savingAccounts;
