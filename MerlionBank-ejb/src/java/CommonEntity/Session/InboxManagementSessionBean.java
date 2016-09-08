@@ -98,19 +98,57 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
     Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
         q.setParameter("id", customerId);
         Customer customer = (Customer)q.getSingleResult();      
-        return customer.getMessages();
+        List <MessageEntity> messages=customer.getMessages();
+        List<MessageEntity>newMessages=new ArrayList<MessageEntity>();
+        for (int i=0;i<messages.size();i++){
+            if (!messages.get(i).getStatus().equals("delected")){
+                newMessages.add(messages.get(i));
+            }
+        }
+        return newMessages;
+        
+        
      
  }
  
 // customer update status from new to read
  @Override
- public boolean readMessage(Long customerId, Long messageID){
-     
+ public boolean readMessage(Long messageID){
+   Query q = em.createQuery("SELECT a FROM Message a WHERE a.id = :id");
+        q.setParameter("id", messageID);
+        MessageEntity message = (MessageEntity)q.getSingleResult();  
+        message.setStatus("read");
+        em.persist(message);
+        return true;
  }
  
+ //customer delete message
  @Override
- public boolean deleteMessage(Long customerID, Long messageID){
-     
+ public boolean deleteMessage(Long messageID){
+     Query q = em.createQuery("SELECT a FROM Message a WHERE a.id = :id");
+        q.setParameter("id", messageID);
+        MessageEntity message = (MessageEntity)q.getSingleResult();  
+        message.setStatus("delected");
+        em.persist(message);
+        return true;
+        
+ }
+ 
+ //system display number of new messages
+ @Override
+ public int countNewMessage(Long customerID){
+     Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", customerID);
+        Customer customer = (Customer)q.getSingleResult();      
+        List <MessageEntity> messages=customer.getMessages();
+        List<MessageEntity>newMessages=new ArrayList<MessageEntity>();
+        int count=0;
+        for (int i=0;i<messages.size();i++){
+            if (messages.get(i).getStatus().equals("new")){
+                count=count+1;
+            }
+        }
+        return count;
      
  }
  

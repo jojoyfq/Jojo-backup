@@ -8,6 +8,7 @@ package CommonEntity.Session;
 import Exception.EmailNotSendException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
+import java.util.List;
 import javax.ejb.Local;
 import javax.mail.MessagingException;
 
@@ -17,6 +18,22 @@ import javax.mail.MessagingException;
  */
 @Local
 public interface InboxManagementSessionBeanLocal {
-   public Long verifyCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
-    public boolean sendMessage(Long customerId,String staffID, String subject,String content)throws EmailNotSendException;
+   
+ //1st - staff choose customer before send message
+ public Long verifyCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
+ 
+ // 2nd- staff send customer message
+ public boolean sendMessage(Long customerId,String staffID, String subject,String content)throws EmailNotSendException;
+
+  // customer view list of message
+ public List viewAllMessage(Long customerId);
+ 
+ // customer update status from new to read
+ public boolean readMessage(Long messageID);
+ 
+ //customer delete message
+ public boolean deleteMessage(Long messageID);
+ 
+ //system display number of new messages
+ public int countNewMessage(Long customerID);
 }
