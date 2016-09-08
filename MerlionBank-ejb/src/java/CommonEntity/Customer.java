@@ -6,7 +6,9 @@
 package CommonEntity;
 
 //import DepositEntity.FixedDepositAccount;
+
 import DepositEntity.Payee;
+import CustomerRelationshipEntity.CaseEntity;
 import DepositEntity.SavingAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -57,12 +59,23 @@ public class Customer implements Serializable {
     private String riskRating;
     private String status;
 
+    
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<MessageEntity> messages;
+
+    public List<MessageEntity> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<MessageEntity> messages) {
+        this.messages = messages;
     }
   
     @OneToOne(cascade={CascadeType.ALL}) 
@@ -71,9 +84,23 @@ public class Customer implements Serializable {
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<SavingAccount> savingAccounts;
     
+
     @OneToMany(cascade={CascadeType.PERSIST})
     private List<Payee> payees =new ArrayList<Payee>();
     
+
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<CustomerAction> customerActions;
+
+    public List<CustomerAction> getCustomerActions() {
+        return customerActions;
+    }
+
+    public void setCustomerActions(List<CustomerAction> customerActions) {
+        this.customerActions = customerActions;
+    }
+
+
     public List<SavingAccount> getSavingAccounts() {
         return savingAccounts;
     }
