@@ -65,16 +65,16 @@ public class Customer implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
-  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
-    private List<MessageEntity> messages;
+//  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+//    private List<MessageEntity> messages;
 
-    public List<MessageEntity> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<MessageEntity> messages) {
-        this.messages = messages;
-    }
+//    public List<MessageEntity> getMessages() {
+//        return messages;
+//    }
+//
+//    public void setMessages(List<MessageEntity> messages) {
+//        this.messages = messages;
+//    }
   
     @OneToOne(cascade={CascadeType.ALL}) 
    private OnlineAccount onlineAccount;//same as ic

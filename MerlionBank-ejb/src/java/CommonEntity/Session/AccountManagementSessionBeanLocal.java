@@ -40,9 +40,8 @@ public interface AccountManagementSessionBeanLocal {
  
 
     public String verifyAccountBalance(String ic);
-
-    public boolean checkPasswordComplexity(String password);
     public String updatePassword(String ic, String oldPassword, String newPassword, String confirmPassword) throws PasswordTooSimpleException;
+    public boolean updateAccountStatus(String ic);
 
 //Forget Password
     public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOfBirth, String email) throws UserNotExistException, UserNotActivatedException;

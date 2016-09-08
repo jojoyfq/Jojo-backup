@@ -29,14 +29,12 @@ and open the template in the editor.
                         <p:message for="ic" display="icon" />
               
                         <p:outputLabel for="password" value="Password " />
-                        <p:inputText id="password" value="#{logInManagedBean.customerPassword}"  required="true" requiredMessage="Please fill in your password!" />
+                        <p:password id="password" value="#{logInManagedBean.customerPassword}"  required="true" requiredMessage="Please enter your password!"/>
                         <h:message for="name"/>
 
 
                     </h:panelGrid>
-                   
                     <center><p:captcha label="Captcha" theme="white" rendered="#{loginManagedBean.logInAttempts>=3}" required="#{loginManagedBean.logInAttempts>=3}" /></center>
-
                     <a href="./createSavingAccount.xhtml" ><i class="fa fa-angle-right"></i> New User? Register Now!</a><br /><br />
                     <a href="./ResetPasswordVerifyCustomerDetails.xhtml" ><i class="fa fa-angle-right"></i> Forgot Your Password or Username?</a><br /><br /><br /><br /><br />
                     <p:commandButton value="Log In" update="panel" actionListener="#{logInManagedBean.customerLogIn}" icon="ui-icon-check" />
