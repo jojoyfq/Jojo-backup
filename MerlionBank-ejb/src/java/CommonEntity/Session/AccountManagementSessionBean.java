@@ -7,6 +7,7 @@ package CommonEntity.Session;
 
 import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
@@ -45,6 +46,7 @@ import com.twilio.sdk.TwilioRestException;
 import com.twilio.sdk.resource.factory.MessageFactory;
 import com.twilio.sdk.resource.instance.Message;
 import java.util.ArrayList;
+import java.util.Calendar;
 import static java.util.Collections.list;
 import java.util.List;
 import org.apache.http.NameValuePair;
@@ -98,6 +100,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("In Creating saving account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
         em.persist(onlineAccount);
+
         Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "inactive");
         em.persist(customer);
         System.out.println("Create Customer successfully");
@@ -110,6 +113,15 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         customer.setSavingAccounts(savingAccounts);
         em.persist(customer);
         em.flush();
+        //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create a new Saving Account", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = new ArrayList<CustomerAction>();
+        customerActions.add(0, action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
         System.out.println("Debit Account successfully created");
 
         try {
@@ -126,6 +138,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
+
         Customer customer = temp.get(temp.size() - 1);
         customer.setAddress(address);
         customer.setEmail(email);
@@ -135,6 +148,15 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         customer.setFinancialGoal(financialGoal);
         em.merge(customer);
         em.flush();
+
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Update Profile", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
     }
 
     @Override
@@ -250,13 +272,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         Customer customer = temp.get(temp.size() - 1);
         if (!passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())) {
             return "invalid old password";
-        } 
-        else if (!newPassword.equals(confirmPassword)) {
+        } else if (!newPassword.equals(confirmPassword)) {
             System.out.println(newPassword);
             System.out.println(confirmPassword);
             return "Does not match with new password";
-        } 
-        else if (passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword()) && newPassword.equals(confirmPassword)) {
+        } else if (passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword()) && newPassword.equals(confirmPassword)) {
             if (!checkPasswordComplexity(newPassword)) {
                 throw new PasswordTooSimpleException("password is too simple");
             }
@@ -264,8 +284,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             customer.getOnlineAccount().setPassword(resetPassword);
             em.flush();
             return ic;
-        } 
-        else {
+        } else {
             return "invalid details";
         }
     }
@@ -299,6 +318,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
+
         Customer customer = temp.get(temp.size() - 1);
         customer.setStatus("active");
         em.persist(customer);
@@ -306,6 +326,15 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.flush();
         customer.getSavingAccounts().get(0).setStatus("active");
         em.flush();
+
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Activate Account", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
         return true;
 
     }
@@ -416,6 +445,15 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             customer.setStatus("active");
             em.flush();
             customer.setOnlineAccount(onlineAccount);
+
+            CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Reset Password", customer);
+            em.persist(action);
+            List<CustomerAction> customerActions = customer.getCustomerActions();
+            customerActions.add(action);
+            customer.setCustomerActions(customerActions);
+            em.persist(customer);
+            em.flush();
+
             return ic;
         } else if (!newPassword.equals(confirmPassword)) {
             return "Does not match with new password";
@@ -424,7 +462,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         }
     }
 
-  //log in- 1st step verify details  
+    //log in- 1st step verify details  
     @Override
     public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
@@ -443,10 +481,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         } else if (customer.getStatus().equals("inactive")) {
             System.out.println("Username " + ic + " please activate your account!");
 
-                //throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+            //throw new UserNotActivatedException("Username " + ic + " please activate your account!");
         } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
             System.out.println("Username " + ic + " Account locked! Please Reset Password!");
             throw new UserNotExistException("Username " + ic + " Account locked! Please Reset Password!");
+
         } else {
             System.out.println("Username " + ic + " IC check pass!");
         }
@@ -455,9 +494,17 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
             Long i = Long.parseLong("1");
             return i;
-        } else {
-            return customer.getId();
         }
+
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Successful Login", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
+        return customer.getId();
     }
 
     public Long lockAccount(Long customerId) {
