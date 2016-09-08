@@ -6,6 +6,7 @@
 package DepositEntity.Session;
 
 import java.math.BigDecimal;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -16,4 +17,5 @@ import javax.ejb.Local;
 public interface TransferSessionBeanLocal {
      public Boolean intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount);
      public Boolean addPayee(Long payeeAccount, String payeeName, Long customerID);
+     public List getPayeeList(Long customerID);
 }

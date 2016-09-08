@@ -9,6 +9,7 @@ import CommonEntity.Customer;
 import DepositEntity.Payee;
 import DepositEntity.SavingAccount;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -90,7 +91,6 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 SavingAccount payeeAccountList = payeeAccountLists.get(0);
                 
                     Payee payee = new Payee();
-                    payee.setId(customerID);
                     payee.setSavingAccount(payeeAccountList);
                     em.persist(payee);
                     em.flush();
@@ -101,6 +101,23 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                     customer.getPayees().add(payee);
                     return true; 
             }
+    }
+    
+    @Override
+    public List getPayeeList(Long customerID){
+        List payeeAccountList = new ArrayList();
+        Query m = em.createQuery("SELECT b FROM Customer b WHERE b.id = :customerID");
+        m.setParameter("customerID",customerID );
+        List<Customer> customers = m.getResultList();
+        Customer customer = customers.get(0);
+        
+        System.out.print("customer is: "+customer.getName());
+        
+        for(int i=0;i<customer.getPayees().size();i++){
+            Long savingAccount = customer.getPayees().get(i).getSavingAccount().getAccountNumber();
+            payeeAccountList.add(savingAccount);
+        }
+        return payeeAccountList;   
     }
 
     public SavingAccount getGiverBankAccount() {
