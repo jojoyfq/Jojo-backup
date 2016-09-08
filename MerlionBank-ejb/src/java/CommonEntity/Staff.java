@@ -5,9 +5,11 @@
  */
 package CommonEntity;
 
+import CustomerRelationshipEntity.StaffAction;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -32,6 +35,9 @@ public class Staff implements Serializable {
     @JoinTable(name="Staff_StaffRole")
     private ArrayList<StaffRole> staffRoles = new ArrayList<StaffRole>();
     
+      @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
+    private List<StaffAction> staffActions;
+      
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;

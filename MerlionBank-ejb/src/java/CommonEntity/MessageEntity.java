@@ -102,10 +102,10 @@ private Customer customer;
 
     @Override
     public String toString() {
-        return "CommonEntity.Message[ id=" + id + " ]";
+        return "CommonEntity.MessageEntity[ id=" + id + " ]";
     }
     
-    public void message(){
+    public MessageEntity(){
         
     }
     
