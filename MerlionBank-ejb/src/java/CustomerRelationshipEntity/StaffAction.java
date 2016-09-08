@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CommonEntity;
+package CustomerRelationshipEntity;
 
+import CommonEntity.Staff;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -19,7 +20,7 @@ import javax.persistence.Temporal;
  * @author a0113893
  */
 @Entity
-public class CustomerAction implements Serializable {
+public class StaffAction implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,6 +28,7 @@ public class CustomerAction implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date actionDate;
     private String description;
+    private Long customerId;
 
     public Date getActionDate() {
         return actionDate;
@@ -44,28 +46,35 @@ public class CustomerAction implements Serializable {
         this.description = description;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
-   
-
-    public CustomerAction() {
+    public Staff getStaff() {
+        return staff;
     }
-    
-     public CustomerAction(Date actionDate, String description, Customer customer) {
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
+    public StaffAction(Date actionDate, String description, Long customerId, Staff staff) {
         this.actionDate = actionDate;
         this.description = description;
-        this.customer = customer;
+        this.customerId = customerId;
+        this.staff = staff;
+    }
+
+    public StaffAction() {
     }
     
     
     @ManyToOne
-    private Customer customer;
+    private Staff staff;
 
     public Long getId() {
         return id;
@@ -85,10 +94,10 @@ public class CustomerAction implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CustomerAction)) {
+        if (!(object instanceof StaffAction)) {
             return false;
         }
-        CustomerAction other = (CustomerAction) object;
+        StaffAction other = (StaffAction) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -97,7 +106,7 @@ public class CustomerAction implements Serializable {
 
     @Override
     public String toString() {
-        return "CommonEntity.CustomerAction[ id=" + id + " ]";
+        return "CustomerRelationshipEntity.StaffAction[ id=" + id + " ]";
     }
     
 }

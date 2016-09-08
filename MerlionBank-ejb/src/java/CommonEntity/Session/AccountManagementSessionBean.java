@@ -280,10 +280,10 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             if (!passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
                 return "invalid old password";
             }
-            else if (!oldPassword.equals(confirmPassword)){
+            else if (!newPassword.equals(confirmPassword)){
                 return "Does not match with new password";
             }
-           else if (passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())&& oldPassword.equals(confirmPassword)){
+           else if (passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())&& newPassword.equals(confirmPassword)){
            if (!checkPasswordComplexity(newPassword)) {
                     throw new PasswordTooSimpleException("password is too simple");
                 }
@@ -297,8 +297,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
    
     //Password complexity check
-    @Override
-    public boolean checkPasswordComplexity(String password) {
+   
+    private boolean checkPasswordComplexity(String password) {
         if (password.length() < 8) {
             return false;
         }
@@ -321,7 +321,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
     
     //Activate account - 4th step update account status
-    private boolean updateAccountStatus(String ic){
+    @Override
+    public boolean updateAccountStatus(String ic){
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
