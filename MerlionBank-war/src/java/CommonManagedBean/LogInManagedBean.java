@@ -15,9 +15,13 @@ import Exception.UserNotExistException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.HashMap;
+import java.util.List;
+//import java.util.Map;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 //import javax.faces.bean.SessionScoped;
@@ -57,6 +61,45 @@ public class LogInManagedBean implements Serializable {
     private String customerPassword;
     private final int max_attempts = 5;
     private int logInAttempts;
+//    private String accountType = "Saving Account";
+
+    private List data = new ArrayList();
+    private List accountTypes;
+    
+          
+    public List getData() {
+        return data;
+    }
+
+    public void setData(List data) {
+        this.data = data;
+    }
+
+    public List getAccountTypes() {
+        return accountTypes;
+    }
+
+    public void setAccountTypes(List accountTypes) {
+        this.accountTypes = accountTypes;
+    }
+    
+//    public List getAccountTypes() {
+//        return accountTypes;
+//    }
+//
+//    public void setAccountTypes(List accountTypes) {
+//        this.accountTypes = accountTypes;
+//    }
+
+    
+
+//    public String getAccountType() {
+//        return accountType;
+//    }
+//
+//    public void setAccountType(String accountType) {
+//        this.accountType = accountType;
+//    }
 
     public int getLogInAttempts() {
         return logInAttempts;
@@ -65,7 +108,7 @@ public class LogInManagedBean implements Serializable {
     public void setLogInAttempts(int logInAttempts) {
         this.logInAttempts = logInAttempts;
     }
-    
+
     /**
      * Creates a new instance of LogInManagedBean
      */
@@ -83,13 +126,19 @@ public class LogInManagedBean implements Serializable {
     public void init() {
         selectedCustomer = new Customer();
         try {
+//            accountTypes = new ArrayList();
+//            accountTypes.add("Saving Account");
+//            accountTypes.add("Credit Account");
+//            accountTypes.add("Loan Account");
+//            accountTypes.add("Wealth Managment Account");
             this.viewOneCustomer();
+        //    System.out.println("Account Type chosen is " + accountType);
         } catch (Exception ex) {
             System.out.println(ex);
         }
 
     }
-    
+
 //   private void warnMsg(String message) {
 //        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, "");
 //        FacesContext context = FacesContext.getCurrentInstance();
@@ -111,32 +160,60 @@ public class LogInManagedBean implements Serializable {
 //        context.getExternalContext().getFlash().setKeepMessages(true);
 //        LOGGER.info("MESSAGE INFO: " + message);
 //    }
-    public void customerLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException {
-      try{  if(customerName != null && customerPassword != null){
-          Long logInId =  amsbl.checkLogin(ic,customerPassword);
-          //logInAttempts = 0;
-          if(logInId.toString().equals("1")){
-          System.out.println("Password does not match");
-          logInAttempts++;
-          System.out.println("number attempts:" +logInAttempts);
-          if(logInAttempts == max_attempts){
-              System.out.println("Your account has been locked out.");
-           }
-          }else{
-              logInAttempts = 0;
-          System.out.println("Log In Successful!");
-          }
-        }else{
-            System.out.println("Please dont leave blanks!");
-        }
-      }catch(UserNotExistException ex){
+ 
+//    public void chooseAccountType(ActionEvent event) throws IOException {
+////        accountTypes.add("Saving Account");
+////        accountTypes.add("Credit Account");
+////        accountTypes.add("Loan Account");
+////        accountTypes.add("Wealth Management Account");
+////        FacesMessage msg;
+////        msg = new FacesMessage("Selected" + accountType);
+//        System.out.println("Account Type chosen is " );
+//        try {
+//            if (accountType.equals("Saving Account")) {
+//                System.out.println("Saving account has been selected");
+//                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/createSavingAccount.xhtml");
+//            } else if (accountType.equals("Credit Account")) {
+//                System.out.println("This service is currently not available!");
+//            } else if (accountType.equals("Loan Account")) {
+//                System.out.println("This service is currently not available!");
+//            } else if (accountType.equals("Wealth Management Account")) {
+//                System.out.println("This service is currently not available!");
+//            } else {
+//                System.out.println("Please indicate one choice");
+//            }
+//        } catch (IOException ex) {
+//            System.out.println(ex);
+//        }
+//
+//    }
+//
+    public void customerLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
+        try {
+            if (customerName != null && customerPassword != null) {
+                Long logInId = amsbl.checkLogin(ic, customerPassword);
+                //logInAttempts = 0;
+                if (logInId.toString().equals("1")) {
+                    System.out.println("Password does not match");
+                    logInAttempts++;
+                    System.out.println("number attempts:" + logInAttempts);
+                    if (logInAttempts == max_attempts) {
+                        System.out.println("Your account has been locked out.");
+                    }
+                } else {
+                    logInAttempts = 0;
+                    System.out.println("Log In Successful!");
+                }
+            } else {
+                System.out.println("Please dont leave blanks!");
+            }
+        } catch (UserNotExistException ex) {
             System.out.println("acccccounnnt does not exist!!!!!!");
-      }catch(PasswordNotMatchException ex1){
-          System.out.println(ex1);
-      }catch( UserNotActivatedException ex2){
-          System.out.println(ex2);
-      }
+        } catch (PasswordNotMatchException | UserNotActivatedException ex1) {
+            System.out.println(ex1);
+        }
     }
+
     public void viewOneCustomer() throws IOException {
         //this.ic = selectedCustomer.getIc();
         selectedCustomer = amsbl.diaplayCustomer(ic);
@@ -146,8 +223,8 @@ public class LogInManagedBean implements Serializable {
         this.customerName = selectedCustomer.getName();
         this.customerGender = selectedCustomer.getGender();
         this.customerDateOfBirth = selectedCustomer.getDateOfBirth();
-         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-         this.birthdate = sdf.format(customerDateOfBirth);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+        this.birthdate = sdf.format(customerDateOfBirth);
         this.birthdate = customerDateOfBirth.toString();
         this.customerEmail = selectedCustomer.getEmail();
         this.customerAddress = selectedCustomer.getAddress();
@@ -168,41 +245,29 @@ public class LogInManagedBean implements Serializable {
 
         // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerLION-war/GRNSWeb/admin/updateUser.xhtml");
     }
-    
-    public void modifyProfile(ActionEvent event) throws UserExistException{
+
+    public void modifyProfile(ActionEvent event) throws UserExistException {
         try {
             if (FacesContext.getCurrentInstance().getResponseComplete()) {
                 System.out.println("lala");
                 return;
             }
-//            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
-//            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
-//            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
-//            customerDateOfBirth = (Date) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerDateOfBirth");
-//            customerAddress = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerAddress");
-//            customerEmail = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerEmail");
-//            customerPhoneNumber = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerPhoneNumber");
-//            customerOccupation = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerOccupation");
-//            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
-//            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
-//            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
+
             System.out.println("Phone Number is: " + customerPhoneNumber);
-            if(ic!=null && customerName !=null && customerGender!=null && customerDateOfBirth !=null && customerAddress != null && customerEmail != null && customerPhoneNumber!=null
-                    && customerOccupation!=null && customerFamilyInfo != null && customerFinancialGoal !=null){
-        amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
-            }else{
-               System.out.println("Please fill in correct information!");
-               
-//            FacesMessage msg = new FacesMessage("Nothing edited for: ", ((OrganizationUnit) event.getObject()).getDepartmentName());
-//            FacesContext.getCurrentInstance().addMessage(null, msg);
+            if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null
+                    && customerOccupation != null && customerFamilyInfo != null && customerFinancialGoal != null) {
+                amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
+            } else {
+                System.out.println("Please fill in correct information!");
 
             }
-        
-         //   amsbl.updateProfile(ic, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
+
+            //   amsbl.updateProfile(ic, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
         } catch (UserExistException ex) {
-          System.out.println("Username already exists");
+            System.out.println("Username already exists");
         }
     }
+
     public String getBirthdate() {
         return birthdate;
     }
@@ -210,8 +275,8 @@ public class LogInManagedBean implements Serializable {
     public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
     }
-    
-    private final static Logger LOGGER = Logger.getLogger(LogInManagedBean.class.getName());
+
+   // private final static Logger LOGGER = Logger.getLogger(LogInManagedBean.class.getName());
 
     public Customer getCustomer() {
         return customer;
@@ -316,6 +381,7 @@ public class LogInManagedBean implements Serializable {
     public void setSelectedCustomer(Customer selectedCustomer) {
         this.selectedCustomer = selectedCustomer;
     }
+
     public String getCustomerPassword() {
         return customerPassword;
     }

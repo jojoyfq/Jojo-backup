@@ -52,56 +52,56 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-
 /**
  *
  * @author a0113893
  */
 @Stateless
 public class AccountManagementSessionBean implements AccountManagementSessionBeanLocal {
-    
+
     private static final Random RANDOM = new SecureRandom();
-    
+
     public static final int SALT_LENGTH = 8;
     @PersistenceContext
     private EntityManager em;
 //    private GoogleMail gm;
+
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType)throws UserExistException, EmailNotSendException {
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType) throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
-        
+
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
         if (!temp.isEmpty()) {
             System.out.println("User " + ic + " exists!");
-            for (int i=0;i<temp.size();i++){
-                if (temp.get(i).getStatus().equals("active"))
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).getStatus().equals("active")) {
                     throw new UserExistException("User " + ic + " exists!");
+                }
                 else if (temp.get(i).getStatus().equals("unverified"))                
                     throw new UserExistException("User " + ic + "has not been verified by MerlionBank!");
                 else if (temp.get(i).getStatus().equals("inactive"))
                     throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");    
             }           
+
         }
-         System.out.println("customer does not exist!");
-         
-         for (int i = 0; i < SALT_LENGTH; i++) {
+        System.out.println("customer does not exist!");
+
+        for (int i = 0; i < SALT_LENGTH; i++) {
             int index = (int) (RANDOM.nextDouble() * letters.length());
             salt += letters.substring(index, index + 1);
         }
         String password = GeneratePassword.createPassword();
         String tempPassword = password;
-        
-        
+
         password = passwordHash(password + salt);
         System.out.println("Password after hash&salt:" + password);
-        
-        
-     System.out.println("In Creating saving account");
-      OnlineAccount onlineAccount= new OnlineAccount (ic,"inactive",salt,password);
+
+        System.out.println("In Creating saving account");
+        OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
         em.persist(onlineAccount);
             Customer customer = new Customer(ic,name,gender,dateOfBirth,address,email,phoneNumber,occupation,familyInfo, null, "0.0000", onlineAccount,"unverified");          
             em.persist(customer);
@@ -128,51 +128,50 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             
            try {
             SendPendingVerificationEmail(name, email);
+
         } catch (MessagingException ex) {
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
         }
 
-        
-
-
     }
-    
-    
 
-    
+
     @Override
-    public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal){
+    public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
-            customer.setAddress(address);
-            customer.setEmail(email);
-            customer.setPhoneNumber(phoneNumber);
-            customer.setOccupation(occupation);
-            customer.setFamilyInfo(familyInfo);
-            customer.setFinancialGoal(financialGoal);
-            em.merge(customer);
-            em.flush();
-            
-            CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Update Profile",customer);
-            em.persist(action);
-            List<CustomerAction> customerActions=customer.getCustomerActions();
-            customerActions.add(action);
-            customer.setCustomerActions(customerActions);
-            em.persist(customer);
-            em.flush();
+
+        Customer customer = temp.get(temp.size() - 1);
+        customer.setAddress(address);
+        customer.setEmail(email);
+        customer.setPhoneNumber(phoneNumber);
+        customer.setOccupation(occupation);
+        customer.setFamilyInfo(familyInfo);
+        customer.setFinancialGoal(financialGoal);
+        em.merge(customer);
+        em.flush();
+
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Update Profile", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
     }
-   
+
     @Override
     public Customer diaplayCustomer(String ic) {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
-            return customer;
+        Customer customer = temp.get(temp.size() - 1);
+        return customer;
     }
+
     
     
     private void SendPendingVerificationEmail(String name, String email) throws MessagingException {
@@ -189,10 +188,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println(content);
         sendEmail.run(email, subject, content);  
     }
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-   
-    
+
     private String passwordHash(String pass) {
         String md5 = null;
 
@@ -211,17 +207,18 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         }
         return md5;
     }
-    
+
     //Activate account- 1st step verify account details
     @Override
-    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth,String phoneNumber)throws UserNotExistException,UserAlreadyActivatedException{
-      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth, String phoneNumber) throws UserNotExistException, UserAlreadyActivatedException {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
         if (temp.isEmpty()) {
             System.out.println("Username " + ic + " does not exist!");
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");
         }
+
         
             int size=temp.size();
             Customer customer=temp.get(size-1);
@@ -239,62 +236,64 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             }
             else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
                 System.out.println("Username " + ic + "Acount locked"); 
+
             throw new UserAlreadyActivatedException("You have already activated your account!");
-            }
-            else {
-              System.out.println("Username " + ic + " IC check pass!");  
-            }               
-        
-            System.out.println(customer.getDateOfBirth());
-            if (!fullName.equals(customer.getName())){
-                //throw new UserNotExistException("Username " + ic + "invaid account details");
-                return customer.getName();
-               
-            }
-            
-            else if(!dateOfBirth.equals(customer.getDateOfBirth())){
-                 throw new UserNotExistException("Username " + ic + "invaid account details");
-                //return "date";
-            }
-            else if (!phoneNumber.equals(customer.getPhoneNumber())){
-                 throw new UserNotExistException("Username " + ic + "invaid account details");
-                //return customer.getPhoneNumber();
-            }else
-                return ic;
-                
+        } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
+            System.out.println("Username " + ic + "Acount locked");
+            throw new UserAlreadyActivatedException("You have already activated your account!");
+        } else {
+            System.out.println("Username " + ic + " IC check pass!");
+        }
+
+        System.out.println(customer.getDateOfBirth());
+        if (!fullName.equals(customer.getName())) {
+            //throw new UserNotExistException("Username " + ic + "invaid account details");
+            return customer.getName();
+
+        } else if (!dateOfBirth.equals(customer.getDateOfBirth())) {
+            throw new UserNotExistException("Username " + ic + "invaid account details");
+            //return "date";
+        } else if (!phoneNumber.equals(customer.getPhoneNumber())) {
+            throw new UserNotExistException("Username " + ic + "invaid account details");
+            //return customer.getPhoneNumber();
+        } else {
+            return ic;
+        }
+
     }
-    
+
     //Activate account - 2nd step verify account balance
     @Override
-    public String verifyAccountBalance(String ic){
-       Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+    public String verifyAccountBalance(String ic) {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
-            int amount=customer.getSavingAccounts().get(0).getBalance().intValueExact();
-            if (amount>=500) {
-                return ic;
-            }
-            else return "invalid amount";
+        Customer customer = temp.get(temp.size() - 1);
+        int amount = customer.getSavingAccounts().get(0).getBalance().intValueExact();
+        if (amount >= 500) {
+            return ic;
+        } else {
+            return "invalid amount";
+        }
     }
-    
+
     //Activate account - 3rd intial password reset
     @Override
-    public String updatePassword (String ic, String oldPassword, String newPassword,String confirmPassword)throws PasswordTooSimpleException{
-    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+    public String updatePassword(String ic, String oldPassword, String newPassword, String confirmPassword) throws PasswordTooSimpleException {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
-            if (!passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
-                return "invalid old password";
+        Customer customer = temp.get(temp.size() - 1);
+        if (!passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())) {
+            return "invalid old password";
+        } else if (!newPassword.equals(confirmPassword)) {
+            System.out.println(newPassword);
+            System.out.println(confirmPassword);
+            return "Does not match with new password";
+        } else if (passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword()) && newPassword.equals(confirmPassword)) {
+            if (!checkPasswordComplexity(newPassword)) {
+                throw new PasswordTooSimpleException("password is too simple");
             }
-            else if (!newPassword.equals(confirmPassword)){
-                return "Does not match with new password";
-            }
-           else if (passwordHash(oldPassword + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())&& newPassword.equals(confirmPassword)){
-           if (!checkPasswordComplexity(newPassword)) {
-                    throw new PasswordTooSimpleException("password is too simple");
-                }
                 String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
                 customer.getOnlineAccount().setPassword(resetPassword);
                 em.flush();
@@ -306,6 +305,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
    
     //Password complexity check
    
+
     private boolean checkPasswordComplexity(String password) {
         if (password.length() < 8) {
             return false;
@@ -327,80 +327,78 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         }
         return false;
     }
-    
+
     //Activate account - 4th step update account status
     @Override
+
     public boolean updateAccountStatus(String ic){
+
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
-            customer.setStatus("active");
-            em.persist(customer);
-            customer.getOnlineAccount().setAccountStatus("active");
-            em.flush();
-            customer.getSavingAccounts().get(0).setStatus("active");
-            em.flush();
-            
-            CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Activate Account",customer);
-            em.persist(action);
-            List<CustomerAction> customerActions=customer.getCustomerActions();
-            customerActions.add(action);
-            customer.setCustomerActions(customerActions);
-            em.persist(customer);
-            em.flush();
-            
-            return true;
-            
+
+        Customer customer = temp.get(temp.size() - 1);
+        customer.setStatus("active");
+        em.persist(customer);
+        customer.getOnlineAccount().setAccountStatus("active");
+        em.flush();
+        customer.getSavingAccounts().get(0).setStatus("active");
+        em.flush();
+
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Activate Account", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
+        return true;
+
     }
-    
+
     //forget password- 1st step verify account details
     @Override
-    public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOfBirth, String email) throws UserNotExistException,UserNotActivatedException {
-      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+    public String forgetPasswordVerifyDetail(String ic, String fullName, Date dateOfBirth, String email) throws UserNotExistException, UserNotActivatedException {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
         if (temp.isEmpty()) {
             System.out.println("Username " + ic + " does not exist!");
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");
         }
-        
-            int size=temp.size();
-            Customer customer=temp.get(size-1);
-            if (customer.getStatus().equals("terminated")){
-                 System.out.println("Username " + ic + " does not exist!");
-            throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
-            }
-            else if (customer.getStatus().equals("inactive")){
-                 System.out.println("Username " + ic + "You have not activated your account!"); 
-             throw new UserNotActivatedException("You have not activated your account!");
-            }
-            else {
-              System.out.println("Username " + ic + " IC check pass!");  
-            }               
-            
-           
-            if (!fullName.equals(customer.getName())){
-                throw new UserNotExistException("Username " + ic + "invaid account details");
-            }
-            else if(!dateOfBirth.equals(customer.getDateOfBirth())){
-                throw new UserNotExistException("Username " + ic + "invaid account details");
-            }
-            else if (!email.equals(customer.getEmail())){
-                throw new UserNotExistException("Username " + ic + "invaid account details");
-            }
-            else 
-                return ic;             
+
+        int size = temp.size();
+        Customer customer = temp.get(size - 1);
+        if (customer.getStatus().equals("terminated")) {
+            System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");
+        } else if (customer.getStatus().equals("inactive")) {
+            System.out.println("Username " + ic + "You have not activated your account!");
+            throw new UserNotActivatedException("You have not activated your account!");
+        } else {
+            System.out.println("Username " + ic + " IC check pass!");
+        }
+
+        if (!fullName.equals(customer.getName())) {
+            throw new UserNotExistException("Username " + ic + "invaid account details");
+        } else if (!dateOfBirth.equals(customer.getDateOfBirth())) {
+            throw new UserNotExistException("Username " + ic + "invaid account details");
+        } else if (!email.equals(customer.getEmail())) {
+            throw new UserNotExistException("Username " + ic + "invaid account details");
+        } else {
+            return ic;
+        }
     }
-    
+
     //send 2FA
     //forget password- 2nd send 2FA
     @Override
-    public String sendTwoFactorAuthentication(String ic) throws TwilioRestException{
+    public String sendTwoFactorAuthentication(String ic) throws TwilioRestException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
+        Customer customer = temp.get(temp.size() - 1);
         String ACCOUNT_SID = "AC0607da3843c85473703f3f5078a21a52";
         String AUTH_TOKEN = "79993c87540fe09ba96d8f1990d78eed";
         TwilioRestClient client = new TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN);
@@ -411,80 +409,80 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("To", customer.getPhoneNumber())); // Replace with a valid phone number for your account.
         params.add(new BasicNameValuePair("From", "+12013451118")); // Replace with a valid phone number for your account.
-        Long number=Math.round(Math.random()*1000000);
-        String oTP=""+number;
+        Long number = Math.round(Math.random() * 1000000);
+        String oTP = "" + number;
         customer.getOnlineAccount().setAuthenticationCode(oTP);
         em.flush();
         params.add(new BasicNameValuePair("Body", oTP));
-        
+
         try {
-      Message message = messageFactory.create(params);
-    } catch (TwilioRestException e) {
-      System.out.println(e.getErrorMessage());
-    }
+            Message message = messageFactory.create(params);
+        } catch (TwilioRestException e) {
+            System.out.println(e.getErrorMessage());
+        }
         //Message sms = messageFactory.create(params);
-        
+
         return ic;
     }
-    
+
     //verify 2FA
     //forget password- 3rd step verify 2FA
     @Override
-    public String verifyTwoFactorAuthentication(String ic,String inputCode){
-      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+    public String verifyTwoFactorAuthentication(String ic, String inputCode) {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
-            
-            if (customer.getOnlineAccount().getAuthenticationCode().equals(inputCode)){
-                return ic;
-            }
-            else return "invalid 2FA";
-        
+        Customer customer = temp.get(temp.size() - 1);
+
+        if (customer.getOnlineAccount().getAuthenticationCode().equals(inputCode)) {
+            return ic;
+        } else {
+            return "invalid 2FA";
+        }
+
     }
-    
+
     @Override
-    public String updateForgetPassword (String ic, String newPassword,String confirmPassword)throws PasswordTooSimpleException{
-   Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+    public String updateForgetPassword(String ic, String newPassword, String confirmPassword) throws PasswordTooSimpleException {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
-            
-           if (newPassword.equals(confirmPassword)){
-           if (!checkPasswordComplexity(newPassword)) {
-                    throw new PasswordTooSimpleException("password is too simple");
-                }
-                String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
-                customer.getOnlineAccount().setPassword(resetPassword);
-                em.flush();
-                OnlineAccount onlineAccount=customer.getOnlineAccount();
-        onlineAccount.setAccountStatus("locked");
-        em.persist(onlineAccount);
-        em.flush();
-        customer.setStatus("active");
-        em.flush();  
-        customer.setOnlineAccount(onlineAccount);
-        
-         CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Reset Password",customer);
+        Customer customer = temp.get(temp.size() - 1);
+
+        if (newPassword.equals(confirmPassword)) {
+            if (!checkPasswordComplexity(newPassword)) {
+                throw new PasswordTooSimpleException("password is too simple");
+            }
+            String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
+            customer.getOnlineAccount().setPassword(resetPassword);
+            em.flush();
+            OnlineAccount onlineAccount = customer.getOnlineAccount();
+            onlineAccount.setAccountStatus("locked");
+            em.persist(onlineAccount);
+            em.flush();
+            customer.setStatus("active");
+            em.flush();
+            customer.setOnlineAccount(onlineAccount);
+
+            CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Reset Password", customer);
             em.persist(action);
-            List<CustomerAction> customerActions=customer.getCustomerActions();
+            List<CustomerAction> customerActions = customer.getCustomerActions();
             customerActions.add(action);
             customer.setCustomerActions(customerActions);
             em.persist(customer);
             em.flush();
-            
-                return ic;
-           }
-           else if (!newPassword.equals(confirmPassword)){
-                return "Does not match with new password";
-            }
-           else return "invalid details";
-    } 
-    
-  //log in- 1st step verify details  
 
- @Override
-    public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException {
+            return ic;
+        } else if (!newPassword.equals(confirmPassword)) {
+            return "Does not match with new password";
+        } else {
+            return "invalid details";
+        }
+    }
+
+    //log in- 1st step verify details  
+    @Override
+    public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -492,51 +490,48 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             System.out.println("Username " + ic + " does not exist!");
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");
         }
-        
-            int size=temp.size();
-            Customer customer=temp.get(size-1);
-            if (customer.getStatus().equals("terminated")){
-                 System.out.println("Username " + ic + " does not exist!");
-          //  throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
-            }
-            else if (customer.getStatus().equals("inactive")){
-                 System.out.println("Username " + ic + " please activate your account!"); 
 
-                //throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+        int size = temp.size();
+        Customer customer = temp.get(size - 1);
+        if (customer.getStatus().equals("terminated")) {
+            System.out.println("Username " + ic + " does not exist!");
+            //  throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
+        } else if (customer.getStatus().equals("inactive")) {
+            System.out.println("Username " + ic + " please activate your account!");
 
-            }
-            else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
-            System.out.println("Username " + ic + " Account locked! Please Reset Password!"); 
+            //throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+        } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
+            System.out.println("Username " + ic + " Account locked! Please Reset Password!");
             throw new UserNotExistException("Username " + ic + " Account locked! Please Reset Password!");
-            }
-            else {
-              System.out.println("Username " + ic + " IC check pass!");  
-            }               
-        
-       if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())){
 
-                Long i=Long.parseLong("1");
-           return i;
-            } 
-       
-        CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Successful Login",customer);
-            em.persist(action);
-            List<CustomerAction> customerActions=customer.getCustomerActions();
-            customerActions.add(action);
-            customer.setCustomerActions(customerActions);
-            em.persist(customer);
-            em.flush();
-            
-       return customer.getId();
+        } else {
+            System.out.println("Username " + ic + " IC check pass!");
+        }
+
+        if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())) {
+
+            Long i = Long.parseLong("1");
+            return i;
+        }
+
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Successful Login", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
+        return customer.getId();
     }
-    
-    public Long lockAccount(Long customerId){
-      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+
+    public Long lockAccount(Long customerId) {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
         q.setParameter("id", customerId);
-        Customer customer=(Customer)q.getSingleResult(); 
+        Customer customer = (Customer) q.getSingleResult();
         customer.setStatus("locked");
         em.flush();
-        OnlineAccount onlineAccount=customer.getOnlineAccount();
+        OnlineAccount onlineAccount = customer.getOnlineAccount();
         onlineAccount.setAccountStatus("locked");
         em.persist(onlineAccount);
         em.flush();
@@ -544,10 +539,4 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         return customer.getId();
     }
 
-}   
-
-     
-    
-
-
-
+}

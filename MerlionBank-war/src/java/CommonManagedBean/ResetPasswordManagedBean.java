@@ -56,7 +56,10 @@ public class ResetPasswordManagedBean implements Serializable {
         customer = new Customer();
     }
 
-    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
+
+    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException,UserNotActivatedException, IOException{
+         customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
+         System.out.println(customerIc);
         if (customerIc != null && customerName != null && dateOfBirth != null && customerEmail != null) {
             String msg = amsbl.forgetPasswordVerifyDetail(customerIc, customerName, dateOfBirth, customerEmail);
             System.out.println(msg);
