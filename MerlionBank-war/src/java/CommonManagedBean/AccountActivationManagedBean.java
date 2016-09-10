@@ -7,14 +7,17 @@ package CommonManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
 import Exception.UserNotExistException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 /**
@@ -41,19 +44,22 @@ public class AccountActivationManagedBean implements Serializable {
     private String customerIc;
     private String customerName;
     private String phoneNumber;
+    private String initialPassword;
+    private String newPassword;
+    private String confirmedPassword;
 
-    /**
-     * Creates a new instance of AccountActivationManagedBean
-     */
-    public void init() {
-        customer = new Customer();
+    public String getConfirmedPassword() {
+        return confirmedPassword;
+    }
 
+    public void setConfirmedPassword(String confirmedPassword) {
+        this.confirmedPassword = confirmedPassword;
     }
 
     public AccountActivationManagedBean() {
     }
 
-    public void activateAccount(ActionEvent event) throws UserNotExistException, UserAlreadyActivatedException {
+    public void activateAccount(ActionEvent event) throws UserNotExistException, UserAlreadyActivatedException, IOException {
 //        this.customerIc = customerIc;
 //        this.customerName = customerName;
 //        this.dateOfBirth = dateOfBirth;
@@ -67,6 +73,7 @@ public class AccountActivationManagedBean implements Serializable {
 
                     if (msg2.equals(customerIc)) {
                         System.out.println("Account activated successfully!");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
                     } else {
                         System.out.println(msg2);
                     }
@@ -83,6 +90,30 @@ public class AccountActivationManagedBean implements Serializable {
         }
     }
 
+    public void resetInitialPassword(ActionEvent event) throws PasswordTooSimpleException {
+        if(customerIc!=null && initialPassword!=null && newPassword!=null && confirmedPassword != null){
+        String msg = msg = amsbl.updatePassword(customerIc, initialPassword, newPassword, confirmedPassword);
+
+        System.out.println(msg);
+
+        if (msg.equals(customerIc)) {
+            System.out.println("Your password has been successfully changed!");
+            boolean msg2 = amsbl.updateAccountStatus(msg);
+            if (msg2 == true) {
+                System.out.println("Status has been updated!");
+            } else {
+                System.out.println("Status has NOT been updated!");
+
+            }
+        } else {
+            System.out.println("password has not been changed!");
+        }
+        }else{
+            System.out.println("Please do not leave blanks!");
+        }
+
+    }
+
     public Customer getCustomer() {
         return customer;
     }
@@ -90,7 +121,6 @@ public class AccountActivationManagedBean implements Serializable {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-
 
     public String getCustomerIc() {
         return customerIc;
@@ -115,4 +145,29 @@ public class AccountActivationManagedBean implements Serializable {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    public String getInitialPassword() {
+        return initialPassword;
+    }
+
+    public void setInitialPassword(String initialPassword) {
+        this.initialPassword = initialPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    /**
+     * Creates a new instance of AccountActivationManagedBean
+     */
+    public void init() {
+        customer = new Customer();
+
+    }
+
 }
