@@ -56,7 +56,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  }
     // 2nd- staff send customer message
   @Override  
- public boolean sendMessage(Long customerId,String staffID, String subject,String content)throws EmailNotSendException{
+ public boolean sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException{
       Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
