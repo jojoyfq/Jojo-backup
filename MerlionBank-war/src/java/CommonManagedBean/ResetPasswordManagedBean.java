@@ -10,9 +10,12 @@ import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import Exception.PasswordTooSimpleException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
+import com.twilio.sdk.TwilioRestException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -53,6 +56,7 @@ public class ResetPasswordManagedBean implements Serializable {
         customer = new Customer();
     }
 
+
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException,UserNotActivatedException, IOException{
          customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
          System.out.println(customerIc);
@@ -61,16 +65,22 @@ public class ResetPasswordManagedBean implements Serializable {
             System.out.println(msg);
             if (msg.equals(customerIc)) {
 
-                String msg2 = amsbl.sendTwoFactorAuthentication(customerIc);
-                System.out.println("Message displayed after 2fa  was sent: " + msg2);
-                if (msg2.equals(customerIc)) {
+                try 
+                {
+                    String msg2 = amsbl.sendTwoFactorAuthentication(customerIc);
+                    System.out.println("Message displayed after 2fa  was sent: " + msg2);
+                    if (msg2.equals(customerIc)) {
 
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/SubmitTwoFA.xhtml");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/SubmitTwoFA.xhtml");
 
+                    }
+                } 
+                catch (TwilioRestException ex) 
+                {
+//                    Logger.getLogger(ResetPasswordManagedBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
-            
 
         } else {
             System.out.println("Don't leave blank please!");
@@ -93,8 +103,8 @@ public class ResetPasswordManagedBean implements Serializable {
 
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Password has been successfully changed!", "");
             FacesContext.getCurrentInstance().addMessage(null, message);
-            
-         //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Submit", "erroMsg"));
+
+            //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Submit", "erroMsg"));
         } catch (PasswordTooSimpleException ex) {
             String msg = "Password is very simple!!!!!";
             System.out.println(msg);

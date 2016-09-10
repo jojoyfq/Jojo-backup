@@ -5,6 +5,9 @@
  */
 package CustomerRelationshipEntity.Session;
 
+import CommonEntity.Customer;
+import Exception.UserNotExistException;
+import java.util.Date;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +16,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface OperationalCRMSessionBeanLocal {
-    
+   public Customer searchCustomer(String ic) throws UserNotExistException;
+   public void updateProfile(Long staffID, Long customerID, String ic, String name, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal);
 }

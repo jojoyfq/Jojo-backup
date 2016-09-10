@@ -28,29 +28,41 @@ import javax.persistence.OneToMany;
 public class Staff implements Serializable {
     private static final long serialVersionUID = 1L;
     @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-//    private Collection<MessageEntity> messages =new ArrayList<MessageEntity>();
+
+    private List<MessageEntity> messages;
+
     
     //@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     @ManyToMany(cascade={CascadeType.ALL})
     @JoinTable(name="Staff_StaffRole")
-    private ArrayList<StaffRole> staffRoles = new ArrayList<StaffRole>();
+    private List<StaffRole> staffRoles;
     
       @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<StaffAction> staffActions;
+
+    public List<StaffAction> getStaffActions() {
+        return staffActions;
+    }
+
+    public void setStaffActions(List<StaffAction> staffActions) {
+        this.staffActions = staffActions;
+    }
       
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
 
-//    public Collection<MessageEntity> getMessages() {
-//        return messages;
-//    }
-//
-//    public void setMessages(Collection<MessageEntity> messages) {
-//        this.messages = messages;
-//    }
 
-    public ArrayList<StaffRole> getStaffRoles() {
+    public Collection<MessageEntity> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<MessageEntity> messages) {
+        this.messages = messages;
+    }
+
+
+    public List<StaffRole> getStaffRoles() {
         return staffRoles;
     }
 

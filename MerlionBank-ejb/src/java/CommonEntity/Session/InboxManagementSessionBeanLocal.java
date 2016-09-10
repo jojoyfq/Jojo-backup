@@ -23,7 +23,7 @@ public interface InboxManagementSessionBeanLocal {
  public Long verifyCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
  
  // 2nd- staff send customer message
- public boolean sendMessage(Long customerId,String staffID, String subject,String content)throws EmailNotSendException;
+ public boolean sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException;
 
   // customer view list of message
  public List viewAllMessage(Long customerId);
