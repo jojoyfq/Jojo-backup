@@ -280,16 +280,18 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             if (!checkPasswordComplexity(newPassword)) {
                 throw new PasswordTooSimpleException("password is too simple");
             }
-            String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
-            customer.getOnlineAccount().setPassword(resetPassword);
-            em.flush();
-            return ic;
-        } else {
-            return "invalid details";
-        }
-    }
+                String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
+                customer.getOnlineAccount().setPassword(resetPassword);
+                em.flush();
+                return ic;
+           }
+           else return "invalid details";
+    } 
 
+   
     //Password complexity check
+   
+
     private boolean checkPasswordComplexity(String password) {
         if (password.length() < 8) {
             return false;
@@ -314,7 +316,9 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     //Activate account - 4th step update account status
     @Override
-    public boolean updateAccountStatus(String ic) {
+
+    public boolean updateAccountStatus(String ic){
+
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
