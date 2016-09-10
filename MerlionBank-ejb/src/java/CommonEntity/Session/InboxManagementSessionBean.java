@@ -6,6 +6,7 @@
 package CommonEntity.Session;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerMessage;
 import CommonEntity.MessageEntity;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
@@ -68,6 +69,16 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         
         MessageEntity internalMessage = new MessageEntity (subject,content,staff,customer,"new");
         em.persist(internalMessage);
+        
+        List<MessageEntity> messages=customer.getMessages();
+        messages.add(internalMessage);
+        customer.setMessages(messages);
+        em.flush();
+        
+        List<MessageEntity> staffMessages= staff.getMessages();
+        staffMessages.add(internalMessage);
+        staff.setMessages(staffMessages);
+        em.flush();
         
          try {
             SendEmail(customer.getName(), customer.getEmail());
@@ -134,7 +145,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         
  }
  
- //system display number of new messages
+ //system display number of new messages for customer
  @Override
  public int countNewMessage(Long customerID){
      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
@@ -152,6 +163,104 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
      
  }
  
+ //customer reply staff message
+ @Override  
+ public boolean customerSendMessage(String subject, String content, String status, Long staffID, Long customerID)throws EmailNotSendException{
+  Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        query.setParameter("id", staffID);
+        Staff staff = (Staff)query.getSingleResult(); 
+        
+        
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", customerID);
+        Customer customer = (Customer)q.getSingleResult(); 
+        
+        CustomerMessage customerMessage=new CustomerMessage(subject,content,"new",staff,false,customer);
+        em.persist(customerMessage);
+        
+        List<CustomerMessage> messages=customer.getCustomerMessages();
+        messages.add(customerMessage);
+        customer.setCustomerMessages(messages);
+        em.flush();
+        
+        List<CustomerMessage> staffMessages= staff.getCustomerMessages();
+        staffMessages.add(customerMessage);
+        staff.setCustomerMessages(staffMessages);
+        em.flush();
+        
+         try {
+            SendStaffNotificationEmail(staff.getStaffName(), staff.getStaffEmail(),customer.getName());
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+        return true;    
+        
+        
+ }
+ 
+
+ //send notification email to staff
+ private void SendStaffNotificationEmail(String staffName, String email,String customerName) throws MessagingException {
+      String subject = "Merlion Bank - New message has been sent to your MerlionBank Online Inbox";
+      System.out.println("Inside send email");
+
+        String content = "<h2>Dear " + staffName
+                + ",</h2><br /><h1>  A new message has been sent to your MerlionBank Online Inbox</h1><br />"
+                + "<h1>This new mwssage comes from user: </h1>"+customerName
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
+ }
+ 
+ // staff view list of message
+ @Override
+ public List<CustomerMessage> StaffViewAllMessage(Long staffId){
+     Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        query.setParameter("id", staffId);
+        Staff staff = (Staff)query.getSingleResult();     
+        List <CustomerMessage> messages=staff.getCustomerMessages();
+        List<CustomerMessage>newMessages=new ArrayList<CustomerMessage>();
+        for (int i=0;i<messages.size();i++){
+            if (!messages.get(i).getStatus().equals("delected")){
+                newMessages.add(messages.get(i));
+            }
+        }
+        return newMessages;
+     
+ }
+ 
+ // staff update status from new to read
+ @Override
+ public boolean readCustomerMessage(Long messageID){
+     Query q = em.createQuery("SELECT a FROM CustomerMessage a WHERE a.id = :id");
+        q.setParameter("id", messageID);
+        CustomerMessage message = (CustomerMessage)q.getSingleResult();  
+        message.setStatus("read");
+        em.persist(message);
+        return true;
+     
+ }
+ 
+ //system display number of new messages for staff
+ @Override
+ public int countStaffNewMessage(Long staffID){
+      Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        query.setParameter("id", staffID);
+        Staff staff = (Staff)query.getSingleResult();      
+        List <CustomerMessage> messages=staff.getCustomerMessages();
+        List<CustomerMessage>newMessages=new ArrayList<CustomerMessage>();
+        int count=0;
+        for (int i=0;i<messages.size();i++){
+            if (messages.get(i).getStatus().equals("new")){
+                count=count+1;
+            }
+        }
+        return count;
+     
+     
+ }
  
  
 }
