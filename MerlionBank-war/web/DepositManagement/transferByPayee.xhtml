@@ -11,13 +11,23 @@
     </h:head>
     <h:body>
         <h:form>
-                <h:panelGrid columns="2" id="transferByPayee" cellpadding="5"> 
+                <h:panelGrid columns="2" id="transferByPayee" cellpadding="5" > 
+                    
+                    <h:outputLabel  value="Your selected Payee Information" />
+                    <h:outputLabel />
+
+                    <h:outputLabel for="payeeAccount" value="Payee Account Number:" />
+                    <p:inputText id="payeeAccount" value="#{transferManagedBean.payeeTransferAccount}" required="false"/>
+
+                    <h:outputLabel for="payeeName" value="Payee Name:" />
+                    <p:inputText id="payeeName" value="#{transferManagedBean.payeeName}" required="false" />
                     
                     <h:outputLabel for="transferAmount" value="Amount: $" />
                     <p:inputText id="transferAmount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." />
 
                 </h:panelGrid>
-
+            
+            <p:commandButton actionListener="#{transferManagedBean.goToTransferByPayeeListPage}" value="Back" />
             <p:commandButton actionListener="#{transferManagedBean.transferByPayee}" value="Submit" />
         </h:form>
     </h:body>

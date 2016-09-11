@@ -18,4 +18,5 @@ public interface TransferSessionBeanLocal {
      public Boolean intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount);
      public Boolean addPayee(Long payeeAccount, String payeeName, Long customerID);
      public List getPayeeList(Long customerID);
+     public String searchPayeeName (Long payeeAccount);
 }

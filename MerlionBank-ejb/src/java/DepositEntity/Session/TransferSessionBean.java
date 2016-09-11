@@ -119,6 +119,15 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         }
         return payeeAccountList;   
     }
+    
+    @Override
+    public String searchPayeeName (Long payeeAccount){
+        Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :payeeAccount");
+        m.setParameter("payeeAccount",payeeAccount );
+        List<SavingAccount> savingAccounts = m.getResultList();
+        SavingAccount savingAccount = savingAccounts.get(0);
+        return savingAccount.getCustomer().getName();
+    }
 
     public SavingAccount getGiverBankAccount() {
         return giverBankAccount;

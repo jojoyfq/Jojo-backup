@@ -68,17 +68,18 @@ public class TransferManagedBean implements Serializable{
     
     public void goToTransferByPayee(ActionEvent event){
         try {
+            payeeName = tfsb.searchPayeeName(payeeTransferAccount);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/transferByPayee.xhtml");
         } catch (Exception e) {
-            System.out.print("Redirect to OneTimeTransfer page fails");
+            System.out.print("Redirect to transferByPayee page fails");
         }
     }
     
     public void transferByPayee(ActionEvent event) throws IOException {
         try{
             amountBD = new BigDecimal(amountString);
-            setGiverAccountNumString("957079855");
+            setGiverAccountNumString("342497558");
             setGiverAccountNumLong(Long.parseLong(giverAccountNumString));
             
             setCheckStatus(tfsb.intraOneTimeTransferCheck(giverAccountNumLong,payeeTransferAccount,amountBD));
@@ -97,7 +98,7 @@ public class TransferManagedBean implements Serializable{
         try{
             amountBD = new BigDecimal(amountString);
             recipientAccountNumLong = Long.parseLong(recipientAccountNumString);  
-            setGiverAccountNumString("957079855");
+            setGiverAccountNumString("342497558");
             setGiverAccountNumLong(Long.parseLong(giverAccountNumString));
             System.out.print(amountBD);
             System.out.print(recipientAccountNumLong);
