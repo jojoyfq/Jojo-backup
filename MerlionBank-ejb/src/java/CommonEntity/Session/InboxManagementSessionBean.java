@@ -18,6 +18,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
@@ -26,7 +27,8 @@ import javax.persistence.Query;
  */
 @Stateless
 public class InboxManagementSessionBean implements InboxManagementSessionBeanLocal {
- private EntityManager em;
+  @PersistenceContext
+    private EntityManager em;
  
  //1st - staff choose customer before send message
  @Override
@@ -125,7 +127,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
 // customer update status from new to read
  @Override
  public boolean readMessage(Long messageID){
-   Query q = em.createQuery("SELECT a FROM Message a WHERE a.id = :id");
+   Query q = em.createQuery("SELECT a FROM MessageEntity a WHERE a.id = :id");
         q.setParameter("id", messageID);
         MessageEntity message = (MessageEntity)q.getSingleResult();  
         message.setStatus("read");
@@ -136,7 +138,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  //customer delete message
  @Override
  public boolean deleteMessage(Long messageID){
-     Query q = em.createQuery("SELECT a FROM Message a WHERE a.id = :id");
+     Query q = em.createQuery("SELECT a FROM MessageEntity a WHERE a.id = :id");
         q.setParameter("id", messageID);
         MessageEntity message = (MessageEntity)q.getSingleResult();  
         message.setStatus("delected");
