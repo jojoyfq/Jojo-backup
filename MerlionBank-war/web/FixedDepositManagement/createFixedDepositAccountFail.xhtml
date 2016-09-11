@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+       xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+       xmlns:ui="http://java.sun.com/jsf/facelets"
+       xmlns:p="http://primefaces.org/ui">
+    
+    <head>
+        <title>Create Fixed Deposit Account Fail</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <h:form>
+            <h:panelGrid columns="2" id="createFixedDepositAccountFail" cellpadding="5"> 
+                
+                <h:outputLabel value="Sorry, we could not process your application since your account balance is not enough." />
+                
+            </h:panelGrid>
+               
+            <p:commandButton action="Success" value="Return" />
+        </h:form>
+    </body>
+</html>
