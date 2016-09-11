@@ -11,30 +11,30 @@
     </h:head>
     <h:body>
         <h:form>
-            <p:panel header="Test Header">
+            <p:panel header="Open a Fixed Deposit Account">
                 <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
 
-                    <h:outputLabel value="From Saving Account" />
-                    <h:outputLabel value="000-0-000000" />
-
-                    <h:outputLabel for="amount" value="Amount:" />
+                    <h:outputLabel for="amount" value="Amount(S$):" />
                     <p:inputText id="amount" value="#{fixedDepositManagedBean.amountString}" label="amount" required="true" />
 
-                    <h:outputLabel value="From Date:" />
-                    <p:calendar id="button" value="#{fixedDepositManagedBean.startDate}" showOn="button" required="true" />
 
-                    <h:outputLabel for="duration" value="Duration:" />
+
+                    <h:outputLabel for="term" value="Deposit Term(Months):" />
                     <h:selectOneMenu id="duration" value="#{fixedDepositManagedBean.duration}" label="duration" required="true" >
                         <f:selectItem itemValue="3" itemLabel="3"/>
                         <f:selectItem itemValue="6" itemLabel="6"/>
                         <f:selectItem itemValue="12" itemLabel="12"/>
-                        <f:selectItem itemValue="24" itemLabel="24"/>
-                    </h:selectOneMenu>  
+                        <f:selectItem itemValue="24" itemLabel="24"/> 
+                    </h:selectOneMenu> 
+
                 </h:panelGrid>
+                
 
                 <p:commandButton actionListener="#{fixedDepositManagedBean.createFixedDepositAccount}" value="Submit" />
 
+                 
             </p:panel>
+             Note:The start of the deposit term will be 7 days after account opening.
         </h:form>
     </h:body>
 </html>

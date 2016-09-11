@@ -35,7 +35,7 @@ public class FixedDepositAccount implements Serializable {
     private Double interestRate;
     @ManyToOne 
     private Customer customer;
-    private String status; 
+    private String status; //inactive, active, terminated 
     private String duration; 
 
     public String getDuration() {
