@@ -8,6 +8,7 @@ package CommonEntity.Session;
 import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
+import CommonEntity.Permission;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import Exception.EmailNotSendException;
@@ -68,7 +69,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 //    private GoogleMail gm;
 
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, Long savingAccountTypeId) throws UserExistException, EmailNotSendException {
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName) throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -111,9 +112,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             //create saving account
             long savingAccoutNumber= Math.round(Math.random()*1000000000);
             BigDecimal initialValue=new BigDecimal("0.0000");
-            Query queryType = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.id = :id");
-        q.setParameter("id", savingAccountTypeId);
-        SavingAccountType savingAccountType = (SavingAccountType) q.getSingleResult();
+            
+            System.out.println("Saving Account Type is: "+savingAccountName);
+            Query queryType = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
+        queryType.setParameter("accountType", savingAccountName);
+        SavingAccountType savingAccountType = (SavingAccountType) queryType.getSingleResult();
             SavingAccount savingAccount= new SavingAccount(savingAccoutNumber, initialValue, initialValue, "inactive", customer,savingAccountType);
             em.persist(savingAccount);
             List<SavingAccount> savingAccounts=new ArrayList<SavingAccount>();
@@ -550,5 +553,6 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         customer.setOnlineAccount(onlineAccount);
         return customer.getId();
     }
+   
 
 }
