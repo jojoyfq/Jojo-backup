@@ -14,32 +14,49 @@ import javax.persistence.ManyToOne;
 
 /**
  *
- * @author apple
+ * @author a0113893
  */
 @Entity
-public class MessageEntity implements Serializable {
+public class CustomerMessage implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String subject;
-    private String status;
     private String content;
+    private String status;
+    private boolean caseValidity;
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public MessageEntity(String subject, String content, Staff staff, Customer customer,String status) {
+    public CustomerMessage(String subject, String content, String status, Staff staff, boolean caseValidity, Customer customer) {
         this.subject = subject;
         this.content = content;
+        this.status = status;
         this.staff = staff;
+        this.caseValidity = caseValidity;
         this.customer = customer;
-        this.status=status;
+    }
+    
+      @ManyToOne
+private Staff staff;
+
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+      
+    @ManyToOne
+private Customer customer;
+
+    
+     public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getSubject() {
@@ -49,28 +66,34 @@ public class MessageEntity implements Serializable {
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isCaseValidity() {
+        return caseValidity;
+    }
+
+    public void setCaseValidity(boolean caseValidity) {
+        this.caseValidity = caseValidity;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public CustomerMessage() {
+    }
     
-@ManyToOne
-    private Staff staff;//=new Staff();
-
-@ManyToOne
-private Customer customer;
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-    public Staff getStaff() {
-        return staff;
-    }
-
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
-
     
     public Long getId() {
         return id;
@@ -90,10 +113,10 @@ private Customer customer;
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof MessageEntity)) {
+        if (!(object instanceof CustomerMessage)) {
             return false;
         }
-        MessageEntity other = (MessageEntity) object;
+        CustomerMessage other = (CustomerMessage) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -102,11 +125,7 @@ private Customer customer;
 
     @Override
     public String toString() {
-        return "CommonEntity.MessageEntity[ id=" + id + " ]";
-    }
-    
-    public MessageEntity(){
-        
+        return "CommonEntity.CustomerMessage[ id=" + id + " ]";
     }
     
 }

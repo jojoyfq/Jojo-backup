@@ -17,6 +17,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
@@ -25,7 +26,8 @@ import javax.persistence.Query;
  */
 @Stateless
 public class StaffVerifyCustomerAccountSessionBean implements StaffVerifyCustomerAccountSessionBeanLocal {
-private EntityManager em;
+ @PersistenceContext
+    private EntityManager em;
     
 //system retrieve list of pending verification customers
 @Override
