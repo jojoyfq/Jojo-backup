@@ -9,6 +9,7 @@ import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import DepositEntity.SavingAccount;
+import DepositEntity.SavingAccountType;
 import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
@@ -67,7 +68,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 //    private GoogleMail gm;
 
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType) throws UserExistException, EmailNotSendException {
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, Long savingAccountTypeId) throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -106,8 +107,13 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             Customer customer = new Customer(ic,name,gender,dateOfBirth,address,email,phoneNumber,occupation,familyInfo, null, "0.0000", onlineAccount,"unverified");          
             em.persist(customer);
             System.out.println("Create Customer successfully");
+            
+            //create saving account
             long savingAccoutNumber= Math.round(Math.random()*1000000000);
             BigDecimal initialValue=new BigDecimal("0.0000");
+            Query queryType = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.id = :id");
+        q.setParameter("id", savingAccountTypeId);
+        SavingAccountType savingAccountType = (SavingAccountType) q.getSingleResult();
             SavingAccount savingAccount= new SavingAccount(savingAccoutNumber, initialValue, initialValue, "inactive", customer,savingAccountType);
             em.persist(savingAccount);
             List<SavingAccount> savingAccounts=new ArrayList<SavingAccount>();
