@@ -25,16 +25,46 @@ public class Permission implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String systemName;
+    private String moduleName;
     private boolean validity;
+    
+       
+    @ManyToMany(cascade={CascadeType.ALL},mappedBy="permissions")
+    private List<StaffRole> staffRoles;
+
+    public boolean isValidity() {
+        return validity;
+    }
+
+    public void setValidity(boolean validity) {
+        this.validity = validity;
+    }
 
     public Permission() {
     }
+
+    public Permission(String moduleName, boolean validity) {
+        this.moduleName = moduleName;
+        this.validity = validity;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+  
+    public List<StaffRole> getStaffRoles() {
+        return staffRoles;
+    }
+
+    public void setStaffRoles(List<StaffRole> staffRoles) {
+        this.staffRoles = staffRoles;
+    }
     
-     
-    
-    @ManyToMany(cascade={CascadeType.ALL},mappedBy="permissions")
-    private List<StaffRole> staffRoles;
 
 
     public Long getId() {

@@ -7,9 +7,13 @@ package CommonEntity.Session;
 
 import CommonEntity.Customer;
 import CommonEntity.Permission;
+import CommonEntity.Staff;
 import CommonEntity.StaffRole;
+import CustomerRelationshipEntity.StaffAction;
 import Exception.RoleAlreadyExistedException;
+import Exception.RoleHasStaffException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -27,11 +31,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     private EntityManager em;
 
 @Override
-public boolean createRole(String roleName,boolean systemUserWorkspace,boolean systemUserAccount,boolean operationalCRM, 
-        boolean collaborativeCRM,boolean fixedDeposit,boolean savingAccount, 
-        boolean counterCash, boolean debitCard,boolean creditCard,boolean secureLoan,boolean unsecureLoan, 
-        boolean billModule,boolean transferModule,boolean customerPlan,boolean executedPlan,boolean finalcialInstrument,
-        boolean customerPortfolio,boolean staffPerformance,boolean customerProductRecommendation)throws RoleAlreadyExistedException {
+public Long createRole(Long staffId,String roleName) throws RoleAlreadyExistedException{
 
     Query q = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :roleName");
         q.setParameter("roleName", roleName);
@@ -40,8 +40,46 @@ public boolean createRole(String roleName,boolean systemUserWorkspace,boolean sy
         if (temp.isEmpty()){
             throw new RoleAlreadyExistedException("This role already existed in the system");
         }
+        List<Staff> staffList = new ArrayList<Staff>();
+        List<Permission>permissions=new ArrayList<Permission>();       
+        StaffRole staffRole=new StaffRole(roleName, staffList,permissions);     
+        em.persist(staffRole);
+        em.flush();  
+        
+        Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        queryStaff.setParameter("id", staffId);
+        Staff staff = (Staff)queryStaff.getSingleResult();
+        
+        StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Create new role",null, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+            
+        return staffRole.getId();
+        
+}
+
+@Override
+public boolean grantRole(Long staffId,Long staffRoleId,boolean systemUserWorkspace,boolean systemUserAccount,boolean operationalCRM, 
+        boolean collaborativeCRM,boolean fixedDeposit,boolean savingAccount, 
+        boolean counterCash, boolean debitCard,boolean creditCard,boolean secureLoan,boolean unsecureLoan, 
+        boolean billModule,boolean transferModule,boolean customerPlan,boolean executedPlan,boolean finalcialInstrument,
+        boolean customerPortfolio,boolean staffPerformance,boolean customerProductRecommendation) {
+
+     Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        queryStaff.setParameter("id", staffId);
+        Staff staff = (Staff)queryStaff.getSingleResult();
+        
+         Query queryRole = em.createQuery("SELECT c FROM StaffRole c WHERE c.id = :id");
+        queryRole.setParameter("id", staffRoleId);
+        StaffRole staffRole = (StaffRole)queryRole.getSingleResult();
+        
     
-        Query query = em.createQuery("SELECT * FROM Permission");
+    
+        Query query = em.createQuery("SELECT a FROM Permission a");
         List<Permission> currentTable = new ArrayList(query.getResultList());
         List<Permission> permissions = new ArrayList<Permission>();
         
@@ -141,9 +179,53 @@ public boolean createRole(String roleName,boolean systemUserWorkspace,boolean sy
         else
             permissions.add(currentTable.get(37));
         
+       staffRole.setPermissions(permissions);
+       em.flush();
         
-        
-        
+        StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"grant role's permission",null, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+             
  return true;   
+}
+
+@Override
+public List<StaffRole> viewRoles (){ 
+        Query query = em.createQuery("SELECT a FROM StaffRole a");
+        List<StaffRole> roleList = new ArrayList(query.getResultList());
+        return roleList;
+}
+
+@Override
+public boolean deleteRole(Long staffRoleId,Long staffId) throws RoleHasStaffException {
+   Query q = em.createQuery("SELECT a FROM StaffRole a WHERE a.id = :id");
+        q.setParameter("id", staffRoleId);
+        StaffRole staffRole = (StaffRole)q.getSingleResult(); 
+        
+        if (!staffRole.getStaffList().isEmpty()){
+          throw new RoleHasStaffException("This role has existing staff");  
+        }
+        
+        em.remove(staffRole);
+        em.flush();
+        
+        Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        queryStaff.setParameter("id", staffId);
+        Staff staff = (Staff)queryStaff.getSingleResult();
+        
+        StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Create new role",null, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+              
+        return true;
+    
 }
 }
