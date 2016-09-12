@@ -38,17 +38,16 @@ public class SavingAccount implements Serializable {
     //private Customer customer;
     @ManyToOne
     private Customer customer;
-    private String productType;
     @ManyToOne
     private SavingAccountType savingAccountType = new SavingAccountType();
 
-    public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, String productType) {
+    public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, SavingAccountType savingAccountType) {
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.availableBalance = availableBalance;
         this.status = status;
         this.customer = customer;
-        this.productType = productType;
+        this.savingAccountType = savingAccountType;
     }
 //    @OneToMany(cascade = {CascadeType.ALL},mappedBy="savingAccount")
 //    private List<TransactionRecord> transactionRecords = new ArrayList<TransactionRecord>();
