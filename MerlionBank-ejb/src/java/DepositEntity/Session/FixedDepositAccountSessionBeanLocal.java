@@ -27,8 +27,8 @@ public interface FixedDepositAccountSessionBeanLocal {
      * @param interest
      * @return
      */
-    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, String status, Double interest);
 
-    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, Double interest);
+
+    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration);
     
 }
