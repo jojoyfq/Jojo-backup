@@ -5,6 +5,7 @@
  */
 package DepositManagedBean;
 
+import DepositEntity.FixedDepositRate;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import javax.faces.event.ActionEvent;
 import java.io.IOException;
@@ -20,6 +21,9 @@ import java.util.GregorianCalendar;
 import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -47,7 +51,10 @@ public class FixedDepositManagedBean implements Serializable {
     private Long accountNumber;
     private String accountNumberStr;
     private String endDateString;
-
+    private String startDateString;
+    private FixedDepositRate rate;
+    @PersistenceContext
+    private EntityManager em;
 
     public FixedDepositManagedBean() {
     }
@@ -64,27 +71,36 @@ public class FixedDepositManagedBean implements Serializable {
        //compute end date
          calE = GregorianCalendar.getInstance();
          calE.setTime(getStartDate());
-         if (getDuration().equalsIgnoreCase("3"))
+         if (getDuration().equalsIgnoreCase("3")){
          calE.add(GregorianCalendar.MONTH, 3);
+//         try{
+//             rate = em.getReference(FixedDepositRate.class,1);
+//         }catch(EntityNotFoundException enf){         
+//         }         
+         rate = em.find(FixedDepositRate.class, 1);}
                
-         else if(getDuration().equalsIgnoreCase("6"))
+         else if(getDuration().equalsIgnoreCase("6")){
          calE.add(GregorianCalendar.MONTH, 6);
+         rate = em.find(FixedDepositRate.class, 2);}
        
-         else if(getDuration().equalsIgnoreCase("12"))
+         else if(getDuration().equalsIgnoreCase("12")){
          calE.add(GregorianCalendar.MONTH, 12);
-          
-         else
+         rate = em.find(FixedDepositRate.class, 3);} 
+         else{
          calE.add(GregorianCalendar.MONTH,24);
-     
+         rate = em.find(FixedDepositRate.class, 4);}
+         
          setEndDate(getCalE().getTime());
+         interestRate = rate.getInterestRate();
          
         //for testing
         setCustomerIC("123a");
         
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         endDateString = df.format(endDate);
+        startDateString = df.format(startDate);
        
-        createResponse = fda.createFixedAccount(customerIC, amountBD, startDate, endDate, duration);
+        createResponse = fda.createFixedAccount(customerIC, amountBD, startDate, endDate, duration,interestRate);
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         
       if (getCreateResponse() == true) {
