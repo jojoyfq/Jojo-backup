@@ -143,6 +143,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         MessageEntity message = (MessageEntity)q.getSingleResult();  
         message.setStatus("delected");
         em.persist(message);
+        em.flush();
         return true;
         
  }

@@ -5,6 +5,7 @@
  */
 package CommonEntity.Session;
 
+import CommonEntity.Permission;
 import CommonEntity.StaffRole;
 import Exception.RoleAlreadyExistedException;
 import Exception.RoleHasStaffException;
@@ -30,6 +31,11 @@ public List<StaffRole> viewRoles ();
 
 public boolean deleteRole(Long staffRoleId,Long staffId) throws RoleHasStaffException;
 
+public List<Permission> viewPermission ();
+
+//Modify role
+public boolean addPermission(Long staffId,Long staffRoleId,Long permissionId);
+public boolean deletePermission(Long staffId,Long staffRoleId,Long permissionId);
 
     
 }
