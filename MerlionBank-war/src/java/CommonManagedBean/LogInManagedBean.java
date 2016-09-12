@@ -267,6 +267,7 @@ public class LogInManagedBean implements Serializable {
             System.out.println("Username already exists");
         }
     }
+    
 
     public String getBirthdate() {
         return birthdate;
