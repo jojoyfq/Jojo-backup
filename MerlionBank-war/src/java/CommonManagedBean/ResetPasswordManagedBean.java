@@ -57,7 +57,8 @@ public class ResetPasswordManagedBean implements Serializable {
     }
 
 
-    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException,UserNotActivatedException, IOException{
+    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException,UserNotActivatedException, IOException, TwilioRestException{
+
          customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
          System.out.println(customerIc);
         if (customerIc != null && customerName != null && dateOfBirth != null && customerEmail != null) {

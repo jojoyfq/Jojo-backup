@@ -31,20 +31,17 @@ and open the template in the editor.
 
 
                         <p:outputLabel for="name" value="Name: " />
-                        <p:inputText id="name" value="#{accountActivationManagedBean.customerName}"  required="true" requiredMessage="Please fill in your Name!" />
-                        <h:message for="name"/>
+                        <p:inputText id="name" value="#{accountActivationManagedBean.customerName}"  required="true" label="name" requiredMessage="Please fill in your Name!" />
+                        <p:message for="name" display="icon"/>
 
                         <p:outputLabel for="dateOfBirth" value="Date Of Birth: " />
                         <p:calendar id="dateOfBirth" value="#{accountActivationManagedBean.dateOfBirth}" showOn="button" required="true" requiredMessage="Please choose your date of birth!"/>
-                        <h:message for="dateOfBirth"/>
+                        <p:message for="dateOfBirth" display="icon"/>
 
                         <p:outputLabel for="phoneNumber" value="Phone Number: " />
-                        <p:inputText id="phoneNumber" value="#{accountActivationManagedBean.phoneNumber}"  required="true" requiredMessage="Please fill in your phone number!" />
-                        <h:message for="phoneNumbe"/>
-
-
-
-
+                        <p:inputText id="phoneNumber" value="#{accountActivationManagedBean.phoneNumber}"  required="true" label = "phoneNumber" requiredMessage="Please fill in your phone number!" />
+                        <p:message for="phoneNumber" display="icon"/>
+                        
                     </h:panelGrid>
 
                     <p:commandButton value="Save" update="panel" actionListener="#{accountActivationManagedBean.activateAccount}" icon="ui-icon-check" />

@@ -56,6 +56,14 @@ public class MessageEntity implements Serializable {
 @ManyToOne
 private Customer customer;
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public String getContent() {
         return content;
     }
