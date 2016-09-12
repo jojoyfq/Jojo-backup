@@ -12,7 +12,7 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
             <meta name="apple-mobile-web-app-capable" content="yes" />
         </f:facet>
-        <title>PrimeFaces Atlas</title>
+        <title>Merlion Bank</title>
         <ui:insert name="head" />
     </h:head>
 
@@ -37,24 +37,28 @@
                     <div class="Container100">
                         <div class="Card ui-fluid">
                             <div class="Container100">
-                                <div class="CardBigTopic TexAlCenter Purple">Login</div>
-                                <div class="Container100">
-                                    <p:inputText id="ic" value="#{logInManagedBean.ic}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
-                                    <p:message for="ic" display="icon" />
-                                </div>
-                                <div class="Container100">
+                                <h:form>
+                                    <div class="CardBigTopic TexAlCenter Purple">Login</div>
+                                    <div class="Container100">
+                                        <p:inputText id="ic" value="#{logInManagedBean.ic}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
+                                        <p:message for="ic" display="icon" />
+                                    </div>
+                                    <div class="Container100">
 
-                                    <p:inputText id="password" value="#{logInManagedBean.customerPassword}"  placeholder="Password" required="true" requiredMessage="Please fill in your password!" />
-                                    <p:message for="password"/>
-                                </div>
+                                        <p:inputText id="password" value="#{logInManagedBean.customerPassword}"  placeholder="Password" required="true" requiredMessage="Please fill in your password!" />
+                                        <p:message for="password"/>
+                                    </div>
 
-                                <center><p:captcha label="Captcha" theme="white" rendered="#{loginManagedBean.logInAttempts>=3}" required="#{loginManagedBean.logInAttempts>=3}" /></center>
-
-
-                                <div class="Container100"><p:commandButton value="Login Now" styleClass="White Fs16" actionListener="#{logInManagedBean.customerLogIn}"/></div>
-                                <div class="Container100 TexAlRight"><p:commandLink value="New User? Register Now!"/></div>
-                                <div class="Container100 TexAlRight"><p:commandLink value="Forgot Your Password or Username?"/></div>
-
+                                    <div class="Container100"><p:commandButton id="login" value="Login Now" styleClass="White Fs16" actionListener="#{logInManagedBean.customerLogIn}"/></div>
+                                </h:form>
+                                
+                                <h:form>
+                                    <div class="Container100 TexAlRight"><p:commandLink id="registerNewUser" value="New User? Register Now!" type="submit" actionListener="#{registerManagedBean.goToSelectAccountTypePage}"/></div>
+                                </h:form>
+                                
+                                <h:form>
+                                    <div class="Container100 TexAlRight"><p:commandLink value="Forgot Your Password or Username?"/></div>
+                                </h:form>
                                 <!--<div class="Container100"><p:button value="New User? Register Now!" styleClass="GrayButton" href="./createSavingAccount.xhtml"/></div>-->
                                 <!--<div class="Container100"><p:button value="Forgot Your Password or Username?" styleClass="GrayButton" href="./ResetPasswordVerifyCustomerDetails.xhtml"/></div>-->
                             </div>
@@ -79,6 +83,7 @@
         <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
         <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
         <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+
     </h:body>
 
 </html>
