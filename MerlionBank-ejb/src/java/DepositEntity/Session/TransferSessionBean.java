@@ -5,8 +5,11 @@
  */
 package DepositEntity.Session;
 
+import CommonEntity.Customer;
+import DepositEntity.Payee;
 import DepositEntity.SavingAccount;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -31,6 +34,9 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     private Long receipientBankAccountNum;
     private Date transferTime;
     private BigDecimal transferAmount;
+    private Long payeeAccount;
+    private String payeeName;
+    private Long customerID;
 
     @Override
     public Boolean intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) {
@@ -71,6 +77,56 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 }
             }
          
+    }
+    
+    @Override
+    public Boolean addPayee(Long payeeAccount, String payeeName, Long customerID){
+                
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :payeeAccount");
+        q.setParameter("payeeAccount",payeeAccount );
+            List<SavingAccount> payeeAccountLists = q.getResultList();
+            if(payeeAccountLists.isEmpty()){
+                return false;
+            }else {
+                SavingAccount payeeAccountList = payeeAccountLists.get(0);
+                
+                    Payee payee = new Payee();
+                    payee.setSavingAccount(payeeAccountList);
+                    em.persist(payee);
+                    em.flush();
+                    Query m = em.createQuery("SELECT b FROM Customer b WHERE b.id = :customerID");
+                    m.setParameter("customerID",customerID );
+                    List<Customer> customers = m.getResultList();
+                    Customer customer = customers.get(0);
+                    customer.getPayees().add(payee);
+                    return true; 
+            }
+    }
+    
+    @Override
+    public List getPayeeList(Long customerID){
+        List payeeAccountList = new ArrayList();
+        Query m = em.createQuery("SELECT b FROM Customer b WHERE b.id = :customerID");
+        m.setParameter("customerID",customerID );
+        List<Customer> customers = m.getResultList();
+        Customer customer = customers.get(0);
+        
+        System.out.print("customer is: "+customer.getName());
+        
+        for(int i=0;i<customer.getPayees().size();i++){
+            Long savingAccount = customer.getPayees().get(i).getSavingAccount().getAccountNumber();
+            payeeAccountList.add(savingAccount);
+        }
+        return payeeAccountList;   
+    }
+    
+    @Override
+    public String searchPayeeName (Long payeeAccount){
+        Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :payeeAccount");
+        m.setParameter("payeeAccount",payeeAccount );
+        List<SavingAccount> savingAccounts = m.getResultList();
+        SavingAccount savingAccount = savingAccounts.get(0);
+        return savingAccount.getCustomer().getName();
     }
 
     public SavingAccount getGiverBankAccount() {
@@ -137,6 +193,29 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         this.transferAmount = transferAmount;
     }
    
+    public Long getPayeeAccount() {
+        return payeeAccount;
+    }
+
+    public void setPayeeAccount(Long payeeAccount) {
+        this.payeeAccount = payeeAccount;
+    }
+
+    public String getPayeeName() {
+        return payeeName;
+    }
+
+    public void setPayeeName(String payeeName) {
+        this.payeeName = payeeName;
+    }
+    
+    public Long getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(Long customerID) {
+        this.customerID = customerID;
+    }
 
     
     
