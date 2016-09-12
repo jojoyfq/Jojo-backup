@@ -42,13 +42,14 @@ public class FixedDepositAccount implements Serializable {
         return duration;
     }
 
-    public FixedDepositAccount(BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, String status ,Double interest) {
+    public FixedDepositAccount(Long accountNumber,BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, String status ,Double interest) {
       this.amount = amount;
       this.startDate = dateOfStart;
       this.endDate = dateOfEnd;
       this.duration = duration;
       this.status = status;
       this.interestRate = interest;
+      this.accountNumber = accountNumber;
         // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

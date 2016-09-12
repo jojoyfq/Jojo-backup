@@ -22,8 +22,8 @@ and open the template in the editor.
                 <h:outputLabel value="Your Fixed Deposit Account is Created Successfully" />
                 <h:outputLabel />
                 
-                <h:outputLabel value="Account Number" />
-                <h:outputLabel value="000-0-000000" />
+                <h:outputLabel for="accountNumber" value="accountNumber:" />
+                <p:outputLabel id="accountNumber" value="#{fixedDepositManagedBean.accountNumberStr}"  />          
                 
                 <h:outputLabel for="amount" value="Amount:" />
                 <p:outputLabel id="amount" value="#{fixedDepositManagedBean.amountString}"  />

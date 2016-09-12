@@ -5,7 +5,7 @@
  */
 package DepositManagedBean;
 
-import DepositEntity.FixedDepositRate;
+
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import javax.faces.event.ActionEvent;
 import java.io.IOException;
@@ -44,14 +44,13 @@ public class FixedDepositManagedBean implements Serializable {
     private Date endDate;
     private Double interestRate;
     private String customerIC;
-    private Boolean createResponse;
     private Long accountNumber;
     private String accountNumberStr;
     private String endDateString;
     private String startDateString;
-    private FixedDepositRate rate;
  //   @PersistenceContext
    // private EntityManager em;
+
 
     public FixedDepositManagedBean() {
     }
@@ -96,15 +95,14 @@ public class FixedDepositManagedBean implements Serializable {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         endDateString = df.format(endDate);
         startDateString = df.format(startDate);
+
        
-        createResponse = fda.createFixedAccount(customerIC, amountBD, startDate, endDate, duration);
-        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        accountNumber = fda.createFixedAccount(customerIC, amountBD, startDate, endDate, duration);
+        accountNumberStr = accountNumber.toString();
         
-      if (getCreateResponse() == true) {
-            ec.redirect("/MerlionBank-war/DepositManagement/createFixedDepositAccountSuccess.xhtml");
-        } else {
-            ec.redirect("/MerlionBank-war/DepositManagement/createFixedDepositAccountFail.xhtml");
-        }
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositAccountSuccess.xhtml");
+     
     }
 
     //to return the most recently created fixed deposit account info after successful creation
@@ -223,19 +221,6 @@ public class FixedDepositManagedBean implements Serializable {
         this.customerIC = customerIC;
     }
 
-    /**
-     * @return the createResponse
-     */
-    public Boolean getCreateResponse() {
-        return createResponse;
-    }
-
-    /**
-     * @param createResponse the createResponse to set
-     */
-    public void setCreateResponse(Boolean createResponse) {
-        this.createResponse = createResponse;
-    }
 
     /**
      * @return the accountNumber
@@ -306,5 +291,14 @@ public class FixedDepositManagedBean implements Serializable {
     public void setCalS(Calendar calS) {
         this.calS = calS;
     }
+    
+        public String getStartDateString() {
+        return startDateString;
+    }
+
+    public void setStartDateString(String startDateString) {
+        this.startDateString = startDateString;
+    }
+
 
 }

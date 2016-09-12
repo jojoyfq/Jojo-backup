@@ -37,7 +37,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private EntityManager em;
     FixedDepositAccount account; 
     private BigDecimal savingBalance; //from manage bean
-    private Long FixedDepositaccountNumber; //generate 
+    private Long accountNumber; //generate 
     private BigDecimal fixedAccountBalance; //from managed bean
     private String fixedDuration;//from managed bean
     //private BigDecimal amount; // amount the account should have 
@@ -48,38 +48,45 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private Object Calender;
     private FixedDepositRate rate;
     private Double interestRate;
+    private Long rateIdLong;
+    private Integer rateIdInt;
     
-    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration){
-        
-        String salt = "";
-        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
-        System.out.println("Inside createAccount");
-        
+    public Long createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration){
+                
         Query q =em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
-        for (int i = 0; i < SALT_LENGTH; i++){
-                int index = (int) (RANDOM.nextDouble() * letters.length());
-                salt += letters.substring(index, index + 1);
-            }
-            
-        FixedDepositaccountNumber = Math.round(Math.random() * 1000000000);
+        
+        accountNumber = Math.round(Math.random() * 1000000000);
         BigDecimal balance = new BigDecimal("0.0000"); //initial balance 
         //find interest rate according to duration
-        if(duration.equalsIgnoreCase("3"))
-            rate = em.find(FixedDepositRate.class,1);
-        else if(duration.equalsIgnoreCase("6"))
-            rate = em.find(FixedDepositRate.class,2);
-        else if(duration.equalsIgnoreCase("12"))
-            rate = em.find(FixedDepositRate.class,3);
-        else
-            rate = em.find(FixedDepositRate.class, 4);
-        interestRate = rate.getInterestRate();
+       
+        if(duration.equalsIgnoreCase("3")){
+            rateIdInt = 1;
+            rateIdLong = rateIdInt.longValue();
+            rate = em.find(FixedDepositRate.class,rateIdLong);}
         
-        account = new FixedDepositAccount(amount, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
-        Customer customer = null; 
+        else if(duration.equalsIgnoreCase("6")){
+                 rateIdInt = 2;
+            rateIdLong = rateIdInt.longValue();
+            rate = em.find(FixedDepositRate.class,rateIdLong);}
+        
+        else if(duration.equalsIgnoreCase("12")){
+            rateIdInt = 3;
+            rateIdLong = rateIdInt.longValue();
+            rate = em.find(FixedDepositRate.class,rateIdLong);}
+            
+        
+        else{
+            rateIdInt = 4;
+            rateIdLong = rateIdInt.longValue();
+            rate = em.find(FixedDepositRate.class,rateIdLong);}
+        
+        account = new FixedDepositAccount(accountNumber,amount, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
+        Customer customer = temp.get(0); 
         em.persist(account);
         account.setCustomer(customer);
+        //customer may alr have fixed acct
         List<FixedDepositAccount> fixedAccounts = new ArrayList<FixedDepositAccount>();
         fixedAccounts.add(account);
         customer.setFixedDepositeAccounts(fixedAccounts);
@@ -97,7 +104,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         em.flush();
         
         System.out.println("Fixed Deposit account created successfullly");
-        return null;
+        return accountNumber;
     }
 
 //    @Override
