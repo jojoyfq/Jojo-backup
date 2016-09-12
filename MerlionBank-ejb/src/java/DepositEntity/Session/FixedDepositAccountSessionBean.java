@@ -6,20 +6,24 @@
 package DepositEntity.Session;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
 import DepositEntity.FixedDepositAccount;
+import static DepositEntity.FixedDepositAccount_.customer;
 import DepositEntity.SavingAccount;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
+import java.util.Calendar;
 /**
  *
  * @author shuyunhuang
@@ -30,38 +34,73 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 
     @PersistenceContext
     private EntityManager em;
-    FixedDepositAccount account;
-    private BigDecimal savingBalance;
-    private Long FixedDepositaccountNumber;
-    private BigDecimal fixedAccountBalance;
-    private String fixedDuration;
-
+    FixedDepositAccount account; 
+    private BigDecimal savingBalance; //from manage bean
+    private Long FixedDepositaccountNumber; //generate 
+    private BigDecimal fixedAccountBalance; //from managed bean
+    private String fixedDuration;//from managed bean
+    //private BigDecimal amount; // amount the account should have 
+    
+    private static final Random RANDOM = new SecureRandom();
+    public static final int SALT_LENGTH = 8;
 //interestRate table
-    private Double interestRate3 = 0.0015;
+    /*private Double interestRate3 = 0.0015;
     private Double interestRate6 = 0.0020;
     private Double interestRate12 = 0.0035;
-    private Double interestRate24 = 0.01;
+    private Double interestRate24 = 0.01;*/
+    private Object Calender;
 
-    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart,
-            Date dateOfEnd, String duration,
-            Double interest) {
-
-        //check balance
-        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration,
+            Double interest){
+        
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        System.out.println("Inside createAccount");
+        
+        Query q =em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
-        List<Customer> customers = q.getResultList();
-        Customer customer = customers.get(0);
-        
-        
-         if(savingBalance.compareTo(amount) == -1){
+        List<Customer> temp = new ArrayList(q.getResultList());
+        for (int i = 0; i < SALT_LENGTH; i++){
+                int index = (int) (RANDOM.nextDouble() * letters.length());
+                salt += letters.substring(index, index + 1);
+            }
             
-         return false;
-         }
-         else{  
-         
-
+        FixedDepositaccountNumber = Math.round(Math.random() * 1000000000);
+        BigDecimal balance = new BigDecimal("0.0000"); //initial balance 
         
-        account = new FixedDepositAccount(amount, dateOfStart,
+        account = new FixedDepositAccount(amount, dateOfStart, dateOfEnd, duration, "inactive", interest);
+        Customer customer = null; 
+        em.persist(account);
+        account.setCustomer(customer);
+        List<FixedDepositAccount> fixedAccounts = new ArrayList<FixedDepositAccount>();
+        fixedAccounts.add(account);
+        customer.setFixedDepositeAccounts(fixedAccounts);
+        
+        em.persist(customer);
+        em.flush();
+        
+        //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create a new Fixed deposit account", customer);
+        em.persist(customer);
+        List<CustomerAction> customerActions=new ArrayList<CustomerAction>();
+        customerActions.add(0,action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+        
+        System.out.println("Fixed Deposit account created successfullly");
+        return null;
+    }
+
+    @Override
+    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, String status, Double interest) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    }
+         
+        
+        
+        /*account = new FixedDepositAccount(amount, dateOfStart,
                 dateOfEnd, duration, interest);
         account.setCustomer(customer);
         List<FixedDepositAccount> fixedAccounts = new ArrayList<FixedDepositAccount>();
@@ -74,7 +113,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         return true;
     }
     }
-}
+}*/
 
 
 /*

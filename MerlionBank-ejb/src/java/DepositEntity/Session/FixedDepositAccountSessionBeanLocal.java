@@ -16,6 +16,19 @@ import javax.ejb.Local;
 @Local
 public interface FixedDepositAccountSessionBeanLocal {
 
+    /**
+     *
+     * @param ic
+     * @param amount
+     * @param dateOfStart
+     * @param dateOfEnd
+     * @param duration
+     * @param status
+     * @param interest
+     * @return
+     */
+    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, String status, Double interest);
+
     public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, Double interest);
     
 }
