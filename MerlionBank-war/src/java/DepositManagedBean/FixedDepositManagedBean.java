@@ -73,23 +73,19 @@ public class FixedDepositManagedBean implements Serializable {
 //             rate = em.getReference(FixedDepositRate.class,1);
 //         }catch(EntityNotFoundException enf){         
 //         }         
-        // rate = em.find(FixedDepositRate.class, 1);}
-               
+           
          else if(getDuration().equalsIgnoreCase("6")){
          calE.add(GregorianCalendar.MONTH, 6);}
-        // rate = em.find(FixedDepositRate.class, 2);}
+     
        
          else if(getDuration().equalsIgnoreCase("12")){
          calE.add(GregorianCalendar.MONTH, 12);}
-        // rate = em.find(FixedDepositRate.class, 3);} 
+
          else{
          calE.add(GregorianCalendar.MONTH,24);}
-         //rate = em.find(FixedDepositRate.class, 4);}
-         
+ 
          setEndDate(getCalE().getTime());
-         //interestRate = rate.getInterestRate();
-         
-        //for testing
+
         setCustomerIC("123a");
         
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");

@@ -43,10 +43,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     //private BigDecimal amount; // amount the account should have 
     
     private static final Random RANDOM = new SecureRandom();
-    public static final int SALT_LENGTH = 8;
-    
-    private Object Calender;
     private FixedDepositRate rate;
+    
     private Double interestRate;
     private Long rateIdLong;
     private Integer rateIdInt;
@@ -57,7 +55,25 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
         
-        accountNumber = Math.round(Math.random() * 1000000000);
+        //generate and check account number
+        accountNumber = Math.round(Math.random() * 99999999);
+        int a = 1;
+        while(a==1) {
+           Query q2 = em.createQuery("SELECT c.accountNumber FROM FixedDepositAccount c");
+           List<Long> existingAcctNum = new ArrayList(q2.getResultList());
+//print to check existingAcctNum list is correct         
+//           for(int i=0;i < existingAcctNum.size();i++){
+//           System.out.print("hello"+existingAcctNum.get(i).toString());
+//           }
+//           
+           if(!existingAcctNum.isEmpty()){
+           if(existingAcctNum.contains(accountNumber))
+               accountNumber = Math.round(Math.random() * 999999999);
+           else
+               a =0; }
+           a=0;
+        }
+        
         BigDecimal balance = new BigDecimal("0.0000"); //initial balance 
         //find interest rate according to duration
        
@@ -82,7 +98,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             rateIdLong = rateIdInt.longValue();
             rate = em.find(FixedDepositRate.class,rateIdLong);}
         
-        account = new FixedDepositAccount(accountNumber,amount, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
+        interestRate = rate.getInterestRate();
+        account = new FixedDepositAccount(accountNumber,amount,balance, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
         Customer customer = temp.get(0); 
         em.persist(account);
         account.setCustomer(customer);

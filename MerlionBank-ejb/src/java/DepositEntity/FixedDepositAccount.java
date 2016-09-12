@@ -27,7 +27,7 @@ public class FixedDepositAccount implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long accountNumber; 
-    private BigDecimal amount;
+    private BigDecimal amount;//expected amount
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -36,13 +36,30 @@ public class FixedDepositAccount implements Serializable {
     @ManyToOne 
     private Customer customer;
     private String status; //inactive, active, terminated 
+    private BigDecimal balance;//real amount
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
     private String duration; 
 
     public String getDuration() {
         return duration;
     }
 
-    public FixedDepositAccount(Long accountNumber,BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, String status ,Double interest) {
+    public FixedDepositAccount(Long accountNumber,BigDecimal amount, BigDecimal balance,Date dateOfStart, Date dateOfEnd, String duration, String status ,Double interest) {
       this.amount = amount;
       this.startDate = dateOfStart;
       this.endDate = dateOfEnd;
@@ -50,6 +67,7 @@ public class FixedDepositAccount implements Serializable {
       this.status = status;
       this.interestRate = interest;
       this.accountNumber = accountNumber;
+      this.balance = balance;
         // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
