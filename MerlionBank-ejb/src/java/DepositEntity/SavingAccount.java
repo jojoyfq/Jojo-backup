@@ -25,20 +25,23 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class SavingAccount implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long accountNumber;
     private BigDecimal balance;
-    private BigDecimal availableBalance; 
+    private BigDecimal availableBalance;
     private String status; //activated, inactive, terminated, below balance
     //@OneToOne(mappedBy="savingAccount")
     //private Customer customer;
     @ManyToOne
     private Customer customer;
     private String productType;
-    
+    @ManyToOne
+    private SavingAccountType savingAccountType = new SavingAccountType();
+
     public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, String productType) {
         this.accountNumber = accountNumber;
         this.balance = balance;
@@ -57,20 +60,15 @@ public class SavingAccount implements Serializable {
 //    public void setTransactionRecords(List<TransactionRecord> transactionRecords) {
 //        this.transactionRecords = transactionRecords;
 //    }
-    
+
    // @OneToMany(cascade = {CascadeType.ALL},mappedBy = "receipientSavingAccount")
-   // private List<IntrabankTransferRecord> intrabankTransferRecords = new ArrayList<IntrabankTransferRecord>();
-
+    // private List<IntrabankTransferRecord> intrabankTransferRecords = new ArrayList<IntrabankTransferRecord>();
    // public List<IntrabankTransferRecord> getIntrabankTransferRecords() {
-   //     return intrabankTransferRecords;
-   // }
-
+    //     return intrabankTransferRecords;
+    // }
    // public void setIntrabankTransferRecords(List<IntrabankTransferRecord> intrabankTransferRecords) {
-   //     this.intrabankTransferRecords = intrabankTransferRecords;
-   // }
-
- 
-    
+    //     this.intrabankTransferRecords = intrabankTransferRecords;
+    // }
     public Long getId() {
         return id;
     }
@@ -99,6 +97,7 @@ public class SavingAccount implements Serializable {
         return true;
     }
 //test
+
     @Override
     public String toString() {
         return "DepositEntity.SavingAccount[ id=" + getId() + " ]";
@@ -111,6 +110,7 @@ public class SavingAccount implements Serializable {
         return accountNumber;
     }
 //test
+
     /**
      * @param accountNumber the accountNumber to set
      */
@@ -118,7 +118,6 @@ public class SavingAccount implements Serializable {
         this.accountNumber = accountNumber;
     }
 
- 
     /**
      * @return the status
      */
@@ -161,42 +160,39 @@ public class SavingAccount implements Serializable {
         this.balance = balance;
     }
 
-    
     public BigDecimal getAvailableBalance() {
         return availableBalance;
     }
 
-
     public void setAvailableBalance(BigDecimal availableBalance) {
         this.availableBalance = availableBalance;
     }
-    
-    public Boolean deductAmt(BigDecimal amount){
-        
-        if( this.availableBalance.doubleValue() >= amount.doubleValue()){
+
+    public Boolean deductAmt(BigDecimal amount) {
+
+        if (this.availableBalance.doubleValue() >= amount.doubleValue()) {
             this.availableBalance.subtract(amount);
-            return true;}
-        else
-            return false;            
+            return true;
+        } else {
+            return false;
         }
-    
-   public SavingAccount(){
-   }
-    
+    }
+
+    public SavingAccount() {
+    }
+
+    public SavingAccountType getSavingAccountType() {
+        return savingAccountType;
+    }
+
+    public void setSavingAccountType(SavingAccountType savingAccountType) {
+        this.savingAccountType = savingAccountType;
+    }
 
     /**
      * @return the transactionRecord
      */
-  
-
     /**
      * @return the intrabankTransferToMe
      */
-   
-            
-            
-        
-    }
-
- 
-    
+}

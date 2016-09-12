@@ -84,7 +84,7 @@ public class AccountActivationManagedBean implements Serializable {
                 System.out.println("Please dont leave blanks!");
             }
         } catch (UserNotExistException ex) {
-            System.out.println("User not existed!");
+            System.out.println("User not existed!" + ex.getMessage());
         } catch (UserAlreadyActivatedException ex1) {
             System.out.println("Problem with activation");
         }

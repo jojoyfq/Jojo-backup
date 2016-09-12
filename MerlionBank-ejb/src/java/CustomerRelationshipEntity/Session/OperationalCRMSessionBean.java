@@ -7,10 +7,13 @@ package CustomerRelationshipEntity.Session;
 
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
+import CommonEntity.Staff;
+import CustomerRelationshipEntity.StaffAction;
 import Exception.UserAlreadyActivatedException;
 import Exception.UserNotExistException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -25,9 +28,9 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
  private EntityManager em;
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    /*
+    
     @Override
-    public Customer searchCustomer(String ic) {
+    public Customer searchCustomer(String ic) throws UserNotExistException{
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -42,33 +45,24 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
                  System.out.println("Username " + ic + " does not exist!");
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
             }
-            else if (customer.getStatus().equals("active")){
-                 System.out.println("Username " + ic + "You have already activated your account!"); 
-             throw new UserAlreadyActivatedException("You have already activated your account!");
-            }
-            else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
-                System.out.println("Username " + ic + "Acount locked"); 
-            throw new UserAlreadyActivatedException("You have already activated your account!");
-            }
             else {
               System.out.println("Username " + ic + " IC check pass!");  
             }               
-        
-        
-        
-        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
-        q.setParameter("ic", ic);
-        List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
             return customer;
     }
     
     @Override
-    public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal){
-        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
-        q.setParameter("ic", ic);
-        List<Customer> temp = new ArrayList(q.getResultList());
-            Customer customer = temp.get(temp.size()-1);
+    public void updateProfile(Long staffID, Long customerID, String ic, String name, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal){
+        Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        query.setParameter("id", staffID);
+        Staff staff = (Staff)query.getSingleResult(); 
+        
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", customerID);
+        Customer customer = (Customer)q.getSingleResult();
+        customer.setIc(ic);
+        customer.setName(name);
+        customer.setDateOfBirth(dateOfBirth);
             customer.setAddress(address);
             customer.setEmail(email);
             customer.setPhoneNumber(phoneNumber);
@@ -76,14 +70,15 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
             customer.setFamilyInfo(familyInfo);
             customer.setFinancialGoal(financialGoal);
             em.merge(customer);
-            em.flush();
-            
-            CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Update Profile",customer);
-            em.persist(action);
-            List<CustomerAction> customerActions=customer.getCustomerActions();
-            customerActions.add(action);
-            customer.setCustomerActions(customerActions);
             em.persist(customer);
             em.flush();
-    }*/
+            
+            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"update Customer profile",customerID, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+    }
 }

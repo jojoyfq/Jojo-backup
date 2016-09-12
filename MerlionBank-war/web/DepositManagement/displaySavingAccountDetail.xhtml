@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <f:view>
+        <h:head>
+            <title>Display Saving Account Detail</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        </h:head>
+        <h:body>
+
+            <h:form>
+                <p:panel id="panel" header="Your Saving Account Details">
+
+<!--                    <p:messages id="savingAccounts" />-->
+                    <h:panelGrid columns="4" cellpadding="5">
+                        <p:dataTable var="SavingAccount" value="#{savingAccountManagedBean.savingAccounts}">
+                            <p:column headerText="Account Number">
+                                <h:outputText value="#{SavingAccount.accountNumber}" />
+                            </p:column>
+
+                            <p:column headerText="Available Balance">
+                                <h:outputText value="#{SavingAccount.availableBalance}" />
+                            </p:column>
+                            
+                            <p:column headerText="Balance">
+                                <h:outputText value="#{SavingAccount.balance}" />
+                            </p:column>
+                            
+                            <p:column headerText="Type">
+                                <h:outputText value="#{SavingAccount.savingAccountType}" />
+                            </p:column>
+                            
+                            
+<!--                            <p:column style="width:32px;text-align: center">
+                                <p:commandButton  icon="ui-icon-search" title="View">
+                                    <f:setPropertyActionListener value="#{messageManagedBean.customerReadMessage(event)}" target="#{messageManagedBean.message}" />
+                                </p:commandButton>
+                            </p:column>-->
+                        </p:dataTable>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
