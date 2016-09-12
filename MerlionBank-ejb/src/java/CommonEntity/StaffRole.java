@@ -7,6 +7,7 @@ package CommonEntity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,24 +31,33 @@ public class StaffRole implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String roleName;
-
-    public StaffRole(){
-    }
-    public StaffRole(Long id, String roleName, String password) {
-        this.id = id;
-        this.roleName = roleName;
-        this.password = password;
-    }
     
       
    @ManyToMany(cascade={CascadeType.ALL},mappedBy="staffRoles")
-   private ArrayList<Staff> staffList=new ArrayList<Staff> ();
+   private List<Staff> staffList;
    
    @ManyToMany(cascade={CascadeType.ALL})
    @JoinTable(name="StaffRole_Permission")
-   private ArrayList<Permission> permissions = new ArrayList<Permission>();
-   
+   private List<Permission> permissions;
 
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public StaffRole() {
+    }
+
+    public StaffRole(String roleName, List<Staff> staffList, List<Permission> permissions) {
+        this.roleName = roleName;
+        this.staffList = staffList;
+        this.permissions = permissions;
+    }
+   
+    
     public Long getId() {
         return id;
     }
@@ -64,28 +74,16 @@ public class StaffRole implements Serializable {
         this.roleName = roleName;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public ArrayList<Staff> getStaffList() {
+    public List<Staff> getStaffList() {
         return staffList;
     }
 
-    public void setStaffList(ArrayList<Staff> staffList) {
+    public void setStaffList(List<Staff> staffList) {
         this.staffList = staffList;
     }
-    private String password;
   
  
-
-  
- 
-
     @Override
     public int hashCode() {
         int hash = 0;
