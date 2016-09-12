@@ -10,6 +10,7 @@ import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import Exception.PasswordTooSimpleException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
+import com.twilio.sdk.TwilioRestException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
@@ -53,7 +54,7 @@ public class ResetPasswordManagedBean implements Serializable {
         customer = new Customer();
     }
 
-    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException,UserNotActivatedException, IOException{
+    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException,UserNotActivatedException, IOException, TwilioRestException{
          customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
          System.out.println(customerIc);
         if (customerIc != null && customerName != null && dateOfBirth != null && customerEmail != null) {

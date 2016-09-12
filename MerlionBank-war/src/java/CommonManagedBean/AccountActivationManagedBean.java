@@ -41,7 +41,7 @@ public class AccountActivationManagedBean implements Serializable {
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
-    private String customerIc;
+    private String customerIc = "S9276";
     private String customerName;
     private String phoneNumber;
     private String initialPassword;

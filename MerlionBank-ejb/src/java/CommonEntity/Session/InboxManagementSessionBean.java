@@ -17,6 +17,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
@@ -25,28 +26,32 @@ import javax.persistence.Query;
  */
 @Stateless
 public class InboxManagementSessionBean implements InboxManagementSessionBeanLocal {
+    @PersistenceContext
  private EntityManager em;
  
  //1st - staff choose customer before send message
  @Override
  public Long verifyCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException{
+     System.out.println("testing: "+customerIc);
      Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", customerIc);
         List<Customer> temp = new ArrayList(q.getResultList());
+        System.out.println("testing: "+temp.size());
         if (temp.isEmpty()) {
             System.out.println("Username " + customerIc + " does not exist!");
-            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+          //  throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
         }
         
             int size=temp.size();
             Customer customer=temp.get(size-1);
+            //System.out.println("testing: "+customer.getIc());
             if (customer.getStatus().equals("terminated")){
                  System.out.println("Username " + customerIc + " does not exist!");
-            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");    
+           // throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");    
             }
             else if (customer.getStatus().equals("inactive")){
                  System.out.println("Username " + customerIc + "Customer has not activated his or her account!"); 
-             throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
+           //  throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
             }
             else {
               System.out.println("Username " + customerIc + " IC check pass!");  
@@ -56,7 +61,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  }
     // 2nd- staff send customer message
   @Override  
- public boolean sendMessage(Long customerId,String staffID, String subject,String content)throws EmailNotSendException{
+ public boolean sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException{
       Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
@@ -68,6 +73,16 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         
         MessageEntity internalMessage = new MessageEntity (subject,content,staff,customer,"new");
         em.persist(internalMessage);
+        
+        List<MessageEntity> messages=customer.getMessages();
+        messages.add(internalMessage);
+        customer.setMessages(messages);
+        em.flush();
+        
+        List<MessageEntity> staffMessages= staff.getMessages();
+        staffMessages.add(internalMessage);
+        staff.setMessages(staffMessages);
+        em.flush();
         
          try {
             SendEmail(customer.getName(), customer.getEmail());
@@ -95,13 +110,21 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  // customer view list of message
  @Override
  public List viewAllMessage(Long customerId){
-    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
-        q.setParameter("id", customerId);
-        Customer customer = (Customer)q.getSingleResult();      
+   Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+  // System.out.println("Customer Ic is "+customerName);
+       q.setParameter("id", customerId);
+       Customer customer = (Customer)q.getSingleResult(); 
+     
+     //Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+     System.out.println("Ccccccccustomer Ic is "+customerId);
+        //q.setParameter("id", customerName);
+        //List<Customer> temp = new ArrayList(q.getResultList());
+        // int size = temp.size();
+       // Customer customer = temp.get(size - 1);
         List <MessageEntity> messages=customer.getMessages();
         List<MessageEntity>newMessages=new ArrayList<MessageEntity>();
         for (int i=0;i<messages.size();i++){
-            if (!messages.get(i).getStatus().equals("delected")){
+            if (!messages.get(i).getStatus().equals("deleted")){
                 newMessages.add(messages.get(i));
             }
         }
@@ -113,23 +136,33 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  
 // customer update status from new to read
  @Override
- public boolean readMessage(Long messageID){
-   Query q = em.createQuery("SELECT a FROM Message a WHERE a.id = :id");
+ public MessageEntity readMessage(Long messageID){
+     System.out.println("Selected Message ID is "+messageID);
+   Query q = em.createQuery("SELECT a FROM MessageEntity a WHERE a.id = :id");
         q.setParameter("id", messageID);
         MessageEntity message = (MessageEntity)q.getSingleResult();  
         message.setStatus("read");
         em.persist(message);
-        return true;
+        return message;
  }
  
  //customer delete message
  @Override
  public boolean deleteMessage(Long messageID){
-     Query q = em.createQuery("SELECT a FROM Message a WHERE a.id = :id");
+     Query q = em.createQuery("SELECT a FROM MessageEntity a WHERE a.id = :id");
         q.setParameter("id", messageID);
         MessageEntity message = (MessageEntity)q.getSingleResult();  
-        message.setStatus("delected");
+        message.setStatus("deleted");
         em.persist(message);
+        em.flush();
+        /*List<MessageEntity> messages=new ArrayList<MessageEntity>(message.getCustomer().getMessages());
+        
+        for(int i=0;i<messages.size();i++){
+            if (messages.get(i).getId()==messageID)
+                messages.get(i).setStatus("deleted");
+        }
+        message.getCustomer().setMessages(messages);
+        em.flush();*/
         return true;
         
  }

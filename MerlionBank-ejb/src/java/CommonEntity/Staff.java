@@ -28,29 +28,63 @@ import javax.persistence.OneToMany;
 public class Staff implements Serializable {
     private static final long serialVersionUID = 1L;
     @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-//    private Collection<MessageEntity> messages =new ArrayList<MessageEntity>();
+
+    private List<MessageEntity> messages;
+
     
     //@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     @ManyToMany(cascade={CascadeType.ALL})
     @JoinTable(name="Staff_StaffRole")
-    private ArrayList<StaffRole> staffRoles = new ArrayList<StaffRole>();
+    private List<StaffRole> staffRoles;
     
       @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<StaffAction> staffActions;
       
+@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
+    private List<CustomerMessage> customerMessages;
+
+    public List<CustomerMessage> getCustomerMessages() {
+        return customerMessages;
+    }
+
+    public void setCustomerMessages(List<CustomerMessage> customerMessages) {
+        this.customerMessages = customerMessages;
+    }
+
+    public List<StaffAction> getStaffActions() {
+        return staffActions;
+    }
+
+    public void setStaffActions(List<StaffAction> staffActions) {
+        this.staffActions = staffActions;
+    }
+      
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
+    private String staffName;
+    private String password;
+    private String staffEmail;
 
-//    public Collection<MessageEntity> getMessages() {
-//        return messages;
-//    }
-//
-//    public void setMessages(Collection<MessageEntity> messages) {
-//        this.messages = messages;
-//    }
+    public String getStaffEmail() {
+        return staffEmail;
+    }
 
-    public ArrayList<StaffRole> getStaffRoles() {
+    public void setStaffEmail(String staffEmail) {
+        this.staffEmail = staffEmail;
+    }
+
+
+    public List<MessageEntity> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<MessageEntity> messages) {
+        this.messages = messages;
+    }
+
+
+    public List<StaffRole> getStaffRoles() {
         return staffRoles;
     }
 
@@ -73,8 +107,7 @@ public class Staff implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    private String staffName;
-    private String password;
+ 
    
    
     

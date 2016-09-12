@@ -85,6 +85,17 @@ public class Customer implements Serializable {
     
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<CustomerAction> customerActions;
+    
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<CustomerMessage> customerMessages;
+
+    public List<CustomerMessage> getCustomerMessages() {
+        return customerMessages;
+    }
+
+    public void setCustomerMessages(List<CustomerMessage> customerMessages) {
+        this.customerMessages = customerMessages;
+    }
 
     public List<CustomerAction> getCustomerActions() {
         return customerActions;

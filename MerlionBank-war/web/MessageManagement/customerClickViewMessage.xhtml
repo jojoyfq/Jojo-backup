@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view>
+        
+        <h:body>
+            <div>Modify My Profile</div>
+            <h:form id="form">
+                  <div class="form-group">
+                <p:growl id="msgs" showDetail="true"/>
+
+                <p:panelGrid columns="2" id="ModifyUserProfile">                   
+
+                    <p:commandButton update="ModifyUserProfile" actionListener="#{messageManagedBean.customerViewAllMessages}" value="View" />
+                </p:panelGrid>
+</div>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
