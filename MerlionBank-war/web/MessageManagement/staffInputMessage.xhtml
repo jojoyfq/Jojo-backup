@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <f:view>
+        <h:head>
+            <title>Message Management System</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        </h:head>
+        <h:body>
+
+            <h:form>
+                <p:panel id="panel" header="Message Management System">
+
+                    <p:messages id="msgs" />
+
+                    <h:panelGrid columns="3" cellpadding="5">
+                        <p:outputLabel for="subject" value="Subject: " />
+                        <p:inputText id="subject" value="#{messageManagedBean.messageSubject}" required="true" label="subject" requiredMessage="Please enter the message subject!"/>
+                        <p:message for="subject" display="icon" />
+
+
+                        <p:outputLabel for="content" value="Message: " />
+
+                        <p:inputTextarea rows="6" cols="33" id="content" value ="#{messageManagedBean.content}" required="true" label = "content" requiredMessage="Cannot send blank message!"/>
+                        <p:message for="content" display="icon" />
+                    </h:panelGrid>
+
+                    <p:commandButton value="Submit" update="panel" actionListener="#{messageManagedBean.sendMessageToCustomer}" icon="ui-icon-check" />
+                </p:panel>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

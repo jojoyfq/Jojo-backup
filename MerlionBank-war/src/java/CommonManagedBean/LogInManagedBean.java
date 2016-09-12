@@ -67,21 +67,6 @@ public class LogInManagedBean implements Serializable {
     private List accountTypes;
     
           
-    public List getData() {
-        return data;
-    }
-
-    public void setData(List data) {
-        this.data = data;
-    }
-
-    public List getAccountTypes() {
-        return accountTypes;
-    }
-
-    public void setAccountTypes(List accountTypes) {
-        this.accountTypes = accountTypes;
-    }
     
 //    public List getAccountTypes() {
 //        return accountTypes;
@@ -101,14 +86,7 @@ public class LogInManagedBean implements Serializable {
 //        this.accountType = accountType;
 //    }
 
-    public int getLogInAttempts() {
-        return logInAttempts;
-    }
-
-    public void setLogInAttempts(int logInAttempts) {
-        this.logInAttempts = logInAttempts;
-    }
-
+   
     /**
      * Creates a new instance of LogInManagedBean
      */
@@ -203,6 +181,7 @@ public class LogInManagedBean implements Serializable {
                 } else {
                     logInAttempts = 0;
                     System.out.println("Log In Successful!");
+                   //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
                 }
             } else {
                 System.out.println("Please dont leave blanks!");
@@ -210,7 +189,7 @@ public class LogInManagedBean implements Serializable {
         } catch (UserNotExistException ex) {
             System.out.println("acccccounnnt does not exist!!!!!!");
         } catch (PasswordNotMatchException | UserNotActivatedException ex1) {
-            System.out.println(ex1);
+            System.out.println(ex1.getMessage());
         }
     }
 
@@ -389,4 +368,28 @@ public class LogInManagedBean implements Serializable {
     public void setCustomerPassword(String customerPassword) {
         this.customerPassword = customerPassword;
     }
+    public List getData() {
+        return data;
+    }
+
+    public void setData(List data) {
+        this.data = data;
+    }
+
+    public List getAccountTypes() {
+        return accountTypes;
+    }
+
+    public void setAccountTypes(List accountTypes) {
+        this.accountTypes = accountTypes;
+    }
+     public int getLogInAttempts() {
+        return logInAttempts;
+    }
+
+    public void setLogInAttempts(int logInAttempts) {
+        this.logInAttempts = logInAttempts;
+    }
+
+    
 }

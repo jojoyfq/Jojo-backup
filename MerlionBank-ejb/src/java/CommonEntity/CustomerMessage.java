@@ -128,4 +128,5 @@ private Customer customer;
         return "CommonEntity.CustomerMessage[ id=" + id + " ]";
     }
     
+
 }

@@ -10,7 +10,10 @@ and open the template in the editor.
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core">
-
+ <ui:define name="check">
+        #{logInManagedBean.customerLogIn(event)}
+      
+    </ui:define>
     <f:view>
         <h:head>
             <title>Message Management System</title>
@@ -33,7 +36,7 @@ and open the template in the editor.
 
                     </h:panelGrid>
                    
-                    <p:commandButton value="Log In" update="panel" actionListener="#{logInManagedBean.customerLogIn}" icon="ui-icon-check" />
+                    <p:commandButton value="Submit" update="panel" actionListener="#{messageManagedBean.verifyCustomerDetails}" icon="ui-icon-check" />
                 </p:panel>
             </h:form>
         </h:body>
