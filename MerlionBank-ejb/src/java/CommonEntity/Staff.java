@@ -39,6 +39,17 @@ public class Staff implements Serializable {
     
       @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<StaffAction> staffActions;
+      
+@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
+    private List<CustomerMessage> customerMessages;
+
+    public List<CustomerMessage> getCustomerMessages() {
+        return customerMessages;
+    }
+
+    public void setCustomerMessages(List<CustomerMessage> customerMessages) {
+        this.customerMessages = customerMessages;
+    }
 
     public List<StaffAction> getStaffActions() {
         return staffActions;
@@ -51,9 +62,20 @@ public class Staff implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
+    private String staffName;
+    private String password;
+    private String staffEmail;
+
+    public String getStaffEmail() {
+        return staffEmail;
+    }
+
+    public void setStaffEmail(String staffEmail) {
+        this.staffEmail = staffEmail;
+    }
 
 
-    public Collection<MessageEntity> getMessages() {
+    public List<MessageEntity> getMessages() {
         return messages;
     }
 
@@ -85,8 +107,7 @@ public class Staff implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    private String staffName;
-    private String password;
+ 
    
    
     

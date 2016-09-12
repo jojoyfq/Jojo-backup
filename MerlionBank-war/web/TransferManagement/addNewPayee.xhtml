@@ -5,24 +5,28 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
+<f:view>
     <h:head>
         <title>Add New Payee</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </h:head>
     <h:body>
          <h:form>
-                <h:panelGrid columns="2" id="addNewPayee" cellpadding="5"> 
+                <h:panelGrid columns="3" id="addNewPayee" cellpadding="5"> 
 
                     <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
-                    <p:inputText id="recipientAccount" value="" label="recipientAccount" required="true" requiredMessage="Recipient Account Number is required." />
+                    <p:inputText id="recipientAccount" value="#{transferManagedBean.payeeAccountString}" label="recipientAccount" required="true" requiredMessage="Recipient Account Number is required." />
+                    <h:message for="recipientAccount"  />
 
                     <h:outputLabel for="recipientName" value="Recipient Name:" />
-                    <p:inputText id="recipientName" value="" required="true" requiredMessage="Recipient Name is required." />
-                    
+                    <p:inputText id="recipientName" value="#{transferManagedBean.payeeName}" required="true" requiredMessage="Recipient Name is required." />
+                    <h:message for="recipientName"  />
 
                 </h:panelGrid>
 
-                <p:commandButton value="Next" id="addNewPayeeNext" />
+                <p:commandButton value="Next" id="addNewPayeeNext" actionListener="#{transferManagedBean.addPayee}"/>
         </h:form>
     </h:body>
+</f:view>
+
 </html>

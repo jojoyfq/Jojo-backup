@@ -5,20 +5,24 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-    <head>
+    <h:head>
         <title>Use My Payee List</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
+    </h:head>
 
-    <body>
+    <h:body>
         <h:form>
             <p:commandButton value="Add New Recipient" id="addNewPayeeButton"
                              actionListener="#{transferManagedBean.goToAddNewPayeePage}"/>
 
-            <!--            <p:selectOneMenu id="payeeList">
-                            <f:selectItem itemLabel="Select recipient ..." itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{dropdownView.countries}" />
-                        </p:selectOneMenu>         -->
+            <p:selectOneMenu id="payeeList" value="#{transferManagedBean.payeeTransferAccount}">
+                <f:selectItem itemLabel="Select recipient ..." itemValue="" noSelectionOption="true" />
+                <f:selectItems value="#{transferManagedBean.payeeList}" />
+            </p:selectOneMenu>  
+            
+            <p:commandButton value="Submit" id="transferByPayee"
+                             actionListener="#{transferManagedBean.goToTransferByPayee}"/>
+            
         </h:form>
-    </body>
+    </h:body>
 </html>

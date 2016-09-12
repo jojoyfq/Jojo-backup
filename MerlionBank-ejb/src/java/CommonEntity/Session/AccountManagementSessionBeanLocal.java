@@ -26,11 +26,11 @@ import javax.ejb.Local;
 @Local
 public interface AccountManagementSessionBeanLocal {
 
-    //Create Account   
+//Create Account   
 
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountType) throws UserExistException, EmailNotSendException;//throws UserExistException;
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName) throws UserExistException, EmailNotSendException;
 
-   //Update Account Details  
+//Update Account Details  
     public Customer diaplayCustomer(String ic);
 
     public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException;

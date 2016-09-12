@@ -24,6 +24,7 @@ public class MessageEntity implements Serializable {
     private Long id;
     private String subject;
     private String status;
+    private String content;
 
     public String getStatus() {
         return status;
@@ -48,13 +49,20 @@ public class MessageEntity implements Serializable {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-    private String content;
     
 @ManyToOne
     private Staff staff;//=new Staff();
 
 @ManyToOne
 private Customer customer;
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
     public String getContent() {
         return content;
