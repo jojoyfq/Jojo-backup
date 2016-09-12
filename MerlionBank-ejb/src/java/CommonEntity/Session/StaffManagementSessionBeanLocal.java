@@ -5,7 +5,10 @@
  */
 package CommonEntity.Session;
 
+import CommonEntity.StaffRole;
 import Exception.RoleAlreadyExistedException;
+import Exception.RoleHasStaffException;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -15,10 +18,18 @@ import javax.ejb.Local;
 @Local
 public interface StaffManagementSessionBeanLocal {
     
-public boolean createRole(String roleName,boolean systemUserWorkspace,boolean systemUserAccount,boolean operationalCRM, 
+public Long createRole(Long staffId,String roleName) throws RoleAlreadyExistedException;
+
+public boolean grantRole(Long staffId,Long staffRoleId,boolean systemUserWorkspace,boolean systemUserAccount,boolean operationalCRM, 
         boolean collaborativeCRM,boolean fixedDeposit,boolean savingAccount, 
         boolean counterCash, boolean debitCard,boolean creditCard,boolean secureLoan,boolean unsecureLoan, 
         boolean billModule,boolean transferModule,boolean customerPlan,boolean executedPlan,boolean finalcialInstrument,
-        boolean customerPortfolio,boolean staffPerformance,boolean customerProductRecommendation)throws RoleAlreadyExistedException;   
+        boolean customerPortfolio,boolean staffPerformance,boolean customerProductRecommendation);
+
+public List<StaffRole> viewRoles ();
+
+public boolean deleteRole(Long staffRoleId,Long staffId) throws RoleHasStaffException;
+
+
     
 }
