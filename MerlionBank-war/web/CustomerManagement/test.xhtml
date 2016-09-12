@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <h:head>
+            <f:facet name="first">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+            </f:facet>
+            <title>Create New Saving Account</title>
+            <ui:insert name="head" />
+        </h:head>
+        
+        <h:body styleClass="BlackBack">
+            <h:form>
+                <h:panelGrid columns="2" id="createSavingAccount" cellpadding="5">                   
+                    <h:outputLabel for="ic" value="IC:" />
+                    <p:inputText id="ic" value="#{commonInfraManagedBean.ic}" label="IC" required="true" />
+
+                    <h:outputLabel for="customerName" value="Name:" />
+                    <p:inputText id="customerName" value="#{commonInfraManagedBean.customerName}" label="customerName" required="true" requiredMessage="Please input your username"/>
+
+                    <h:outputLabel for="customerGender" value="Gender:" />
+                    <p:inputText id="customerGender" value="#{commonInfraManagedBean.customerGender}" label="customerGender" required="true" />
+
+                    <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
+                    <p:calendar id="customerDateOfBirth" value="#{commonInfraManagedBean.customerDateOfBirth}" showOn="button" required="true" />
+
+
+                    <h:outputLabel for="customerAddress" value="Address:" />
+                    <p:inputText id="customerAddress" value="#{commonInfraManagedBean.customerAddress}" label="customerAddress" required="true" />
+
+                    <h:outputLabel for="customerEmail" value="Email:" />
+                    <p:inputText id="customerEmail" value="#{commonInfraManagedBean.customerEmail}" label="customerEmail" required="true" />
+
+                    <h:outputLabel for="customerPhoneNumber" value="Phone Number:" />
+                    <p:inputText id="customerPhoneNumber" value="#{commonInfraManagedBean.customerPhoneNumber}" label="customerPhoneNumber" required="true" />
+
+                    <h:outputLabel for="customerOccupation" value="Occupation:" />
+                    <p:inputText id="customerOccupation" value="#{commonInfraManagedBean.customerOccupation}" label="customerOccupation" required="true" />
+
+                    <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
+                    <p:inputText id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" />
+                    <h:outputLabel for="savingAccountType" value="Saving Account Type:" />
+                    <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}" style="width:150px">
+
+                        <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
+                    </p:selectOneMenu>
+                </h:panelGrid>
+
+                <p:commandButton update="createSavingAccount" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

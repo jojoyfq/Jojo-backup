@@ -33,4 +33,13 @@ public class RegisterManagedBean implements Serializable{
             System.out.print("Redirect to DisplayAccountTypeChoice page fails");
         }
     }
+    
+    public void goToCreateSavingAccountPage(ActionEvent event){
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CustomerManagement/createSavingAccount.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to CreateSavingAccount page fails");
+        }
+    }
 }
