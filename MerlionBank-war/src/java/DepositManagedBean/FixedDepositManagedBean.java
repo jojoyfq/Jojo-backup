@@ -37,7 +37,8 @@ public class FixedDepositManagedBean implements Serializable {
     private String amountString;
     private BigDecimal amountBD;
     private Date startDate;
-    private Calendar cal;
+    private Calendar calE;
+    private Calendar calS;
     private String duration;
     private Date endDate;
     private Double interestRate;
@@ -47,11 +48,6 @@ public class FixedDepositManagedBean implements Serializable {
     private String accountNumberStr;
     private String endDateString;
 
-    //interestRate table
-    private final Double interestRate3 = 0.0015;
-    private final Double interestRate6 = 0.0020;
-    private final Double interestRate12 = 0.0035;
-    private final Double interestRate24 = 0.01;
 
     public FixedDepositManagedBean() {
     }
@@ -60,24 +56,27 @@ public class FixedDepositManagedBean implements Serializable {
         
         amountBD = new BigDecimal(amountString);
       
-
-        setCal(GregorianCalendar.getInstance());
-         getCal().setTime(getStartDate());
-         if (getDuration().equalsIgnoreCase("3")){
-         getCal().add(GregorianCalendar.MONTH, 3);
-         setInterestRate(interestRate3);}
+       //compute start date
+         calS = GregorianCalendar.getInstance();
+         calS.add(GregorianCalendar.DATE, 7);
+         startDate = calS.getTime();
+         
+       //compute end date
+         calE = GregorianCalendar.getInstance();
+         calE.setTime(getStartDate());
+         if (getDuration().equalsIgnoreCase("3"))
+         calE.add(GregorianCalendar.MONTH, 3);
                
-         else if(getDuration().equalsIgnoreCase("6")){
-         getCal().add(GregorianCalendar.MONTH, 6);
-         setInterestRate(interestRate6);}
+         else if(getDuration().equalsIgnoreCase("6"))
+         calE.add(GregorianCalendar.MONTH, 6);
        
-         else if(getDuration().equalsIgnoreCase("12")){
-         setInterestRate(interestRate12);
-         getCal().add(GregorianCalendar.MONTH, 12);}
-         else{
-         getCal().add(GregorianCalendar.MONTH,24);
-         setInterestRate(interestRate24);}
-         setEndDate(getCal().getTime());
+         else if(getDuration().equalsIgnoreCase("12"))
+         calE.add(GregorianCalendar.MONTH, 12);
+          
+         else
+         calE.add(GregorianCalendar.MONTH,24);
+     
+         setEndDate(getCalE().getTime());
          
         //for testing
         setCustomerIC("123a");
@@ -85,7 +84,7 @@ public class FixedDepositManagedBean implements Serializable {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         endDateString = df.format(endDate);
        
-        createResponse = fda.createFixedAccount(customerIC, amountBD, startDate, endDate, duration, interestRate);
+        createResponse = fda.createFixedAccount(customerIC, amountBD, startDate, endDate, duration);
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         
       if (getCreateResponse() == true) {
@@ -154,19 +153,6 @@ public class FixedDepositManagedBean implements Serializable {
         this.startDate = startDate;
     }
 
-    /**
-     * @return the cal
-     */
-    public Calendar getCal() {
-        return cal;
-    }
-
-    /**
-     * @param cal the cal to set
-     */
-    public void setCal(Calendar cal) {
-        this.cal = cal;
-    }
 
     /**
      * @return the duration
@@ -278,6 +264,34 @@ public class FixedDepositManagedBean implements Serializable {
      */
     public void setEndDateString(String endDateString) {
         this.endDateString = endDateString;
+    }
+
+    /**
+     * @return the calE
+     */
+    public Calendar getCalE() {
+        return calE;
+    }
+
+    /**
+     * @param calE the calE to set
+     */
+    public void setCalE(Calendar calE) {
+        this.calE = calE;
+    }
+
+    /**
+     * @return the calS
+     */
+    public Calendar getCalS() {
+        return calS;
+    }
+
+    /**
+     * @param calS the calS to set
+     */
+    public void setCalS(Calendar calS) {
+        this.calS = calS;
     }
 
 }
