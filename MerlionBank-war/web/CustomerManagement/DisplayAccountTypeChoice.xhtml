@@ -17,55 +17,56 @@
     </h:head>
 
     <h:body>
+        <h:form>
+            <div class="Wid100 MarAuto">
+                <div class="Wid80 MarAuto WidAutoOnMobile">
+                    <div style="margin-top:10rem;"></div>
 
-        <div class="Wid100 MarAuto">
-            <div class="Wid80 MarAuto WidAutoOnMobile">
-                <div style="margin-top:10rem;"></div>
-
-                <div class="Wid60 MarAuto WidAutoOnMobile">
-                    <div class="Container100">
-                        <div class="Card ui-fluid">
-                            <div class="CardBigTopic TexAlCenter Purple">Select an Account Type</div>
-                            <div class="SeparatorFull"></div>
+                    <div class="Wid60 MarAuto WidAutoOnMobile">
+                        <div class="Container100">
+                            <div class="Card ui-fluid">
+                                <div class="CardBigTopic TexAlCenter Purple">Select an Account Type</div>
+                                <div class="SeparatorFull"></div>
 
 
-                            <div class="Container100 ui-fluid">
+                                <div class="Container100 ui-fluid">
 
-                                <div class="Card">
-                                   <div class="Container10"></div>
-                                    <div class="Container50">
-                                        <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+                                    <div class="Card">
+                                        <div class="Container10"></div>
+                                        <div class="Container50">
+                                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 
-                                            <p:outputLabel for="accountType" value="Account Type: " />
-                                            <p:selectOneMenu id="accountType" value="#{accountTypeManagedBean.accountType}" style="width:220px">
-                                                <f:selectItems value="#{accountTypeManagedBean.accountTypes}" />                
-                                            </p:selectOneMenu>
-                                        </p:panelGrid>
+                                                <p:outputLabel for="accountType" value="Account Type: " />
+                                                <p:selectOneMenu id="accountType" value="#{accountTypeManagedBean.accountType}" style="width:220px">
+                                                    <f:selectItems value="#{accountTypeManagedBean.accountTypes}" />                
+                                                </p:selectOneMenu>
+                                            </p:panelGrid>
+                                        </div>
+                                        <div class="Container10"></div>
+
+                                        <div class="EmptyBox20"></div>
+                                        <div class="Container30"></div>
+                                        <div class="Container40">
+                                            <p:commandButton actionListener="#{registerManagedBean.goToCreateSavingAccountPage}" value="Submit" />
+                                        </div>
+                                        <div class="Container30"></div>
                                     </div>
-                                    <div class="Container10"></div>
-
-                                    <div class="EmptyBox20"></div>
-                                    <div class="Container30"></div>
-                                    <div class="Container40">
-                                        <p:commandButton actionListener="#{accountTypeManagedBean.chooseAccountType}" value="Submit" />
-                                    </div>
-                                    <div class="Container30"></div>
                                 </div>
+
+
                             </div>
-
-
                         </div>
                     </div>
+
                 </div>
-
             </div>
-        </div>
 
-        <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
-        <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
-        <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
-        <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
-        <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+        </h:form>
     </h:body>
 
 </html>
