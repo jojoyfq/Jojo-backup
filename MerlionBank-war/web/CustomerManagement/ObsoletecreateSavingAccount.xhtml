@@ -12,14 +12,8 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui">
     <f:view>
         <h:head>
-            <f:facet name="first">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-                <meta name="apple-mobile-web-app-capable" content="yes" />
-            </f:facet>
-            <title>Create New Saving Account</title>
-            <ui:insert name="head" />
+            <title>Update Profile</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         </h:head>
         <h:body>
             <h:form>
@@ -51,8 +45,8 @@ and open the template in the editor.
 
                     <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
                     <p:inputText id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" />
-<h:outputLabel for="savingAccountType" value="Saving Account Type:" />
-                     <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}" style="width:150px">
+                    <h:outputLabel for="savingAccountType" value="Saving Account Type:" />
+                    <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}" style="width:150px">
 
                         <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
                         <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
@@ -61,7 +55,6 @@ and open the template in the editor.
 
                 <p:commandButton update="createSavingAccount" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />
             </h:form>
-
         </h:body>
     </f:view>
 </html>

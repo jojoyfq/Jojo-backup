@@ -19,8 +19,10 @@ import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -41,7 +43,7 @@ public class CommonInfraManagedBean implements Serializable {
     private String customerAddress;
     private String customerEmail;
     private String customerPhoneNumber;
-   // private String savingAccountType;
+
 
     private String customerOccupation;
     private String customerFamilyInfo;
@@ -53,6 +55,7 @@ public class CommonInfraManagedBean implements Serializable {
     private String savingAccountType;
     private Long savingAccountID;
 
+
     public Long getSavingAccountID() {
         return savingAccountID;
     }
@@ -61,11 +64,12 @@ public class CommonInfraManagedBean implements Serializable {
         this.savingAccountID = savingAccountID;
     }
 
+
     //  private final static Logger LOGGER = Logger.getLogger(CommonInfraManagedBean.class.getName());
     /**
      * Creates a new instance of CommonInfraManaged
      */
-   //  public CommonInfraManagedBean() {
+
     //     try {
     //         MyLogger.setup();
     //     } catch (IOException e) {
@@ -77,7 +81,7 @@ public class CommonInfraManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         customer = new Customer();
-     //   savingAccountType = new SavingAccountType();
+
         savingAccountTypes = new ArrayList<>();
         savingAccountTypes.add("MerLion Monthly Saving Account");
         savingAccountTypes.add("MerLion Youth Saving Account");
@@ -85,17 +89,20 @@ public class CommonInfraManagedBean implements Serializable {
     }
 
     public void setAllVariables(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
-        if (FacesContext.getCurrentInstance().getResponseComplete()) {
-            System.out.println("lala");
-            return;
-        }
-        System.out.println("ahdhdhdhdaad ");
+
+        if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null && savingAccountType != null) {
+            if (FacesContext.getCurrentInstance().getResponseComplete()) {
+                System.out.println("lala");
+                return;
+            }
+            try {
+                System.out.println("ahdhdhdhdaad ");
           //  try {
-        //savingAccountType = (SavingAccountType) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("savingAccountType");
+                //savingAccountType = (SavingAccountType) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("savingAccountType");
 
       //  savingAccountID = savingAccountType.getId();
+                //          }catch()
 
-  //          }catch()
 //            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
 //            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
 //            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
@@ -107,15 +114,35 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
-        //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
-        amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
+
+                //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
+                amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
+
 
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-//            
+
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
+
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            } catch (UserExistException ex) {
+                System.out.println(ex.getMessage());
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+            } catch (EmailNotSendException ex1) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex1.getMessage());
+
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } else {
+            System.out.println("Message from managed bean: please do not leave blanks!");
+        }
+
     }
 
     public String getCustomerPhoneNumber() {

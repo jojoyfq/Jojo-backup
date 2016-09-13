@@ -26,6 +26,7 @@ import javax.faces.event.ActionEvent;
 @SessionScoped
 public class AccountTypeManagedBean implements Serializable {
   private List accountTypes;
+  private String accountType = "Saving Account";
   //private List data = new ArrayList();
 
     public List getAccountTypes() {
@@ -43,7 +44,7 @@ public class AccountTypeManagedBean implements Serializable {
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
-    private String accountType = "Saving Account";
+    
 
     /**
      * Creates a new instance of AccountTypeManagedBean

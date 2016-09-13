@@ -160,14 +160,6 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         message.setStatus("deleted");
         em.persist(message);
         em.flush();
-        /*List<MessageEntity> messages=new ArrayList<MessageEntity>(message.getCustomer().getMessages());
-        
-        for(int i=0;i<messages.size();i++){
-            if (messages.get(i).getId()==messageID)
-                messages.get(i).setStatus("deleted");
-        }
-        message.getCustomer().setMessages(messages);
-        em.flush();*/
         return true;
         
  }
