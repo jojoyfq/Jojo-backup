@@ -85,6 +85,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
                 }
                 else if (temp.get(i).getStatus().equals("unverified"))                
                     throw new UserExistException("User " + ic + "has not been verified by MerlionBank!");
+                else if (temp.get(i).getStatus().equals("locked"))                
+                    throw new UserExistException("User " + ic + " account has been locked. Please unlock your account!");
                 else if (temp.get(i).getStatus().equals("inactive"))
                     throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");    
             }           

@@ -7,15 +7,27 @@ package CommonEntity.Session;
 
 import CommonEntity.Customer;
 import CommonEntity.Permission;
+import static CommonEntity.Session.AccountManagementSessionBean.SALT_LENGTH;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
 import CustomerRelationshipEntity.StaffAction;
+import Exception.EmailNotSendException;
 import Exception.RoleAlreadyExistedException;
 import Exception.RoleHasStaffException;
+import Exception.StaffRoleExistException;
+import Exception.UserExistException;
+import Other.Session.GeneratePassword;
+import Other.Session.sendEmail;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -26,7 +38,9 @@ import javax.persistence.Query;
  */
 @Stateless
 public class StaffManagementSessionBean implements StaffManagementSessionBeanLocal {
+private static final Random RANDOM = new SecureRandom();
 
+    public static final int SALT_LENGTH = 8;
 @PersistenceContext
     private EntityManager em;
 
@@ -465,4 +479,152 @@ public boolean deletePermission(Long staffId,Long staffRoleId,Long permissionId)
         
         return true;  
 } 
+
+//Super Admin create staff accounts
+@Override
+public boolean createStaff(Long staffID, String staffIc,String staffName, String staffEmail, String mobileNumber, String status) throws UserExistException{
+    
+  String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        System.out.println("Inside createAccount");
+
+        Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffIc = :staffIc");
+        q.setParameter("staffIc", staffIc);
+        List<Staff> temp = new ArrayList(q.getResultList());
+        if (!temp.isEmpty()) {
+            System.out.println("User " + staffIc + " exists!");
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).getStatus().equals("active")) {
+                    throw new UserExistException("Staff " + staffIc + " exists!");
+                }
+                else if (temp.get(i).getStatus().equals("locked"))                
+                    throw new UserExistException("Staff " + staffIc + " Account has been locked!");
+                else if (temp.get(i).getStatus().equals("inactive"))
+                    throw new UserExistException("Staff " + staffIc + " has an inavtive account. Please proceed to activation.");    
+            }           
+
+        }
+        System.out.println("staff does not exist!");
+
+        for (int i = 0; i < SALT_LENGTH; i++) {
+            int index = (int) (RANDOM.nextDouble() * letters.length());
+            salt += letters.substring(index, index + 1);
+        }
+        String password = GeneratePassword.createPassword();
+        String tempPassword = password;
+
+        password = passwordHash(password + salt);
+        System.out.println("Password after hash&salt:" + password);  
+        
+        List<StaffRole> staffRoles = new ArrayList<StaffRole>();
+        Staff staff=new Staff(staffIc, staffName, password, staffEmail, mobileNumber, "inactive", staffRoles);
+        em.persist(staff);
+        em.flush();
+        
+        recordStaffAction(staffID,"create a new staff"+staffIc,null);
+        
+        return true;
+        
+}
+
+private void recordStaffAction(Long staffId, String actionDescription,Long customerId){
+    
+        Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        queryStaff.setParameter("id", staffId);
+        Staff staff = (Staff)queryStaff.getSingleResult();
+        
+        StaffAction action=new StaffAction(Calendar.getInstance().getTime(),actionDescription,customerId, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+    
+}
+
+private String passwordHash(String pass) {
+        String md5 = null;
+
+        try {
+            //Create MessageDigest object for MD5
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            //Update input string in message digest
+            digest.update(pass.getBytes(), 0, pass.length());
+
+            //Converts message digest value in base 16 (hex) 
+            md5 = new BigInteger(1, digest.digest()).toString(16);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md5;
+    }
+
+@Override
+public List<StaffRole> displayListOfRole(){
+    Query query = em.createQuery("SELECT a FROM StaffRole a");
+        List<StaffRole> staffRoles = new ArrayList(query.getResultList());
+return staffRoles;
+}
+
+@Override
+public Long assignStaffRole(Long staffId,Long newStaffId,Long staffRoleId) throws StaffRoleExistException,EmailNotSendException{
+
+    Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        queryStaff.setParameter("id", newStaffId);
+        Staff newStaff = (Staff)queryStaff.getSingleResult();
+        
+    Query queryRole = em.createQuery("SELECT b FROM StaffRole b WHERE b.id = :id");
+        queryRole.setParameter("id", staffRoleId);
+        StaffRole staffRole = (StaffRole)queryRole.getSingleResult();
+        
+        List<StaffRole>staffRoles=newStaff.getStaffRoles();
+        
+        for (int i=0;i<staffRoles.size();i++){
+            if (staffRoles.get(i).getId()==staffRoleId)
+                throw new StaffRoleExistException("staff already has this role");
+        }
+        staffRoles.add(staffRole);
+        newStaff.setStaffRoles(staffRoles);
+        em.persist(newStaff);
+        em.flush();
+        
+        List<Staff>staffList=new ArrayList<Staff>(staffRole.getStaffList());
+        staffList.add(newStaff);
+        staffRole.setStaffList(staffList);
+        em.persist(staffRole);
+        em.flush();
+        
+        recordStaffAction(staffId,"Assign Staff Roles"+newStaff.getStaffIc(),null);
+        
+        try {
+            sendEmail(newStaff.getStaffName(),newStaff.getStaffEmail(),newStaff.getPassword());
+
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+        return newStaffId;
+        
+}
+
+private void sendEmail(String name, String email, String password) throws MessagingException {
+        String subject = "Merlion Bank - Online Banking Staff Account \"" + name + "\" Created - Pending Activation";
+        System.out.println("Inside send email");
+
+        String content = "<h2>Dear " + name
+                + ",</h2><br /><h1>  Congratulations! System Administrators have successfully registered a Merlion Online Banking Staff Account for you!</h1><br />"
+                + "<h1>Welcome to Merlion Bank.</h1>"
+                + "<h2 align=\"center\">Temporary password: " + password
+                + "<br />Please activate your account through this link: " + "</h2><br />" 
+                //+ "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum SG$500 to your account in order to activate your saving account. Thank you.</p>"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
+    }
+
+
 }
