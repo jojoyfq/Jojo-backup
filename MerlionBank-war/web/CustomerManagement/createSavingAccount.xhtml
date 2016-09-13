@@ -12,48 +12,88 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui">
     <f:view>
         <h:head>
-            <title>Update Profile</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <f:facet name="first">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+            </f:facet>
+            <title>Create New Saving Account</title>
+            <ui:insert name="head" />
         </h:head>
-        <h:body>
+
+        <h:body styleClass="BlackBack">
             <h:form>
-                <h:panelGrid columns="2" id="createSavingAccount" cellpadding="5">                   
-                    <h:outputLabel for="ic" value="IC:" />
-                    <p:inputText id="ic" value="#{commonInfraManagedBean.ic}" label="IC" required="true" />
+                <div class="Wid100 MarAuto">
+                    <div class="Wid80 MarAuto WidAutoOnMobile">
+                        <div style="margin-top:10rem;"></div>
 
-                    <h:outputLabel for="customerName" value="Name:" />
-                    <p:inputText id="customerName" value="#{commonInfraManagedBean.customerName}" label="customerName" required="true" requiredMessage="Please input your username"/>
-
-                    <h:outputLabel for="customerGender" value="Gender:" />
-                    <p:inputText id="customerGender" value="#{commonInfraManagedBean.customerGender}" label="customerGender" required="true" />
-
-                    <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
-                    <p:calendar id="customerDateOfBirth" value="#{commonInfraManagedBean.customerDateOfBirth}" showOn="button" required="true" />
+                        <div class="Wid60 MarAuto WidAutoOnMobile">
+                            <div class="Container100">
+                                <div class="Card ui-fluid">
+                                    <div class="CardBigTopic TexAlCenter Purple">Create New Saving Account</div>
+                                    <div class="SeparatorFull"></div>
 
 
-                    <h:outputLabel for="customerAddress" value="Address:" />
-                    <p:inputText id="customerAddress" value="#{commonInfraManagedBean.customerAddress}" label="customerAddress" required="true" />
+                                    <div class="Container100 ui-fluid">
+                                        <div class="Card">
 
-                    <h:outputLabel for="customerEmail" value="Email:" />
-                    <p:inputText id="customerEmail" value="#{commonInfraManagedBean.customerEmail}" label="customerEmail" required="true" />
+                                            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                                                <p:outputLabel for="ic" value="IC:" />
+                                                <p:inputText id="ic" value="#{commonInfraManagedBean.ic}" label="IC" required="true" />
 
-                    <h:outputLabel for="customerPhoneNumber" value="Phone Number:" />
-                    <p:inputText id="customerPhoneNumber" value="#{commonInfraManagedBean.customerPhoneNumber}" label="customerPhoneNumber" required="true" />
+                                                <p:outputLabel for="customerName" value="Name:" />
+                                                <p:inputText id="customerName" value="#{commonInfraManagedBean.customerName}" label="customerName" required="true" requiredMessage="Please input your username"/>
 
-                    <h:outputLabel for="customerOccupation" value="Occupation:" />
-                    <p:inputText id="customerOccupation" value="#{commonInfraManagedBean.customerOccupation}" label="customerOccupation" required="true" />
+                                                <p:outputLabel for="customerGender" value="Gender:" />
+                                                <p:inputText id="customerGender" value="#{commonInfraManagedBean.customerGender}" label="customerGender" required="true" />
 
-                    <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
-                    <p:inputText id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" />
-<h:outputLabel for="savingAccountType" value="Saving Account Type:" />
-                     <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}" style="width:150px">
+                                                <p:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
+                                                <p:calendar id="customerDateOfBirth" value="#{commonInfraManagedBean.customerDateOfBirth}" showOn="button" required="true" />
 
-                        <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
-                    </p:selectOneMenu>
-                </h:panelGrid>
+                                                <p:outputLabel for="customerAddress" value="Address:" />
+                                                <p:inputText id="customerAddress" value="#{commonInfraManagedBean.customerAddress}" label="customerAddress" required="true" />
 
-                <p:commandButton update="createSavingAccount" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />
+                                                <p:outputLabel for="customerEmail" value="Email:" />
+                                                <p:inputText id="customerEmail" value="#{commonInfraManagedBean.customerEmail}" label="customerEmail" required="true" />
+
+                                                <p:outputLabel for="customerPhoneNumber" value="Phone Number:" />
+                                                <p:inputText id="customerPhoneNumber" value="#{commonInfraManagedBean.customerPhoneNumber}" label="customerPhoneNumber" required="true" />
+
+                                                <p:outputLabel for="customerOccupation" value="Occupation:" />
+                                                <p:inputText id="customerOccupation" value="#{commonInfraManagedBean.customerOccupation}" label="customerOccupation" required="true" />
+
+                                                <p:outputLabel for="customerFamilyInfo" value="Family Information:" />
+                                                <p:inputText id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" />
+
+                                                <p:outputLabel for="savingAccountType" value="Saving Account Type:" />
+                                                <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}">
+                                                    <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
+                                                    <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
+                                                </p:selectOneMenu>
+                                                
+                                                <div class="EmptyBox20"></div>
+
+                                                <p:commandButton type="button" value="Submit" update="createSavingAccount" actionListener="#{commonInfraManagedBean.setAllVariables}"/>
+                                            </p:panelGrid>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+                <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+                <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+                <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+                <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+
             </h:form>
         </h:body>
     </f:view>
