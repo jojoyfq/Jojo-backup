@@ -77,7 +77,7 @@ public class MessageManagedBean implements Serializable {
         message = new MessageEntity();
         messages = new ArrayList<>();
         //customerId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id");
-        customerId = logInManagedBean.;
+        customerId = logInManagedBean.getCustomerId();
         customerIc = logInManagedBean.getIc();
         customerName =logInManagedBean.getCustomerName();
 
