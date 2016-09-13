@@ -10,56 +10,82 @@ and open the template in the editor.
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
+
     <f:view>
         <h:head>
-            <title>Modify Profile</title>
+            <title>Modify My Profile</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         </h:head>
         <h:body>
-            <h:form id="form">   
+            <div>Modify My Profile</div>
+            <h:form id="form">
+                  <div class="form-group">
+                <p:growl id="msgs" showDetail="true"/>
+
+                <p:panelGrid columns="2" id="ModifyUserProfile">                   
+
+                    <h:outputLabel for="ic" value="IC:" /> 
+                    <h:outputLabel value="#{logInManagedBean.ic}" />
+
+                    <h:outputLabel for="ic" value="IC2: " />
+                    <p:inplace id="ic" editor="true">
+                        <p:inputText value="#{logInManagedBean.ic}" required="true" label="text" />
+                    </p:inplace>
 
 
-                <p:growl id="msgs" showDetail="true" />
 
-                <p:panel header="Modify Your Password!" style="margin-bottom:10px;">
-                      <h:panelGrid columns="3" cellpadding="5">
-                        <h:outputLabel for="ic" value="IC:" /> 
-                        <h:outputLabel for="ic" value="#{logInManagedBean.ic}" /> 
-                        <h:outputLabel/>
+                    <h:outputLabel for="name" value="Name:" /> 
+                    <h:outputLabel value="#{logInManagedBean.customerName}" />
 
-                        <h:outputLabel for="name" value="Name:" /> 
-                        <h:outputLabel for="name" value="#{logInManagedBean.customerName}" /> 
-                        <h:outputLabel/>
+                    <h:outputLabel for="gender" value="Gender:" /> 
+                    <h:outputLabel value=" #{logInManagedBean.customerGender}" /> 
 
-                        <h:outputLabel for="customerDateOfBirth" value="Name:" /> 
-                        <h:outputLabel for="customerDateOfBirth" value="#{logInManagedBean.birthdate}" /> 
-                        <h:outputLabel/>
+                    <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
+                    <h:outputLabel value="#{logInManagedBean.birthdate}" />
+<!--                    <p:calendar id="customerDateOfBirth" value="{logInManagedBean.customerDateOfBirth}" showOn="button" required="true" />-->
 
-                        <h:outputLabel for="email" value="Email:" /> 
-                        <p:inputText id="email" value="#{logInManagedBean.customerEmail}"  required="true" requiredMessage="Please fill in your email!" />
-                        <p:message for="email" display="icon" />
-                        
-                         <h:outputLabel for="phoneNumber" value="Phone Number:" /> 
-                        <p:inputText id="phoneNumber" value="#{logInManagedBean.customerPhoneNumber}"   required="true" requiredMessage="Please fill in your phone number!"/>
-                        <p:message for="phoneNumber" display="icon"/>
 
-                        <h:outputLabel for="address" value="Address is:" /> 
-                        <p:inputText id="address" value="#{logInManagedBean.customerAddress}" label="customerAddress" required="true" requiredMessage="Please fill in your address!"/>
-                        <p:message for="address" display="icon"/>
-                         <h:outputLabel for="occupation" value="Occupation:" /> 
-                        <p:inputText id="occupation" value="#{logInManagedBean.customerOccupation}" label="occupation" required="true" requiredMessage="Please fill in your occupation!"/>
-                        <p:message for="occupation" display="icon"/>
 
-                        <h:outputLabel for="familyInfo" value="Family Information:" /> 
-                        <p:inputText id = "familyInfo" value="#{logInManagedBean.customerFamilyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
-                        <p:message for="familyInfo" display="icon"/>
-
+                    <h:outputLabel for="email" value="Email:" /> 
+                    <p:inputText id="email" value="#{logInManagedBean.customerEmail}"  required="true" requiredMessage="Please fill in your email!" />
+<!--                    <div class="missingfield">-->
+                        <h:message for="email"  />
                        
-                        <br></br>
+<!--                   </div>-->
+                 
+                    <h:outputLabel for="phoneNumber" value="Phone Number:" /> 
+                    <p:inputText id="phoneNumber" value="#{logInManagedBean.customerPhoneNumber}"   required="true" requiredMessage="Please fill in your phone number!"/>
+                    <div class="missingfield">
+                        <h:message for="phoneNumber"  />
+                    </div>
+                 
+         
 
-                        <p:commandButton update="msgs"  icon="ui-icon-script" actionListener="#{logInManagedBean.modifyProfile}" value="Submit" />
-                    </h:panelGrid>
-                </p:panel>
+                    <h:outputLabel for="address" value="Address is:" /> 
+                    <p:inputText id="address" value="#{logInManagedBean.customerAddress}" label="customerAddress" required="true" requiredMessage="Please fill in your address!"/>
+                     <div class="missingfield">
+                        <h:message for="address"  />
+                    </div>
+                      <h:outputLabel/>
+                    <h:outputLabel for="occupation" value="Occupation:" /> 
+                    <p:inputText id="occupation" value="#{logInManagedBean.customerOccupation}" label="occupation" required="true" requiredMessage="Please fill in your occupation!"/>
+                    <h:message for="occupation"  />
+
+                    <h:outputLabel for="familyInfo" value="Family Information:" /> 
+                    <p:inputText id = "familyInfo" value="#{logInManagedBean.customerFamilyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
+                    <h:message for="familyInfo"  />
+
+
+<!--                 <h:outputLabel for="financialAsset" value="Financial Asset: " /> 
+                 <p:inputText id = "financialAsset" value="{logInManagedBean.customerFinancialAsset}" label="financialAsset" required="true" requiredMessage="Please fill in your !"/>
+                    <h:message for="financialAsset"  />-->
+<!--
+                    <h:outputLabel for="financialGoal" value="Financial Goal:" /> 
+                    <p:inputText value="{logInManagedBean.customerFinancialGoal}"/>-->
+
+                    <p:commandButton update="ModifyUserProfile" actionListener="#{logInManagedBean.modifyProfile}" value="Edit" />
+                </p:panelGrid>
+</div>
             </h:form>
         </h:body>
     </f:view>

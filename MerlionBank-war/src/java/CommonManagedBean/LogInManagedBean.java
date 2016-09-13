@@ -32,7 +32,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
-import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -189,14 +188,8 @@ public class LogInManagedBean implements Serializable {
             }
         } catch (UserNotExistException ex) {
             System.out.println("acccccounnnt does not exist!!!!!!");
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,"Log In Message" ,ex.getMessage());
-
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (PasswordNotMatchException | UserNotActivatedException ex1) {
             System.out.println(ex1.getMessage());
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,"Log In Message" ,ex1.getMessage());
-
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
 
@@ -241,23 +234,16 @@ public class LogInManagedBean implements Serializable {
 
             System.out.println("Phone Number is: " + customerPhoneNumber);
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null
-                    && customerOccupation != null && customerFamilyInfo != null) {
+                    && customerOccupation != null && customerFamilyInfo != null && customerFinancialGoal != null) {
                 amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
-                
-                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,"System Message" ,"Profile edited successfully!");
-
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
             } else {
                 System.out.println("Please fill in correct information!");
-                
+
             }
 
             //   amsbl.updateProfile(ic, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
         } catch (UserExistException ex) {
             System.out.println("Username already exists");
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,"Log In Message" ,ex.getMessage());
-
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
     
