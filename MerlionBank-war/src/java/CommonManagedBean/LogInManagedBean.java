@@ -46,7 +46,7 @@ public class LogInManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
 
     private Customer customer;
-    private String ic = "S9276";
+    private String ic;
     private String customerName;
     private String customerGender;
     private Date customerDateOfBirth;
@@ -66,9 +66,16 @@ public class LogInManagedBean implements Serializable {
 
     private List data = new ArrayList();
     private List accountTypes;
-    
-          
-    
+    private Long customerId;
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
 //    public List getAccountTypes() {
 //        return accountTypes;
 //    }
@@ -76,9 +83,6 @@ public class LogInManagedBean implements Serializable {
 //    public void setAccountTypes(List accountTypes) {
 //        this.accountTypes = accountTypes;
 //    }
-
-    
-
 //    public String getAccountType() {
 //        return accountType;
 //    }
@@ -86,8 +90,6 @@ public class LogInManagedBean implements Serializable {
 //    public void setAccountType(String accountType) {
 //        this.accountType = accountType;
 //    }
-
-   
     /**
      * Creates a new instance of LogInManagedBean
      */
@@ -111,7 +113,7 @@ public class LogInManagedBean implements Serializable {
 //            accountTypes.add("Loan Account");
 //            accountTypes.add("Wealth Managment Account");
             this.viewOneCustomer();
-        //    System.out.println("Account Type chosen is " + accountType);
+            //    System.out.println("Account Type chosen is " + accountType);
         } catch (Exception ex) {
             System.out.println(ex);
         }
@@ -139,7 +141,6 @@ public class LogInManagedBean implements Serializable {
 //        context.getExternalContext().getFlash().setKeepMessages(true);
 //        LOGGER.info("MESSAGE INFO: " + message);
 //    }
- 
 //    public void chooseAccountType(ActionEvent event) throws IOException {
 ////        accountTypes.add("Saving Account");
 ////        accountTypes.add("Credit Account");
@@ -169,10 +170,12 @@ public class LogInManagedBean implements Serializable {
 //
     public void customerLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
         try {
-            if (customerName != null && customerPassword != null) {
-                Long logInId = amsbl.checkLogin(ic, customerPassword);
-                //logInAttempts = 0;
-                if (logInId.toString().equals("1")) {
+            if (ic != null && customerPassword != null) {
+                customerId = amsbl.checkLogin(ic, customerPassword);
+                System.out.println("managed bean message: id: "+customerId);
+                selectedCustomer = amsbl.diaplayCustomerId(customerId);
+           System.out.println("managed bean message: id: "+customerId);     //logInAttempts = 0;
+                if (customerId.toString().equals("1")) {
                     System.out.println("Password does not match");
                     logInAttempts++;
                     System.out.println("number attempts:" + logInAttempts);
@@ -182,19 +185,22 @@ public class LogInManagedBean implements Serializable {
                 } else {
                     logInAttempts = 0;
                     System.out.println("Log In Successful!");
-                   //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("name", selectedCustomer.getName());
+
+                    //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
                 }
             } else {
                 System.out.println("Please dont leave blanks!");
             }
         } catch (UserNotExistException ex) {
-            System.out.println("acccccounnnt does not exist!!!!!!");
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,"Log In Message" ,ex.getMessage());
+           // System.out.println("acccccounnnt does not exist!!!!!!");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", ex.getMessage());
 
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (PasswordNotMatchException | UserNotActivatedException ex1) {
             System.out.println(ex1.getMessage());
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,"Log In Message" ,ex1.getMessage());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", ex1.getMessage());
 
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
@@ -239,28 +245,27 @@ public class LogInManagedBean implements Serializable {
                 return;
             }
 
-            System.out.println("Phone Number is: " + customerPhoneNumber);
+            System.out.println("Message from managed Bean: IC is: " +ic);
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null
                     && customerOccupation != null && customerFamilyInfo != null) {
                 amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
-                
-                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,"System Message" ,"Profile edited successfully!");
 
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Profile edited successfully!");
+
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
             } else {
                 System.out.println("Please fill in correct information!");
-                
+
             }
 
             //   amsbl.updateProfile(ic, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
         } catch (UserExistException ex) {
             System.out.println("Username already exists");
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,"Log In Message" ,ex.getMessage());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", ex.getMessage());
 
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
 
     public String getBirthdate() {
         return birthdate;
@@ -271,7 +276,6 @@ public class LogInManagedBean implements Serializable {
     }
 
    // private final static Logger LOGGER = Logger.getLogger(LogInManagedBean.class.getName());
-
     public Customer getCustomer() {
         return customer;
     }
@@ -383,6 +387,7 @@ public class LogInManagedBean implements Serializable {
     public void setCustomerPassword(String customerPassword) {
         this.customerPassword = customerPassword;
     }
+
     public List getData() {
         return data;
     }
@@ -398,7 +403,8 @@ public class LogInManagedBean implements Serializable {
     public void setAccountTypes(List accountTypes) {
         this.accountTypes = accountTypes;
     }
-     public int getLogInAttempts() {
+
+    public int getLogInAttempts() {
         return logInAttempts;
     }
 
@@ -406,5 +412,4 @@ public class LogInManagedBean implements Serializable {
         this.logInAttempts = logInAttempts;
     }
 
-    
 }

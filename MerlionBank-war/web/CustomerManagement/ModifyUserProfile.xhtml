@@ -18,10 +18,10 @@ and open the template in the editor.
         <h:body>
             <h:form id="form">   
 
-
-                <p:growl id="msgs" showDetail="true" />
-
-                <p:panel header="Modify Your Password!" style="margin-bottom:10px;">
+             
+                <p:panel header="Modify Your Password!" style="margin-bottom:10px;" id="panel">
+                    
+                    <p:messages id="msgs" />
                       <h:panelGrid columns="3" cellpadding="5">
                         <h:outputLabel for="ic" value="IC:" /> 
                         <h:outputLabel for="ic" value="#{logInManagedBean.ic}" /> 
@@ -57,7 +57,7 @@ and open the template in the editor.
                        
                         <br></br>
 
-                        <p:commandButton update="msgs"  icon="ui-icon-script" actionListener="#{logInManagedBean.modifyProfile}" value="Submit" />
+                        <p:commandButton update="panel"  icon="ui-icon-script" actionListener="#{logInManagedBean.modifyProfile}" value="Submit" />
                     </h:panelGrid>
                 </p:panel>
             </h:form>

@@ -22,6 +22,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 
 /**
  *
@@ -33,6 +34,14 @@ public class MessageManagedBean implements Serializable {
 
     @EJB
     InboxManagementSessionBeanLocal imsbl;
+    
+    //maintain the log in function from LogInManagedBean
+    @Inject
+    private LogInManagedBean logInManagedBean;
+//setter for LogInManagedBean
+    public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
+        this.logInManagedBean = logInManagedBean;
+    }
 
     private String customerIc;
     private Long staffId;
@@ -46,37 +55,7 @@ public class MessageManagedBean implements Serializable {
     private MessageEntity message;
     private String customerName;
 
-    public List<MessageEntity> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<MessageEntity> messages) {
-        this.messages = messages;
-    }
-
-    public MessageEntity getMessage() {
-        return message;
-    }
-
-    public void setMessage(MessageEntity message) {
-        this.message = message;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public Long getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
-    }
+    
 //    public List getMessages() {
 //        return messages;
 //    }
@@ -88,6 +67,9 @@ public class MessageManagedBean implements Serializable {
 
     @PostConstruct
     public void init() {
+        
+        System.err.println("************ ic: " + logInManagedBean.getIc());
+        
         staff = new Staff();
         customer = new Customer();
 //        customerId = customer.getId();
@@ -95,9 +77,9 @@ public class MessageManagedBean implements Serializable {
         message = new MessageEntity();
         messages = new ArrayList<>();
         //customerId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id");
-        customerId = 2L;
-        customerIc = "S9276";
-        customerName = "gao";
+        customerId = logInManagedBean.;
+        customerIc = logInManagedBean.getIc();
+        customerName =logInManagedBean.getCustomerName();
 
         System.out.println("Logged in customer IC is : " + customerId);
        messages = imsbl.viewAllMessage(customerId);
@@ -139,10 +121,12 @@ public class MessageManagedBean implements Serializable {
     }
 
     public MessageEntity customerReadMessage(ActionEvent event) throws IOException {
+        message = (MessageEntity)event.getComponent().getAttributes().get("selectedMessage");
+        System.err.println("********** message.getId(): " + message.getId());
         //messageId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("MessageID");
       //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/displaySingleMessage.xhtml");
-        messageId = 6L;
-        message = imsbl.readMessage(messageId);
+//        messageId = 6L;
+        message = imsbl.readMessage(message.getId());
         return message;
     }
     public void customerDeleteMessage(Long msgID) throws IOException {
@@ -229,5 +213,35 @@ public class MessageManagedBean implements Serializable {
     public void setStaff(Staff staff) {
         this.staff = staff;
     }
+public List<MessageEntity> getMessages() {
+        return messages;
+    }
 
+    public void setMessages(List<MessageEntity> messages) {
+        this.messages = messages;
+    }
+
+    public MessageEntity getMessage() {
+        return message;
+    }
+
+    public void setMessage(MessageEntity message) {
+        this.message = message;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
+    }
 }
