@@ -87,13 +87,15 @@ public class CommonInfraManagedBean implements Serializable {
     }
 
     public void setAllVariables(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
-        if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null && savingAccountType != null) {
-            if (FacesContext.getCurrentInstance().getResponseComplete()) {
-                System.out.println("lala");
-                return;
-            }
-            try {
-                System.out.println("ahdhdhdhdaad ");
+
+        if(ic!=null && customerName!=null && customerGender!=null && customerDateOfBirth!=null && customerAddress!=null && customerEmail!=null && customerPhoneNumber!=null && customerOccupation!=null && customerFamilyInfo!=null &&savingAccountType!=null){
+        if (FacesContext.getCurrentInstance().getResponseComplete()) {
+            System.out.println("lala");
+            return;
+        }
+        try {
+            System.out.println("ahdhdhdhdaad ");
+
           //  try {
                 //savingAccountType = (SavingAccountType) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("savingAccountType");
 
@@ -118,6 +120,7 @@ public class CommonInfraManagedBean implements Serializable {
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -130,11 +133,13 @@ public class CommonInfraManagedBean implements Serializable {
             } catch (EmailNotSendException ex1) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex1.getMessage());
 
+
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
         } else {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
+       
     }
 
     public String getCustomerPhoneNumber() {

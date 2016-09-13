@@ -136,7 +136,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             System.out.println("Debit Account successfully created");
             
            try {
-            SendPendingVerificationEmail(name, email);
+               // reminder: remove password
+            SendPendingVerificationEmail(name, email,tempPassword);
 
         } catch (MessagingException ex) {
             System.out.println("Error sending email.");
@@ -171,7 +172,16 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.flush();
 
     }
-
+    
+    @Override
+    public Customer diaplayCustomerId(Long id) {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", id);
+        Customer customer =(Customer) q.getSingleResult();
+        return customer;
+    }
+    
+   
     @Override
     public Customer diaplayCustomer(String ic) {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
@@ -183,14 +193,14 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     
     
-    private void SendPendingVerificationEmail(String name, String email) throws MessagingException {
+    private void SendPendingVerificationEmail(String name, String email,String password) throws MessagingException {
       String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Verification";
         System.out.println("Inside send email");
 
         String content = "<h2>Dear " + name
                 + ",</h2><br /><h1>  Congratulations! You have successfully registered a Merlion Online Banking Account!</h1><br />"
                 + "<h1>Welcome to Merlion Bank.</h1>"
-                + "<br />Please activate your account through this link: " + "</h2><br />" 
+                + "<br />Temporary Password: " + password + "<br />Please activate your account through this link: " + "</h2><br />" 
                 + "<p style=\"color: #ff0000;\">Please kindly wait for 1 to 2 working days for staff to verify you account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>MerLION Platform User Support</p>";
