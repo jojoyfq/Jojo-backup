@@ -260,6 +260,7 @@ public class LogInManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
+    
 
     public String getBirthdate() {
         return birthdate;
