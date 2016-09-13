@@ -17,8 +17,10 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -73,6 +75,9 @@ public class AccountActivationManagedBean implements Serializable {
 
                     if (msg2.equals(customerIc)) {
                         System.out.println("Account activated successfully!");
+                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account activated successfully!");
+
+                        RequestContext.getCurrentInstance().showMessageInDialog(message);
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
                     } else {
                         System.out.println(msg2);
@@ -85,33 +90,45 @@ public class AccountActivationManagedBean implements Serializable {
             }
         } catch (UserNotExistException ex) {
             System.out.println("User not existed!" + ex.getMessage());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Account Activation Message", ex.getMessage());
+
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
         } catch (UserAlreadyActivatedException ex1) {
             System.out.println("Problem with activation");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Account Activation Message", ex1.getMessage());
+
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
 
     public void resetInitialPassword(ActionEvent event) throws PasswordTooSimpleException {
-        if(customerIc!=null && initialPassword!=null && newPassword!=null && confirmedPassword != null){
-        String msg = msg = amsbl.updatePassword(customerIc, initialPassword, newPassword, confirmedPassword);
+        try {
+            if (customerIc != null && initialPassword != null && newPassword != null && confirmedPassword != null) {
+                String msg = msg = amsbl.updatePassword(customerIc, initialPassword, newPassword, confirmedPassword);
 
-        System.out.println(msg);
+                System.out.println(msg);
 
-        if (msg.equals(customerIc)) {
-            System.out.println("Your password has been successfully changed!");
-            boolean msg2 = amsbl.updateAccountStatus(msg);
-            if (msg2 == true) {
-                System.out.println("Status has been updated!");
+                if (msg.equals(customerIc)) {
+                    System.out.println("Your password has been successfully changed!");
+                    boolean msg2 = amsbl.updateAccountStatus(msg);
+                    if (msg2 == true) {
+                        System.out.println("Status has been updated!");
+                    } else {
+                        System.out.println("Status has NOT been updated!");
+
+                    }
+                } else {
+                    System.out.println("password has not been changed!");
+                }
             } else {
-                System.out.println("Status has NOT been updated!");
-
+                System.out.println("Please do not leave blanks!");
             }
-        } else {
-            System.out.println("password has not been changed!");
-        }
-        }else{
-            System.out.println("Please do not leave blanks!");
-        }
+        } catch (PasswordTooSimpleException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Account Activation Message", ex.getMessage());
 
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
     }
 
     public Customer getCustomer() {

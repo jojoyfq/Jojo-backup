@@ -14,9 +14,11 @@ import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -25,6 +27,7 @@ import javax.faces.event.ActionEvent;
 @Named(value = "accountTypeManagedBean")
 @SessionScoped
 public class AccountTypeManagedBean implements Serializable {
+
   private List accountTypes;
   private String accountType = "Saving Account";
   //private List data = new ArrayList();
@@ -51,10 +54,10 @@ public class AccountTypeManagedBean implements Serializable {
      */
     public AccountTypeManagedBean() {
     }
-    
+
     @PostConstruct
     public void init() {
-        
+
         try {
             accountTypes = new ArrayList();
             accountTypes.add("Saving Account");
@@ -62,18 +65,19 @@ public class AccountTypeManagedBean implements Serializable {
             accountTypes.add("Loan Account");
             accountTypes.add("Wealth Managment Account");
             System.out.println(accountTypes);
-           
-        //    System.out.println("Account Type chosen is " + accountType);
+
+            //    System.out.println("Account Type chosen is " + accountType);
         } catch (Exception ex) {
             System.out.println(ex);
         }
 
     }
-     public void chooseAccountType(ActionEvent event) throws IOException {
+
+    public void chooseAccountType(ActionEvent event) throws IOException {
 
 //        FacesMessage msg;
 //        msg = new FacesMessage("Selected" + accountType);
-        System.out.println("Account Type chosen is " );
+        System.out.println("Account Type chosen is ");
         try {
             switch (accountType) {
                 case "Saving Account":
@@ -81,15 +85,30 @@ public class AccountTypeManagedBean implements Serializable {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/createSavingAccount.xhtml");
                     break;
                 case "Credit Account":
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "This service is currently not available!");
+
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
                     System.out.println("This service is currently not available!");
                     break;
                 case "Loan Account":
                     System.out.println("This service is currently not available!");
+                   message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "This service is currently not available!");
+
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                    System.out.println("This service is currently not available!");
                     break;
                 case "Wealth Management Account":
+                     message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "This service is currently not available!");
+
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                    System.out.println("This service is currently not available!");
                     System.out.println("This service is currently not available!");
                     break;
                 default:
+                     message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "This service is currently not available!");
+
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                    System.out.println("This service is currently not available!");
                     System.out.println("Please indicate one choice");
                     break;
             }
@@ -97,5 +116,5 @@ public class AccountTypeManagedBean implements Serializable {
             System.out.println(ex);
         }
 
-     }
+    }
 }
