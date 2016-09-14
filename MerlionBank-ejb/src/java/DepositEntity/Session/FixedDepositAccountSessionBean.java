@@ -48,24 +48,18 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private Double interestRate;
     private Long rateIdLong;
     private Integer rateIdInt;
+    private Customer customer;
     
-    public Long createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration){
-                
-        Query q =em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
-        q.setParameter("ic", ic);
-        List<Customer> temp = new ArrayList(q.getResultList());
-        
+    public Long createFixedAccount(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration){
+         
+         customer = em.find(Customer.class, customerId);
         //generate and check account number
         accountNumber = Math.round(Math.random() * 99999999);
         int a = 1;
         while(a==1) {
            Query q2 = em.createQuery("SELECT c.accountNumber FROM FixedDepositAccount c");
            List<Long> existingAcctNum = new ArrayList(q2.getResultList());
-//print to check existingAcctNum list is correct         
-//           for(int i=0;i < existingAcctNum.size();i++){
-//           System.out.print("hello"+existingAcctNum.get(i).toString());
-//           }
-//           
+ 
            if(!existingAcctNum.isEmpty()){
            if(existingAcctNum.contains(accountNumber))
                accountNumber = Math.round(Math.random() * 999999999);
@@ -90,9 +84,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         else if(duration.equalsIgnoreCase("12")){
             rateIdInt = 3;
             rateIdLong = rateIdInt.longValue();
-            rate = em.find(FixedDepositRate.class,rateIdLong);}
-            
-        
+            rate = em.find(FixedDepositRate.class,rateIdLong);}       
         else{
             rateIdInt = 4;
             rateIdLong = rateIdInt.longValue();
@@ -100,7 +92,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         
         interestRate = rate.getInterestRate();
         account = new FixedDepositAccount(accountNumber,amount,balance, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
-        Customer customer = temp.get(0); 
+       
         em.persist(account);
         account.setCustomer(customer);
         //customer may alr have fixed acct
@@ -128,6 +120,10 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 //    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, String status, Double interest) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
+
+    public Long createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     }
          
         

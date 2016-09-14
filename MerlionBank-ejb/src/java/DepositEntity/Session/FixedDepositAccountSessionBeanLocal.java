@@ -29,6 +29,6 @@ public interface FixedDepositAccountSessionBeanLocal {
      */
 
 
-    public Long createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration);
+    public Long createFixedAccount(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration);
     
 }

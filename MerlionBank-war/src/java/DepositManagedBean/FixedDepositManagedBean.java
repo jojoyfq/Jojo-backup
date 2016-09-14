@@ -6,6 +6,7 @@
 package DepositManagedBean;
 
 
+import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import javax.faces.event.ActionEvent;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.GregorianCalendar;
 import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 
 /**
  *
@@ -43,20 +45,28 @@ public class FixedDepositManagedBean implements Serializable {
     private String duration;
     private Date endDate;
     private Double interestRate;
-    private String customerIC;
+    private Long customerId;
+
+
     private Long accountNumber;
     private String accountNumberStr;
     private String endDateString;
     private String startDateString;
- //   @PersistenceContext
-   // private EntityManager em;
+
+    
+     @Inject
+    private LogInManagedBean logInManagedBean;
+//setter for LogInManagedBean
+    public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
+        this.logInManagedBean = logInManagedBean;
+    }
 
 
     public FixedDepositManagedBean() {
     }
 
     public void createFixedDepositAccount(ActionEvent event) throws IOException {
-        
+    
         amountBD = new BigDecimal(amountString);
       
        //compute start date
@@ -86,14 +96,14 @@ public class FixedDepositManagedBean implements Serializable {
  
          setEndDate(getCalE().getTime());
 
-        setCustomerIC("123a");
+        setCustomerId(logInManagedBean.getCustomerId());
         
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         endDateString = df.format(endDate);
         startDateString = df.format(startDate);
 
        
-        accountNumber = fda.createFixedAccount(customerIC, amountBD, startDate, endDate, duration);
+        accountNumber = fda.createFixedAccount(customerId, amountBD, startDate, endDate, duration);
         accountNumberStr = accountNumber.toString();
         
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
@@ -103,14 +113,14 @@ public class FixedDepositManagedBean implements Serializable {
 
     //to return the most recently created fixed deposit account info after successful creation
  /*   public ArrayList<String> getLastDepositAccount(){
-     customerIC = (String) FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-     ArrayList<String> result = fda.displayLastAccount(customerIC);
+     customerId = (String) FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+     ArrayList<String> result = fda.displayLastAccount(customerId);
      // accountNum, endDate, amount
      return result; 
      }
     
      public void withdraw(){
-     customerIC = (String) FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+     customerId = (String) FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
      accountNumberStr = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("accountNumber");
      accountNumber = Long.valueOf(accountNumberStr);
      // havent finished  
@@ -120,6 +130,10 @@ public class FixedDepositManagedBean implements Serializable {
     /**
      * @return the amountString
      */
+    public void transferToFixed(ActionEvent event) throws IOException{
+        
+    }
+            
     public String getAmountString() {
         return amountString;
     }
@@ -204,19 +218,8 @@ public class FixedDepositManagedBean implements Serializable {
     }
 
     /**
-     * @return the customerIC
+     * @return the customerId
      */
-    public String getCustomerIC() {
-        return customerIC;
-    }
-
-    /**
-     * @param customerIC the customerIC to set
-     */
-    public void setCustomerIC(String customerIC) {
-        this.customerIC = customerIC;
-    }
-
 
     /**
      * @return the accountNumber
@@ -297,4 +300,12 @@ public class FixedDepositManagedBean implements Serializable {
     }
 
 
+     public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    } 
+    
 }
