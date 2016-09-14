@@ -259,9 +259,6 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
                 System.out.println("Username " + ic + "Acount locked"); 
 
             throw new UserAlreadyActivatedException("You have already activated your account!");
-        } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
-            System.out.println("Username " + ic + "Acount locked");
-            throw new UserAlreadyActivatedException("You have already activated your account!");
         } else {
             System.out.println("Username " + ic + " IC check pass!");
         }

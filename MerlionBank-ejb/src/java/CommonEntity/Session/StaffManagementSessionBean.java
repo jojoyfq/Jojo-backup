@@ -6,16 +6,21 @@
 package CommonEntity.Session;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
 import CommonEntity.Permission;
 import static CommonEntity.Session.AccountManagementSessionBean.SALT_LENGTH;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
 import CustomerRelationshipEntity.StaffAction;
 import Exception.EmailNotSendException;
+import Exception.PasswordNotMatchException;
+import Exception.PasswordTooSimpleException;
 import Exception.RoleAlreadyExistedException;
 import Exception.RoleHasStaffException;
 import Exception.StaffRoleExistException;
+import Exception.UserAlreadyActivatedException;
 import Exception.UserExistException;
+import Exception.UserNotExistException;
 import Other.Session.GeneratePassword;
 import Other.Session.sendEmail;
 import java.math.BigInteger;
@@ -24,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import javax.ejb.Stateless;
@@ -482,7 +488,7 @@ public boolean deletePermission(Long staffId,Long staffRoleId,Long permissionId)
 
 //Super Admin create staff accounts
 @Override
-public boolean createStaff(Long staffID, String staffIc,String staffName, String staffEmail, String mobileNumber, String status) throws UserExistException{
+public boolean createStaff(Long staffID, String staffIc,String staffName, String staffEmail, String mobileNumber, String status) throws UserExistException,EmailNotSendException{
     
   String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -518,10 +524,19 @@ public boolean createStaff(Long staffID, String staffIc,String staffName, String
         
         List<StaffRole> staffRoles = new ArrayList<StaffRole>();
         Staff staff=new Staff(staffIc, staffName, password, staffEmail, mobileNumber, "inactive", staffRoles);
+        staff.setSalt(salt);
         em.persist(staff);
         em.flush();
         
         recordStaffAction(staffID,"create a new staff"+staffIc,null);
+        
+        try {
+            sendEmail(staff.getStaffName(),staff.getStaffEmail(),tempPassword);
+
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
         
         return true;
         
@@ -570,7 +585,7 @@ return staffRoles;
 }
 
 @Override
-public Long assignStaffRole(Long staffId,Long newStaffId,Long staffRoleId) throws StaffRoleExistException,EmailNotSendException{
+public Long assignStaffRole(Long staffId,Long newStaffId,Long staffRoleId) throws StaffRoleExistException{
 
     Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         queryStaff.setParameter("id", newStaffId);
@@ -599,13 +614,7 @@ public Long assignStaffRole(Long staffId,Long newStaffId,Long staffRoleId) throw
         
         recordStaffAction(staffId,"Assign Staff Roles"+newStaff.getStaffIc(),null);
         
-        try {
-            sendEmail(newStaff.getStaffName(),newStaff.getStaffEmail(),newStaff.getPassword());
-
-        } catch (MessagingException ex) {
-            System.out.println("Error sending email.");
-            throw new EmailNotSendException("Error sending email.");
-        }
+        
         return newStaffId;
         
 }
@@ -626,5 +635,126 @@ private void sendEmail(String name, String email, String password) throws Messag
         sendEmail.run(email, subject, content);
     }
 
+//Activate account- 1st step verify account details
+    @Override
+    public Long activateAccountVerifyDetail(String staffIc, String fullName, String email) throws UserNotExistException, UserAlreadyActivatedException {
+        Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffIc = :staffIc");
+        q.setParameter("staffIc", staffIc);
+        List<Staff> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty()) {
+            System.out.println("Username " + staffIc + " does not exist!");
+            throw new UserNotExistException("Staff " + staffIc + " does not exist, please try again");
+        }
+
+        
+            int size=temp.size();
+            Staff staff=temp.get(size-1);
+            
+            if (staff.getStatus().equals("terminated")){
+                 System.out.println("Username " + staffIc + " does not exist!");
+            throw new UserNotExistException("Username " + staffIc + " does not exist, please try again");    
+            }
+            else if (staff.getStatus().equals("active")){
+                 System.out.println("Username " + staffIc + "You have already activated your account!"); 
+             throw new UserAlreadyActivatedException("You have already activated your account!");
+            }
+            else if (staff.getStatus().equals("locked")){
+                System.out.println("Username " + staffIc + "Acount locked"); 
+
+            throw new UserAlreadyActivatedException("You have already activated your account!");
+        
+        } else {
+            System.out.println("Username " + staffIc + " IC check pass!");
+        }
+
+        if (!fullName.equals(staff.getStaffName())) {
+            throw new UserNotExistException("Username " + staffIc + "invaid account details");
+        } else if (!email.equals(staff.getStaffEmail())) {
+            throw new UserNotExistException("Username " + staffIc + "invaid account details");
+            //return "date";
+        } else {
+            return staff.getId();
+        }
+
+    }
+    
+    //Activate account - 2nd intial password reset
+    @Override
+    public Long updatePassword(Long staffId, String oldPassword, String newPassword, String confirmPassword) throws PasswordTooSimpleException,PasswordNotMatchException,UserNotExistException {
+        Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        q.setParameter("id", staffId);
+        Staff staff = (Staff)q.getSingleResult();
+        
+        if (!passwordHash(oldPassword + staff.getSalt()).equals(staff.getPassword())) {
+            //return "invalid old password";
+            throw new UserNotExistException("invalid old password");
+        } else if (!newPassword.equals(confirmPassword)) {
+            //System.out.println(newPassword);
+            //System.out.println(confirmPassword);
+            throw new PasswordNotMatchException("password do not match");
+        } else if (passwordHash(oldPassword + staff.getSalt()).equals(staff.getPassword()) && newPassword.equals(confirmPassword)) {
+            if (!checkPasswordComplexity(newPassword)) {
+                throw new PasswordTooSimpleException("password is too simple");
+            }
+                String resetPassword = passwordHash(newPassword + staff.getSalt());
+                staff.setPassword(resetPassword);
+                em.flush();
+                return staffId;
+           }
+           else 
+            throw new UserNotExistException("Account is invalid");
+    } 
+
+   
+    //Password complexity check
+   
+
+    private boolean checkPasswordComplexity(String password) {
+        if (password.length() < 8) {
+            return false;
+        }
+
+        char pw[] = password.toCharArray();
+        boolean alphabet = false;
+        boolean digit = false;
+        for (int i = 0; i < pw.length; i++) {
+            if (Character.isLetter(pw[i])) {
+                alphabet = true;
+            }
+            if (Character.isDigit(pw[i])) {
+                digit = true;
+            }
+            if (alphabet && digit) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //Activate account - 3rd step update account status
+    @Override
+  public boolean updateAccountStatus(Long staffId){
+
+        Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        q.setParameter("id", staffId);
+        Staff staff = (Staff)q.getSingleResult();
+        
+        staff.setStatus("active");
+        em.persist(staff);
+        em.flush();
+        
+        recordStaffAction(staffId,"Activate Account",null);
+        
+        return true;
+
+    }
+
+  //view system users
+@Override
+public List<Staff> displayListOfStaff(){
+    Query query = em.createQuery("SELECT a FROM Staff a");
+        List<Staff> staffs = new ArrayList(query.getResultList());
+return staffs;
+}
 
 }
