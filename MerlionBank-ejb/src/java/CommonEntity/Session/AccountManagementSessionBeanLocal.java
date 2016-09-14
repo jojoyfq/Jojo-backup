@@ -58,5 +58,5 @@ public boolean updateAccountStatus(String ic);
 //Log in
      public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException;
 
- 
+ public Customer diaplayCustomerId(Long id);
 }

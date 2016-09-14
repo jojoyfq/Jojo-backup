@@ -183,4 +183,12 @@ public class ResetPasswordManagedBean implements Serializable {
         this.password = password;
     }
 
+    public void goToResetPasswordVerifyCustomerDetailsPage(ActionEvent event){
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CustomerManagement/ResetPasswordVerifyCustomerDetails.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to ResetPasswordVerifyCustomerDetails page fails");
+        }
+    }
 }

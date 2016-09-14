@@ -281,5 +281,14 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
      
  }
  
+     
+    @Override
+    public MessageEntity diaplayMessage(Long id) {
+        Query q = em.createQuery("SELECT a FROM MessageEntity a WHERE a.id = :id");
+        q.setParameter("id", id);
+        MessageEntity message =(MessageEntity) q.getSingleResult();
+        return message;
+    }
+ 
  
 }
