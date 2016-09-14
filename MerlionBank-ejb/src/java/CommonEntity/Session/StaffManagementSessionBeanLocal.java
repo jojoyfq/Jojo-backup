@@ -7,8 +7,11 @@ package CommonEntity.Session;
 
 import CommonEntity.Permission;
 import CommonEntity.StaffRole;
+import Exception.EmailNotSendException;
 import Exception.RoleAlreadyExistedException;
 import Exception.RoleHasStaffException;
+import Exception.StaffRoleExistException;
+import Exception.UserExistException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -36,6 +39,10 @@ public List<Permission> viewPermission ();
 //Modify role
 public boolean addPermission(Long staffId,Long staffRoleId,Long permissionId);
 public boolean deletePermission(Long staffId,Long staffRoleId,Long permissionId);
+
+public boolean createStaff(Long staffID, String staffIc,String staffName, String staffEmail, String mobileNumber, String status) throws UserExistException;
+public List<StaffRole> displayListOfRole();
+public Long assignStaffRole(Long staffId,Long newStaffId,Long staffRoleId) throws StaffRoleExistException,EmailNotSendException;
 
     
 }
