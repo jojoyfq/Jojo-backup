@@ -35,8 +35,8 @@ and open the template in the editor.
 
                             <p:column headerText="View" style="width: 80px;" >
                                 <center>
-                                    <p:commandButton icon="ui-icon-mail-open" oncomplete="PF('msgDialog').show()" actionListener="#{messageManagedBean.customerReadMessage}" update=":form:panel" ajax="true" type="submit" >
-                                        <f:setPropertyActionListener value="#{messageEntity}" target="#{messageManagedBean.message}" />
+                                    <p:commandButton icon="ui-icon-mail-open" oncomplete="PF('msgDialog').show()" actionListener="#{messageManagedBean.customerReadMessage}" update=":form:panel :form:dialogMessage" ajax="true" type="submit" >
+                                        <f:attribute name="selectedMessage" value="#{messageEntity}"  />
                                     </p:commandButton>
                                 </center>
                             </p:column>
@@ -49,7 +49,7 @@ and open the template in the editor.
                             </p:column>
                         </p:dataTable>
                     </h:panelGrid>
-                    <p:dialog  appendTo="@(body)" header="Message Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
+                    <p:dialog id="dialogMessage"  appendTo="@(body)" header="Message Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
                         <p:outputPanel id="msgDetail" style="text-align:center;">
                             <p:panelGrid  columns="2"  >
 
