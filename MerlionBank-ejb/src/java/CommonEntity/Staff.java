@@ -36,6 +36,7 @@ public class Staff implements Serializable {
     private String staffEmail;
     private String mobileNumber;
     private String status;
+    private String salt;
     
     @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
    private List<MessageEntity> messages;
@@ -63,6 +64,14 @@ public class Staff implements Serializable {
         this.mobileNumber = mobileNumber;
         this.status = status;
         this.staffRoles = staffRoles;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     

@@ -93,6 +93,7 @@ public class CommonInfraManagedBean implements Serializable {
             System.out.println("lala");
             return;
         }
+
         try {
             System.out.println("ahdhdhdhdaad ");
 
@@ -121,6 +122,7 @@ public class CommonInfraManagedBean implements Serializable {
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
 
+
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -140,6 +142,7 @@ public class CommonInfraManagedBean implements Serializable {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
        
+
     }
 
     public String getCustomerPhoneNumber() {

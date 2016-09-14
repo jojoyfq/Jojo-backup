@@ -11,6 +11,7 @@ import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
+import Exception.UserAlreadyHasSavingAccountException;
 import Exception.UserExistException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
@@ -30,6 +31,9 @@ public interface AccountManagementSessionBeanLocal {
 
     public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName) throws UserExistException, EmailNotSendException;
 
+//Create Another Saving Account
+    public void createSavingAccountExistingCustomer(Long customerID, String savingAccountName) throws UserAlreadyHasSavingAccountException, EmailNotSendException;
+    
 //Update Account Details  
     public Customer diaplayCustomer(String ic);
 
