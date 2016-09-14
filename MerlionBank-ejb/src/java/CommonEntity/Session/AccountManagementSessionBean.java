@@ -333,9 +333,6 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             System.out.println("Username " + ic + "Acount locked");
 
             throw new UserAlreadyActivatedException("You have already activated your account!");
-        } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
-            System.out.println("Username " + ic + "Acount locked");
-            throw new UserAlreadyActivatedException("You have already activated your account!");
         } else {
             System.out.println("Username " + ic + " IC check pass!");
         }
@@ -591,14 +588,18 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");
         } else if (customer.getStatus().equals("inactive")) {
             System.out.println("Username " + ic + " please activate your account!");
+<<<<<<< HEAD
+           throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+=======
 
             throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+>>>>>>> refs/remotes/origin/master
 
         } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
             System.out.println("Username " + ic + " Account locked! Please Reset Password!");
             throw new UserNotExistException("Username " + ic + " Account locked! Please Reset Password!");
 
-        } else if (customer.getOnlineAccount().getAccountStatus().equals("unverified")) {
+        } else if (customer.getStatus().equals("unverified")) {
             System.out.println("Username " + ic + "Please wait for your account to be verified!");
             throw new UserNotExistException("Username " + ic + "Please wait for your account to be verified!");
 
