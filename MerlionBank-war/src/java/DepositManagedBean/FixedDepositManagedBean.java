@@ -5,8 +5,6 @@
  */
 package DepositManagedBean;
 
-
-import CommonEntity.Customer;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.SavingAccount;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
@@ -64,17 +62,17 @@ public class FixedDepositManagedBean implements Serializable {
     private List<String> savingAcctDisplay;
     private String savingAcctSelected;
     private Long savingAcctNumber;
-    private Customer customer;
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-    
-  
+//    private Customer customer;
+//
+//    public Customer getCustomer() {
+//        return customer;
+//    }
+//
+//    public void setCustomer(Customer customer) {
+//        this.customer = customer;
+//    }
+//    
+//  
     
     
 
@@ -104,7 +102,6 @@ public class FixedDepositManagedBean implements Serializable {
         this.savingAcctDisplay = savingAcctDisplay;
     }
 
-
     
      @Inject
     private LogInManagedBean logInManagedBean;
@@ -121,9 +118,10 @@ public class FixedDepositManagedBean implements Serializable {
     public void init(){
         savingAcctDisplay = new ArrayList<String>();
         this.displaySavingAccts();
-        customer = new Customer();
+      //  customer = new Customer();
         
     }
+    
     public void createFixedDepositAccount(ActionEvent event) throws IOException {
     
         amountBD = new BigDecimal(amountString);
