@@ -53,4 +53,6 @@ public interface InboxManagementSessionBeanLocal {
   //system display number of new messages for staff
  public int countStaffNewMessage(Long staffID);
  
+ public MessageEntity diaplayMessage(Long id);
+ 
 }

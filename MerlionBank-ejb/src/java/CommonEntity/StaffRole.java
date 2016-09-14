@@ -40,6 +40,7 @@ public class StaffRole implements Serializable {
    @JoinTable(name="StaffRole_Permission")
    private List<Permission> permissions;
 
+   
     public List<Permission> getPermissions() {
         return permissions;
     }
