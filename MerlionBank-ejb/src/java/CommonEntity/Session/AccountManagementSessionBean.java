@@ -516,15 +516,13 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
         } else if (customer.getStatus().equals("inactive")) {
             System.out.println("Username " + ic + " please activate your account!");
-
-
            throw new UserNotActivatedException("Username " + ic + " please activate your account!");
 
         } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
             System.out.println("Username " + ic + " Account locked! Please Reset Password!");
             throw new UserNotExistException("Username " + ic + " Account locked! Please Reset Password!");
 
-        } else if (customer.getOnlineAccount().getAccountStatus().equals("unverified")) {
+        } else if (customer.getStatus().equals("unverified")) {
             System.out.println("Username " + ic + "Please wait for your account to be verified!");
             throw new UserNotExistException("Username " + ic + "Please wait for your account to be verified!");
 

@@ -757,4 +757,22 @@ public List<Staff> displayListOfStaff(){
 return staffs;
 }
 
+//delete system user
+public Long searchStaff(String staffIc)throws UserNotExistException{
+   Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffIc = :staffIc");
+        q.setParameter("staffIc", staffIc);
+        List<Staff> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty()) {
+            throw new UserNotExistException("No staff account with this IC existed");
+        }
+        int size= temp.size();
+        Staff staff=temp.get(size-1);
+        
+        if (!staff.getStatus().equals("terminated"))
+            return staff.getId();
+        else
+            throw new UserNotExistException("No staff account with this IC existed");
+            
+}
+
 }
