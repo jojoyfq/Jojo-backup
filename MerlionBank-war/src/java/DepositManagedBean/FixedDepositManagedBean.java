@@ -6,6 +6,7 @@
 package DepositManagedBean;
 
 
+import CommonEntity.Customer;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.SavingAccount;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
@@ -52,7 +53,7 @@ public class FixedDepositManagedBean implements Serializable {
     private String duration;
     private Date endDate;
     private Double interestRate;
-    private Long customerId;
+    private Long customerId = 2L;
 
 
     private Long accountNumber;
@@ -63,6 +64,19 @@ public class FixedDepositManagedBean implements Serializable {
     private List<String> savingAcctDisplay;
     private String savingAcctSelected;
     private Long savingAcctNumber;
+    private Customer customer;
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+    
+  
+    
+    
 
     public Long getSavingAcctNumber() {
         return savingAcctNumber;
@@ -107,6 +121,7 @@ public class FixedDepositManagedBean implements Serializable {
     public void init(){
         savingAcctDisplay = new ArrayList<String>();
         this.displaySavingAccts();
+        customer = new Customer();
         
     }
     public void createFixedDepositAccount(ActionEvent event) throws IOException {
@@ -140,7 +155,7 @@ public class FixedDepositManagedBean implements Serializable {
  
          setEndDate(getCalE().getTime());
 
-        setCustomerId(logInManagedBean.getCustomerId());
+        //setCustomerId(logInManagedBean.getCustomerId());
         
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         endDateString = df.format(endDate);
@@ -148,6 +163,7 @@ public class FixedDepositManagedBean implements Serializable {
 
        
         accountNumber = fda.createFixedAccount(customerId, amountBD, startDate, endDate, duration);
+        System.out.print(customerId);
         accountNumberStr = accountNumber.toString();
         
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
@@ -172,15 +188,7 @@ public class FixedDepositManagedBean implements Serializable {
      } **/
    
     public void transferToFixed( ActionEvent event) throws IOException{
-        //display saving accounts
-//        customerId = logInManagedBean.getCustomerId();
-//        savingAccounts = sas.getSavingAccount(customerId);
-//        
-//        for(int i=0;i<savingAccounts.size();i++){
-//            String accountNum = savingAccounts.get(i).getAccountNumber().toString();
-//            savingAcctDisplay.add(accountNum);
-//        }
-       // System.out.print(savingAcctDisplay.get(0));
+
         savingAcctNumber = Long.valueOf(savingAcctSelected);
         //check if customer have select any account
        // Boolean response = fda.transferToFixed(amountBD,savingAcctNumber,accountNumber);
@@ -189,7 +197,7 @@ public class FixedDepositManagedBean implements Serializable {
     }
         
     public void displaySavingAccts(){
-        customerId = logInManagedBean.getCustomerId();
+        //customerId = logInManagedBean.getCustomerId();
         savingAccounts = sas.getSavingAccount(customerId);
         
         for(int i=0;i<savingAccounts.size();i++){
