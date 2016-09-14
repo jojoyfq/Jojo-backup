@@ -89,7 +89,7 @@ public class CommonInfraManagedBean implements Serializable {
             System.out.println("lala");
             return;
         }
-        System.out.println("ahdhdhdhdaad ");
+        try{System.out.println("ahdhdhdhdaad ");
           //  try {
         //savingAccountType = (SavingAccountType) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("savingAccountType");
 
@@ -115,7 +115,9 @@ public class CommonInfraManagedBean implements Serializable {
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-//            
+        }catch(UserExistException ex){
+            System.out.println(ex.getMessage());
+        }      
     }
 
     public String getCustomerPhoneNumber() {

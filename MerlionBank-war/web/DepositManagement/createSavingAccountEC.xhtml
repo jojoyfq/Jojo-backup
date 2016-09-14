@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <f:view>
+        <h:head>
+            <title>Create Saving Account for Existing Customer</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        </h:head>
+
+        <h:body>
+            <h:form>  
+<!--                <p:growl id="createSavingAccountEC" showDetail="true" />-->
+
+                <p:panel header="Select Saving Account Type" style="margin-bottom:10px;">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:outputLabel for="savingAccountType" value="Select Saving Account Type: " />
+                        <p:selectOneMenu id="savingAccountType" value="#{savingAccountManagedBean.savingAccountName}" style="width:150px">
+                            <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{savingAccountManagedBean.savingAccountTypeList}" />                
+                        </p:selectOneMenu>
+
+                    </h:panelGrid>
+
+                    <p:separator />
+
+                    <p:commandButton  actionListener="#{savingAccountManagedBean.createSavingAccountExistingCustomer}" value="Submit" />
+                </p:panel>
+            </h:form>
+        </h:body>
+
+    </f:view>
+</html>
