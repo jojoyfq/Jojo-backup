@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
@@ -21,7 +17,6 @@ and open the template in the editor.
             <h:form>
                 <p:panel id="panel" header="Your Saving Account Details">
 
-<!--                    <p:messages id="savingAccounts" />-->
                     <h:panelGrid columns="4" cellpadding="5">
                         <p:dataTable var="SavingAccount" value="#{savingAccountManagedBean.savingAccounts}">
                             <p:column headerText="Account Number">
@@ -37,15 +32,10 @@ and open the template in the editor.
                             </p:column>
                             
                             <p:column headerText="Type">
-                                <h:outputText value="#{SavingAccount.savingAccountType}" />
+                                <h:outputText value="#{SavingAccount.savingAccountType.accountType}" />
                             </p:column>
                             
-                            
-<!--                            <p:column style="width:32px;text-align: center">
-                                <p:commandButton  icon="ui-icon-search" title="View">
-                                    <f:setPropertyActionListener value="#{messageManagedBean.customerReadMessage(event)}" target="#{messageManagedBean.message}" />
-                                </p:commandButton>
-                            </p:column>-->
+                          
                         </p:dataTable>
                     </h:panelGrid>
                 </p:panel>
