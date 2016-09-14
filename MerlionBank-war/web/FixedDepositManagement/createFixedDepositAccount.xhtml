@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Create Fixed Deposit Account</title>
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"/>-->
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:panel header="Open a Fixed Deposit Account">
+                <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+
+                    <h:outputLabel for="amount" value="Amount(S$):" />
+                    <p:inputText id="amount" value="#{fixedDepositManagedBean.amountString}" label="amount" required="true" />
+
+
+
+                    <h:outputLabel for="term" value="Deposit Term(Months):" />
+                    <h:selectOneMenu id="duration" value="#{fixedDepositManagedBean.duration}" label="duration" required="true" >
+                        <f:selectItem itemValue="3" itemLabel="3"/>
+                        <f:selectItem itemValue="6" itemLabel="6"/>
+                        <f:selectItem itemValue="12" itemLabel="12"/>
+                        <f:selectItem itemValue="24" itemLabel="24"/> 
+                    </h:selectOneMenu> 
+
+                </h:panelGrid>
+                
+
+                <p:commandButton actionListener="#{fixedDepositManagedBean.createFixedDepositAccount}" value="Submit" />
+
+                 
+            </p:panel>
+             Note:The start of the deposit term will be 7 days after account opening.
+        </h:form>
+    </h:body>
+</html>
