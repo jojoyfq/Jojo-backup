@@ -207,7 +207,10 @@ public class LogInManagedBean implements Serializable {
 
         }
     }
-
+ public void submitCaptcha(ActionEvent event) {
+        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Correct", "Correct");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
     public void viewOneCustomer() throws IOException {
         //this.ic = selectedCustomer.getIc();
         selectedCustomer = amsbl.diaplayCustomer(ic);
