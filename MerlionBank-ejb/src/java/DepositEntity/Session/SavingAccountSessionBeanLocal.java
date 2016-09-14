@@ -17,5 +17,6 @@ import javax.ejb.Local;
 public interface SavingAccountSessionBeanLocal {
 
     public List<SavingAccount> getSavingAccount(Long customerID);
+    public List<String> getSavingAccountType();
     
 }

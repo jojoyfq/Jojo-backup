@@ -135,6 +135,7 @@ public class TransferManagedBean implements Serializable{
     
     public List getPayeeListfromDatabase() throws IOException {
         payeeList = tfsb.getPayeeList(customerID);
+        System.out.print(payeeList);
         return payeeList;
     }
     
