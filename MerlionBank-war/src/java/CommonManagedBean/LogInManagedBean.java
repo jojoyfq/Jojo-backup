@@ -173,7 +173,7 @@ public class LogInManagedBean implements Serializable {
             if (ic != null && customerPassword != null) {
                 customerId = amsbl.checkLogin(ic, customerPassword);
                 System.out.println("managed bean message: id: "+customerId);
-                selectedCustomer = amsbl.diaplayCustomerId(customerId);
+               
            System.out.println("managed bean message: id: "+customerId);     //logInAttempts = 0;
                 if (customerId.toString().equals("1")) {
                     System.out.println("Password does not match");
@@ -181,8 +181,13 @@ public class LogInManagedBean implements Serializable {
                     System.out.println("number attempts:" + logInAttempts);
                     if (logInAttempts == max_attempts) {
                         System.out.println("Your account has been locked out.");
+                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", "Your account has been locked out.");
+
+                        RequestContext.getCurrentInstance().showMessageInDialog(message);
+                    //  System.out.println(amsbl.lockAccount(customerId));
                     }
-                } else {
+                } else { 
+                    selectedCustomer = amsbl.diaplayCustomerId(customerId);
                     logInAttempts = 0;
                     System.out.println("Log In Successful!");
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);

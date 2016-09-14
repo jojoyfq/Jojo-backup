@@ -108,6 +108,7 @@ public class ResetPasswordManagedBean implements Serializable {
         try {
             String errorMsg = amsbl.updateForgetPassword(customerIc, password, confirmPassword);
             System.out.println("after entring the confirmed password: " + errorMsg);
+            amsbl.updateAccountStatus(customerIc);
 
            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Password has been successfully changed!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
