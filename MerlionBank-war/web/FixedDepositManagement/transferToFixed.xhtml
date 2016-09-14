@@ -9,20 +9,23 @@
     </h:head>
     <h:body>
         <h:form>
-         <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+                <h:panelGrid columns="2" id="transferToFixedPanel" cellpadding="5"> 
 
-                    <h:outputLabel for="amount" value="Amount(S$):" />
-                    <p:inputText id="amount" value="#{fixedDepositManagedBean.amountString}" label="amount" required="true" />
-
-                    <h:outputLabel for="savingAccount" value="Choose from your saving account" />
-                    <h:selectOneMenu id="duration" value="#{fixedDepositManagedBean.duration}" label="duration" required="true" >
-                        <f:selectItem itemValue="3" itemLabel="3"/>
-                        <f:selectItem itemValue="6" itemLabel="6"/>
-                        <f:selectItem itemValue="12" itemLabel="12"/>
-                        <f:selectItem itemValue="24" itemLabel="24"/> 
-                    </h:selectOneMenu> 
+                    <h:outputLabel value="Transfer to your fixed deposit account #{fixedDepositManagedBean.accountNumberStr}" >
+                    </h:outputLabel>
+                    <br/>
+                    <h:outputLabel for="amount" value="Amount(S$): #{fixedDepositManagedBean.amountString}" >
+                    </h:outputLabel>
+                    <br/>
+                    <p:selectOneMenu id="payeeList" value="#{fixedDepositManagedBean.savingAcctSelected}" >
+                        <f:selectItem itemLabel="Select your saving account" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{fixedDepositManagedBean.savingAcctDisplay}" />
+                    </p:selectOneMenu>
 
                 </h:panelGrid>
+
+                <p:commandButton value="Submit" id="transferToFixedButton"
+                                 actionListener="#{fixedDepositManagedBean.transferToFixed}" />
         </h:form>
     </h:body>
 </html>

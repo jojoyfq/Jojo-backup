@@ -7,7 +7,9 @@ package DepositManagedBean;
 
 
 import CommonManagedBean.LogInManagedBean;
+import DepositEntity.SavingAccount;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
+import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import javax.faces.event.ActionEvent;
 import java.io.IOException;
 import javax.inject.Named;
@@ -16,9 +18,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -37,6 +42,8 @@ public class FixedDepositManagedBean implements Serializable {
      */
     @EJB
     FixedDepositAccountSessionBeanLocal fda;
+    @EJB
+    SavingAccountSessionBeanLocal sas;
     private String amountString;
     private BigDecimal amountBD;
     private Date startDate;
@@ -52,6 +59,37 @@ public class FixedDepositManagedBean implements Serializable {
     private String accountNumberStr;
     private String endDateString;
     private String startDateString;
+    private List<SavingAccount> savingAccounts;
+    private List<String> savingAcctDisplay;
+    private String savingAcctSelected;
+    private Long savingAcctNumber;
+
+    public Long getSavingAcctNumber() {
+        return savingAcctNumber;
+    }
+
+    public void setSavingAcctNumber(Long savingAcctNumber) {
+        this.savingAcctNumber = savingAcctNumber;
+    }
+
+
+
+    public String getSavingAcctSelected() {
+        return savingAcctSelected;
+    }
+
+    public void setSavingAcctSelected(String savingAcctSelected) {
+        this.savingAcctSelected = savingAcctSelected;
+    }
+
+    public List<String> getSavingAcctDisplay() {
+        return savingAcctDisplay;
+    }
+
+    public void setSavingAcctDisplay(List<String> savingAcctDisplay) {
+        this.savingAcctDisplay = savingAcctDisplay;
+    }
+
 
     
      @Inject
@@ -65,6 +103,12 @@ public class FixedDepositManagedBean implements Serializable {
     public FixedDepositManagedBean() {
     }
 
+    @PostConstruct
+    public void init(){
+        savingAcctDisplay = new ArrayList<String>();
+        this.displaySavingAccts();
+        
+    }
     public void createFixedDepositAccount(ActionEvent event) throws IOException {
     
         amountBD = new BigDecimal(amountString);
@@ -125,15 +169,36 @@ public class FixedDepositManagedBean implements Serializable {
      accountNumber = Long.valueOf(accountNumberStr);
      // havent finished  
            
-     }
-     */
-    /**
-     * @return the amountString
-     */
-    public void transferToFixed(ActionEvent event) throws IOException{
+     } **/
+   
+    public void transferToFixed( ActionEvent event) throws IOException{
+        //display saving accounts
+//        customerId = logInManagedBean.getCustomerId();
+//        savingAccounts = sas.getSavingAccount(customerId);
+//        
+//        for(int i=0;i<savingAccounts.size();i++){
+//            String accountNum = savingAccounts.get(i).getAccountNumber().toString();
+//            savingAcctDisplay.add(accountNum);
+//        }
+       // System.out.print(savingAcctDisplay.get(0));
+        savingAcctNumber = Long.valueOf(savingAcctSelected);
+        //check if customer have select any account
+       // Boolean response = fda.transferToFixed(amountBD,savingAcctNumber,accountNumber);
+     
         
     }
-            
+        
+    public void displaySavingAccts(){
+        customerId = logInManagedBean.getCustomerId();
+        savingAccounts = sas.getSavingAccount(customerId);
+        
+        for(int i=0;i<savingAccounts.size();i++){
+            String accountNum = savingAccounts.get(i).getAccountNumber().toString();
+            savingAcctDisplay.add(accountNum);
+        }
+        
+    }
+    
     public String getAmountString() {
         return amountString;
     }
@@ -307,5 +372,13 @@ public class FixedDepositManagedBean implements Serializable {
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     } 
+        public List<SavingAccount> getSavingAccounts() {
+        return savingAccounts;
+    }
+
+    public void setSavingAccounts(List<SavingAccount> savingAccounts) {
+        this.savingAccounts = savingAccounts;
+    }
+
     
 }
