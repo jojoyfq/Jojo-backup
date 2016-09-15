@@ -27,13 +27,13 @@ public class TransferManagedBean implements Serializable{
 
     @EJB
     TransferSessionBeanLocal tfsb;
+    private List savingAccountList;
     private String recipientName;
     private String amountString;
     private BigDecimal amountBD;
     private Long recipientAccountNumLong;
     private String recipientAccountNumString;
     private Long giverAccountNumLong;
-    private String giverAccountNumString;
     private boolean checkStatus;
     private Long payeeAccount;
     private String payeeAccountString;
@@ -47,6 +47,7 @@ public class TransferManagedBean implements Serializable{
     @PostConstruct
     public void init() {
         try{
+            this.getSavingAccountNumbers();
             this.getPayeeListfromDatabase();
         }catch(Exception e){
             System.out.print("Get PayeeList encounter error");
@@ -76,11 +77,23 @@ public class TransferManagedBean implements Serializable{
         }
     }
     
+    public void goToIntraTransferPage(ActionEvent event){
+        try{
+            if(giverAccountNumLong!=null){
+                FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/intraTransfer.xhtml");
+            }else{
+                FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/selectSavingAccount.xhtml");
+            }
+        } catch (Exception e) {
+            System.out.print("Redirect to intraTransfer Page fails");
+        }
+    }
+    
     public void transferByPayee(ActionEvent event) throws IOException {
         try{
             amountBD = new BigDecimal(amountString);
-            setGiverAccountNumString("342497558");
-            setGiverAccountNumLong(Long.parseLong(giverAccountNumString));
             
             setCheckStatus(tfsb.intraOneTimeTransferCheck(giverAccountNumLong,payeeTransferAccount,amountBD));
 
@@ -98,11 +111,8 @@ public class TransferManagedBean implements Serializable{
         try{
             amountBD = new BigDecimal(amountString);
             recipientAccountNumLong = Long.parseLong(recipientAccountNumString);  
-            setGiverAccountNumString("342497558");
-            setGiverAccountNumLong(Long.parseLong(giverAccountNumString));
             System.out.print(amountBD);
             System.out.print(recipientAccountNumLong);
-            System.out.print(giverAccountNumString);
             setCheckStatus(tfsb.intraOneTimeTransferCheck(giverAccountNumLong,recipientAccountNumLong,amountBD));
 
             if(checkStatus){ //if return true, go to success page
@@ -133,10 +143,14 @@ public class TransferManagedBean implements Serializable{
         }
     }
     
-    public List getPayeeListfromDatabase() throws IOException {
+    public List getPayeeListfromDatabase() {
         payeeList = tfsb.getPayeeList(customerID);
         System.out.print(payeeList);
         return payeeList;
+    }
+    
+    public void getSavingAccountNumbers() throws IOException {
+        savingAccountList = tfsb.getSavingAccountNumbers(customerID);
     }
     
     public void goToTransferByPayeeListPage(ActionEvent event){
@@ -205,13 +219,6 @@ public class TransferManagedBean implements Serializable{
         this.giverAccountNumLong = giverAccountNumLong;
     }
 
-    public String getGiverAccountNumString() {
-        return giverAccountNumString;
-    }
-
-    public void setGiverAccountNumString(String giverAccountNumString) {
-        this.giverAccountNumString = giverAccountNumString;
-    }
     
     public boolean isCheckStatus() {
         return checkStatus;
@@ -267,5 +274,13 @@ public class TransferManagedBean implements Serializable{
 
     public void setPayeeTransferAccount(Long payeeTransferAccount) {
         this.payeeTransferAccount = payeeTransferAccount;
+    }
+    
+    public List getSavingAccountList() {
+        return savingAccountList;
+    }
+
+    public void setSavingAccountList(List savingAccountList) {
+        this.savingAccountList = savingAccountList;
     }
 }
