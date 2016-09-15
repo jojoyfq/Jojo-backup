@@ -3,7 +3,7 @@
 <sun-application>
     <web>
         <web-uri>MerlionBank-war.war</web-uri>
-        <context-root>/MerlionBank</context-root>
+        <context-root>/MerlionBank-war</context-root>
     </web>
     <web>
         <web-uri>MerlionBankBackOffice.war</web-uri>
