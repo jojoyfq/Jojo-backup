@@ -19,4 +19,5 @@ public interface TransferSessionBeanLocal {
      public Boolean addPayee(Long payeeAccount, String payeeName, Long customerID);
      public List getPayeeList(Long customerID);
      public String searchPayeeName (Long payeeAccount);
+     public List<Long> getSavingAccountNumbers(Long customerID);
 }
