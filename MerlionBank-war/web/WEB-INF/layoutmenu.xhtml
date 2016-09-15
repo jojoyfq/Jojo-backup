@@ -1,0 +1,71 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pa="http://primefaces.org/atlas">
+
+    <h:form id="menuform">
+
+        <div id="layout-menu-cover">
+            <pa:menu id="layout-menu" widgetVar="AtlasMenu">
+                <p:submenu id="pa_dashboards" label="Atlas Dashboards" icon="icon-network">
+                    <p:menuitem id="pa_pro_page" value="Your Promotion Page" icon="icon-network" outcome="/promotion-page"/>
+                    <p:menuitem id="pa_db_v" value="Atlas Dashboard 1" icon="icon-gauge" outcome="/dashboard"/>
+                    <p:menuitem id="pa_db_v1" value="Atlas Dashboard 2" icon="icon-gauge" outcome="/dashboard2"/>
+                </p:submenu>
+                <p:submenu id="pa_menuopt" label="Menu And Color Options" icon="icon-colours">
+                    <p:menuitem id="pa_red" url="#" value="Red Topbar" icon="icon-drop" onclick="PF('AtlasMenu').changeBodyClass('RedTopbar');return false;"/>
+                    <p:menuitem id="pa_blue" url="#" value="Blue Topbar" icon="icon-drop" onclick="PF('AtlasMenu').changeBodyClass('BlueTopbar');return false;"/>
+                    <p:menuitem id="pa_teal" url="#" value="Teal Topbar" icon="icon-drop" onclick="PF('AtlasMenu').changeBodyClass('TealTopbar');return false;"/>
+                    <p:menuitem id="pa_green" url="#" value="Green Topbar" icon="icon-drop" onclick="PF('AtlasMenu').changeBodyClass('GreenTopbar');return false;"/>
+                    <p:menuitem id="pa_orange" url="#" value="Orange Topbar" icon="icon-drop" onclick="PF('AtlasMenu').changeBodyClass('OrangeTopbar');return false;"/>
+                    <p:menuitem id="pa_leaden" url="#" value="Leaden Topbar" icon="icon-drop" onclick="PF('AtlasMenu').changeBodyClass('LeadenTopbar');return false;"/>
+                    <p:menuitem id="pa_yellow" url="#" value="Yellow Topbar" icon="icon-drop" onclick="PF('AtlasMenu').changeBodyClass('YellowTopbar');return false;"/>
+                    <p:menuitem id="pa_purple" url="#" value="Purple Topbar" icon="icon-drop" onclick="PF('AtlasMenu').changeBodyClass('PurpleTopbar');return false;"/>
+                    <p:menuitem id="pa_top_menu" url="#" value="Default Menu" icon="icon-grid" onclick="PF('AtlasMenu').changeBodyClass('');return false;" />
+                    <p:menuitem id="pa_popup_menu" url="#" value="Popup Menu Option" icon="icon-text-document-inverted" onclick="PF('AtlasMenu').changeBodyClass('PopupMenu');return false;"/>
+                </p:submenu>
+                <p:submenu id="pa_theme" label="Atlas Theme" icon="icon-leaf">
+                    <p:menuitem id="pa_sample" value="Sample Page" icon="icon-key" outcome="/sample" />
+                    <p:menuitem id="pa_forms" value="Form Elements" icon="icon-text-document" outcome="/forms" />
+                    <p:menuitem id="pa_data" value="Data Components" icon="icon-archive" outcome="/data" />
+                    <p:menuitem id="pa_datatable" value="DataTable" icon="icon-sweden" outcome="/datatable" />
+                    
+                </p:submenu>
+                <p:submenu id="pa_default" label="Default Pages" icon="icon-tv">
+                    <p:menuitem id="pa_empty" value="Empty Page" icon="icon-browser" outcome="/empty-page" />
+                    
+                </p:submenu>
+                <p:submenu id="pa_hierarchy" label="Menu Hierarchy" icon="icon-folder">
+                    <p:submenu id="pa_sm1" label="Submenu 1" icon="icon-plus">
+                        <p:submenu id="pa_sm11" label="Submenu 1.1" icon="icon-plus">
+                            <p:menuitem id="pa_lnk111" value="Link 1" icon="icon-link" url="#" />
+                            <p:menuitem id="pa_lnk112" value="Link 2" icon="icon-link" url="#" />
+                            <p:menuitem id="pa_lnk113" value="Link 3" icon="icon-link" url="#" />
+                        </p:submenu>
+                        <p:submenu id="pa_sm12" label="Submenu 1.2" icon="icon-plus">
+                            <p:submenu id="pa_sm121" label="Submenu 1.2.1" icon="icon-plus">
+                                <p:menuitem id="pa_lnk1211" value="Link 1" icon="icon-link" url="#" />
+                                <p:menuitem id="pa_lnk1212" value="Link 2" icon="icon-link" url="#" />
+                                <p:menuitem id="pa_lnk1213" value="Link 3" icon="icon-link" url="#" />
+                            </p:submenu>
+                        </p:submenu>
+                    </p:submenu>
+                    <p:submenu id="pa_sm2" label="Submenu 2" icon="icon-plus">
+                        <p:menuitem id="pa_lnk21" value="Link 1" icon="icon-link" url="#" />
+                        <p:menuitem id="pa_lnk22" value="Link 2" icon="icon-link" url="#" />
+                    </p:submenu>
+                </p:submenu>
+                
+                <p:menuitem id="pa_icons" value="Font Icons" icon="icon-archive" outcome="/font-icons" />
+                
+                <p:submenu id="pa_docs" label="Documentation" icon="icon-lifebuoy">
+                </p:submenu>
+        
+            </pa:menu>
+        </div>
+    </h:form>
+
+</ui:composition>
