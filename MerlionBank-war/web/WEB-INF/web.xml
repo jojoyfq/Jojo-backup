@@ -19,10 +19,20 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
-        </session-timeout>
+         30    
+        </session-timeout>     
     </session-config>
     <welcome-file-list>
         <welcome-file>CustomerManagement/ModifyUserProfile.xhtml</welcome-file>
     </welcome-file-list>
+    
+    <context-param>
+        <param-name>primefaces.PRIVATE_CAPTCHA_KEY</param-name>
+        <param-value>6LfIHyoTAAAAALBjWIkMeFNtsnx0aRG5IlQZRf7A</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>primefaces.PUBLIC_CAPTCHA_KEY</param-name>
+        <param-value>6LfIHyoTAAAAABhzAGZ_Topjhqrfi7cJLDCWYgDd</param-value>
+    </context-param>
 </web-app>

@@ -68,6 +68,15 @@ public class LogInManagedBean implements Serializable {
     private List accountTypes;
     private Long customerId;
 
+    
+    
+    public LogInManagedBean() 
+    {
+        logInAttempts = 0;
+    }
+    
+    
+
     public Long getCustomerId() {
         return customerId;
     }
@@ -90,18 +99,6 @@ public class LogInManagedBean implements Serializable {
 //    public void setAccountType(String accountType) {
 //        this.accountType = accountType;
 //    }
-    /**
-     * Creates a new instance of LogInManagedBean
-     */
-    public LogInManagedBean() {
-//        try {
-//            MyLogger.setup();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//     //       throw new RuntimeException("Problems with creating the log files");
-//        }
-//        LOGGER.setLevel(Level.INFO);
-    }
 
     @PostConstruct
     public void init() {
