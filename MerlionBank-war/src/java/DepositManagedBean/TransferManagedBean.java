@@ -60,7 +60,7 @@ public class TransferManagedBean implements Serializable{
     public void goToOneTimeTransferPage(ActionEvent event){
         try {
             FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/transferOneTime.xhtml");
+                    .redirect("/MerlionBank-war/TransferManagement/transferOneTime.xhtml");
         } catch (Exception e) {
             System.out.print("Redirect to OneTimeTransfer page fails");
         }
@@ -70,7 +70,7 @@ public class TransferManagedBean implements Serializable{
         try {
             payeeName = tfsb.searchPayeeName(payeeTransferAccount);
             FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/transferByPayee.xhtml");
+                    .redirect("/MerlionBank-war/TransferManagement/transferByPayee.xhtml");
         } catch (Exception e) {
             System.out.print("Redirect to transferByPayee page fails");
         }
@@ -85,9 +85,9 @@ public class TransferManagedBean implements Serializable{
             setCheckStatus(tfsb.intraOneTimeTransferCheck(giverAccountNumLong,payeeTransferAccount,amountBD));
 
             if(checkStatus){ //if return true, go to success page
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/DepositManagement/transferByPayeeSuccess.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/TransferManagement/transferByPayeeSuccess.xhtml");
             }else{ //if return false, stay at the same page, display error message
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/DepositManagement/intraTransfer.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/TransferManagement/intraTransfer.xhtml");
             }
         }catch (Exception e){
             System.out.print("Transfer By Payee Encounter Error");
@@ -106,9 +106,9 @@ public class TransferManagedBean implements Serializable{
             setCheckStatus(tfsb.intraOneTimeTransferCheck(giverAccountNumLong,recipientAccountNumLong,amountBD));
 
             if(checkStatus){ //if return true, go to success page
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/DepositManagement/transferOneTimeSuccess.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/TransferManagement/transferOneTimeSuccess.xhtml");
             }else{ //if return false, stay at the same page, display error message
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/DepositManagement/transferOneTime.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/TransferManagement/transferOneTime.xhtml");
             }
             
         } catch (Exception e){
@@ -123,9 +123,9 @@ public class TransferManagedBean implements Serializable{
             payeeAccount = Long.parseLong(payeeAccountString);
             checkAddPayeeStatus = tfsb.addPayee(payeeAccount, payeeName,customerID);
             if(checkAddPayeeStatus) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/DepositManagement/addNewPayeeSuccess.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/TransferManagement/addNewPayeeSuccess.xhtml");
             }else {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/DepositManagement/addNewPayee.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/TransferManagement/addNewPayee.xhtml");
             }
             
         } catch(Exception e){
@@ -142,7 +142,7 @@ public class TransferManagedBean implements Serializable{
     public void goToTransferByPayeeListPage(ActionEvent event){
         try {
             FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/transferByPayeeList.xhtml");
+                    .redirect("/MerlionBank-war/TransferManagement/transferByPayeeList.xhtml");
         } catch (Exception e) {
             System.out.print("Redirect to TransferByPayeeList page fails");
         }       
@@ -151,7 +151,7 @@ public class TransferManagedBean implements Serializable{
     public void goToAddNewPayeePage(ActionEvent event){
         try {
             FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/addNewPayee.xhtml");
+                    .redirect("/MerlionBank-war/TransferManagement/addNewPayee.xhtml");
         } catch (Exception e) {
             System.out.print("Redirect to AddNewPayee page fails");
         }       
