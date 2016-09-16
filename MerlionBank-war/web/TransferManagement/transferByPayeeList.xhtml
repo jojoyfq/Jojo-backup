@@ -12,11 +12,11 @@
 
     <h:body>
         <h:form>
-            <p:commandButton value="Add New Recipient" id="addNewPayeeButton"
+            <p:commandButton value="Add New Rayee" id="addNewPayeeButton"
                              actionListener="#{transferManagedBean.goToAddNewPayeePage}"/>
 
             <p:selectOneMenu id="payeeList" value="#{transferManagedBean.payeeTransferAccount}">
-                <f:selectItem itemLabel="Select recipient ..." itemValue="" noSelectionOption="true" />
+                <f:selectItem itemLabel="Select Payee ..." itemValue="" noSelectionOption="true" />
                 <f:selectItems value="#{transferManagedBean.payeeList}" />
             </p:selectOneMenu>  
             
