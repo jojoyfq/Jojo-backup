@@ -55,4 +55,7 @@ public interface InboxManagementSessionBeanLocal {
  
  public MessageEntity diaplayMessage(Long id);
  
+ //staff delete customer message
+ public boolean deleteCustomerMessage(Long messageID);
+ 
 }

@@ -8,8 +8,11 @@ package DepositEntity.Session;
 import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
+import Exception.UserHasNoSavingAccountException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,19 +29,24 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     private EntityManager em;
 
     @Override
-    public List<SavingAccount> getSavingAccount(Long customerID) {
+    public List<SavingAccount> getSavingAccount(Long customerID) throws UserHasNoSavingAccountException {
         List<SavingAccount> activeSavingAccounts = new ArrayList();
-        
+
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
         q.setParameter("customerID", customerID);
         List<Customer> customers = q.getResultList();
         Customer customer = customers.get(0);
-        for(int i=0;i<customer.getSavingAccounts().size();i++){
-            if(customer.getSavingAccounts().get(i).getStatus().equals("active")){
-                activeSavingAccounts.add(customer.getSavingAccounts().get(i));
+        if (customer.getSavingAccounts().isEmpty()) {
+           System.out.print("Customer has no saving account");
+                throw new UserHasNoSavingAccountException("User has no saving account!");          
+        } else {
+            for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
+                if (customer.getSavingAccounts().get(i).getStatus().equals("active")) {
+                    activeSavingAccounts.add(customer.getSavingAccounts().get(i));
+                }
             }
+            return activeSavingAccounts;
         }
-        return activeSavingAccounts;
     }
 
     @Override
@@ -50,9 +58,9 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         List<SavingAccountType> savingAccountTypes = q.getResultList();
 
         if (savingAccountTypes.isEmpty()) {
-           System.out.print("The accountType Table is Empty");
-           savingAccountString.add("false");
-           return savingAccountString;
+            System.out.print("The accountType Table is Empty");
+            savingAccountString.add("false");
+            return savingAccountString;
         } else {
             System.out.print(savingAccountTypes.size());
             for (int i = 0; i < savingAccountTypes.size(); i++) {
@@ -61,6 +69,25 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
                 savingAccountString.add(savingAccountType);
             }
             return savingAccountString;
+        }
+    }
+    
+    @Override
+    public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
+        List<Long> savingAccountNumbers = new ArrayList();
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
+        q.setParameter("customerID", customerID);
+        List<Customer> customers = q.getResultList();
+        Customer customer = customers.get(0);
+        if (customer.getSavingAccounts().isEmpty()) {
+            throw new UserHasNoSavingAccountException("User has no saving account!");
+        } else {
+            for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
+                if(customer.getSavingAccounts().get(i).getStatus().equals("active")){
+                savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
+                }
+            }
+            return savingAccountNumbers;
         }
     }
 

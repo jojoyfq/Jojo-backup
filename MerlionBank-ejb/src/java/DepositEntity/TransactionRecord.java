@@ -34,11 +34,13 @@ public class TransactionRecord implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private BigDecimal amount;
+    private String status;
     private String description;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date transactionTime;
     @ManyToOne
     private SavingAccount savingAccount;
+
 
     
     public TransactionRecord(){}
@@ -120,9 +122,21 @@ public class TransactionRecord implements Serializable {
         this.transactionTime = transactionTime;
     }
     
-    
+     public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
     
+    public SavingAccount getSavingAccount() {
+        return savingAccount;
+    }
+
+    public void setSavingAccount(SavingAccount savingAccount) {
+        this.savingAccount = savingAccount;
+    }
     
     
 }

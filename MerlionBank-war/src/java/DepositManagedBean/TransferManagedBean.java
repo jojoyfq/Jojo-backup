@@ -6,6 +6,7 @@
 package DepositManagedBean;
 
 import DepositEntity.Session.TransferSessionBeanLocal;
+import Exception.UserHasNoSavingAccountException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -149,7 +150,7 @@ public class TransferManagedBean implements Serializable{
         return payeeList;
     }
     
-    public void getSavingAccountNumbers() throws IOException {
+    public void getSavingAccountNumbers() throws IOException, UserHasNoSavingAccountException {
         savingAccountList = tfsb.getSavingAccountNumbers(customerID);
     }
     

@@ -117,7 +117,7 @@ public class FixedDepositManagedBean implements Serializable {
     @PostConstruct
     public void init(){
         savingAcctDisplay = new ArrayList<String>();
-        this.displaySavingAccts();
+       
       //  customer = new Customer();
         
     }
@@ -194,16 +194,7 @@ public class FixedDepositManagedBean implements Serializable {
         
     }
         
-    public void displaySavingAccts(){
-        //customerId = logInManagedBean.getCustomerId();
-        savingAccounts = sas.getSavingAccount(customerId);
-        
-        for(int i=0;i<savingAccounts.size();i++){
-            String accountNum = savingAccounts.get(i).getAccountNumber().toString();
-            savingAcctDisplay.add(accountNum);
-        }
-        
-    }
+    
     
     public String getAmountString() {
         return amountString;

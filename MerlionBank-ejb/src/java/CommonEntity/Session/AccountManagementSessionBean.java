@@ -115,7 +115,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("Create Customer successfully");
 
         //create saving account
-        long savingAccoutNumber = Math.round(Math.random() * 1000000000);
+        long savingAccoutNumber = generateSavingAccountNumber();
         BigDecimal initialValue = new BigDecimal("0.0000");
 
         System.out.println("Saving Account Type is: " + savingAccountName);
@@ -175,7 +175,10 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             }
 
             //create saving account
-            long savingAccoutNumber = Math.round(Math.random() * 1000000000);
+            
+            //long savingAccoutNumber = Math.round(Math.random() * 1000000000);
+          
+            Long savingAccoutNumber=generateSavingAccountNumber();
             BigDecimal initialValue = new BigDecimal("0.0000");
             System.out.println("Saving Account Type is: " + savingAccountName);
             Query queryType = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
@@ -211,6 +214,27 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             
         }
 
+    }
+    
+    private long generateSavingAccountNumber(){
+        int a = 1;
+        Random rnd = new Random();
+        int number=100000000 + rnd.nextInt(900000000);
+        Long accountNumber = Long.valueOf(number);
+        Query q2 = em.createQuery("SELECT c.accountNumber FROM SavingAccount c");
+            List<Long> existingAcctNum = new ArrayList(q2.getResultList());
+        while (a == 1) {
+            
+                if ((existingAcctNum.contains(accountNumber)) ||  (number/100000000==0)) {
+                    number=100000000 + rnd.nextInt(900000000);
+                    accountNumber = Long.valueOf(number);
+                     a = 1;
+                } else {
+                    a = 0;
+                }
+            }       
+         
+        return accountNumber;
     }
 
     @Override
@@ -547,7 +571,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             customer.getOnlineAccount().setPassword(resetPassword);
             em.flush();
             OnlineAccount onlineAccount = customer.getOnlineAccount();
-            onlineAccount.setAccountStatus("locked");
+            onlineAccount.setAccountStatus("active");
             em.persist(onlineAccount);
             em.flush();
             customer.setStatus("active");
