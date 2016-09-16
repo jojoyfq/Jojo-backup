@@ -28,7 +28,7 @@ and open the template in the editor.
 
                     <h:panelGrid columns="3" cellpadding="5">
                         <p:outputLabel for="ic" value="IC: " />
-                        <p:inputText id="ic" value="#{messageManagedBean.customerIc}" required="true" label="ic" requiredMessage="Please enter your IC!"/>
+                        <p:inputText id="ic" value="#{staffMessageManagedBean.customerIc}" required="true" label="ic" requiredMessage="Please enter your IC!"/>
                         <p:message for="ic" display="icon" />
               
                      
@@ -36,7 +36,7 @@ and open the template in the editor.
 
                     </h:panelGrid>
                    
-                    <p:commandButton value="Submit" update="panel" actionListener="#{messageManagedBean.verifyCustomerDetails}" icon="ui-icon-check" />
+                    <p:commandButton value="Submit" update="panel" actionListener="#{staffMessageManagedBean.verifyCustomerDetails}" icon="ui-icon-check" />
                 </p:panel>
             </h:form>
         </h:body>

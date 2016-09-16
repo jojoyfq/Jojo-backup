@@ -46,7 +46,7 @@ public class LogInManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
 
     private Customer customer;
-    private String ic ="S4444";
+    private String ic = "S4444";
     private String customerName;
     private String customerGender;
     private Date customerDateOfBirth;
@@ -68,14 +68,9 @@ public class LogInManagedBean implements Serializable {
     private List accountTypes;
     private Long customerId;
 
-    
-    
-    public LogInManagedBean() 
-    {
+    public LogInManagedBean() {
         logInAttempts = 0;
     }
-    
-    
 
     public Long getCustomerId() {
         return customerId;
@@ -99,7 +94,6 @@ public class LogInManagedBean implements Serializable {
 //    public void setAccountType(String accountType) {
 //        this.accountType = accountType;
 //    }
-
     @PostConstruct
     public void init() {
         selectedCustomer = new Customer();
@@ -169,21 +163,24 @@ public class LogInManagedBean implements Serializable {
         try {
             if (ic != null && customerPassword != null) {
                 customerId = amsbl.checkLogin(ic, customerPassword);
-                System.out.println("managed bean message: id: "+customerId);
-               
-           System.out.println("managed bean message: id: "+customerId);     //logInAttempts = 0;
+                System.out.println("managed bean message: id: " + customerId);
+
+                System.out.println("managed bean message: id: " + customerId);     //logInAttempts = 0;
                 if (customerId.toString().equals("1")) {
                     System.out.println("Password does not match");
                     logInAttempts++;
                     System.out.println("number attempts:" + logInAttempts);
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password does not correct! Please try again!");
+
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
                     if (logInAttempts == max_attempts) {
                         System.out.println("Your account has been locked out.");
-                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", "Your account has been locked out.");
+                        message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your account has been locked out.");
 
                         RequestContext.getCurrentInstance().showMessageInDialog(message);
-                    //  System.out.println(amsbl.lockAccount(customerId));
+                        //  System.out.println(amsbl.lockAccount(customerId));
                     }
-                } else { 
+                } else {
                     selectedCustomer = amsbl.diaplayCustomerId(customerId);
                     logInAttempts = 0;
                     System.out.println("Log In Successful!");
@@ -197,7 +194,7 @@ public class LogInManagedBean implements Serializable {
             }
         } catch (UserNotExistException ex) {
 
-           // System.out.println("acccccounnnt does not exist!!!!!!");
+            // System.out.println("acccccounnnt does not exist!!!!!!");
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", ex.getMessage());
 
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -209,10 +206,12 @@ public class LogInManagedBean implements Serializable {
 
         }
     }
- public void submitCaptcha(ActionEvent event) {
+
+    public void submitCaptcha(ActionEvent event) {
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Correct", "Correct");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
+
     public void viewOneCustomer() throws IOException {
         //this.ic = selectedCustomer.getIc();
         selectedCustomer = amsbl.diaplayCustomer(ic);
@@ -252,11 +251,10 @@ public class LogInManagedBean implements Serializable {
                 return;
             }
 
-            System.out.println("Message from managed Bean: IC is: " +ic);
+            System.out.println("Message from managed Bean: IC is: " + ic);
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null
                     && customerOccupation != null && customerFamilyInfo != null && customerFinancialGoal != null) {
                 amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
-
 
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Profile edited successfully!");
 
@@ -286,7 +284,7 @@ public class LogInManagedBean implements Serializable {
         this.birthdate = birthdate;
     }
 
-   // private final static Logger LOGGER = Logger.getLogger(LogInManagedBean.class.getName());
+    // private final static Logger LOGGER = Logger.getLogger(LogInManagedBean.class.getName());
     public Customer getCustomer() {
         return customer;
     }

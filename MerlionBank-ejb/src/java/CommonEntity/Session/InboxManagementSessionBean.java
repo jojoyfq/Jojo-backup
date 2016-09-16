@@ -162,7 +162,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         em.flush();
         return true;
         
- }
+ } 
  
  //system display number of new messages for customer
  @Override
@@ -252,13 +252,13 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  
  // staff update status from new to read
  @Override
- public boolean readCustomerMessage(Long messageID){
+ public CustomerMessage readCustomerMessage(Long messageID){
      Query q = em.createQuery("SELECT a FROM CustomerMessage a WHERE a.id = :id");
         q.setParameter("id", messageID);
         CustomerMessage message = (CustomerMessage)q.getSingleResult();  
         message.setStatus("read");
         em.persist(message);
-        return true;
+        return message;
      
  }
  
