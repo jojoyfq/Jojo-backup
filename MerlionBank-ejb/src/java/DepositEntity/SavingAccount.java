@@ -40,6 +40,9 @@ public class SavingAccount implements Serializable {
     private Customer customer;
     @ManyToOne
     private SavingAccountType savingAccountType = new SavingAccountType();
+    
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="SavingAccount")
+    private List<TransactionRecord> transactionRecords;
 
     public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, SavingAccountType savingAccountType) {
         this.accountNumber = accountNumber;
@@ -188,10 +191,11 @@ public class SavingAccount implements Serializable {
         this.savingAccountType = savingAccountType;
     }
 
-    /**
-     * @return the transactionRecord
-     */
-    /**
-     * @return the intrabankTransferToMe
-     */
+    public List<TransactionRecord> getTransactionRecords() {
+        return transactionRecords;
+    }
+
+    public void setTransactionRecords(List<TransactionRecord> transactionRecords) {
+        this.transactionRecords = transactionRecords;
+    }
 }

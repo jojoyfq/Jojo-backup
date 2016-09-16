@@ -10,6 +10,7 @@ import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
 import Exception.UserAlreadyHasSavingAccountException;
+import Exception.UserHasNoSavingAccountException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -37,16 +38,15 @@ public class SavingAccountManagedBean implements Serializable{
     private String savingAccountName;
     private List<String> savingAccountTypeList;
     private boolean createSavingAccountStatus;
+    private List<Long> savingAccountNumberList;
 
     
-
-    
-
     @PostConstruct
     public void init() {
         try{
             getSavingAccountType();
             savingAccounts = sasb.getSavingAccount(customerID);
+            getSavingAccountNumbers();
         }catch(Exception e){
             System.out.print("Init encounter error");
         }
@@ -55,17 +55,24 @@ public class SavingAccountManagedBean implements Serializable{
     public SavingAccountManagedBean() {
     }
     
-    public void createSavingAccountExistingCustomer(ActionEvent event) throws UserAlreadyHasSavingAccountException, EmailNotSendException, IOException{
+    public void createSavingAccountExistingCustomer(ActionEvent event) throws UserAlreadyHasSavingAccountException, EmailNotSendException, IOException, UserHasNoSavingAccountException{
         try{
             System.out.print(customerID);
             System.out.print(savingAccountName);
             amsb.createSavingAccountExistingCustomer(customerID, savingAccountName);
+            //get data from database and assign the new value to the variable after createSavingAccount success!
+            getSavingAccountNumbers();
+            savingAccounts = sasb.getSavingAccount(customerID);
                 FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/createSavingAccountECsuccess.xhtml");
          
         }catch(UserAlreadyHasSavingAccountException ex){
             System.out.println(ex.getMessage());
         }
+    }
+    
+    public void getSavingAccountNumbers() throws UserHasNoSavingAccountException{
+        savingAccountNumberList = sasb.getSavingAccountNumbers(customerID);
     }
     
     public void getSavingAccountType(){
@@ -115,6 +122,15 @@ public class SavingAccountManagedBean implements Serializable{
     public void setCreateSavingAccountStatus(boolean createSavingAccountStatus) {
         this.createSavingAccountStatus = createSavingAccountStatus;
     }
+    
+    public List<Long> getSavingAccountNumberList() {
+        return savingAccountNumberList;
+    }
+
+    public void setSavingAccountNumberList(List<Long> savingAccountNumList) {
+        this.savingAccountNumberList = savingAccountNumList;
+    }
+
 
     
 }
