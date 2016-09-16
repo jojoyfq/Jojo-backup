@@ -12,7 +12,7 @@
     <ui:define name="content">
 
         <!-- Left Column -->
-        <div class="Container20 NoPadding Responsive100">
+        <div class="Container25 NoPadding Responsive100">
 
         </div>
 
@@ -23,38 +23,39 @@
                     <div class="CardBigTopic"> One Time Transfer </div>
                     <div class="Separator"></div>
 
-                            <div class="Container100 ui-fluid">
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <div class="Card">
+                                <div class="Container10"></div>
+                                <div class="Container80">
+                                    <h:panelGrid columns="2" id="transferOneTime" cellpadding="5"> 
 
-                                <div class="Card">
-                                    <div class="Container10"></div>
-                                    <div class="Container80">
-                                        <h:panelGrid columns="2" id="transferOneTime" cellpadding="5"> 
+                                        <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
+                                        <p:inputMask id="recipientAccount"  maxlength="9" mask="9?99999999" value="#{transferManagedBean.recipientAccountNumString}" required="true" requiredMessage="Recipient Account Number is required."/>
 
-                                            <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
-                                            <p:inputMask id="recipientAccount"  maxlength="9" mask="9?99999999" value="#{transferManagedBean.recipientAccountNumString}" required="true" requiredMessage="Recipient Account Number is required."/>
+                                        <h:outputLabel for="recipientName" value="Recipient Name:" />
+                                        <p:inputText id="recipientName" value="#{transferManagedBean.recipientName}" required="true" requiredMessage="Recipient Name is required." />
 
-                                            <h:outputLabel for="recipientName" value="Recipient Name:" />
-                                            <p:inputText id="recipientName" value="#{transferManagedBean.recipientName}" required="true" requiredMessage="Recipient Name is required." />
+                                        <h:outputLabel for="transferAmount" value="Amount: $" />
+                                        <p:inputText id="transferAmount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." />
 
-                                            <h:outputLabel for="transferAmount" value="Amount: $" />
-                                            <p:inputText id="transferAmount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." />
-
-                                        </h:panelGrid>
-                                    </div>
-                                    <div class="Container10"></div>
-
-                                    <div class="EmptyBox20"></div>
-                                    <div class="Container30"></div>
-                                    <div class="Container40">
-                                        <p:commandButton actionListener="#{transferManagedBean.oneTimeTransfer}" value="Submit" />
-                                    </div>
-                                    <div class="Container30"></div>
+                                    </h:panelGrid>
                                 </div>
+                                <div class="Container10"></div>
+
+                                <div class="EmptyBox20"></div>
+                                <div class="Container30"></div>
+                                <div class="Container40">
+                                    <p:commandButton actionListener="#{transferManagedBean.oneTimeTransfer}" value="Submit" />
+                                </div>
+                                <div class="Container30"></div>
                             </div>
+                        </h:form>
+                    </div>
 
 
-                       
-                   
+
+
 
 
                 </div>
@@ -65,7 +66,7 @@
         </div>
 
         <!-- Right Column -->
-        <div class="Container30 NoPadding Responsive50">
+        <div class="Container25 NoPadding Responsive50">
 
 
         </div>
