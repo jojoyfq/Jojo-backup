@@ -289,6 +289,19 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         MessageEntity message =(MessageEntity) q.getSingleResult();
         return message;
     }
+    
+     //staff delete message
+ @Override
+ public boolean deleteCustomerMessage(Long messageID){
+     Query q = em.createQuery("SELECT a FROM CustomerMessage a WHERE a.id = :id");
+        q.setParameter("id", messageID);
+        CustomerMessage message = (CustomerMessage)q.getSingleResult();  
+        message.setStatus("deleted");
+        em.persist(message);
+        em.flush();
+        return true;
+        
+ }
  
  
 }
