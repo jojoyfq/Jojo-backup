@@ -589,7 +589,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         } else if (customer.getStatus().equals("inactive")) {
             System.out.println("Username " + ic + " please activate your account!");
 
-           throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+            throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+
         } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
             System.out.println("Username " + ic + " Account locked! Please Reset Password!");
             throw new UserNotExistException("Username " + ic + " Account locked! Please Reset Password!");
