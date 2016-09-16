@@ -7,383 +7,50 @@
 
 
     <ui:define name="content">
-        
 
-        <!-- Left Column -->
-        <div class="Container20 NoPadding Responsive100">
-            <div class="Container100">
-                <div class="Card ui-fluid">
-                    <i class="icon-user Blue Fs50 Fleft"></i>
-                    <span class="Blue Fs20 FontDosisSemiBold">Welcome, Luke Skywalker</span><br/>
-                    <span class="Leaden Fs14 FontDosisMedium">Your last login - 18.08.2015</span>
-                    <div class="EmptyBox10"></div>
-                    <div class="Container100 Responsive50"><p:button value="Settings" styleClass="RedButton"/></div>
-                    <div class="Container100 Responsive50"><p:button value="My Services" styleClass="PurpleButton"/></div>
-                    <div class="Container100 Responsive50"><p:button value="Code Samples" styleClass="CyanButton"/></div>
-                    <div class="Container100 Responsive50"><p:button value="Applications" styleClass="OrangeButton"/></div>
-                </div>
-            </div>
-            <div class="Container100 Responsive50">
-                <div class="Card">
-                    <i class="icon-cloud2 Fright Blue Fs60"></i>
-                    <span class="Blue Fs18 FontDosisMedium">Today</span><br/>
-                    <span class="Blue Fs50 FontDosisMedium">28º</span><br/>
-                    <span class="Leaden Fs14 FontDosisRegular">Cloudy ~ 12°- 23°</span>
-                    <div class="Separator"></div>
-                    <div class="Container33 TexAlCenter">
-                        <span class="Leaden Fs14 FontDosisRegular">Sun</span><br/>
-                        <span class="Blue Fs28 FontDosisMedium">12º</span>
-                    </div>
-                    <div class="Container33 TexAlCenter">
-                        <span class="Leaden Fs14 FontDosisRegular">Mon</span><br/>
-                        <span class="Blue Fs28 FontDosisMedium">20º</span>
-                    </div>
-                    <div class="Container33 TexAlCenter">
-                        <span class="Leaden Fs14 FontDosisRegular">Tue</span><br/>
-                        <span class="Blue Fs28 FontDosisMedium">18º</span>
-                    </div>
-                    <div class="Container33 TexAlCenter">
-                        <span class="Leaden Fs14 FontDosisRegular">Wed</span><br/>
-                        <span class="Blue Fs28 FontDosisMedium">13º</span>
-                    </div>
-                    <div class="Container33 TexAlCenter">
-                        <span class="Leaden Fs14 FontDosisRegular">Thu</span><br/>
-                        <span class="Blue Fs28 FontDosisMedium">13º</span>
-                    </div>
-                    <div class="Container33 TexAlCenter">
-                        <span class="Leaden Fs14 FontDosisRegular">Fri</span><br/>
-                        <span class="Blue Fs28 FontDosisMedium">10º</span>
-                    </div>
-                    <div class="EmptyBox10"></div>
-                    <div class="Container100 ui-fluid">
-                        <p:selectOneMenu id="console" value="#{selectOneMenuView.console}">
-                            <f:selectItem itemLabel="Change Location" itemValue="" />
-                            <f:selectItem itemLabel="İstanbul" itemValue="İstanbul" />
-                            <f:selectItem itemLabel="New York" itemValue="New York" />
-                            <f:selectItem itemLabel="Rio" itemValue="Rio" />
-                            <f:selectItem itemLabel="Berlin" itemValue="Berlin" />
-                            <f:selectItem itemLabel="Milano" itemValue="Milano" />
-                            <f:selectItem itemLabel="Barcelona" itemValue="Barcelona" />
-                        </p:selectOneMenu>
-                    </div>
-                </div>
-            </div>
-            <div class="Container100 Responsive50">
-                <div class="Card ui-fluid">
-                    <i class="icon-sports-club Green Fs40 Fleft MarRight10"></i>
-                    <span class="Green Fs20 FontDosisSemiBold">Atlas Data <br/> Fusion Platform</span>
-                    <div class="EmptyBox10"></div>
-                    <span class="BoldLeaden Fs14 FontDosisMedium">Cursus est primis euismod auctor sem nascetur est laoreet sagittis dui montes suscipit tristique lorem potenti.</span>
-                    <div class="EmptyBox10"></div>
-                    <p:button value="Load App" styleClass="GreenButton"/>
-                </div>
-            </div>
-            <div class="Container100 Responsive50">
-                <div class="Card ui-fluid">
-                    <i class="icon-flattr Red Fs40 Fleft MarRight10"></i>
-                    <span class="Red Fs20 FontDosisSemiBold">Atlas Analytical <br/> Applications</span>
-                    <div class="EmptyBox10"></div>
-                    <span class="BoldLeaden Fs14 FontDosisMedium">Cursus est primis euismod auctor sem nascetur est laoreet sagittis dui montes suscipit tristique lorem potenti.</span>
-                    <div class="EmptyBox10"></div>
-                    <p:button value="Load App" styleClass="RedButton"/>
-                </div>
-            </div>
-            <div class="Container100 Responsive50">
-                <div class="Card ui-fluid">
-                    <i class="icon-qq Cyan Fs40 Fleft MarRight10"></i>
-                    <span class="Cyan Fs20 FontDosisSemiBold">Atlas Mobile <br/> Object Reporter</span>
-                    <div class="EmptyBox10"></div>
-                    <span class="BoldLeaden Fs14 FontDosisMedium">Cursus est primis euismod auctor sem nascetur est laoreet sagittis dui montes suscipit tristique lorem potenti.</span>
-                    <div class="EmptyBox10"></div>
-                    <p:button value="Load App" styleClass="CyanButton"/>
-                </div>
-            </div>
-            <div class="Container100 Responsive50">
-                <div class="Card ui-fluid">
-                    <i class="icon-lab-flask Blue Fs40 Fleft MarRight10"></i>
-                    <span class="Blue Fs20 FontDosisSemiBold">Atlas Development <br/> Labs</span>
-                    <div class="EmptyBox10"></div>
-                    <span class="BoldLeaden Fs14 FontDosisMedium">Cursus est primis euismod auctor sem nascetur est laoreet sagittis dui montes suscipit tristique lorem potenti.</span>
-                    <div class="EmptyBox10"></div>
-                    <p:button value="Load App" styleClass="BlueButton"/>
-                </div>
-            </div>
-        </div>
 
-        <!-- Center Column -->
-        <div class="Container50 NoPadding Responsive50">
-            <div class="Container100">
-                <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"><i class="icon-shareable Fleft MarRight10 Fs28"></i> Atlas Platform Applications APIs</div>
-                    <div class="Separator"></div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card LeadenBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-dropbox Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas Dropbox<br/> Sync API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card GreenBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-evernote Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas Evernote <br/>TODOs API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card OrangeBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-grooveshark Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas GrooveShark <br/>Share API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card BlueBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-skype Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas Skype Chat <br/>Sync API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card TealBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-twitter Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas Twitter <br/>Auth API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card BoldLeadenBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-spotify Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas Spotify <br/>Connection API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card CyanBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-slideshare Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas Slideshare <br/>Sync API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card RedBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-pinterest Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas Pinterest<br/> Share API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                    <div class="Container33 Responsive50 Flex">
-                        <div class="Card PurpleBack SoftGray TexAlCenter HoverEffect ui-fluid">
-                            <i class="icon-github Fs40 DispBlock"></i>
-                            <div class="EmptyBox10"></div>
-                            Atlas GitHub <br/>Connection API
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Load App" styleClass="GrayButton"/>
-                        </div>
-                    </div>
-                </div>
-            </div> 
-            <div class="Container100">
-                <div class="Card">
-                    <div class="CardBigTopic"><i class="icon-news Fleft MarRight10 Fs28"></i> Atlas API GitHub Reports
-                        <p:selectOneMenu id="console2" value="#{selectOneMenuView.console}" styleClass="Fright">
-                            <f:selectItem itemLabel="Filter By Application" itemValue="" />
-                            <f:selectItem itemLabel="Spotify" itemValue="Spotify" />
-                            <f:selectItem itemLabel="Evernote" itemValue="Evernote" />
-                            <f:selectItem itemLabel="Github" itemValue="Github" />
-                            <f:selectItem itemLabel="GrooveShark" itemValue="GrooveShark" />
-                            <f:selectItem itemLabel="Skype" itemValue="Skype" />
-                            <f:selectItem itemLabel="Slideshare" itemValue="Slideshare" />
-                            <f:selectItem itemLabel="Pinterest" itemValue="Pinterest" />
-                        </p:selectOneMenu>
-                    </div>
-                    <div class="Separator"></div>
-                    <div class="EmptyBox5"></div>
-                    
-                    <div class="EmptyBox10"></div>
-                    <div class="Container33 ui-fluid Responsive50"><p:commandButton value="Send With Email" icon="fa fa-envelope Fs14 white" styleClass="GreenButton"/></div>
-                    <div class="Container33 ui-fluid Responsive50"><p:commandButton value="Print List" icon="fa fa-print Fs14 white" styleClass="BlueButton"/></div>
-                    <div class="Container33 ui-fluid Responsive50"><p:commandButton value="Delete List" icon="fa fa-trash Fs14 white" styleClass="RedButton"/></div>
-                </div>
-            </div>   
+        <div class="Container100 NoPadding Responsive50">
 
-            <div class="Container100">
-                <div class="Card">
-                    <div class="CardBigTopic"><i class="icon-stopwatch Fleft MarRight10 Fs28"></i> Atlas Remote API - Realtime Control Panel</div>
-                    <div class="Separator"></div>
-                    <h:graphicImage name="images/chart3.svg" library="atlas-layout" styleClass="Wid100"/>
-                    
-                    <div class="Container50 Responsive100">
-                        <div class="Card SoftGrayBack">
-                            <span class="DispBlock FontDosisSemiBold Fs16 BoldLeaden">Realtime Server Status</span>
-                            <div class="EmptyBox10"></div>
-                            <h:graphicImage name="images/chart.svg" library="atlas-layout" styleClass="Wid100"/>
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Details" icon="fa fa-envelope" styleClass="GreenButton Fleft Fs14 White"/>
-                            <p:commandButton icon="fa fa-share-alt" styleClass="RedButton Fright Fs16 White"/>
-                            <p:commandButton icon="fa fa-cog" styleClass="OrangeButton Fright Fs16 White"/>
-                        </div>
-                    </div>
-                    <div class="Container50 Responsive100">
-                        <div class="Card SoftGrayBack">
-                            <span class="DispBlock FontDosisSemiBold Fs16 BoldLeaden">Realtime Connection Status</span>
-                            <div class="EmptyBox10"></div>
-                            <h:graphicImage name="images/chart2.svg" library="atlas-layout" styleClass="Wid100"/>
-                            <div class="EmptyBox10"></div>
-                            <p:commandButton value="Details" icon="fa fa-envelope" styleClass="GreenButton Fleft Fs14 White"/>
-                            <p:commandButton icon="fa fa-share-alt" styleClass="RedButton Fright Fs16 White"/>
-                            <p:commandButton icon="fa fa-cog" styleClass="OrangeButton Fright Fs16 White"/>
-                        </div>
-                    </div>
-                </div>
-            </div> 
-        </div>
-
-        <!-- Right Column -->
-        <div class="Container30 NoPadding Responsive50">
-
-            <div class="Container100">
-                <div class="Card ui-fluid">
-                    <div class="CardBigTopic"><i class="icon-rocket Fleft MarRight10 Fs28"></i> Atlas Remote Plugins - Create New Plugin Pack </div>
-                    <div class="Separator"></div>
-                    <div class="CardSmallTopic">Custom Build Of API</div>
-                    <div class="Container100"><p:inputText placeholder="Name Of Your Build"/></div>
-                    <div class="Container50 Responsive50">
-                        <p:selectOneMenu id="app1" value="#{selectOneMenuView.console}">
-                            <f:selectItem itemLabel="Select" itemValue="" />
-                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
-                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
-                        </p:selectOneMenu>
-                    </div>
-                    <div class="Container50 Responsive50">
-                        <p:selectOneMenu id="app2" value="#{selectOneMenuView.console}">
-                            <f:selectItem itemLabel="Select" itemValue="" />
-                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
-                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
-                        </p:selectOneMenu>
-                    </div>
-                    <div class="Container50 Responsive50">
-                        <p:selectOneMenu id="app3" value="#{selectOneMenuView.console}">
-                            <f:selectItem itemLabel="Select" itemValue="" />
-                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
-                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
-                        </p:selectOneMenu>
-                    </div>
-                    <div class="Container50 Responsive50">
-                        <p:selectOneMenu id="app4" value="#{selectOneMenuView.console}">
-                            <f:selectItem itemLabel="Select" itemValue="" />
-                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
-                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
-                        </p:selectOneMenu>
-                    </div>
-                    <div class="EmptyBox5"></div>
-                    <div class="Separator"></div>
-                    <div class="CardSmallTopic">Select Pack Modules</div>
-                    <p:selectManyCheckbox layout="responsive" columns="2">
-                        <f:selectItem itemLabel="Dropbox" itemValue="0" />
-                        <f:selectItem itemLabel="Evernote" itemValue="1" />
-                        <f:selectItem itemLabel="Grroveshark" itemValue="2" />
-                        <f:selectItem itemLabel="Skype" itemValue="3" />
-                        <f:selectItem itemLabel="Twitter" itemValue="4" />
-                        <f:selectItem itemLabel="Spotify" itemValue="5" />
-                        <f:selectItem itemLabel="Slideshare" itemValue="6" />
-                        <f:selectItem itemLabel="Pinterest" itemValue="7" />
-                        <f:selectItem itemLabel="Github" itemValue="8" />
-                        <f:selectItem itemLabel="All" itemValue="9" />
-                    </p:selectManyCheckbox>
-                    <div class="EmptyBox5"></div>
-                    <div class="Separator"></div>
-                    <div class="Container33 ui-fluid Responsive50"><p:commandButton value="Share" styleClass="PurpleButton"/></div>
-                    <div class="Container33 ui-fluid Responsive50"><p:commandButton value="Save" styleClass="GreenButton"/></div>
-                    <div class="Container33 ui-fluid Responsive50"><p:commandButton value="Build" styleClass="RedButton"/></div>
-                </div>
-            </div> 
-
-            <div class="Container100 NoPadding Flex FlexWrap">
-                <div class="Container50 Responsive100 Flex">
-                    <div class="Card BlueBack SoftGray ui-fluid">
-                        <div class="CardBigTopic SoftGray"><i class="icon-facebook-with-circle Fright Fs40"></i> Facebook  <br/> Page <br/> <span class="Fs14">18.08.2016</span> </div>
-                        <div class="EmptyBox20"></div>
-                        <span class="Fs14 FontDosisRegular">“Cursus est primis euismod auctor sem nascetur est laoreet sagittis dui montes suscipit tristique lorem potenti.”
-                            <br/> <span class="FontDosisSemiBold">- Poe DAMERON</span></span>
-                        <div class="EmptyBox20"></div>
-                        <span class="Fs14 FontDosisRegular">“Cursus est primis sagittis euismod auctor sem nascetur est laoreet sagittis dui montes suscipit tristique lorem potenti.”
-                            <br/> <span class="FontDosisSemiBold">- Poe DAMERON</span></span>
-                        <div class="EmptyBox20"></div>
-                        <p:commandButton value="View More Comments" styleClass="GrayButton"/>
-                    </div>
-                </div>
-
-                <div class="Container50 Responsive100 Flex">
-                    <div class="Card TealBack SoftGray ui-fluid">
-                        <div class="CardBigTopic SoftGray"><i class="icon-twitter-with-circle Fright Fs40"></i> Twitter Mentions <br/> And Tweets <br/> <span class="Fs14">18.08.2016</span> </div>
-                        <div class="EmptyBox20"></div>
-                        <span class="Fs14 FontDosisRegular">“Cursus est primis euismod auctor sem nascetur est laoreet sagittis dui montes suscipit tristique lorem potenti."
-                            <br/> <span class="FontDosisSemiBold Underline">@kyloren</span></span>
-                        <div class="EmptyBox20"></div>
-                        <span class="Fs14 FontDosisRegular">“Cursus est primis euismod auctor sem nascetur est laoreet sagittis dui montes suscipit tristique lorem potenti."
-                            <br/> <span class="FontDosisSemiBold Underline">@kyloren</span></span>
-                        <div class="EmptyBox20"></div>
-                        <p:commandButton value="View More Tweets" styleClass="GrayButton"/>
-                    </div>
-
-                </div> 
+            <div class="Container30 NoPadding Responsive100">
                 <div class="Container100">
-                    <div class="Card">
-                        <div class="CardBigTopic"><i class="icon-github-with-circle Fright Fs50"></i> GitHub Weekly Issues <br/> <span class="Fs14">18.08.2016</span> </div>
+                    <div class="Card ui-fluid">
 
-                        <div class="Container100 Responsive100">
-                            <div class="Card SoftGrayBack Zoom1point05x">
-                                <span class="Fs14 FontDosisRegular">Cursus est primis euismod auctor sem nascetur est laoreet sagittis lorem potenti.
-                                    <br/><br/> <span class="FontDosisSemiBold Blue">@luke</span></span>
-                                <div class="EmptyBox5"></div>
-                                <p:commandButton icon="fa fa-share-alt" styleClass="BlueButton Fright Fs16 White"/>
-                                <p:commandButton icon="fa fa-cog" styleClass="OrangeButton Fright Fs16 White"/>
-                            </div>
-                        </div>
-                        <div class="Container100 Responsive100">
-                            <div class="Card SoftGrayBack Zoom1point05x">
-                                <span class="Fs14 FontDosisRegular">Cursus est primis euismod auctor sem nascetur est laoreet sagittis lorem potenti.
-                                    <br/><br/> <span class="FontDosisSemiBold Blue">@luke</span></span>
-                                <div class="EmptyBox5"></div>
-                                <p:commandButton icon="fa fa-share-alt" styleClass="BlueButton Fright Fs16 White"/>
-                                <p:commandButton icon="fa fa-cog" styleClass="OrangeButton Fright Fs16 White"/>
-                            </div>
-                        </div>
-                        <div class="Container100 Responsive100">
-                            <div class="Card SoftGrayBack Zoom1point05x">
-                                <span class="Fs14 FontDosisRegular">Cursus est primis euismod auctor sem nascetur est laoreet sagittis lorem potenti.
-                                    <br/><br/> <span class="FontDosisSemiBold Blue">@luke</span></span>
-                                <div class="EmptyBox5"></div>
-                                <p:commandButton icon="fa fa-share-alt" styleClass="BlueButton Fright Fs16 White"/>
-                                <p:commandButton icon="fa fa-cog" styleClass="OrangeButton Fright Fs16 White"/>
-                            </div>
-                        </div>
+                        <span class="Blue Fs20 FontDosisSemiBold">Welcome, Yanmeng Li</span><br/>
+                        <span class="Leaden Fs14 FontDosisMedium">Your last login - 15.09.2016</span>
+                        <div class="EmptyBox30"></div>
+                        <div class="Container100 Responsive50"><p:button value="Update Profile" styleClass="White Fs16"/></div>
+                        <div class="Container100 Responsive50"><p:button value="Reset Password" styleClass="White Fs16"/></div>
+                        <div class="Container100 Responsive50"><p:button value="Log Out" styleClass="White Fs16"/></div>
                     </div>
-                </div> 
+                </div>
             </div>
 
+
+            <div class="Container70">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic">Your Quick Summary</div>
+                    <div class="Separator"></div>
+                    <div class="Container30 Responsive50 Flex">
+
+                    </div>
+
+                    <div class="Container40 Responsive50 Flex">
+                        <div class="Card">
+                            <div class="CardBigTopic TexAlCenter">Saving Account Balance</div>
+                            <p:chart id="bar" type="bar" model="#{barChartManagedBean.barModel}" responsive="true"/>
+                        </div>
+                    </div>
+
+                    <div class="Container30 Responsive50 Flex">
+
+                    </div>
+
+                </div>
+            </div> 
+
         </div>
+
+
 
     </ui:define>
 
