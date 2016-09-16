@@ -48,7 +48,7 @@ public interface InboxManagementSessionBeanLocal {
  public List<CustomerMessage> StaffViewAllMessage(Long staffId);
  
  // staff update status from new to read
- public boolean readCustomerMessage(Long messageID);
+ public CustomerMessage readCustomerMessage(Long messageID);
  
   //system display number of new messages for staff
  public int countStaffNewMessage(Long staffID);

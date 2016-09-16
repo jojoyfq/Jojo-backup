@@ -133,33 +133,6 @@ public class MessageManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
     }
 
-    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
-        if (customerIc != null) {
-            try {
-                Long msg = imsbl.verifyCustomer(customerIc);
-
-                System.out.println(msg + "Customer verification is successful!");
-
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
-
-            } catch (UserNotExistException | UserNotActivatedException ex) {
-                System.out.println(ex.getMessage());
-            }
-        } else {
-
-            System.out.println("Please do not leave any blanks");
-        }
-    }
-
-    public void sendMessageToCustomer(ActionEvent event) throws EmailNotSendException {
-        if (messageSubject != null && content != null) {
-            try {
-                imsbl.sendMessage(customerId, staffId, messageSubject, content);
-            } catch (EmailNotSendException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-    }
 
     public MessageEntity customerReadMessage(ActionEvent event) throws IOException {
         message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
@@ -168,6 +141,11 @@ public class MessageManagedBean implements Serializable {
         //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/displaySingleMessage.xhtml");
 //        messageId = 6L;
         message = imsbl.readMessage(message.getId());
+        messageId = message.getId();
+        messageSubject = message.getSubject();
+        content = message.getContent();
+        staffId = message.getStaff().getId();
+        status = message.getStatus();
         return message;
     }
 
@@ -186,16 +164,21 @@ public class MessageManagedBean implements Serializable {
 
     public void customerReplyMessage(ActionEvent event) throws EmailNotSendException {
         try {
-            message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
-            System.err.println("********** message.getId(): " + message.getId());
-            imsbl.customerSendMessage(messageSubject, customerReplyContent, customerReplyMsgStatus, staffId, customerId);
+        //    message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
+            System.err.println("********** message.getId(): " + messageId);
+            System.err.println("********** message.getMessageSubject(): " + messageSubject);
+            System.err.println("********** message.getContent: " + content);
+            System.err.println("********** message.getStaffId(): " + staffId);
+            imsbl.customerSendMessage(message.getSubject(), customerReplyContent, message.getStatus(), staffId, customerId);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your reply has been successfully sent!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
 
-    public void replyMessage(ActionEvent event) {
+    public MessageEntity replyMessage(ActionEvent event) {
         message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
         System.err.println("********** message.getId(): " + message.getId());
         System.out.println("***********Message from Managed Bean: ");
@@ -204,6 +187,7 @@ public class MessageManagedBean implements Serializable {
         // sendID = msg.getReceiverId();
         System.out.println("Staff ID is  " + message.getStaff().getId());
         //   replyTitle = "RE: " + msg.getTitle();
+        return message;
     }
     public void countCusotmerUnreadEmail(){
         
