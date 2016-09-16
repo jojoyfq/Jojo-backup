@@ -51,21 +51,25 @@
 
                                     <div class="Container100"><p:commandButton id="login" value="Login Now" styleClass="White Fs16" actionListener="#{logInManagedBean.customerLogIn}"/></div>
                                 </h:form>
-                                
+                                <h:form>
+                                    <p:messages showDetail="true"/>
+                                    <p:captcha label="Captcha" />
+                                    <p:commandButton value="Check" actionListener="#{logInManagedBean.submitCaptcha}" ajax="false" icon="ui-icon-check"/>
+                                </h:form>>
                                 <h:form>
                                     <div class="Container100 TexAlRight"><p:commandLink id="registerNewUser" value="New User? Register Now!" type="submit" actionListener="#{registerManagedBean.goToSelectAccountTypePage}"/></div>
                                 </h:form>
-                                
+
                                 <h:form>
                                     <div class="Container100 TexAlRight"><p:commandLink value="Forgot Your Password or Username?" type="submit" actionListener="#{resetPasswordManagedBean.goToResetPasswordVerifyCustomerDetailsPage}"/></div>
                                 </h:form>
-                              
+
                             </div>
                             <div class="EmptyBox20"></div>
                             <div class="SeparatorFull"></div>
                             <div class="EmptyBox20"></div>
 
-                          
+
                             <div class="Container100"><p:button value="Activate Account" styleClass="GrayButton" /></div>
 
 
