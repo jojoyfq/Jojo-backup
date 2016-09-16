@@ -20,60 +20,41 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Update Your Information </div>
+                    <div class="CardBigTopic"> One Time Transfer </div>
                     <div class="Separator"></div>
 
+                            <div class="Container100 ui-fluid">
 
-                    <div class="Container100">
-                        <h:form id="form">
+                                <div class="Card">
+                                    <div class="Container10"></div>
+                                    <div class="Container80">
+                                        <h:panelGrid columns="2" id="transferOneTime" cellpadding="5"> 
 
-                            <p:panel style="margin-bottom:10px;" id="panel">
+                                            <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
+                                            <p:inputMask id="recipientAccount"  maxlength="9" mask="9?99999999" value="#{transferManagedBean.recipientAccountNumString}" required="true" requiredMessage="Recipient Account Number is required."/>
 
-                                <p:messages id="msgs" />
-                                <h:panelGrid columns="3" cellpadding="5">
+                                            <h:outputLabel for="recipientName" value="Recipient Name:" />
+                                            <p:inputText id="recipientName" value="#{transferManagedBean.recipientName}" required="true" requiredMessage="Recipient Name is required." />
 
-                                    <h:outputLabel for="ic" value="IC:" /> 
-                                    <h:outputLabel for="ic" value="#{logInManagedBean.ic}" /> 
-                                    <h:outputLabel/>
+                                            <h:outputLabel for="transferAmount" value="Amount: $" />
+                                            <p:inputText id="transferAmount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." />
 
+                                        </h:panelGrid>
+                                    </div>
+                                    <div class="Container10"></div>
 
-                                    <h:outputLabel for="name" value="Name:" /> 
-                                    <h:outputLabel value="#{logInManagedBean.customerName}" />
-                                    <h:outputLabel/>
-                                    <h:outputLabel for="gender" value="Gender:" /> 
-                                    <h:outputLabel value=" #{logInManagedBean.customerGender}" /> 
-                                    <h:outputLabel/>
-                                    <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
-                                    <h:outputLabel value="#{logInManagedBean.birthdate}" />
-                                    <h:outputLabel/>
-                                    <h:outputLabel for="email" value="Email:" /> 
-                                    <p:inputText id="email" value="#{logInManagedBean.customerEmail}"  required="true" requiredMessage="Please fill in your email!" />
-                                    <p:message for="email" display="icon" />
-
+                                    <div class="EmptyBox20"></div>
+                                    <div class="Container30"></div>
+                                    <div class="Container40">
+                                        <p:commandButton actionListener="#{transferManagedBean.oneTimeTransfer}" value="Submit" />
+                                    </div>
+                                    <div class="Container30"></div>
+                                </div>
+                            </div>
 
 
-                                    <h:outputLabel for="phoneNumber" value="Phone Number:" /> 
-                                    <p:inputText id="phoneNumber" value="#{logInManagedBean.customerPhoneNumber}"   required="true" requiredMessage="Please fill in your phone number!"/>
-                                    <p:message for="phoneNumber" display="icon" />
-
-                                    <h:outputLabel for="address" value="Address is:" /> 
-                                    <p:inputText id="address" value="#{logInManagedBean.customerAddress}" label="customerAddress" required="true" requiredMessage="Please fill in your address!"/>
-                                    <p:message for="address" display="icon" />
-
-                                    <h:outputLabel for="occupation" value="Occupation:" /> 
-                                    <p:inputText id="occupation" value="#{logInManagedBean.customerOccupation}" label="occupation" required="true" requiredMessage="Please fill in your occupation!"/>
-                                    <p:message for="occupation" display="icon"  />
-
-                                    <h:outputLabel for="familyInfo" value="Family Information:" /> 
-                                    <p:inputText id = "familyInfo" value="#{logInManagedBean.customerFamilyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
-                                    <p:message for="familyInfo" display="icon" />
-
-                                    <p:commandButton update="panel"  icon="ui-icon-script" actionListener="#{logInManagedBean.modifyProfile}" value="Submit" />
-                                </h:panelGrid>
-                            </p:panel>
-
-                        </h:form>
-                    </div>
+                       
+                   
 
 
                 </div>
