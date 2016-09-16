@@ -27,11 +27,18 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
 
     @Override
     public List<SavingAccount> getSavingAccount(Long customerID) {
+        List<SavingAccount> activeSavingAccounts = new ArrayList();
+        
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
         q.setParameter("customerID", customerID);
         List<Customer> customers = q.getResultList();
         Customer customer = customers.get(0);
-        return customer.getSavingAccounts();
+        for(int i=0;i<customer.getSavingAccounts().size();i++){
+            if(customer.getSavingAccounts().get(i).getStatus().equals("active")){
+                activeSavingAccounts.add(customer.getSavingAccounts().get(i));
+            }
+        }
+        return activeSavingAccounts;
     }
 
     @Override

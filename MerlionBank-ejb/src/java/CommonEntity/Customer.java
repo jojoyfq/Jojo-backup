@@ -9,6 +9,7 @@ package CommonEntity;
 
 import DepositEntity.Payee;
 import CustomerRelationshipEntity.CaseEntity;
+import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -123,8 +124,16 @@ public class Customer implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
     private List<CaseEntity> cases= new ArrayList<CaseEntity>();
     
-//    @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
-//    private List<FixedDepositAccount> fixedDepositeAccounts=new ArrayList<FixedDepositAccount>();
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
+    private List<FixedDepositAccount> fixedDepositeAccounts;
+
+    public List<FixedDepositAccount> getFixedDepositeAccounts() {
+        return fixedDepositeAccounts;
+    }
+
+    public void setFixedDepositeAccounts(List<FixedDepositAccount> fixedDepositeAccounts) {
+        this.fixedDepositeAccounts = fixedDepositeAccounts;
+    }
 
     public List<CaseEntity> getCases() {
         return cases;

@@ -589,9 +589,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         } else if (customer.getStatus().equals("inactive")) {
             System.out.println("Username " + ic + " please activate your account!");
 
-
-            throw new UserNotActivatedException("Username " + ic + " please activate your account!");
-
+           throw new UserNotActivatedException("Username " + ic + " please activate your account!");
         } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
             System.out.println("Username " + ic + " Account locked! Please Reset Password!");
             throw new UserNotExistException("Username " + ic + " Account locked! Please Reset Password!");
@@ -620,7 +618,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
         return customer.getId();
     }
-
+@Override
     public Long lockAccount(Long customerId) {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
         q.setParameter("id", customerId);

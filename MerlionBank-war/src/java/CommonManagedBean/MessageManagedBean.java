@@ -51,7 +51,7 @@ public class MessageManagedBean implements Serializable {
     private String messageSubject;
     private String content;
     private Customer customer;
-    private Long customerId = 452L;
+    private Long customerId = 2L;
     private Staff staff;
     private List<MessageEntity> messages;
     private Long messageId;
