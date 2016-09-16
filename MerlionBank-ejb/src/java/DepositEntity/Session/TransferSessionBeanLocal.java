@@ -5,6 +5,7 @@
  */
 package DepositEntity.Session;
 
+import Exception.UserHasNoSavingAccountException;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Local;
@@ -19,5 +20,5 @@ public interface TransferSessionBeanLocal {
      public Boolean addPayee(Long payeeAccount, String payeeName, Long customerID);
      public List getPayeeList(Long customerID);
      public String searchPayeeName (Long payeeAccount);
-     public List<Long> getSavingAccountNumbers(Long customerID);
+     public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
 }
