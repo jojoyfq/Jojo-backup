@@ -20,41 +20,32 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> One Time Transfer </div>
+                    <div class="CardBigTopic"> Transfer Using My Payee List </div>
                     <div class="Separator"></div>
 
-                            <div class="Container100 ui-fluid">
-
-                                <div class="Card">
-                                    <div class="Container10"></div>
-                                    <div class="Container80">
-                                        <h:panelGrid columns="2" id="transferOneTime" cellpadding="5"> 
-
-                                            <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
-                                            <p:inputMask id="recipientAccount"  maxlength="9" mask="9?99999999" value="#{transferManagedBean.recipientAccountNumString}" required="true" requiredMessage="Recipient Account Number is required."/>
-
-                                            <h:outputLabel for="recipientName" value="Recipient Name:" />
-                                            <p:inputText id="recipientName" value="#{transferManagedBean.recipientName}" required="true" requiredMessage="Recipient Name is required." />
-
-                                            <h:outputLabel for="transferAmount" value="Amount: $" />
-                                            <p:inputText id="transferAmount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." />
-
-                                        </h:panelGrid>
-                                    </div>
-                                    <div class="Container10"></div>
-
-                                    <div class="EmptyBox20"></div>
-                                    <div class="Container30"></div>
-                                    <div class="Container40">
-                                        <p:commandButton actionListener="#{transferManagedBean.oneTimeTransfer}" value="Submit" />
-                                    </div>
-                                    <div class="Container30"></div>
-                                </div>
+                    <div class="Container80 NoPadding Responsive50 ui-fluid">
+                        <div class="Container70 Responsive50">
+                            <p:commandButton value="Add New Recipient" id="addNewPayeeButton"
+                                             actionListener="#{transferManagedBean.goToAddNewPayeePage}"/>
+                        </div>
+                        <div class="EmptyBox20"></div>
+                        <h:form>
+                            <div class="Container70 Responsive50">
+                                <p:selectOneMenu id="payeeList" value="#{transferManagedBean.payeeTransferAccount}">
+                                    <f:selectItem itemLabel="Select Payee ..." itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{transferManagedBean.payeeList}" />
+                                </p:selectOneMenu>  
                             </div>
+                            <div class="Container30 Responsive50">
+                                <p:commandButton value="Submit" id="transferByPayee"
+                                                 actionListener="#{transferManagedBean.goToTransferByPayee}"/> 
+                            </div>
+                        </h:form>
+                    </div>
 
 
-                       
-                   
+
+
 
 
                 </div>
