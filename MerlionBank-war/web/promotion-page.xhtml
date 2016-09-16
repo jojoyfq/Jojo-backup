@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>PrimeFaces Atlas Promotional Landing Page</title>
+        <h:outputScript name="js/layout.js" library="atlas-layout" />
+        <ui:insert name="head" />
+    </h:head>
+
+    <h:body style="margin: 0px; background-color:#fff;" styleClass="PopupMenu">
+        
+        <div id="layout-topbar-cover" style="background-color:#2B464C;">
+
+            <div id="layout-topbar">
+                <a href="#" id="logo"><h:graphicImage name="images/logo.svg" library="atlas-layout" /></a>
+                <a id="menu-button"><i class="icon-menu"></i></a>
+            </div>
+
+        </div>
+        
+        <div id="layout-menu-cover">
+            <ul id="layout-menu">
+                <li><a href="dashboard.xhtml" class="menulink">Atlas Dashboard</a></li>
+                <li><a href="#atlas-highlight" class="menulink">Promotion Page Slogan</a></li>
+                <li><a href="#atlas-cardsArea" class="menulink"> How It Works</a></li>
+                <li><a href="#atlas-infoArea" class="menulink"> Why Atlas APIs</a></li>
+                <li><a href="#atlas-pricingtables" class="menulink">Pricing Tables</a></li>
+                <li><a href="#atlas-features" class="menulink">Features</a></li>
+                <li><a href="#atlas-customers" class="menulink">Customers</a></li>
+                <li><a href="#atlas-support" class="menulink">Support</a></li>
+            </ul>
+        </div>
+        
+        <!-- -->
+        
+        <div class="Container100 NoIndent" id="atlas-highlight" style="background-color:#2B464C; padding:10rem 3rem;">
+            
+            <div class="EmptyBox120 ShowOnDesktop"></div>
+            <h1 class="FontDosisRegular Fs40 SoftGray TexAlCenter">YOUR APPLICATION SLOGAN COMES HERE</h1>
+            <div class="EmptyBox30"></div>
+            <span class="DispBlock TexAlCenter Fs24 FontDosisRegular SoftGray">“ You can use this page as a promotion page template for your application.<br/>
+                So your web application and promotion website of application will work in complete harmony. ”</span>
+            <div class="EmptyBox70 ShowOnDesktop"></div>
+            <div class="EmptyBox20 ShowOnMobile"></div>
+            <div class="Wid90 MarAuto OvHidden">
+                <div class="Container33 Responsive100 TexAlCenter">
+                    <h:graphicImage name="images/highlight-illust-1.svg" library="atlas-layout" styleClass="Wid70"/>
+                    <div class="EmptyBox30"></div>
+                    <p:commandButton value="Create Free Account" styleClass="RedButton"/>
+                    <div class="EmptyBox20 ShowOnMobile"></div>
+                </div>
+                <div class="Container33 Responsive100 TexAlCenter">
+                    <h:graphicImage name="images/highlight-illust-2.svg" library="atlas-layout" styleClass="Wid70"/>
+                    <div class="EmptyBox30"></div>
+                    <p:commandButton value="Download Plugin" styleClass="OrangeButton"/>
+                    <div class="EmptyBox20 ShowOnMobile"></div>
+                </div>
+                <div class="Container33 Responsive100 TexAlCenter">
+                    <h:graphicImage name="images/highlight-illust-3.svg" library="atlas-layout" styleClass="Wid70"/>
+                    <div class="EmptyBox30"></div>
+                    <p:commandButton value="Build &amp; Deploy" styleClass="GreenButton"/>
+                    <div class="EmptyBox20 ShowOnMobile"></div>
+                </div>
+            </div>
+            <div class="EmptyBox120 ShowOnDesktop"></div>
+            
+        </div>
+        
+        <!-- -->
+        
+        <div class="Container100 NoIndent" id="atlas-cardsArea" style="background-color:#F0F2F5; padding:0px 3rem;">
+            
+            <div class="EmptyBox50"></div>
+            
+            <h1 class="FontDosisRegular Fs30 Leaden TexAlCenter">How It Works ?</h1>
+            <div class="EmptyBox30"></div>
+            
+            <div class="Wid90 MarAuto OvHidden Flex FlexWrap">
+                <div class="Container33 Responsive100 TexAlCenter Flex">
+                    <div class="Card ui-fluid">
+                        <div class="Wid80 MarAuto">
+                            <div class="EmptyBox20"></div>
+                            <h:graphicImage name="images/highlight-illust-1.svg" library="atlas-layout" styleClass="Wid100"/>
+                            <div class="EmptyBox20"></div>
+                            <span class="Red Fs20 FontDosisSemiBold DispBlock TexAlCenter">1. Create Your Free Account</span>
+                            <div class="EmptyBox20"></div>
+                            <span class="Purple Fs18 FontDosisMedium DispBlock TexAlCenter">Pretium magnis sapien lorem at ipsum nam luctus ante leo purus leo adipiscing 
+                                amet nulla sagittis adipiscing torquent vestibulum adipiscing sem in fames taciti.</span>
+                            <div class="EmptyBox20"></div>
+                            <p:commandButton value="Create Free Account" styleClass="RedButton"/>
+                            <div class="EmptyBox20"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="Container33 Responsive100 TexAlCenter Flex">
+                    <div class="Card ui-fluid">
+                        <div class="Wid80 MarAuto">
+                            <div class="EmptyBox20"></div>
+                            <h:graphicImage name="images/highlight-illust-2.svg" library="atlas-layout" styleClass="Wid100"/>
+                            <div class="EmptyBox20"></div>
+                            <span class="Red Fs20 FontDosisSemiBold DispBlock TexAlCenter">2. Custom Build Plugins And Download</span>
+                            <div class="EmptyBox20"></div>
+                            <span class="Purple Fs18 FontDosisMedium DispBlock TexAlCenter">Pretium magnis sapien lorem at ipsum nam luctus ante leo purus leo adipiscing 
+                                amet nulla sagittis adipiscing torquent vestibulum adipiscing sem in fames taciti.</span>
+                            <div class="EmptyBox20"></div>
+                            <p:commandButton value="Download Plugin" styleClass="OrangeButton"/>
+                            <div class="EmptyBox20"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="Container33 Responsive100 TexAlCenter Flex">
+                    <div class="Card ui-fluid">
+                        <div class="Wid80 MarAuto">
+                            <div class="EmptyBox20"></div>
+                            <h:graphicImage name="images/highlight-illust-3.svg" library="atlas-layout" styleClass="Wid100"/>
+                            <div class="EmptyBox20"></div>
+                            <span class="Red Fs20 FontDosisSemiBold DispBlock TexAlCenter">3. Develop, Build And Deploy</span>
+                            <div class="EmptyBox20"></div>
+                            <span class="Purple Fs18 FontDosisMedium DispBlock TexAlCenter">Pretium magnis sapien lorem at ipsum nam luctus ante leo purus leo adipiscing 
+                                amet nulla sagittis adipiscing torquent vestibulum adipiscing sem in fames taciti.</span>
+                            <div class="EmptyBox20"></div>
+                            <p:commandButton value="Build &amp; Deploy" styleClass="GreenButton"/>
+                            <div class="EmptyBox20"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="EmptyBox50"></div>
+            
+        </div>
+        
+        <!-- -->
+        
+        <div class="Container100 NoIndent RedBack" id="atlas-infoArea">
+            
+            <div class="EmptyBox50"></div>
+            
+            <h1 class="FontDosisRegular Fs30 SoftGray TexAlCenter">Why Atlas APIs ?</h1>
+            <div class="EmptyBox50"></div>
+            
+            <div class="Wid80 MarAuto">
+                <div class="Container50 Responsive50 TexAlCenter">
+                    <h:graphicImage name="images/illust1.svg" library="atlas-layout" styleClass="Wid90"/>
+                </div>
+                <div class="Container50 Responsive50">
+                    <h1 class="Fs30 Purple FontDosisSemiBold">Atlas Evernote TODOs API</h1><br/>
+                    <span class="FontDosisMedium Fs18 SoftGray">A ullamcorper et sit hac nam praesent adipiscing ullamcorper at laoreet sodales at adipiscing fusce ullamcorper convallis facilisi. 
+                        Ac consectetur vel a rutrum mus dictumst leo a nibh a suspendisse class interdum purus habitant. Ut quis non dolor sed condimentum in 
+                        metus elit varius vestibulum a litora parturient aliquam non iaculis placerat duis facilisis a mi scelerisque.<br/><br/>
+                        Ullamcorper venenatis elementum integer metus habitasse ante euismod vel ad lacus cum dis integer condimentum vestibulum lectus accumsan 
+                        ante ullamcorper malesuada.<br/><br/>
+                        Pretium magnis sapien lorem at ipsum nam luctus ante leo purus leo adipiscing amet nulla sagittis adipiscing torquent vestibulum 
+                        adipiscing sem in fames taciti. imperdiet a adipiscing aptent elit a dis adipiscing parturient fusce a cras nascetur hac sapien a 
+                        lorem vulputate elit.</span>
+                </div>
+                <div class="EmptyBox30"></div>
+                <div class="Container50 Responsive50 TexAlRight">
+                    <h1 class="Fs30 Purple FontDosisSemiBold">Atlas Dropbox Sync API</h1><br/>
+                    <span class="FontDosisMedium Fs18 SoftGray">A ullamcorper et sit hac nam praesent adipiscing ullamcorper at laoreet sodales at adipiscing fusce ullamcorper convallis facilisi. 
+                        Ac consectetur vel a rutrum mus dictumst leo a nibh a suspendisse class interdum purus habitant. Ut quis non dolor sed condimentum in 
+                        metus elit varius vestibulum a litora parturient aliquam non iaculis placerat duis facilisis a mi scelerisque.<br/><br/>
+                        Ullamcorper venenatis elementum integer metus habitasse ante euismod vel ad lacus cum dis integer condimentum vestibulum lectus accumsan 
+                        ante ullamcorper malesuada.<br/><br/>
+                        Pretium magnis sapien lorem at ipsum nam luctus ante leo purus leo adipiscing amet nulla sagittis adipiscing torquent vestibulum 
+                        adipiscing sem in fames taciti. imperdiet a adipiscing aptent elit a dis adipiscing parturient fusce a cras nascetur hac sapien a 
+                        lorem vulputate elit.</span>
+                </div>
+                <div class="Container50 Responsive50 TexAlCenter">
+                    <h:graphicImage name="images/illust2.svg" library="atlas-layout" styleClass="Wid90"/>
+                </div>
+                <div class="EmptyBox30"></div>
+                <div class="Container50 Responsive50 TexAlCenter">
+                    <h:graphicImage name="images/illust1.svg" library="atlas-layout" styleClass="Wid90"/>
+                </div>
+                <div class="Container50 Responsive50">
+                    <h1 class="Fs30 Purple FontDosisSemiBold">Atlas Evernote TODOs API</h1><br/>
+                    <span class="FontDosisMedium Fs18 SoftGray">A ullamcorper et sit hac nam praesent adipiscing ullamcorper at laoreet sodales at adipiscing fusce ullamcorper convallis facilisi. 
+                        Ac consectetur vel a rutrum mus dictumst leo a nibh a suspendisse class interdum purus habitant. Ut quis non dolor sed condimentum in 
+                        metus elit varius vestibulum a litora parturient aliquam non iaculis placerat duis facilisis a mi scelerisque.<br/><br/>
+                        Ullamcorper venenatis elementum integer metus habitasse ante euismod vel ad lacus cum dis integer condimentum vestibulum lectus accumsan 
+                        ante ullamcorper malesuada.<br/><br/>
+                        Pretium magnis sapien lorem at ipsum nam luctus ante leo purus leo adipiscing amet nulla sagittis adipiscing torquent vestibulum 
+                        adipiscing sem in fames taciti. imperdiet a adipiscing aptent elit a dis adipiscing parturient fusce a cras nascetur hac sapien a 
+                        lorem vulputate elit.</span>
+                </div>
+            </div>
+            
+            <div class="EmptyBox50"></div>
+            
+        </div>
+        
+        <!-- -->
+        
+        <div class="Container100 NoIndent" id="atlas-pricingtables" style="background-color:#F0F2F5; padding:0px 3rem;">
+            
+            <div class="EmptyBox50"></div>
+            
+            <h1 class="FontDosisRegular Fs30 Leaden TexAlCenter">Pricing Tables</h1>
+            <div class="EmptyBox30"></div>
+            
+            <div class="Wid80 MarAuto Responsive100 Flex FlexWrap">
+
+                <div class="Container25 TexAlCenter Responsive50 Flex">
+                    <div class="Card Zoom1point05x">
+                        <div class="Container100 FontDosisSemibold BoldLeaden" style="font-size:2.4rem;">Standard</div>
+                        <div class="Separator"></div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        <div class="Container100 FontDosisRegular BoldLeaden" style="font-size:6rem;">$20<span class="Fs30 Leaden">/mo*</span></div>
+                        <div class="Container100 FontDosisRegular Leaden Fs16">Basic customer support for<br/> small business</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        <div class="Separator"></div>
+                        <div class="Container100 FontDosisRegular Leaden Fs16">$25 for monthly</div>
+                        <div class="Container100 ui-fluid"> <p:button value="Get Started" styleClass="GreenButton Fleft"/> </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container25 TexAlCenter Responsive50 Flex">
+                    <div class="Card Zoom1point05x">
+                        <div class="Container100 FontDosisSemibold Red" style="font-size:2.4rem;">Pro</div>
+                        <div class="Separator"></div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        <div class="Container100 FontDosisRegular BoldLeaden" style="font-size:6rem;">$30<span class="Fs30 Leaden">/mo*</span></div>
+                        <div class="Container100 FontDosisRegular Leaden Fs16">All-in-one customer support<br/> for small business</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        <div class="Separator"></div>
+                        <div class="Container100 FontDosisRegular Leaden Fs16">$35 for monthly</div>
+                        <div class="Container100 ui-fluid"> <p:button value="Get Started" styleClass="RedButton Fleft"/> </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container25 TexAlCenter Responsive50 Flex">
+                    <div class="Card Zoom1point05x">
+                        <div class="Container100 FontDosisSemibold BoldLeaden" style="font-size:2.4rem;">Business</div>
+                        <div class="Separator"></div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        <div class="Container100 FontDosisRegular BoldLeaden" style="font-size:6rem;">$150<span class="Fs30 Leaden">/mo*</span></div>
+                        <div class="Container100 FontDosisRegular Leaden Fs16">Business class customer <br/>support + One to one help</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        <div class="Separator"></div>
+                        <div class="Container100 FontDosisRegular Leaden Fs16">$155 for monthly</div>
+                        <div class="Container100 ui-fluid"> <p:button value="Get Started" styleClass="GreenButton Fleft"/> </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container25 TexAlCenter Responsive50 Flex">
+                    <div class="Card Zoom1point05x">
+                        <div class="Container100 FontDosisSemibold BoldLeaden" style="font-size:2.4rem;">Business Plus</div>
+                        <div class="Separator"></div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        <div class="Container100 FontDosisRegular BoldLeaden" style="font-size:6rem;">$500<span class="Fs30 Leaden">/mo*</span></div>
+                        <div class="Container100 FontDosisRegular Leaden Fs16">Business class customer <br/>support + One to one help</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        <div class="Separator"></div>
+                        <div class="Container100 FontDosisRegular Leaden Fs16">$555 for monthly</div>
+                        <div class="Container100 ui-fluid"> <p:button value="Get Started" styleClass="GreenButton Fleft"/> </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="EmptyBox50"></div>
+            
+        </div>
+        
+        <!-- -->
+        
+        <div class="Container100 NoIndent" id="atlas-features">
+            
+            <div class="EmptyBox50"></div>
+            
+            <h1 class="FontDosisRegular Fs30 Leaden TexAlCenter">Features</h1>
+            <div class="EmptyBox30"></div>
+            
+            <div class="Wid80 MarAuto">
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-leaf Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">HTML5 &amp; CSS3</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-flag Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">Font-Icons</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-mobile Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">Responsive</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-compass Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">Cross-Browser</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-cake Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">Hand-Crafted</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-leaf Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">HTML5 &amp; CSS3</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-flag Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">Font-Icons</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-mobile Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">Responsive</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-compass Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">Cross-Browser</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-cake Green Wid100" style="font-size:6rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisSemiBold Red" style="font-size:2.6rem;">Hand-Crafted</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontDosisRegular BoldLeaden Fs16">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor 
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="EmptyBox50"></div>
+            
+        </div>
+        
+        <!-- -->
+        
+        <div class="Container100 NoIndent" id="atlas-customers" style="background-color:#F0F2F5; padding:0px 3rem;">
+            
+            <div class="EmptyBox50"></div>
+            
+            <h1 class="FontDosisRegular Fs30 Leaden TexAlCenter">Hundreds Of Thousands Of Customers Trust Us !</h1>
+            <div class="EmptyBox30"></div>
+            <div class="Wid90 MarAuto">
+                <h:graphicImage name="images/customers.svg" library="atlas-layout" styleClass="Wid100"/>
+            </div>
+            <div class="EmptyBox50"></div>
+            
+        </div>
+        
+        <!-- -->
+        
+        <div class="Container100 NoIndent TealBack" id="atlas-support">
+            
+            <div class="EmptyBox50"></div>
+            
+            <div class="Wid70 MarAuto"><h1 class="FontDosisRegular Fs30 SoftGray TexAlCenter">Atlas Support Center - Have a question ?</h1></div>
+            <div class="EmptyBox30"></div>
+            <div class="Wid50 MarAuto ui-fluid">
+                <div class="Container70 Responsive50"><p:inputText placeholder="Ask or enter a search term here..."/></div>
+                <div class="Container30 Responsive50"><p:button value="Subscribe Now" styleClass="OrangeButton"/></div>
+            </div>
+            <div class="EmptyBox50"></div>
+            
+        </div>
+        
+        <!-- FOOTER -->
+        <div id="layout-footer">
+            <div id="layout-footer-top">
+                <div class="Container50 NoIndent Responsive50"><a href="#" id="footer-logo"><h:graphicImage name="images/logo.svg" library="atlas-layout" /></a></div>
+                <div class="EmptyBox10 ShowOnMobile"></div>
+                <div class="Container50 NoIndent Responsive50"><span id="footer-info">Atlas Layout &amp; Theme - PrimeFaces Premium Themes And Layouts</span></div>
+            </div>
+
+            <div id="layout-footer-bottom">
+                <div class="Container50 NoPadding Responsive50 ui-fluid">
+                    <div class="Container70 Responsive50"><p:inputText placeholder="Enter Your Email For Subscribe To Newsletter"/></div>
+                    <div class="Container30 Responsive50"><p:button value="Subscribe Now" styleClass="BlueButton"/></div>
+                </div>
+                <div class="Container50 NoPadding Responsive50">
+                    <a href="#layout-footer" class="footer-social"><i class="icon-facebook-with-circle"></i></a>
+                    <a href="#layout-footer" class="footer-social"><i class="icon-twitter-with-circle"></i></a>
+                    <a href="#layout-footer" class="footer-social"><i class="icon-linkedin-with-circle"></i></a>
+                    <a href="#layout-footer" class="footer-social"><i class="icon-google-with-circle"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+    </h:body>
+
+</html>

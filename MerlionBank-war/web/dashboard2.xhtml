@@ -1,0 +1,301 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+    <ui:define name="content">
+
+        <!-- Top Left Section -->
+        <div class="Container40 Responsive50 NoIndent Flex FlexWrap">
+            <div class="Container50 Responsive50 Flex">
+                <div class="Card ui-fluid">
+                    <div class="CardBigTopic Leaden">
+                        <i class="icon-dropbox Fs50 Fright Blue"></i>
+                        Atlas Dropbox Storage <br/>Sync API Graphs
+                    </div>
+                    <div class="EmptyBox10"></div>
+                    <span class="FontDosisSemiBold Fs30 DispBlock Purple">33.786 <span class="Fs18 FontDosisRegular">Forks</span></span>
+                    <span class="FontDosisSemiBold Fs30 DispBlock Purple">134.889 <span class="Fs18 FontDosisRegular">Commits</span></span>
+                    <div class="EmptyBox20"></div>
+                    <p:commandButton value="Show Me More Info" styleClass="GreenButton"/>
+                </div>
+            </div>
+            <div class="Container50 Responsive50 Flex">
+                <div class="Card ui-fluid">
+                    <div class="CardBigTopic Leaden">
+                        <i class="icon-spotify Fs50 Fright Teal"></i>
+                        Atlas Spotify Connect <br/> API Graphs
+                    </div>
+                    <div class="EmptyBox10"></div>
+                    <span class="FontDosisSemiBold Fs30 DispBlock Purple">21.690 <span class="Fs18 FontDosisRegular">Forks</span></span>
+                    <span class="FontDosisSemiBold Fs30 DispBlock Purple">34.200 <span class="Fs18 FontDosisRegular">Commits</span></span>
+                    <div class="EmptyBox20"></div>
+                    <p:commandButton value="Show Me More Info" styleClass="GreenButton"/>
+                </div>
+            </div>
+            <div class="Container50 Responsive50 Flex">
+                <div class="Card ui-fluid">
+                    <div class="CardBigTopic Leaden">
+                        <i class="icon-evernote Fs50 Fright Green"></i>
+                        Atlas Evernote<br/>TODOs API Graphs
+                    </div>
+                    <div class="EmptyBox10"></div>
+                    <span class="FontDosisSemiBold Fs30 DispBlock Purple">12.301 <span class="Fs18 FontDosisRegular">Forks</span></span>
+                    <span class="FontDosisSemiBold Fs30 DispBlock Purple">78.225 <span class="Fs18 FontDosisRegular">Commits</span></span>
+                    <div class="EmptyBox20"></div>
+                    <p:commandButton value="Show Me More Info" styleClass="GreenButton"/>
+                </div>
+            </div>
+            <div class="Container50 Responsive50 Flex">
+                <div class="Card ui-fluid">
+                    <div class="CardBigTopic Leaden">
+                        <i class="icon-grooveshark Fs50 Fright Orange"></i>
+                        Atlas GrooveShark<br/>Share API Graphs
+                    </div>
+                    <div class="EmptyBox10"></div>
+                    <span class="FontDosisSemiBold Fs30 DispBlock Purple">18.667 <span class="Fs18 FontDosisRegular">Forks</span></span>
+                    <span class="FontDosisSemiBold Fs30 DispBlock Purple">67.991 <span class="Fs18 FontDosisRegular">Commits</span></span>
+                    <div class="EmptyBox20"></div>
+                    <p:commandButton value="Show Me More Info" styleClass="GreenButton"/>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Top Right Section -->
+        <div class="Container60 Responsive50 Flex">
+            <div class="Card ui-fluid">
+                <h:graphicImage name="images/chart3.svg" library="atlas-layout" styleClass="Wid100"/>
+                <div class="EmptyBox20"></div>
+                
+                <div class="Container25 Responsive50">
+                    <p:selectOneMenu id="app1" value="#{selectOneMenuView.console}">
+                        <f:selectItem itemLabel="Select Api" itemValue="" />
+                        <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                        <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                        <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                    </p:selectOneMenu>
+                </div>
+                <div class="Container25 Responsive50">
+                    <p:selectOneMenu id="app2" value="#{selectOneMenuView.console}">
+                        <f:selectItem itemLabel="Select Platform" itemValue="" />
+                        <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                        <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                        <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                    </p:selectOneMenu>
+                </div>
+                <div class="Container25 Responsive50">
+                    <p:selectOneMenu id="app3" value="#{selectOneMenuView.console}">
+                        <f:selectItem itemLabel="Select Axis" itemValue="" />
+                        <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                        <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                        <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                    </p:selectOneMenu>
+                </div>
+                <div class="Container25 Responsive50">
+                    <p:selectOneMenu id="app4" value="#{selectOneMenuView.console}">
+                        <f:selectItem itemLabel="Select Range" itemValue="" />
+                        <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                        <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                        <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                    </p:selectOneMenu>
+                </div>
+
+                <div class="EmptyBox10"></div>
+                <div class="Separator"></div>
+                <div class="EmptyBox5"></div>
+                
+                <div class="Container20 Responsive50 TexAlCenter">
+                    <i class="icon-spotify DispBlock Fs40"></i>
+                    <div class="EmptyBox5"></div>
+                    <span class="FontDosisSemiBold Fs15">Atlas Spotify Connect API</span>
+                    <div class="EmptyBox10"></div>
+                    <p:commandButton value="See On Chart" styleClass="OrangeButton"/>
+                </div>
+                <div class="Container20 Responsive50 TexAlCenter">
+                    <i class="icon-evernote DispBlock Fs40"></i>
+                    <div class="EmptyBox5"></div>
+                    <span class="FontDosisSemiBold Fs15">Atlas Evernote TODOs API</span>
+                    <div class="EmptyBox10"></div>
+                    <p:commandButton value="See On Chart" styleClass="OrangeButton"/>
+                </div>
+                <div class="Container20 Responsive50 TexAlCenter">
+                    <i class="icon-dropbox DispBlock Fs40"></i>
+                    <div class="EmptyBox5"></div>
+                    <span class="FontDosisSemiBold Fs15">Atlas Dropbox Sync API</span>
+                    <div class="EmptyBox10"></div>
+                    <p:commandButton value="See On Chart" styleClass="OrangeButton"/>
+                </div>
+                <div class="Container20 Responsive50 TexAlCenter">
+                    <i class="icon-pinterest DispBlock Fs40"></i>
+                    <div class="EmptyBox5"></div>
+                    <span class="FontDosisSemiBold Fs15">Atlas Pinterest Share API</span>
+                    <div class="EmptyBox10"></div>
+                    <p:commandButton value="See On Chart" styleClass="OrangeButton"/>
+                </div>
+                <div class="Container20 Responsive50 TexAlCenter">
+                    <i class="icon-twitter DispBlock Fs40"></i>
+                    <div class="EmptyBox5"></div>
+                    <span class="FontDosisSemiBold Fs15">Atlas Twitter Auth API</span>
+                    <div class="EmptyBox10"></div>
+                    <p:commandButton value="See On Chart" styleClass="OrangeButton"/>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- Bottom Section -->
+        <div class="Container100">
+            <div class="Card">
+                <div class="CardBigTopic"><i class="icon-thunder-cloud Fleft MarRight10 Fs28"></i> Atlas Remote API - Realtime Control Panel
+                    <div class="Wid50 ui-fluid Fright">
+                        <div class="Container50 Responsive50">
+                            <p:selectOneMenu id="app5" value="#{selectOneMenuView.console}">
+                                <f:selectItem itemLabel="Select Range" itemValue="" />
+                                <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                                <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                                <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="Container50 Responsive50">
+                            <p:selectOneMenu id="app6" value="#{selectOneMenuView.console}">
+                                <f:selectItem itemLabel="Select Range" itemValue="" />
+                                <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                                <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                                <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </div>
+                <div class="Separator"></div>
+                
+                <div class="Container40 Responsive50 ui-fluid">
+                    <div class="CardSmallTopic">Add New Campaign</div>
+                    <div class="Container100"><p:inputText placeholder="New Campaign Name"/></div>
+                    <div class="Container50 Responsive50">
+                        <p:selectOneMenu id="app7" value="#{selectOneMenuView.console}">
+                            <f:selectItem itemLabel="Select Client" itemValue="" />
+                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="Container50 Responsive50">
+                        <p:selectOneMenu id="app8" value="#{selectOneMenuView.console}">
+                            <f:selectItem itemLabel="Select Pay Range" itemValue="" />
+                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="Container50 Responsive50">
+                        <p:selectOneMenu id="app9" value="#{selectOneMenuView.console}">
+                            <f:selectItem itemLabel="Starting Date" itemValue="" />
+                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="Container50 Responsive50">
+                        <p:selectOneMenu id="app10" value="#{selectOneMenuView.console}">
+                            <f:selectItem itemLabel="Due Date" itemValue="" />
+                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="Container50 Responsive50">
+                        <p:selectOneMenu id="app11" value="#{selectOneMenuView.console}">
+                            <f:selectItem itemLabel="Select Platform" itemValue="" />
+                            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                            <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="Container50 Responsive50">
+                        <p:inputSwitch onLabel="on" offLabel="off" styleClass="Fleft MarRight20"/>
+                        <span class="FontDosisMedium Fs16">Change Status Of Campaign</span>
+                    </div>
+                </div>
+                
+                <div class="Container30 Responsive50">
+                    <div class="Container100 ui-fluid">
+                        <div class="CardSmallTopic">Descriptions</div>
+                        <p:inputTextarea rows="8" placeholder="Add Descriptions"/>
+                    </div>
+                </div>
+                <div class="Container30 Responsive50">
+                    <div class="Container100">
+                        <div class="CardSmallTopic">Select Actions</div>
+                        <p:selectManyCheckbox layout="responsive" columns="2">
+                            <f:selectItem itemLabel="Change Campaign" itemValue="Xbox One" />
+                            <f:selectItem itemLabel="Delete Campaign" itemValue="PS+" />
+                            <f:selectItem itemLabel="Edit Campaign" itemValue="Wii U" />
+                            <f:selectItem itemLabel="Move Campaign" itemValue="Wii U" />
+                            <f:selectItem itemLabel="Send With Mail" itemValue="Wii U" />
+                            <f:selectItem itemLabel="Generate Report" itemValue="Wii U" />
+                            <f:selectItem itemLabel="Share Campaign" itemValue="Xbox One" />
+                            <f:selectItem itemLabel="Settings" itemValue="PS+" />
+                            <f:selectItem itemLabel="Add TODO List" itemValue="Wii U" />
+                            <f:selectItem itemLabel="Remove All" itemValue="Wii U" />
+                        </p:selectManyCheckbox>
+                    </div>
+                </div>
+                <div class="EmptyBox20"></div>
+                
+                <div class="Container50 Responsive100 ui-fluid">
+                    <div class="Container33 Responsive"><p:commandButton value="Add To List" styleClass="BlueButton"/></div>
+                    <div class="Container33 Responsive"><p:commandButton value="Clear Ad Form" styleClass="RedButton"/></div>
+                    <div class="Container33 Responsive"><p:commandButton value="Send As Report" styleClass="OrangeButton"/></div>
+                </div>
+                
+                <div class="EmptyBox30"></div>
+                <div class="Container100">
+                    <h:form id="form">
+                        <p:dataTable id="singleDT"  var="car" rows="20" value="#{dtSelectionView.cars7}" selectionMode="single" selection="#{dtSelectionView.selectedCar}" rowKey="#{car.id}"
+                                     emptyMessage="No records found !" reflow="true">
+                            
+
+                            <p:column headerText="Campaign" sortBy="#{car.id}">
+                                <i class="icon-facebook-with-circle Blue Fleft MarRight10 Fs20"></i> Facebook
+                            </p:column>
+                            <p:column headerText="Client" sortBy="#{car.year}">
+                                Luke Skywalker
+                            </p:column>
+                            <p:column headerText="Budget" sortBy="#{car.brand}" >
+                                <span class="Blue">$ 5.567</span>
+                            </p:column>
+                            <p:column headerText="Status" sortBy="#{car.color}" >
+                                <p:inputSwitch onLabel="on" offLabel="off"/>
+                            </p:column>
+                            <p:column headerText="Changes" sortBy="#{car.color}">
+                                <span class="Green">+ 3,45 %</span>
+                            </p:column>
+                            <p:column headerText="Starting Date" sortBy="#{car.color}">
+                                18.08.2016
+                            </p:column>
+                            <p:column headerText="Due Date" sortBy="#{car.color}">
+                                18.08.2017
+                            </p:column>
+                            <p:column headerText="Description" sortBy="#{car.color}">
+                                At quis ac ullamcorper vestibulum.
+                            </p:column>
+                            <p:column headerText="Actions" sortBy="#{car.color}">
+                                <p:commandButton icon="fa fa-share-alt" styleClass="RedButton Fs16 White"/>
+                                <p:commandButton icon="fa fa-cog" styleClass="OrangeButton Fs16 White"/>
+                            </p:column>
+                            <p:column headerText="Platform" sortBy="#{car.color}">
+                                Atlas Facebook OAuth
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+        
+
+    </ui:define>
+
+</ui:composition>
