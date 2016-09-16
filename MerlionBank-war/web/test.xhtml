@@ -12,7 +12,7 @@
     <ui:define name="content">
 
         <!-- Left Column -->
-        <div class="Container20 NoPadding Responsive100">
+        <div class="Container25 NoPadding Responsive100">
 
         </div>
 
@@ -20,20 +20,31 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Choose Transfer Method </div>
+                    <div class="CardBigTopic"> Add New Recipient </div>
                     <div class="Separator"></div>
 
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <div class="Card">
+                                <div class="Container10"></div>
+                                <div class="Container80 TexAlCenter">
+                                    Add New Payee Success !
+                                </div>
+                                <div class="Container10"></div>
 
-                    <div class="Container100">
-                    <div class="Card ui-fluid">
-
-                        <div class="Container100 Responsive50"><p:commandButton value="One Time Transfer" id="oneTimeTransfer" 
-                                 actionListener="#{transferManagedBean.goToOneTimeTransferPage}"/></div>
-                        <div class="Container100 Responsive50"><p:commandButton value="Tranfer Using My Payee List" id="payeeList" 
-                                 actionListener="#{transferManagedBean.goToTransferByPayeeListPage}"/></div>
-                        
+                                <div class="EmptyBox20"></div>
+                                <div class="Container30"></div>
+                                <div class="Container40">
+                                    <p:commandButton value="Back to Transfer" id="backToTransfer" actionListener="#{transferManagedBean.goBackTranferByPayeeListPage}"/>
+                                </div>
+                                <div class="Container30"></div>
+                            </div>
+                        </h:form>
                     </div>
-                </div>
+
+
+
+
 
 
                 </div>
@@ -44,7 +55,7 @@
         </div>
 
         <!-- Right Column -->
-        <div class="Container30 NoPadding Responsive50">
+        <div class="Container25 NoPadding Responsive50">
 
 
         </div>
