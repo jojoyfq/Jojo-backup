@@ -5,6 +5,8 @@
  */
 package Simulation.Session;
 
+import Exception.AccountNotExistedException;
+import java.math.BigDecimal;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +15,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface ExternalTransferSessionBeanLocal {
+    public boolean transferSavingAccount(Long accountNumber, BigDecimal amount)throws AccountNotExistedException;
+    public boolean transferFixedDepositAccount(Long accountNumber, BigDecimal amount)throws AccountNotExistedException;
     
 }
