@@ -7,6 +7,7 @@ package CommonEntity.Session;
 
 import CommonEntity.Customer;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -17,7 +18,7 @@ import javax.ejb.Local;
 @Local
 public interface StaffVerifyCustomerAccountSessionBeanLocal {
  //system retrieve list of pending verification customers
-public List<Customer> viewPendingVerificationList();  
+public List<Customer> viewPendingVerificationList()throws ListEmptyException;  
 public boolean verifySavingAccountCustomer (Long staffID, Long customerID, String result,Long savingAccountId) throws EmailNotSendException;
 
 //staff verify customer and choose"reject" or "approve"
