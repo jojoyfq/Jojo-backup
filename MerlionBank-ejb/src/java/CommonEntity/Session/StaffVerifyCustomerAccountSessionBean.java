@@ -8,9 +8,14 @@ package CommonEntity.Session;
 import CommonEntity.Customer;
 import CommonEntity.Staff;
 import CustomerRelationshipEntity.StaffAction;
+import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
+import Other.Session.GeneratePassword;
 import Other.Session.sendEmail;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -53,6 +58,13 @@ public boolean verifySavingAccountCustomer (Long staffID, Long customerID, Strin
         query.setParameter("id", savingAccountId);
         SavingAccount savingAccount = (SavingAccount)query.getSingleResult();
         
+        String password = GeneratePassword.createPassword();
+        String tempPassword = password;
+
+        password = passwordHash(password + customer.getOnlineAccount().getSalt());
+        customer.getOnlineAccount().setPassword(password);
+        System.out.println("Password after hash&salt:" + password);
+        
         if (result.equals("approve")){
             customer.setStatus("inactive");
             em.persist(customer);
@@ -65,7 +77,7 @@ public boolean verifySavingAccountCustomer (Long staffID, Long customerID, Strin
             em.flush();
             
             try {
-            sendEmail(customer.getName(),customer.getEmail(),customer.getOnlineAccount().getPassword(),savingAccount.getAccountNumber());
+            sendEmail(customer.getName(),customer.getEmail(),tempPassword,savingAccount.getAccountNumber());
             } catch (MessagingException ex) {
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
@@ -92,14 +104,75 @@ public boolean verifySavingAccountCustomer (Long staffID, Long customerID, Strin
         else return false;
 }
 
- private void sendEmail(String name, String email, String password,Long savingAccountNumber) throws MessagingException {
+//staff verify customer and choose"reject" or "approve"
+@Override
+public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID, String result,Long accountId) throws EmailNotSendException{
+    Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        queryStaff.setParameter("id", staffID);
+        Staff staff = (Staff)queryStaff.getSingleResult();
+    
+    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", customerID);
+        Customer customer = (Customer)q.getSingleResult();
+        
+        Query query = em.createQuery("SELECT a FROM FixedDepositAcount a WHERE a.id = :id");
+        query.setParameter("id", accountId);
+        FixedDepositAccount fixedDepositAccount = (FixedDepositAccount)query.getSingleResult();
+        
+        String password = GeneratePassword.createPassword();
+        String tempPassword = password;
+
+        password = passwordHash(password + customer.getOnlineAccount().getSalt());
+        customer.getOnlineAccount().setPassword(password);
+        System.out.println("Password after hash&salt:" + password);
+        
+        if (result.equals("approve")){
+            customer.setStatus("inactive");
+            em.persist(customer);
+            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Approve fixed deposit account"+fixedDepositAccount.getAccountNumber(),customerID, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+            
+            try {
+            sendEmail(customer.getName(),customer.getEmail(),tempPassword,fixedDepositAccount.getAccountNumber());
+            } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+            return true;
+        }
+        else if (result.equals("reject")){
+            customer.setStatus("terminated");
+            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Reject saving account"+fixedDepositAccount.getAccountNumber(),customerID, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+           try {
+            sendEmail(customer.getName(),customer.getEmail(),customer.getOnlineAccount().getPassword(),fixedDepositAccount.getAccountNumber());
+            } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+            return true;
+        }
+        else return false;
+}
+
+ private void sendEmail(String name, String email, String password,Long accountNumber) throws MessagingException {
         String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Activation";
         System.out.println("Inside send email");
 
         String content = "<h2>Dear " + name
                 + ",</h2><br /><h1>  Congratulations! You have successfully registered a Merlion Online Banking Account!</h1><br />"
                 + "<h1>Welcome to Merlion Bank.</h1>"
-                + "<h2 align=\"center\">SavingAccountNumber: " + savingAccountNumber
+                + "<h2 align=\"center\">AccountNumber: " + accountNumber
                 + "<br />Temporary Password: " + password + "<br />Please activate your account through this link: " + "</h2><br />" 
                 + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum SG$500 to your account in order to activate your saving account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
@@ -119,6 +192,25 @@ private void sendRejectVerificationEmail(String name, String email) throws Messa
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
         sendEmail.run(email, subject, content);  
+    }
+
+private String passwordHash(String pass) {
+        String md5 = null;
+
+        try {
+            //Create MessageDigest object for MD5
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            //Update input string in message digest
+            digest.update(pass.getBytes(), 0, pass.length());
+
+            //Converts message digest value in base 16 (hex) 
+            md5 = new BigInteger(1, digest.digest()).toString(16);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md5;
     }
 
 }

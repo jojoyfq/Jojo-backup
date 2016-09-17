@@ -10,6 +10,7 @@ import CommonEntity.CustomerMessage;
 import CommonEntity.MessageEntity;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import Other.Session.sendEmail;
@@ -112,7 +113,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
     
  // customer view list of message
  @Override
- public List viewAllMessage(Long customerId){
+ public List viewAllMessage(Long customerId)throws ListEmptyException{
    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
   // System.out.println("Customer Ic is "+customerName);
        q.setParameter("id", customerId);
@@ -131,6 +132,8 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
                 newMessages.add(messages.get(i));
             }
         }
+        if (newMessages.size()==0)
+            throw new ListEmptyException("There are no messages!");
         return newMessages;
         
         
@@ -235,7 +238,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  
  // staff view list of message
  @Override
- public List<CustomerMessage> StaffViewAllMessage(Long staffId){
+ public List<CustomerMessage> StaffViewAllMessage(Long staffId)throws ListEmptyException{
      Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffId);
         Staff staff = (Staff)query.getSingleResult();     
@@ -246,6 +249,8 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
                 newMessages.add(messages.get(i));
             }
         }
+        if (newMessages.size()==0)
+            throw new ListEmptyException("There are no messages!");
         return newMessages;
      
  }
