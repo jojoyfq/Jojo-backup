@@ -11,6 +11,7 @@ import CommonEntity.MessageEntity;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import java.io.IOException;
@@ -137,18 +138,22 @@ public class MessageManagedBean implements Serializable {
 //        customerName = logInManagedBean.getCustomerName();
 
         System.out.println("Logged in customer IC is : " + customerId);
-        messages = imsbl.viewAllMessage(customerId);
+        //       messages = imsbl.viewAllMessage(customerId);
 //        System.out.println("message size is: "+messages.size());
         customerUnreadMsg = imsbl.countNewMessage(customerId);
 
     }
 
-    public void customerViewAllMessages(ActionEvent event) throws IOException {
+    public void customerViewAllMessages(ActionEvent event) throws IOException, ListEmptyException {
 
-        messages = imsbl.viewAllMessage(customerId);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
+        try {
+            messages = imsbl.viewAllMessage(customerId);
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+        //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
     }
-
 
     public MessageEntity customerReadMessage(ActionEvent event) throws IOException {
         message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
@@ -165,31 +170,35 @@ public class MessageManagedBean implements Serializable {
         return message;
     }
 
-    public void customerDeleteMessage(Long msgID) throws IOException {
+    public void customerDeleteMessage(Long msgID) throws IOException, ListEmptyException {
 
-        boolean checkDelete = imsbl.deleteMessage(msgID);
+        try {
+            boolean checkDelete = imsbl.deleteMessage(msgID);
 
-        if (checkDelete == false) {
-            System.out.println("Message deleted unsuccessfully!!!!");
-        }
-        System.out.println("delete message check: " + customerId);
-        messages = imsbl.viewAllMessage(customerId);
+            if (checkDelete == false) {
+                System.out.println("Message deleted unsuccessfully!!!!");
+            }
+            System.out.println("delete message check: " + customerId);
+            messages = imsbl.viewAllMessage(customerId);
         // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
-
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
     }
 
     public void customerReplyMessage(ActionEvent event) throws EmailNotSendException {
         try {
-        //    message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
+            //    message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
             System.err.println("********** message.getId(): " + messageId);
             System.err.println("********** message.getMessageSubject(): " + messageSubject);
             System.err.println("********** message.getContent: " + content);
             System.err.println("********** message.getStaffId(): " + staffId);
-            msgAddToStaff=imsbl.customerSendMessage(message.getSubject(), customerReplyContent, message.getStatus(), staffId, customerId);
+            msgAddToStaff = imsbl.customerSendMessage(message.getSubject(), customerReplyContent, message.getStatus(), staffId, customerId);
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your reply has been successfully sent!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             staffMessageManagedBean.getCustomerMessages().add(msgAddToStaff);
-            
+
         } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -207,8 +216,9 @@ public class MessageManagedBean implements Serializable {
         //   replyTitle = "RE: " + msg.getTitle();
         return message;
     }
-    public void countCusotmerUnreadEmail(){
-        
+
+    public void countCusotmerUnreadEmail() {
+
     }
 
 //    public void customerViewAllMessage(ActionEvent event){
