@@ -19,4 +19,7 @@ public interface StaffVerifyCustomerAccountSessionBeanLocal {
  //system retrieve list of pending verification customers
 public List<Customer> viewPendingVerificationList();  
 public boolean verifySavingAccountCustomer (Long staffID, Long customerID, String result,Long savingAccountId) throws EmailNotSendException;
+
+//staff verify customer and choose"reject" or "approve"
+public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID, String result,Long accountId) throws EmailNotSendException;
 }

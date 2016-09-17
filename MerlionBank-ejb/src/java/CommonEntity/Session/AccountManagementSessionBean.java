@@ -9,8 +9,11 @@ import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.Permission;
+import DepositEntity.FixedDepositAccount;
+import DepositEntity.FixedDepositRate;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
+import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
@@ -67,6 +70,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     public static final int SALT_LENGTH = 8;
     @PersistenceContext
     private EntityManager em;
+    FixedDepositAccountSessionBeanLocal fdasbl;
 //    private GoogleMail gm;
 
     @Override
@@ -656,6 +660,76 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.flush();
         customer.setOnlineAccount(onlineAccount);
         return customer.getId();
+    }
+    
+    //Create Fixed Deposit Account - 1st page - create online banking account
+    public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException {
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        System.out.println("Inside createAccount");
+
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        if (!temp.isEmpty()) {
+            System.out.println("User " + ic + " exists!");
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).getStatus().equals("active")) {
+                    throw new UserExistException("User " + ic + " exists! Please go and login");
+                } else if (temp.get(i).getStatus().equals("unverified")) {
+                    throw new UserExistException("User " + ic + "has not been verified by MerlionBank!");
+
+                } 
+                else if (temp.get(i).getStatus().equals("locked"))                
+                    throw new UserExistException("User " + ic + " account has been locked. Please unlock your account!");
+                else if (temp.get(i).getStatus().equals("inactive"))
+                    throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");    
+            }           
+
+
+        }
+        System.out.println("customer does not exist!");
+
+        for (int i = 0; i < SALT_LENGTH; i++) {
+            int index = (int) (RANDOM.nextDouble() * letters.length());
+            salt += letters.substring(index, index + 1);
+        }
+        String password = GeneratePassword.createPassword();
+        String tempPassword = password;
+
+        password = passwordHash(password + salt);
+        System.out.println("Password after hash&salt:" + password);
+
+        System.out.println("In Creating  account");
+        OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
+        em.persist(onlineAccount);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified");
+        em.persist(customer);
+        em.flush();
+        System.out.println("Create Customer successfully");
+return customer;
+    }
+    
+    
+    //Create Fixed Deposit Account - 2nd page - configure fixed deposit account
+    public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration)throws EmailNotSendException{
+       Long accountNumber=fdasbl.createFixedAccount(customer.getId(), amount, dateOfStart, dateOfEnd, duration);
+     String password = GeneratePassword.createPassword();
+        String tempPassword = password;
+
+        password = passwordHash(password + customer.getOnlineAccount().getSalt());
+        customer.getOnlineAccount().setPassword(password);
+        System.out.println("Password after hash&salt:" + password);
+        
+    try {
+               // reminder: remove password
+            SendPendingVerificationEmail(customer.getName(), customer.getEmail(),tempPassword);
+
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+    return customer.getId();
     }
 
 }
