@@ -8,6 +8,7 @@ package DepositEntity.Session;
 import CommonEntity.Customer;
 import DepositEntity.Payee;
 import DepositEntity.SavingAccount;
+import DepositEntity.TransferRecord;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import Exception.UserHasNoSavingAccountException;
+import java.util.Calendar;
 
 /**
  *
@@ -74,6 +76,13 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 //update the available balance of recipient BankAccount (+)
                 updatedRecipientBalance = recipientBalance.add(transferAmount);
                 recipientSavingAccount.setAvailableBalance(updatedRecipientBalance);
+                
+                Date currentTime = Calendar.getInstance().getTime();
+                java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+                
+                TransferRecord transferRecord = new TransferRecord("TF", transferAmount, "settled", "iBanking Transfer",currentTimestamp,giverBankAccountNum,recipientBankAccountNum, "intraTransfer","MerlionBank","MerlionBank");
+                em.persist(transferRecord);
+                em.flush();
                 return true;
             }
         }
