@@ -11,6 +11,7 @@ import CommonEntity.MessageEntity;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import java.io.IOException;
@@ -108,17 +109,21 @@ public class StaffMessageManagedBean implements Serializable {
 //        customerName = logInManagedBean.getCustomerName();
 
         System.out.println("Logged in Staff IC is : " + staffId);
-        customerMessages = imsbl.StaffViewAllMessage(staffId);
+        //       customerMessages = imsbl.StaffViewAllMessage(staffId);
 //        System.out.println("message size is: "+messages.size());
         customerUnreadMsg = imsbl.countStaffNewMessage(staffId);
 
     }
 
-//    public void customerViewAllMessages(ActionEvent event) throws IOException {
-//
-//        messages = imsbl.viewAllMessage(customerId);
-//        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
-//    }
+    public void staffViewAllMessages(ActionEvent event) throws IOException, ListEmptyException {
+        try {
+            customerMessages = imsbl.StaffViewAllMessage(staffId);
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+    }
+
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
         if (customerIc != null) {
             try {
@@ -197,15 +202,21 @@ public class StaffMessageManagedBean implements Serializable {
         //   replyTitle = "RE: " + msg.getTitle();
     }
 
-    public void staffDeleteMessage(Long messageId) {
-        boolean checkDelete = imsbl.deleteCustomerMessage(messageId);
-        if (checkDelete == false) {
-            System.out.println("Message deleted unsuccessfully!!!!");
-        }
-        customerMessages = imsbl.StaffViewAllMessage(staffId);
-        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message deleted successfully");
-        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+    public void staffDeleteMessage(Long messageId) throws ListEmptyException {
 
+        try {
+            boolean checkDelete = imsbl.deleteCustomerMessage(messageId);
+            if (checkDelete == false) {
+                System.out.println("Message deleted unsuccessfully!!!!");
+            }
+            customerMessages = imsbl.StaffViewAllMessage(staffId);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message deleted successfully");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
     }
 
     public String getCustomerIc() {
