@@ -65,7 +65,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  }
     // 2nd- staff send customer message
   @Override  
- public boolean sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException{
+ public MessageEntity sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException{
       Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
@@ -94,7 +94,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
         }
-        return true;    
+        return internalMessage;    
 }
  
  //send notification email to customer
@@ -187,7 +187,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  
  //customer reply staff message
  @Override  
- public boolean customerSendMessage(String subject, String content, String status, Long staffID, Long customerID)throws EmailNotSendException{
+ public CustomerMessage customerSendMessage(String subject, String content, String status, Long staffID, Long customerID)throws EmailNotSendException{
   Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
@@ -216,7 +216,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
         }
-        return true;    
+        return customerMessage;    
         
         
  }
@@ -245,7 +245,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         List <CustomerMessage> messages=staff.getCustomerMessages();
         List<CustomerMessage>newMessages=new ArrayList<CustomerMessage>();
         for (int i=0;i<messages.size();i++){
-            if (!messages.get(i).getStatus().equals("delected")){
+            if (!messages.get(i).getStatus().equals("deleted")){
                 newMessages.add(messages.get(i));
             }
         }

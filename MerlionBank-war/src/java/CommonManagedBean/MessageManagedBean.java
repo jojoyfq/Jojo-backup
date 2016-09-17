@@ -6,6 +6,7 @@
 package CommonManagedBean;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerMessage;
 import CommonEntity.MessageEntity;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
@@ -40,7 +41,13 @@ public class MessageManagedBean implements Serializable {
     //maintain the log in function from LogInManagedBean
     @Inject
     private LogInManagedBean logInManagedBean;
+    @Inject
+    private StaffMessageManagedBean staffMessageManagedBean;
 //setter for LogInManagedBean
+
+    public void setStaffMessageManagedBean(StaffMessageManagedBean staffMessageManagedBean) {
+        this.staffMessageManagedBean = staffMessageManagedBean;
+    }
 
     public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
         this.logInManagedBean = logInManagedBean;
@@ -61,6 +68,15 @@ public class MessageManagedBean implements Serializable {
     private String customerReplyContent;
     private String customerReplyMsgStatus = "new";
     private int customerUnreadMsg;
+    private CustomerMessage msgAddToStaff;
+
+    public CustomerMessage getMsgAddToStaff() {
+        return msgAddToStaff;
+    }
+
+    public void setMsgAddToStaff(CustomerMessage msgAddTostaff) {
+        this.msgAddToStaff = msgAddTostaff;
+    }
 
     public int getCustomerUnreadMsg() {
         return customerUnreadMsg;
@@ -169,9 +185,11 @@ public class MessageManagedBean implements Serializable {
             System.err.println("********** message.getMessageSubject(): " + messageSubject);
             System.err.println("********** message.getContent: " + content);
             System.err.println("********** message.getStaffId(): " + staffId);
-            imsbl.customerSendMessage(message.getSubject(), customerReplyContent, message.getStatus(), staffId, customerId);
+            msgAddToStaff=imsbl.customerSendMessage(message.getSubject(), customerReplyContent, message.getStatus(), staffId, customerId);
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your reply has been successfully sent!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            staffMessageManagedBean.getCustomerMessages().add(msgAddToStaff);
+            
         } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
