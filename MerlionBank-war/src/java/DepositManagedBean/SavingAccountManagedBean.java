@@ -18,8 +18,10 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -66,11 +68,15 @@ public class SavingAccountManagedBean implements Serializable{
             //get data from database and assign the new value to the variable after createSavingAccount success!
             getSavingAccountNumbers();
             savingAccounts = sasb.getSavingAccount(customerID);
-                FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/createSavingAccountECsuccess.xhtml");
+            
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            
          
         }catch(UserAlreadyHasSavingAccountException ex){
             System.out.println(ex.getMessage());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
     
