@@ -70,7 +70,18 @@ public class Customer implements Serializable {
     }
   @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<MessageEntity> messages;
+  
+ @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<UploadedFile> files;
 
+    public List<UploadedFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<UploadedFile> files) {
+        this.files = files;
+    }
+ 
     public List<MessageEntity> getMessages() {
         return messages;
     }

@@ -140,7 +140,7 @@ public class MessageManagedBean implements Serializable {
         System.out.println("Logged in customer IC is : " + customerId);
         //       messages = imsbl.viewAllMessage(customerId);
 //        System.out.println("message size is: "+messages.size());
-       // customerUnreadMsg = imsbl.countNewMessage(customerId);
+        customerUnreadMsg = imsbl.countNewMessage(customerId);
 
     }
 
@@ -152,7 +152,7 @@ public class MessageManagedBean implements Serializable {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
+        //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
     }
 
     public MessageEntity customerReadMessage(ActionEvent event) throws IOException {
@@ -217,10 +217,8 @@ public class MessageManagedBean implements Serializable {
         return message;
     }
 
-    public int countCusotmerUnreadEmail() {
-        customerUnreadMsg = imsbl.countNewMessage(customerId);
-        
-        return customerUnreadMsg;
+    public void countCusotmerUnreadEmail() {
+
     }
 
 //    public void customerViewAllMessage(ActionEvent event){

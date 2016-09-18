@@ -12,39 +12,47 @@
     <ui:define name="content">
 
         <!-- Left Column -->
-        <div class="Container20 NoPadding Responsive100">
+        <div class="Container10 NoPadding Responsive100">
 
         </div>
 
         <!-- Center Column -->
-        <div class="Container60 NoPadding Responsive50">
+        <div class="Container80 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-
+       
                     <div class="Container100 ui-fluid">
-                        <div class="Card">
-                            <h:form>
-                                <h:panelGrid columns="2" id="transferToFixedPanel" cellpadding="5"> 
+                        <h:form>
+                            <p:panel id="panel" header="Your Saving Account Details">
 
-                                    <h:outputLabel value="Transfer to your fixed deposit account #{fixedDepositManagedBean.accountNumberStr}" >
-                                    </h:outputLabel>
-                                    <br/>
-                                    <h:outputLabel for="amount" value="Amount(S$): #{fixedDepositManagedBean.amountString}" >
-                                    </h:outputLabel>
-                                    <br/>
-                                    <p:selectOneMenu id="payeeList" value="#{fixedDepositManagedBean.savingAcctSelected}" >
-                                        <f:selectItem itemLabel="Select your saving account" itemValue="" noSelectionOption="true" />
-                                        <f:selectItems value="#{fixedDepositManagedBean.savingAcctDisplay}" />
-                                    </p:selectOneMenu>
+                                <h:panelGrid columns="4" cellpadding="5">
+                                    <p:dataTable var="SavingAccount" value="#{savingAccountManagedBean.savingAccounts}">
+                                        <p:column headerText="Account Number">
+                                            <h:outputText value="#{SavingAccount.accountNumber}" />
+                                        </p:column>
 
+                                        <p:column headerText="Available Balance">
+                                            <h:outputText value="#{SavingAccount.availableBalance}" />
+                                        </p:column>
+
+                                        <p:column headerText="Balance">
+                                            <h:outputText value="#{SavingAccount.balance}" />
+                                        </p:column>
+
+                                        <p:column headerText="Type">
+                                            <h:outputText value="#{SavingAccount.savingAccountType.accountType}" />
+                                        </p:column>
+
+
+                                    </p:dataTable>
                                 </h:panelGrid>
-
-                                <p:commandButton value="Submit" id="transferToFixedButton"
-                                                 actionListener="#{fixedDepositManagedBean.transferToFixed}" />
-                            </h:form>
-
-                        </div>
+                            </p:panel>
+                        </h:form>
                     </div>
+
+
+
+
 
 
                 </div>
@@ -55,7 +63,7 @@
         </div>
 
         <!-- Right Column -->
-        <div class="Container20 NoPadding Responsive50">
+        <div class="Container10 NoPadding Responsive50">
 
 
         </div>
