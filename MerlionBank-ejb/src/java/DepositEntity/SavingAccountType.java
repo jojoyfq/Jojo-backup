@@ -6,6 +6,7 @@
 package DepositEntity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -27,7 +28,10 @@ public class SavingAccountType implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String accountType;
-    private double interestRate;
+    private BigDecimal minAmount;
+    private double interestRate1;
+    private double interestRate2;
+    private double interestRate3;
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "savingAccountType")
     private List<SavingAccount> savingAccounts = new ArrayList<SavingAccount>();
 
@@ -75,17 +79,41 @@ public class SavingAccountType implements Serializable {
         this.accountType = accountType;
     }
 
-    public double getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(double interestRate) {
-        this.interestRate = interestRate;
-    }
-
     @Override
     public String toString() {
         return "DepositEntity.SavingAccountType[ id=" + id + " ]";
+    }
+    
+     public BigDecimal getMinAmount() {
+        return minAmount;
+    }
+
+    public void setMinAmount(BigDecimal minAmount) {
+        this.minAmount = minAmount;
+    }
+    
+    public double getInterestRate1() {
+        return interestRate1;
+    }
+
+    public void setInterestRate1(double interestRate1) {
+        this.interestRate1 = interestRate1;
+    }
+
+    public double getInterestRate2() {
+        return interestRate2;
+    }
+
+    public void setInterestRate2(double interestRate2) {
+        this.interestRate2 = interestRate2;
+    }
+
+    public double getInterestRate3() {
+        return interestRate3;
+    }
+
+    public void setInterestRate3(double interestRate3) {
+        this.interestRate3 = interestRate3;
     }
 
 }
