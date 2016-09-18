@@ -5,7 +5,9 @@
  */
 package DepositManagedBean;
 
+import CommonEntity.Customer;
 import CommonManagedBean.LogInManagedBean;
+import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
@@ -17,16 +19,17 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -52,123 +55,103 @@ public class FixedDepositManagedBean implements Serializable {
     private Date endDate;
     private Double interestRate;
     private Long customerId = 2L;
-
+    private Boolean response;
 
     private Long accountNumber;
     private String accountNumberStr;
     private String endDateString;
     private String startDateString;
     private List<SavingAccount> savingAccounts;
-    private List<String> savingAcctDisplay;
-    private String savingAcctSelected;
+    private Long savingAcctSelected;  
     private Long savingAcctNumber;
-//    private Customer customer;
-//
-//    public Customer getCustomer() {
-//        return customer;
-//    }
-//
-//    public void setCustomer(Customer customer) {
-//        this.customer = customer;
-//    }
-//    
-//  
-    
-    
-
-    public Long getSavingAcctNumber() {
-        return savingAcctNumber;
-    }
-
-    public void setSavingAcctNumber(Long savingAcctNumber) {
-        this.savingAcctNumber = savingAcctNumber;
-    }
+    private Customer customer;
+    private List<FixedDepositAccount> fixedDepositAccounts;
+    private List<Long> fixedDepositNoMoney;
+    private Long fixedDepositSelected;
+    private BigDecimal amountLessBalance;
+    private BigDecimal amountToTransfer;
+    private String amountToTransferStr;
+    private List<Long> withdrawable;
+    private List<Long> renewable;
 
 
 
-    public String getSavingAcctSelected() {
-        return savingAcctSelected;
-    }
-
-    public void setSavingAcctSelected(String savingAcctSelected) {
-        this.savingAcctSelected = savingAcctSelected;
-    }
-
-    public List<String> getSavingAcctDisplay() {
-        return savingAcctDisplay;
-    }
-
-    public void setSavingAcctDisplay(List<String> savingAcctDisplay) {
-        this.savingAcctDisplay = savingAcctDisplay;
-    }
-
-    
-     @Inject
+    @Inject
     private LogInManagedBean logInManagedBean;
 //setter for LogInManagedBean
+    @Inject
+    private SavingAccountManagedBean savingAccountManagedBean;
+
+    
+    public SavingAccountManagedBean getSavingAccountManagedBean() {
+        return savingAccountManagedBean;
+    }
+
+    public void setSavingAccountManagedBean(SavingAccountManagedBean savingAccountManagedBean) {
+        this.savingAccountManagedBean = savingAccountManagedBean;
+    }
+    
     public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
         this.logInManagedBean = logInManagedBean;
     }
+    
 
-
+    
     public FixedDepositManagedBean() {
     }
 
     @PostConstruct
-    public void init(){
-        savingAcctDisplay = new ArrayList<String>();
-       
-      //  customer = new Customer();
-        
+    public void init() {     
+        savingAccountManagedBean.init();
+        fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
+        fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
+        withdrawable = fda.getWithdrawable(customerId);
+        renewable = fda.getRenewable(customerId);
     }
-    
-    public void createFixedDepositAccount(ActionEvent event) throws IOException {
-    
-        amountBD = new BigDecimal(amountString);
-      
-       //compute start date
-         calS = GregorianCalendar.getInstance();
-         calS.add(GregorianCalendar.DATE, 7);
-         startDate = calS.getTime();
-         
-       //compute end date
-         calE = GregorianCalendar.getInstance();
-         calE.setTime(getStartDate());
-         if (getDuration().equalsIgnoreCase("3")){
-         calE.add(GregorianCalendar.MONTH, 3);}
-//         try{
-//             rate = em.getReference(FixedDepositRate.class,1);
-//         }catch(EntityNotFoundException enf){         
-//         }         
-           
-         else if(getDuration().equalsIgnoreCase("6")){
-         calE.add(GregorianCalendar.MONTH, 6);}
-     
-       
-         else if(getDuration().equalsIgnoreCase("12")){
-         calE.add(GregorianCalendar.MONTH, 12);}
 
-         else{
-         calE.add(GregorianCalendar.MONTH,24);}
- 
-         setEndDate(getCalE().getTime());
+    public void createFixedDepositAccount(ActionEvent event) throws IOException {
+        if (amountString != null) {
+            amountBD = new BigDecimal(amountString);
+
+            //compute start date
+            calS = GregorianCalendar.getInstance();
+            calS.add(GregorianCalendar.DATE, 7);
+            startDate = calS.getTime();
+            //compute end date
+            calE = GregorianCalendar.getInstance();
+            calE.setTime(getStartDate());
+            if (getDuration().equalsIgnoreCase("3")) {
+                calE.add(GregorianCalendar.MONTH, 3);
+            }        
+            else if (getDuration().equalsIgnoreCase("6")) {
+                calE.add(GregorianCalendar.MONTH, 6);
+            } else if (getDuration().equalsIgnoreCase("12")) {
+                calE.add(GregorianCalendar.MONTH, 12);
+            } else {
+                calE.add(GregorianCalendar.MONTH, 24);
+            }
+
+            setEndDate(getCalE().getTime());
 
         //setCustomerId(logInManagedBean.getCustomerId());
-        
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        endDateString = df.format(endDate);
-        startDateString = df.format(startDate);
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            endDateString = df.format(endDate);
+            startDateString = df.format(startDate);
 
-       
-        accountNumber = fda.createFixedAccount(customerId, amountBD, startDate, endDate, duration);
-        System.out.print(customerId);
-        accountNumberStr = accountNumber.toString();
-        
-        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-        ec.redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositAccountSuccess.xhtml");
-     
+            accountNumber = fda.createFixedAccount(customerId, amountBD, startDate, endDate, duration);
+            System.out.print(customerId);
+            accountNumberStr = accountNumber.toString();
+            //update acct list and no money acct list
+            this.updateList(customerId);
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositAccountSuccess.xhtml");
+
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please enter amount");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        }
     }
-
     //to return the most recently created fixed deposit account info after successful creation
  /*   public ArrayList<String> getLastDepositAccount(){
      customerId = (String) FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
@@ -184,18 +167,84 @@ public class FixedDepositManagedBean implements Serializable {
      // havent finished  
            
      } **/
-   
-    public void transferToFixed( ActionEvent event) throws IOException{
 
-        savingAcctNumber = Long.valueOf(savingAcctSelected);
+    public void transferToFixed(ActionEvent event) throws IOException {
+
         //check if customer have select any account
-       // Boolean response = fda.transferToFixed(amountBD,savingAcctNumber,accountNumber);
-     
+
+        if (savingAcctSelected != null&& amountToTransferStr !=null) {
+            amountToTransfer = new BigDecimal(amountToTransferStr);
+            response = fda.transferToFixedDeposit(savingAcctSelected, accountNumber, amountToTransfer, customerId);
+            if (response == true) {
+                fixedDepositSelected = accountNumber;
+                amountLessBalance = fda.amountLessBalance(accountNumber);
+                ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+                this.updateList(customerId);
+                ec.redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSuccess.xhtml");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your saving account has insufficient balance");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please choose saving account and enter amount");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+
+    }
+      
+    public void transferToFixedSeparate(ActionEvent event) throws IOException{
+        if(savingAcctSelected !=null && fixedDepositSelected != null&&amountToTransferStr != null){
+          ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+          amountBD = fda.getAmount(fixedDepositSelected);
+          amountLessBalance = fda.amountLessBalance(fixedDepositSelected);
+          ec.redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSeparateNext.xhtml");
+        }
+        else{
+             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select accounts and enter amount");
+             RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+    
+    public void transferToFixedSeparateNext(ActionEvent event) throws IOException {
+        amountToTransfer = new BigDecimal(amountToTransferStr);
+        response = fda.transferToFixedDeposit(savingAcctSelected, fixedDepositSelected,amountToTransfer, customerId);
+
+        if (response == true) {
+            //format date for display in success page
+            startDateString = fda.formatDate(fixedDepositSelected).get(0);
+            endDateString = fda.formatDate(fixedDepositSelected).get(1);
+            amountLessBalance = fda.amountLessBalance(fixedDepositSelected);
+               ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+               this.updateList(customerId);
+                ec.redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSuccess.xhtml");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your saving account has insufficient balance");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+    }
+    
+    public void earlyWithdraw(ActionEvent event) throws IOException{
+         if (savingAcctSelected != null&& fixedDepositSelected !=null){
+             fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected);
+             this.updateList(customerId);   
+             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+             ec.redirect("/MerlionBank-war/FixedDepositManagement/earlyWithdrawNext.xhtml");
+         }
+    }
+    
+    public void updateList(Long customerId){
+            fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
+            fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
+            withdrawable = fda.getWithdrawable(customerId);
+            renewable = fda.getRenewable(customerId);
+    }
+    
+    public void renewFixed(ActionEvent event) throws IOException{
+        fda.renewFixed(fixedDepositSelected);
+    }
+    public void displayRenewInfo(ActionEvent event) throws IOException{
         
     }
-        
-    
-    
     public String getAmountString() {
         return amountString;
     }
@@ -235,7 +284,6 @@ public class FixedDepositManagedBean implements Serializable {
         System.out.println(startDate);
         this.startDate = startDate;
     }
-
 
     /**
      * @return the duration
@@ -282,7 +330,6 @@ public class FixedDepositManagedBean implements Serializable {
     /**
      * @return the customerId
      */
-
     /**
      * @return the accountNumber
      */
@@ -352,8 +399,8 @@ public class FixedDepositManagedBean implements Serializable {
     public void setCalS(Calendar calS) {
         this.calS = calS;
     }
-    
-        public String getStartDateString() {
+
+    public String getStartDateString() {
         return startDateString;
     }
 
@@ -361,21 +408,115 @@ public class FixedDepositManagedBean implements Serializable {
         this.startDateString = startDateString;
     }
 
-
-     public Long getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
-    } 
-        public List<SavingAccount> getSavingAccounts() {
+    }
+
+    public List<SavingAccount> getSavingAccounts() {
         return savingAccounts;
     }
 
     public void setSavingAccounts(List<SavingAccount> savingAccounts) {
         this.savingAccounts = savingAccounts;
     }
+ public List<Long> getFixedDepositNoMoney() {
+        return fixedDepositNoMoney;
+    }
 
+    public void setFixedDepositNoMoney(List<Long> fixedDepositNoMoney) {
+        this.fixedDepositNoMoney = fixedDepositNoMoney;
+    }
+
+    public List<FixedDepositAccount> getFixedDepositAccounts() {
+        return fixedDepositAccounts;
+    }
+
+    public void setFixedDepositAccounts(List<FixedDepositAccount> fixedDepositAccounts) {
+        this.fixedDepositAccounts = fixedDepositAccounts;
+    }
     
+    public Boolean getResponse() {
+        return response;
+    }
+
+    public void setResponse(Boolean response) {
+        this.response = response;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Long getSavingAcctNumber() {
+        return savingAcctNumber;
+    }
+
+    public void setSavingAcctNumber(Long savingAcctNumber) {
+        this.savingAcctNumber = savingAcctNumber;
+    }
+    
+      public Long getSavingAcctSelected() {
+        return savingAcctSelected;
+    }
+
+    public void setSavingAcctSelected(Long savingAcctSelected) {
+        this.savingAcctSelected = savingAcctSelected;
+    }
+    
+    public BigDecimal getAmountLessBalance() {
+        return amountLessBalance;
+    }
+
+    public void setAmountLessBalance(BigDecimal amountLessBalance) {
+        this.amountLessBalance = amountLessBalance;
+    }
+
+    public Long getFixedDepositSelected() {
+        return fixedDepositSelected;
+    }
+
+    public void setFixedDepositSelected(Long fixedDepositSelected) {
+        this.fixedDepositSelected = fixedDepositSelected;
+    }
+    
+    public List<Long> getRenewable() {
+        return renewable;
+    }
+
+    public void setRenewable(List<Long> renewable) {
+        this.renewable = renewable;
+    }
+
+    public List<Long> getWithdrawable() {
+        return withdrawable;
+    }
+
+    public void setWithdrawable(List<Long> withdrawable) {
+        this.withdrawable = withdrawable;
+    }
+
+    public BigDecimal getAmountToTransfer() {
+        return amountToTransfer;
+    }
+
+    public void setAmountToTransfer(BigDecimal amountToTransfer) {
+        this.amountToTransfer = amountToTransfer;
+    }
+
+    public String getAmountToTransferStr() {
+        return amountToTransferStr;
+    }
+
+    public void setAmountToTransferStr(String amountToTransferStr) {
+        this.amountToTransferStr = amountToTransferStr;
+    }
+
 }
