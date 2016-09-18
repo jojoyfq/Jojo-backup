@@ -62,7 +62,7 @@ public class FixedDepositManagedBean implements Serializable {
     private String endDateString;
     private String startDateString;
     private List<SavingAccount> savingAccounts;
-    private Long savingAcctSelected;  
+    private Long savingAcctSelected;
     private Long savingAcctNumber;
     private Customer customer;
     private List<FixedDepositAccount> fixedDepositAccounts;
@@ -74,15 +74,12 @@ public class FixedDepositManagedBean implements Serializable {
     private List<Long> withdrawable;
     private List<Long> renewable;
 
-
-
     @Inject
     private LogInManagedBean logInManagedBean;
 //setter for LogInManagedBean
     @Inject
     private SavingAccountManagedBean savingAccountManagedBean;
 
-    
     public SavingAccountManagedBean getSavingAccountManagedBean() {
         return savingAccountManagedBean;
     }
@@ -90,18 +87,16 @@ public class FixedDepositManagedBean implements Serializable {
     public void setSavingAccountManagedBean(SavingAccountManagedBean savingAccountManagedBean) {
         this.savingAccountManagedBean = savingAccountManagedBean;
     }
-    
+
     public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
         this.logInManagedBean = logInManagedBean;
     }
-    
 
-    
     public FixedDepositManagedBean() {
     }
 
     @PostConstruct
-    public void init() {     
+    public void init() {
         savingAccountManagedBean.init();
         fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
         fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
@@ -122,8 +117,7 @@ public class FixedDepositManagedBean implements Serializable {
             calE.setTime(getStartDate());
             if (getDuration().equalsIgnoreCase("3")) {
                 calE.add(GregorianCalendar.MONTH, 3);
-            }        
-            else if (getDuration().equalsIgnoreCase("6")) {
+            } else if (getDuration().equalsIgnoreCase("6")) {
                 calE.add(GregorianCalendar.MONTH, 6);
             } else if (getDuration().equalsIgnoreCase("12")) {
                 calE.add(GregorianCalendar.MONTH, 12);
@@ -133,7 +127,7 @@ public class FixedDepositManagedBean implements Serializable {
 
             setEndDate(getCalE().getTime());
 
-        //setCustomerId(logInManagedBean.getCustomerId());
+            //setCustomerId(logInManagedBean.getCustomerId());
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             endDateString = df.format(endDate);
             startDateString = df.format(startDate);
@@ -171,8 +165,7 @@ public class FixedDepositManagedBean implements Serializable {
     public void transferToFixed(ActionEvent event) throws IOException {
 
         //check if customer have select any account
-
-        if (savingAcctSelected != null&& amountToTransferStr !=null) {
+        if (savingAcctSelected != null && amountToTransferStr != null) {
             amountToTransfer = new BigDecimal(amountToTransferStr);
             response = fda.transferToFixedDeposit(savingAcctSelected, accountNumber, amountToTransfer, customerId);
             if (response == true) {
@@ -191,60 +184,88 @@ public class FixedDepositManagedBean implements Serializable {
         }
 
     }
-      
-    public void transferToFixedSeparate(ActionEvent event) throws IOException{
-        if(savingAcctSelected !=null && fixedDepositSelected != null&&amountToTransferStr != null){
-          ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-          amountBD = fda.getAmount(fixedDepositSelected);
-          amountLessBalance = fda.amountLessBalance(fixedDepositSelected);
-          ec.redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSeparateNext.xhtml");
-        }
-        else{
-             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select accounts and enter amount");
-             RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+    public void transferToFixedSeparate(ActionEvent event) throws IOException {
+        if (savingAcctSelected != null && fixedDepositSelected != null && amountToTransferStr != null) {
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            amountBD = fda.getAmount(fixedDepositSelected);
+            amountLessBalance = fda.amountLessBalance(fixedDepositSelected);
+            ec.redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSeparateNext.xhtml");
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select accounts and enter amount");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
+
     public void transferToFixedSeparateNext(ActionEvent event) throws IOException {
         amountToTransfer = new BigDecimal(amountToTransferStr);
-        response = fda.transferToFixedDeposit(savingAcctSelected, fixedDepositSelected,amountToTransfer, customerId);
+        response = fda.transferToFixedDeposit(savingAcctSelected, fixedDepositSelected, amountToTransfer, customerId);
 
         if (response == true) {
             //format date for display in success page
             startDateString = fda.formatDate(fixedDepositSelected).get(0);
             endDateString = fda.formatDate(fixedDepositSelected).get(1);
             amountLessBalance = fda.amountLessBalance(fixedDepositSelected);
-               ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-               this.updateList(customerId);
-                ec.redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSuccess.xhtml");
-            } else {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your saving account has insufficient balance");
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
-            }
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            this.updateList(customerId);
+            ec.redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSuccess.xhtml");
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your saving account has insufficient balance");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
     }
-    
-    public void earlyWithdraw(ActionEvent event) throws IOException{
-         if (savingAcctSelected != null&& fixedDepositSelected !=null){
-             fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected);
-             this.updateList(customerId);   
-             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-             ec.redirect("/MerlionBank-war/FixedDepositManagement/earlyWithdrawNext.xhtml");
-         }
+
+    public void earlyWithdraw(ActionEvent event) throws IOException {
+        if (savingAcctSelected != null && fixedDepositSelected != null) {
+            fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected);
+            this.updateList(customerId);
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect("/MerlionBank-war/FixedDepositManagement/earlyWithdrawNext.xhtml");
+        }
     }
-    
-    public void updateList(Long customerId){
-            fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
-            fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
-            withdrawable = fda.getWithdrawable(customerId);
-            renewable = fda.getRenewable(customerId);
+
+    public void updateList(Long customerId) {
+        fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
+        fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
+        withdrawable = fda.getWithdrawable(customerId);
+        renewable = fda.getRenewable(customerId);
     }
-    
-    public void renewFixed(ActionEvent event) throws IOException{
+
+    public void goToHomePage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/dashboard.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to Home page fails");
+        }
+    }
+
+    public void goToInstructionPage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositTransferInstruction.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to instruction page fails");
+        }
+    }
+
+    public void goToTransferToFixedPage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/FixedDepositManagement/transferToFixed.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to transferToFixed page fails");
+        }
+    }
+
+    public void renewFixed(ActionEvent event) throws IOException {
         fda.renewFixed(fixedDepositSelected);
     }
-    public void displayRenewInfo(ActionEvent event) throws IOException{
-        
+
+    public void displayRenewInfo(ActionEvent event) throws IOException {
+
     }
+
     public String getAmountString() {
         return amountString;
     }
@@ -423,7 +444,8 @@ public class FixedDepositManagedBean implements Serializable {
     public void setSavingAccounts(List<SavingAccount> savingAccounts) {
         this.savingAccounts = savingAccounts;
     }
- public List<Long> getFixedDepositNoMoney() {
+
+    public List<Long> getFixedDepositNoMoney() {
         return fixedDepositNoMoney;
     }
 
@@ -438,7 +460,7 @@ public class FixedDepositManagedBean implements Serializable {
     public void setFixedDepositAccounts(List<FixedDepositAccount> fixedDepositAccounts) {
         this.fixedDepositAccounts = fixedDepositAccounts;
     }
-    
+
     public Boolean getResponse() {
         return response;
     }
@@ -462,15 +484,15 @@ public class FixedDepositManagedBean implements Serializable {
     public void setSavingAcctNumber(Long savingAcctNumber) {
         this.savingAcctNumber = savingAcctNumber;
     }
-    
-      public Long getSavingAcctSelected() {
+
+    public Long getSavingAcctSelected() {
         return savingAcctSelected;
     }
 
     public void setSavingAcctSelected(Long savingAcctSelected) {
         this.savingAcctSelected = savingAcctSelected;
     }
-    
+
     public BigDecimal getAmountLessBalance() {
         return amountLessBalance;
     }
@@ -486,7 +508,7 @@ public class FixedDepositManagedBean implements Serializable {
     public void setFixedDepositSelected(Long fixedDepositSelected) {
         this.fixedDepositSelected = fixedDepositSelected;
     }
-    
+
     public List<Long> getRenewable() {
         return renewable;
     }
