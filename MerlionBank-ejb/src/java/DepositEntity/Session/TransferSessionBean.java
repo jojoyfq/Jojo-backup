@@ -8,6 +8,7 @@ package DepositEntity.Session;
 import CommonEntity.Customer;
 import DepositEntity.Payee;
 import DepositEntity.SavingAccount;
+import DepositEntity.TransactionRecord;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -147,6 +148,56 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         List<SavingAccount> savingAccounts = m.getResultList();
         SavingAccount savingAccount = savingAccounts.get(0);
         return savingAccount.getCustomer().getName();
+    }
+    
+    public List<List> getTransactionRecord(Long savingAccountNumber){
+        List<List> displayList=new ArrayList();
+        
+        Query m = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum");
+        m.setParameter("giverAccountNum", savingAccountNumber);
+        List<TransactionRecord> record1 = m.getResultList();
+        displayList.addAll(addTransferList(record1,"debit"));
+        
+        Query n = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.recipientAccountNum = :recipientAccountNum");
+        n.setParameter("recipientAccountNum", savingAccountNumber);
+        List<TransactionRecord> record2 = n.getResultList();
+        displayList.addAll(addTransferList(record2,"credit"));
+        
+        return displayList;
+        
+    }
+    
+    public List<List> addTransferList(List<TransactionRecord> record,String type){
+        List<List> list=new ArrayList();
+        int count=0;
+        if (type.equals("credit")){
+            for (int i=0;i<record.size();i++){
+                if(record.get(i).equals("settled")){
+                   list.get(count).add(0,record.get(i).getTransactionTime());
+                   list.get(count).add(1,"TF");
+                   list.get(count).add(2,record.get(i).getDescription());
+                   list.get(count).add(3,null);
+                   list.get(count).add(4,record.get(i).getAmount());
+                   count=count+1;
+                }
+                
+            }
+            
+        }
+        else if (type.equals("debit")){
+           for (int i=0;i<record.size();i++){
+                if(record.get(i).equals("settled")){
+                   list.get(count).add(0,record.get(i).getTransactionTime());
+                   list.get(count).add(1,"TF");
+                   list.get(count).add(2,record.get(i).getDescription());
+                   list.get(count).add(3,record.get(i).getAmount());
+                   list.get(count).add(4,null);
+                   count=count+1;
+                }
+                
+            } 
+        }
+        return list;
     }
 
     public SavingAccount getGiverBankAccount() {
