@@ -14,15 +14,12 @@
                     <h:outputLabel value="Transfer to your fixed deposit account #{fixedDepositManagedBean.accountNumberStr}" >
                     </h:outputLabel>
                     <br/>
-                    <h:outputLabel for="amount" value="Amount set when opening(S$): #{fixedDepositManagedBean.amountString}" >
+                    <h:outputLabel for="amount" value="Amount(S$): #{fixedDepositManagedBean.amountString}" >
                     </h:outputLabel>
                     <br/>
-                     <h:outputLabel for="amount" value="Amount to transfer(S$):" />
-                     <p:inputText id="amount" value="#{fixedDepositManagedBean.amountToTransferStr}" label="amount" required="true" />
-                    <br/>
                     <p:selectOneMenu id="payeeList" value="#{fixedDepositManagedBean.savingAcctSelected}" >
-                        <f:selectItem itemLabel="Select your saving account" itemValue="" noSelectionOption="false"  />
-                        <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
+                        <f:selectItem itemLabel="Select your saving account" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{fixedDepositManagedBean.savingAcctDisplay}" />
                     </p:selectOneMenu>
 
                 </h:panelGrid>

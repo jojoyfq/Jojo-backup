@@ -11,7 +11,6 @@ import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
-import Exception.ListEmptyException;
 import Other.Session.GeneratePassword;
 import Other.Session.sendEmail;
 import java.math.BigInteger;
@@ -37,12 +36,10 @@ public class StaffVerifyCustomerAccountSessionBean implements StaffVerifyCustome
     
 //system retrieve list of pending verification customers
 @Override
-public List<Customer> viewPendingVerificationList()throws ListEmptyException{
+public List<Customer> viewPendingVerificationList(){
    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.status = :status");
         q.setParameter("status", "unverified");
         List<Customer> temp = new ArrayList(q.getResultList()); 
-        if (temp.size()==0)
-            throw new ListEmptyException("There are pending verifications!");
         return temp;
 }
 
@@ -97,7 +94,7 @@ public boolean verifySavingAccountCustomer (Long staffID, Long customerID, Strin
             em.persist(staff);
             em.flush();
            try {
-            sendRejectVerificationEmail(customer.getName(),customer.getEmail());
+            sendEmail(customer.getName(),customer.getEmail(),customer.getOnlineAccount().getPassword(),savingAccount.getAccountNumber());
             } catch (MessagingException ex) {
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
@@ -158,7 +155,7 @@ public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID,
             em.persist(staff);
             em.flush();
            try {
-            sendRejectVerificationEmail(customer.getName(),customer.getEmail());
+            sendEmail(customer.getName(),customer.getEmail(),customer.getOnlineAccount().getPassword(),fixedDepositAccount.getAccountNumber());
             } catch (MessagingException ex) {
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");

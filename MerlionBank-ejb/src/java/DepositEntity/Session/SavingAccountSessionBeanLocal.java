@@ -6,7 +6,6 @@
 package DepositEntity.Session;
 
 import DepositEntity.SavingAccount;
-import DepositEntity.TransactionRecord;
 import Exception.UserHasNoSavingAccountException;
 import java.util.List;
 import javax.ejb.Local;
@@ -21,6 +20,5 @@ public interface SavingAccountSessionBeanLocal {
     public List<SavingAccount> getSavingAccount(Long customerID)throws UserHasNoSavingAccountException;
     public List<String> getSavingAccountType();
     public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
-    public List<List> getTransactionRecord(Long savingAccountNumber);
     
 }

@@ -663,7 +663,6 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
     
     //Create Fixed Deposit Account - 1st page - create online banking account
-   @Override
     public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -713,7 +712,6 @@ return customer;
     
     
     //Create Fixed Deposit Account - 2nd page - configure fixed deposit account
-   @Override
     public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration)throws EmailNotSendException{
        Long accountNumber=fdasbl.createFixedAccount(customer.getId(), amount, dateOfStart, dateOfEnd, duration);
      String password = GeneratePassword.createPassword();

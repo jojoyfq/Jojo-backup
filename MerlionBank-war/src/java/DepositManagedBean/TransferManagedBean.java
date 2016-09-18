@@ -39,7 +39,7 @@ public class TransferManagedBean implements Serializable{
     private Long payeeAccount;
     private String payeeAccountString;
     private String payeeName;
-    private Long customerID = Long.parseLong("6");
+    private Long customerID = Long.parseLong("2");
     private List payeeList;
     private Long payeeTransferAccount;
 
@@ -134,7 +134,6 @@ public class TransferManagedBean implements Serializable{
             payeeAccount = Long.parseLong(payeeAccountString);
             checkAddPayeeStatus = tfsb.addPayee(payeeAccount, payeeName,customerID);
             if(checkAddPayeeStatus) {
-                this.getPayeeListfromDatabase();
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/TransferManagement/addNewPayeeSuccess.xhtml");
             }else {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/TransferManagement/addNewPayee.xhtml");

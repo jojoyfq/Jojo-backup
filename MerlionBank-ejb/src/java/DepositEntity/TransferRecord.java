@@ -5,25 +5,23 @@
  */
 package DepositEntity;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 @Entity
+@DiscriminatorValue("TransferRecord")
 public class TransferRecord extends TransactionRecord {
     private String transfer_Type; //Transfer can includes IntraTransfer and InterTransfer
     private String giverBankName;
-    private String recipientBankName;  
+    private String receipientBankName;  
+    @ManyToOne
+    private SavingAccount giverBankAccount; 
+    @ManyToOne
+    private SavingAccount receipientBankAccount; 
+    private Long giverBankAccountNum;
+    private Long receipientBankAccountNum;
 
-    public TransferRecord(){}
-    
-    public TransferRecord(String code, BigDecimal amount,String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum, String transfer_Type,String giverBankName,String recipientBankName){
-        super(code,amount,status,description,transactionTime,giverAccountNum,recipientAccountNum);
-        this.transfer_Type = transfer_Type;
-        this.giverBankName = giverBankName;
-        this.recipientBankName = recipientBankName;
-    }
-    
     public void setTransfer_Type(String transfer_Type) {
         this.transfer_Type = transfer_Type;
     }
@@ -42,11 +40,43 @@ public class TransferRecord extends TransactionRecord {
     }
     
     public void setReceipientBankName(String receipientBankName) {
-        this.recipientBankName = receipientBankName;
+        this.receipientBankName = receipientBankName;
     }
 
     public String getReceipientBankName() {
-        return recipientBankName;
+        return receipientBankName;
     }
 
+     public void setGiverBankAccount(SavingAccount giverBankAccount) {
+        this.giverBankAccount = giverBankAccount;
+    }
+
+    public SavingAccount getGiverBankAccount() {
+        return giverBankAccount;
+    }
+    
+    public SavingAccount getReceipientBankAccount() {
+        return receipientBankAccount;
+    }
+    
+    public void setReceipientBankAccount(SavingAccount receipientBankAccount) {
+        this.receipientBankAccount = receipientBankAccount;
+    }
+    
+    public void setGiverBankAccountNum(Long giverBankAccountNum) {
+        this.giverBankAccountNum = giverBankAccountNum;
+    }
+
+    public void setReceipientBankAccountNum(Long receipientBankAccountNum) {
+        this.receipientBankAccountNum = receipientBankAccountNum;
+    }
+
+    public Long getGiverBankAccountNum() {
+        return giverBankAccountNum;
+    }
+
+    public Long getReceipientBankAccountNum() {
+        return receipientBankAccountNum;
+    }
+    
 }

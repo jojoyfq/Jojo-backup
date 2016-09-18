@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -23,7 +24,8 @@ import javax.persistence.Temporal;
  * @author ruijia
  */
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance
+@DiscriminatorColumn(name="Tansaction_Type")
 @Table(name="TransactionRecord")
 public class TransactionRecord implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -31,28 +33,18 @@ public class TransactionRecord implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String code;
-    BigDecimal amount;
+    private BigDecimal amount;
     private String status;
     private String description;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date transactionTime;
-    private Long giverAccountNum;
-    private Long recipientAccountNum;
+    @ManyToOne
+    private SavingAccount savingAccount;
 
-    
+
     
     public TransactionRecord(){}
     
-    public TransactionRecord(String code,BigDecimal amount,String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum){
-        this.code = code;
-        this.amount = amount;
-        this.status = status;
-        this.description = description;
-        this.transactionTime = transactionTime;
-        this.giverAccountNum = giverAccountNum;
-        this.recipientAccountNum = recipientAccountNum;
-    }
     
     public Long getId() {
         return id;
@@ -138,30 +130,13 @@ public class TransactionRecord implements Serializable {
         this.status = status;
     }
     
-    public String getCode() {
-        return code;
+    public SavingAccount getSavingAccount() {
+        return savingAccount;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setSavingAccount(SavingAccount savingAccount) {
+        this.savingAccount = savingAccount;
     }
-
-    public Long getGiverAccountNum() {
-        return giverAccountNum;
-    }
-
-    public void setGiverAccountNum(Long giverAccountNum) {
-        this.giverAccountNum = giverAccountNum;
-    }
-
-    public Long getRecipientAccountNum() {
-        return recipientAccountNum;
-    }
-
-    public void setRecipientAccountNum(Long recipientAccountNum) {
-        this.recipientAccountNum = recipientAccountNum;
-    }
-    
     
     
 }

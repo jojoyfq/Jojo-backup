@@ -39,10 +39,7 @@ public class SavingAccountManagedBean implements Serializable{
     private List<String> savingAccountTypeList;
     private boolean createSavingAccountStatus;
     private List<Long> savingAccountNumberList;
-    private Long savingAccountSelected;
-    private List<List> transactionRecordList;
 
-    
     
     @PostConstruct
     public void init() {
@@ -75,7 +72,6 @@ public class SavingAccountManagedBean implements Serializable{
     }
     
     public void getSavingAccountNumbers() throws UserHasNoSavingAccountException{
-        System.out.print("inside the getSavingAccountNumbers()");
         savingAccountNumberList = sasb.getSavingAccountNumbers(customerID);
     }
     
@@ -84,22 +80,6 @@ public class SavingAccountManagedBean implements Serializable{
             System.out.print("get saving account type from database got problem!");
         }else{
             savingAccountTypeList = sasb.getSavingAccountType();  
-        }
-    }
-    
-    public void getTransactionRecords() {
-        System.out.print("inside the transaction Managedbean");
-        transactionRecordList = sasb.getTransactionRecord(savingAccountSelected);
-        //System.out.print(transactionRecordList);
-    }
-    
-    public void goToViewTransactionRecord(ActionEvent event){
-         try {
-            this.getTransactionRecords();
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/viewTransactionRecords.xhtml");
-        } catch (Exception e) {
-            System.out.print("Redirect to transferByPayee page fails");
         }
     }
     
@@ -151,23 +131,6 @@ public class SavingAccountManagedBean implements Serializable{
         this.savingAccountNumberList = savingAccountNumList;
     }
 
-    public Long getSavingAccountSelected() {
-        return savingAccountSelected;
-    }
-
-    public void setSavingAccountSelected(Long savingAccountSelected) {
-        this.savingAccountSelected = savingAccountSelected;
-    }
-
-    public List<List> getTransactionRecordList() {
-        return transactionRecordList;
-    }
-
-    public void setTransactionRecordList(List<List> transactionRecordList) {
-        this.transactionRecordList = transactionRecordList;
-    }
-
-    
 
     
 }
