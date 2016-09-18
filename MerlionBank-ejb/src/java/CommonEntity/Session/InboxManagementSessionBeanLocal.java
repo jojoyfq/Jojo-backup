@@ -28,7 +28,7 @@ public interface InboxManagementSessionBeanLocal {
  public Long verifyCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
  
  // 2nd- staff send customer message
- public boolean sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException;
+ public MessageEntity sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException;
 
   // customer view list of message
  public List viewAllMessage(Long customerId)throws ListEmptyException;
@@ -43,13 +43,13 @@ public interface InboxManagementSessionBeanLocal {
  public int countNewMessage(Long customerID);
  
  //customer reply staff message 
- public boolean customerSendMessage(String subject, String content, String status, Long staffID, Long customerID)throws EmailNotSendException;
+ public CustomerMessage customerSendMessage(String subject, String content, String status, Long staffID, Long customerID)throws EmailNotSendException;
  
  // staff view list of message
  public List<CustomerMessage> StaffViewAllMessage(Long staffId)throws ListEmptyException;
  
  // staff update status from new to read
- public boolean readCustomerMessage(Long messageID);
+ public CustomerMessage readCustomerMessage(Long messageID);
  
   //system display number of new messages for staff
  public int countStaffNewMessage(Long staffID);

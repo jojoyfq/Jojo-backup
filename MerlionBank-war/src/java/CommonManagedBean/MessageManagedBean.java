@@ -6,10 +6,12 @@
 package CommonManagedBean;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerMessage;
 import CommonEntity.MessageEntity;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import java.io.IOException;
@@ -40,7 +42,13 @@ public class MessageManagedBean implements Serializable {
     //maintain the log in function from LogInManagedBean
     @Inject
     private LogInManagedBean logInManagedBean;
+    @Inject
+    private StaffMessageManagedBean staffMessageManagedBean;
 //setter for LogInManagedBean
+
+    public void setStaffMessageManagedBean(StaffMessageManagedBean staffMessageManagedBean) {
+        this.staffMessageManagedBean = staffMessageManagedBean;
+    }
 
     public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
         this.logInManagedBean = logInManagedBean;
@@ -61,6 +69,15 @@ public class MessageManagedBean implements Serializable {
     private String customerReplyContent;
     private String customerReplyMsgStatus = "new";
     private int customerUnreadMsg;
+    private CustomerMessage msgAddToStaff;
+
+    public CustomerMessage getMsgAddToStaff() {
+        return msgAddToStaff;
+    }
+
+    public void setMsgAddToStaff(CustomerMessage msgAddTostaff) {
+        this.msgAddToStaff = msgAddTostaff;
+    }
 
     public int getCustomerUnreadMsg() {
         return customerUnreadMsg;
@@ -121,44 +138,21 @@ public class MessageManagedBean implements Serializable {
 //        customerName = logInManagedBean.getCustomerName();
 
         System.out.println("Logged in customer IC is : " + customerId);
-        messages = imsbl.viewAllMessage(customerId);
+        //       messages = imsbl.viewAllMessage(customerId);
 //        System.out.println("message size is: "+messages.size());
         customerUnreadMsg = imsbl.countNewMessage(customerId);
 
     }
 
-    public void customerViewAllMessages(ActionEvent event) throws IOException {
+    public void customerViewAllMessages(ActionEvent event) throws IOException, ListEmptyException {
 
-        messages = imsbl.viewAllMessage(customerId);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
-    }
-
-    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
-        if (customerIc != null) {
-            try {
-                Long msg = imsbl.verifyCustomer(customerIc);
-
-                System.out.println(msg + "Customer verification is successful!");
-
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
-
-            } catch (UserNotExistException | UserNotActivatedException ex) {
-                System.out.println(ex.getMessage());
-            }
-        } else {
-
-            System.out.println("Please do not leave any blanks");
+        try {
+            messages = imsbl.viewAllMessage(customerId);
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
-    }
-
-    public void sendMessageToCustomer(ActionEvent event) throws EmailNotSendException {
-        if (messageSubject != null && content != null) {
-            try {
-                imsbl.sendMessage(customerId, staffId, messageSubject, content);
-            } catch (EmailNotSendException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
+        //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
     }
 
     public MessageEntity customerReadMessage(ActionEvent event) throws IOException {
@@ -168,34 +162,50 @@ public class MessageManagedBean implements Serializable {
         //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/displaySingleMessage.xhtml");
 //        messageId = 6L;
         message = imsbl.readMessage(message.getId());
+        messageId = message.getId();
+        messageSubject = message.getSubject();
+        content = message.getContent();
+        staffId = message.getStaff().getId();
+        status = message.getStatus();
         return message;
     }
 
-    public void customerDeleteMessage(Long msgID) throws IOException {
+    public void customerDeleteMessage(Long msgID) throws IOException, ListEmptyException {
 
-        boolean checkDelete = imsbl.deleteMessage(msgID);
+        try {
+            boolean checkDelete = imsbl.deleteMessage(msgID);
 
-        if (checkDelete == false) {
-            System.out.println("Message deleted unsuccessfully!!!!");
-        }
-        System.out.println("delete message check: " + customerId);
-        messages = imsbl.viewAllMessage(customerId);
+            if (checkDelete == false) {
+                System.out.println("Message deleted unsuccessfully!!!!");
+            }
+            System.out.println("delete message check: " + customerId);
+            messages = imsbl.viewAllMessage(customerId);
         // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
-
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
     }
 
     public void customerReplyMessage(ActionEvent event) throws EmailNotSendException {
         try {
-            message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
-            System.err.println("********** message.getId(): " + message.getId());
-            imsbl.customerSendMessage(messageSubject, customerReplyContent, customerReplyMsgStatus, staffId, customerId);
+            //    message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
+            System.err.println("********** message.getId(): " + messageId);
+            System.err.println("********** message.getMessageSubject(): " + messageSubject);
+            System.err.println("********** message.getContent: " + content);
+            System.err.println("********** message.getStaffId(): " + staffId);
+            msgAddToStaff = imsbl.customerSendMessage(message.getSubject(), customerReplyContent, message.getStatus(), staffId, customerId);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your reply has been successfully sent!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            staffMessageManagedBean.getCustomerMessages().add(msgAddToStaff);
+
         } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
 
-    public void replyMessage(ActionEvent event) {
+    public MessageEntity replyMessage(ActionEvent event) {
         message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
         System.err.println("********** message.getId(): " + message.getId());
         System.out.println("***********Message from Managed Bean: ");
@@ -204,9 +214,11 @@ public class MessageManagedBean implements Serializable {
         // sendID = msg.getReceiverId();
         System.out.println("Staff ID is  " + message.getStaff().getId());
         //   replyTitle = "RE: " + msg.getTitle();
+        return message;
     }
-    public void countCusotmerUnreadEmail(){
-        
+
+    public void countCusotmerUnreadEmail() {
+
     }
 
 //    public void customerViewAllMessage(ActionEvent event){
