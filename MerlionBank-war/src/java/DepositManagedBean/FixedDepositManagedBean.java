@@ -223,34 +223,6 @@ public class FixedDepositManagedBean implements Serializable {
             }
     }
     
-    public void goToHomePage(ActionEvent event){
-        try {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/dashboard.xhtml");
-        } catch (Exception e) {
-            System.out.print("Redirect to Home page fails");
-        }
-    }
-        
-    public void goToInstructionPage(ActionEvent event){
-        try {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositTransferInstruction.xhtml");
-        } catch (Exception e) {
-            System.out.print("Redirect to instruction page fails");
-        }
-    }
-    
-    public void goToTransferToFixedPage(ActionEvent event){
-        try {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/FixedDepositManagement/transferToFixed.xhtml");
-        } catch (Exception e) {
-            System.out.print("Redirect to transferToFixed page fails");
-        }
-    }
-
-    
     public void earlyWithdraw(ActionEvent event) throws IOException{
          if (savingAcctSelected != null&& fixedDepositSelected !=null){
              fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected);

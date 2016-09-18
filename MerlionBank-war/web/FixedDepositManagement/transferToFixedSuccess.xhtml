@@ -12,21 +12,24 @@ and open the template in the editor.
        xmlns:p="http://primefaces.org/ui">
     
     <head>
-        <title>Create Fixed Deposit Account Success</title>
+        <title>Transfer to Fixed Deposit Account Success</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
         <h:form>
             <h:panelGrid columns="2" id="createFixedDepositAccountSuccess" cellpadding="5"> 
                 
-                <h:outputLabel value="Your Fixed Deposit Account is Created Successfully" />
+                <h:outputLabel value="You have successfully transferred to your fixed deposit" />
                 <h:outputLabel />
                 
                 <h:outputLabel for="accountNumber" value="accountNumber:" />
-                <p:outputLabel id="accountNumber" value="#{fixedDepositManagedBean.accountNumberStr}"  />          
+                <p:outputLabel id="accountNumber" value="#{fixedDepositManagedBean.fixedDepositSelected}"  />          
                 
-                <h:outputLabel for="amount" value="Amount:" />
-                <p:outputLabel id="amount" value="#{fixedDepositManagedBean.amountString}"  />
+                <h:outputLabel for="amountTransfered" value="Amount transfered:" />
+                <p:outputLabel id="amountTransfered" value="#{fixedDepositManagedBean.amountToTransferStr}"  />
+               
+                 <h:outputLabel for="amountNeeded" value="Amount still needed:" />
+                 <p:outputLabel id="amountNeeded" value="#{fixedDepositManagedBean.amountLessBalance}"  />               
                 
                 <h:outputLabel for="startDate" value="Start Date:" />
                 <p:outputLabel id="startDate" value="#{fixedDepositManagedBean.startDateString}" />
@@ -36,7 +39,8 @@ and open the template in the editor.
                 
             </h:panelGrid>
                
-            <p:commandButton action="createFixedDepositTransferInstruction" value="Continue" />
+            <p:commandButton action="createFixedDepositAccount" value="Return to Homepage" />
         </h:form>
     </body>
 </html>
+

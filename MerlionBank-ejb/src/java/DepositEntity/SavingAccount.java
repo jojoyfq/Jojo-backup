@@ -41,8 +41,6 @@ public class SavingAccount implements Serializable {
     @ManyToOne
     private SavingAccountType savingAccountType = new SavingAccountType();
     
-    @OneToMany(cascade={CascadeType.ALL},mappedBy="SavingAccount")
-    private List<TransactionRecord> transactionRecords;
 
     public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, SavingAccountType savingAccountType) {
         this.accountNumber = accountNumber;
@@ -52,25 +50,7 @@ public class SavingAccount implements Serializable {
         this.customer = customer;
         this.savingAccountType = savingAccountType;
     }
-//    @OneToMany(cascade = {CascadeType.ALL},mappedBy="savingAccount")
-//    private List<TransactionRecord> transactionRecords = new ArrayList<TransactionRecord>();
-//
-//    public List<TransactionRecord> getTransactionRecords() {
-//        return transactionRecords;
-//    }
-//
-//    public void setTransactionRecords(List<TransactionRecord> transactionRecords) {
-//        this.transactionRecords = transactionRecords;
-//    }
 
-   // @OneToMany(cascade = {CascadeType.ALL},mappedBy = "receipientSavingAccount")
-    // private List<IntrabankTransferRecord> intrabankTransferRecords = new ArrayList<IntrabankTransferRecord>();
-   // public List<IntrabankTransferRecord> getIntrabankTransferRecords() {
-    //     return intrabankTransferRecords;
-    // }
-   // public void setIntrabankTransferRecords(List<IntrabankTransferRecord> intrabankTransferRecords) {
-    //     this.intrabankTransferRecords = intrabankTransferRecords;
-    // }
     public Long getId() {
         return id;
     }
@@ -191,11 +171,4 @@ public class SavingAccount implements Serializable {
         this.savingAccountType = savingAccountType;
     }
 
-    public List<TransactionRecord> getTransactionRecords() {
-        return transactionRecords;
-    }
-
-    public void setTransactionRecords(List<TransactionRecord> transactionRecords) {
-        this.transactionRecords = transactionRecords;
-    }
 }

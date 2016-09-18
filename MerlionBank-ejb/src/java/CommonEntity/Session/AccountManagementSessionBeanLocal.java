@@ -16,6 +16,7 @@ import Exception.UserExistException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import com.twilio.sdk.TwilioRestException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -63,4 +64,9 @@ public boolean updateAccountStatus(String ic);
      public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException;
  public Long lockAccount(Long customerId);
  public Customer diaplayCustomerId(Long id);
+ 
+ //Create Fixed Deposit Account - 1st page - create online banking account
+    public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException;
+//Create Fixed Deposit Account - 2nd page - configure fixed deposit account
+    public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration)throws EmailNotSendException;
 }
