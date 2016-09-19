@@ -39,7 +39,7 @@ public class TransferManagedBean implements Serializable{
     private Long payeeAccount;
     private String payeeAccountString;
     private String payeeName;
-    private Long customerID = Long.parseLong("6");
+    private Long customerID = Long.parseLong("2");
     private List payeeList;
     private Long payeeTransferAccount;
 
