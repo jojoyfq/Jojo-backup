@@ -133,6 +133,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         em.flush();
         System.out.print("Demi" + account.getStartDate());
         System.out.println("Fixed Deposit account created successfullly");
+        
+        //for testting
+        account.setBalance(BigDecimal.valueOf(1000));
         return accountNumber;
     }
 
@@ -467,12 +470,15 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                 } else {
                     endNewTemp = startNewTemp.plus(Period.months(24));
                 }
-                //set new start and end date
-                fixedDepositAccounts.get(i).setStartDate(startNewTemp.toDate());
+                
+                BigDecimal interestEnd = calculateInterestNormal(fixedDepositAccounts.get(i).getAccountNumber());                
+                BigDecimal newBalance = fixedDepositAccounts.get(i).getBalance().add(interestEnd);
+                fixedDepositAccounts.get(i).setBalance(newBalance);
+                em.flush();
+                fixedDepositAccounts.get(i).setStartDate(startNewTemp.toDate()); //set new start and end date
                 em.flush();
                 fixedDepositAccounts.get(i).setEndDate(endNewTemp.toDate());
-                em.flush();
-                // BigDecimal interest = 
+                em.flush();      
             } else {
                 System.out.println("no thing to set !!!!!");
             }
@@ -484,10 +490,10 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.println("Inside send Fixed Deposit Account Maturity email");
         System.out.println("the email address is " + email);
         String content = "<h2>Dear " + name
-                + ",</h2><br /><h1> Your fixed deposit account will be matured in 3 days " + name + " Saving Account!</h1><br />"
-                + "<h1>Welcome to Merlion Bank.</h1>"
+                + ",</h2><br /><h1> Your fixed deposit account will be matured in 3 days.</h1><br />"
+                + "<h1>Fixed Deposit Account Number :" +accountNum +"</h1>"
                 + "<br />This email is to notify you that your Fixed Deposit Account" + accountNum + "</h2><br />"
-                + "<br /><p>will be matured on," + matureDate + " Please be noted that the account will be auto renew with the same duration</p >"
+                + "<br /><p>will be matured on " + matureDate + " Please be noted that the account will be auto renew with the same duration</p >"
                 + "<br /><p>if no further instruction is given.</p >"
                 + "<p>Thank you.</p ><br /><br /><p>Regards,</p ><p>MerLION Platform User Support</p >";
         System.out.println(content);
