@@ -430,7 +430,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         Date dateToday2 = threeDayToEnd.getTime();
         String newstring2 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday2);
         System.out.println(newstring2);
-        
+
         //date of mature
         //check date, and status
         dayOfMature.add(Calendar.DATE, 97);
@@ -450,7 +450,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             DateTime beforeMature = new DateTime(endDate);
             DateTime threeDayBeforeMature = beforeMature.minusDays(3);
             String day3BeforeMature = new SimpleDateFormat("yyyy-MM-dd").format(threeDayBeforeMature);
-            
+
             if (accountStartDay.equals(newstring1) && fixedDepositAccounts.get(i).getStatus().equals("inactive")) {
                 System.out.println("**************** activate account *****************");
                 BigDecimal balance = fixedDepositAccounts.get(i).getBalance();
@@ -480,7 +480,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     } catch (EmailNotSendException ex1) {
                         Logger.getLogger(FixedDepositAccountSessionBean.class.getName()).log(Level.SEVERE, null, ex1);
                     }
-                }
+                } //else if (accountEndDay.equals(newstring3) && ) {
+
+                        //}
             } else if (accountEndDay.equals(newstring3) && fixedDepositAccounts.get(i).getStatus().equals("renew")) {
                 System.out.println("**************** renew account *****************");
                 String duration = account.getDuration();
