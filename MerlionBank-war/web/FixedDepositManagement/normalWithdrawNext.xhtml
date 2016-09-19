@@ -12,14 +12,14 @@ and open the template in the editor.
        xmlns:p="http://primefaces.org/ui">
     
     <head>
-        <title>Early Withdraw Success</title>
+        <title>Set as Withdraw at End of Deposit Term Success</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
         <h:form>
             <h:panelGrid columns="2" id="earlyWithdrawSuccess" cellpadding="5"> 
                 
-                <h:outputLabel value="You have successfully withdrawn fixed deposit" />
+                <h:outputLabel value="Your fixed deposit will be withdrawn at end of the deposit term." />
                 <h:outputLabel />
                 
                 <h:outputLabel for="fixedAccountNumber" value="Fixed deposit account number:" />
@@ -28,9 +28,10 @@ and open the template in the editor.
                 <p:outputLabel id="savingaccountNumber" value="#{fixedDepositManagedBean.savingAcctSelected}"  /> 
                 <h:outputLabel for="principalAmount" value="Principal Amount(S$):" />
                 <p:outputLabel id="principal" value="#{fixedDepositManagedBean.amountBD}"  />  
-                <h:outputLabel for="interest" value="Interest Earned(S$):" />
+                <h:outputLabel for="interest" value="Interest you will earn(S$):" />
                 <p:outputLabel id="interest" value="#{fixedDepositManagedBean.interest}"  />  
-                
+                <h:outputLabel for="withdrawDate" value="Withdraw Date:" />
+                <p:outputLabel id="withdrawDate" value="#{fixedDepositManagedBean.endDateString}"  />  
             </h:panelGrid>
                
             <p:commandButton action="createFixedDepositAccount" value="Return to Homepage" />

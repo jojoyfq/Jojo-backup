@@ -17,6 +17,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -75,6 +76,15 @@ public class FixedDepositManagedBean implements Serializable {
     private List<Long> renewable;
     private String startDateNew;
     private String withdrawTime;
+    private BigDecimal interest;
+
+    public BigDecimal getInterest() {
+        return interest;
+    }
+
+    public void setInterest(BigDecimal interest) {
+        this.interest = interest;
+    }
 
     public String getWithdrawTime() {
         return withdrawTime;
@@ -253,13 +263,22 @@ public class FixedDepositManagedBean implements Serializable {
     public void withdraw(ActionEvent event) throws IOException{
          if (savingAcctSelected != null&& fixedDepositSelected !=null&& withdrawTime !=null){
              if(withdrawTime.equalsIgnoreCase("withdraw now")){
-             fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected);
+             amountBD = fda.getBalance(fixedDepositSelected);
+             interest = fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected).setScale(4, RoundingMode.HALF_UP);
+             
              this.updateList(customerId);   
              ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
              ec.redirect("/MerlionBank-war/FixedDepositManagement/earlyWithdrawNext.xhtml");
          }
              else{
-                 
+                amountBD = fda.getBalance(fixedDepositSelected);
+                interest = fda.calculateInterestNormal(fixedDepositSelected).setScale(4, RoundingMode.HALF_UP);
+                endDateString = fda.formatDate(fixedDepositSelected).get(1);
+                fda.normalWithdrawMark(fixedDepositSelected, savingAcctSelected);
+                this.updateList(customerId);
+             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+             ec.redirect("/MerlionBank-war/FixedDepositManagement/normalWithdrawNext.xhtml");
+             
              }
          }
     }

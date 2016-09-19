@@ -29,6 +29,7 @@ import org.joda.time.Days;
 import org.joda.time.Period;
 import Exception.EmailNotSendException;
 import Other.Session.sendEmail;
+import java.math.RoundingMode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
@@ -58,6 +59,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private Integer rateIdInt;
     private Customer customer;
     private BigDecimal interest;
+  
+ 
 
     public BigDecimal getInterest() {
         return interest;
@@ -139,10 +142,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         return accountNumber;
     }
 
-//    @Override
-//    public Boolean createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration, String status, Double interest) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
+
     public Long createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -275,19 +275,14 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 
     //withdraw to Merlion saving account
     @Override
-    public void earlyWithdraw(Long fixedAccountNum, Long savingAccountNum) {
+    public BigDecimal earlyWithdraw(Long fixedAccountNum, Long savingAccountNum) {
         account = this.getAccount(fixedAccountNum);
         //interest rate for early withdraw
         rateIdInt = 5;
         rateIdLong = rateIdInt.longValue();
         rate = em.find(FixedDepositRate.class, rateIdLong);
         interestRate = rate.getInterestRate();
-        //no interest if account is not active
-        if (account.getStatus().equals("active") || account.getStatus().equals("renew")) {
-            interest = this.calculateInterestEarly(fixedAccountNum, interestRate);
-        } else {
-            interest = BigDecimal.valueOf(0);
-        }
+        interest = this.calculateInterestEarly(fixedAccountNum, interestRate);
 
         //credit principal and interest to savingaccount
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
@@ -302,6 +297,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account.setBalance(BigDecimal.valueOf(0));
         account.setStatus("terminated");
         em.flush();
+        return interest;
     }
     
     @Override
@@ -326,7 +322,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     @Override
     public void normalWithdrawMark(Long fixedAccountNum, Long savingAccountNum){
         account= this.getAccount(fixedAccountNum);
-        String temp = "normalWithdraw"+savingAccountNum.toString();
+        String temp = "normalWithdraw,"+savingAccountNum.toString();
         account.setStatus(temp);       
     }
 
@@ -343,6 +339,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.print("number of days = " + numOfDays);
         BigDecimal interestAmount = principal.multiply(new BigDecimal((numOfDays / (double) 365) * interestRate1));
         System.out.print("interest amount =" + interestAmount);
+        interestAmount.setScale(4,RoundingMode.HALF_UP );
         return interestAmount;
     }
 
@@ -352,7 +349,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         List<Long> fixedDepositsAcctNum = new ArrayList<>();
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
-            if (account.getStatus().equals("inactive") || account.getStatus().equals("active")) {
+            //active and renew and normal withdraw accounts can be withdraw
+            if (account.getStatus().equalsIgnoreCase("active")||account.getStatus().equalsIgnoreCase("renew")||account.getStatus().contains(",")) {
                 fixedDepositsAcctNum.add(account.getAccountNumber());
             }
         }
@@ -365,7 +363,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         List<Long> fixedDepositsAcctNum = new ArrayList<>();
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
-            if (account.getStatus().equals("active")) {
+            //active and normal withdraw accts can be renewed
+            if (account.getStatus().equalsIgnoreCase("active")||account.getStatus().contains(",")) {
                 fixedDepositsAcctNum.add(account.getAccountNumber());
             }
         }
@@ -407,12 +406,14 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     }
     
     
+    @Override
     public BigDecimal calculateInterestNormal(Long accountNum) {
         account = this.getAccount(accountNum);
         interestRate = account.getInterestRate();
         BigDecimal principal = account.getBalance();
         Integer durationInt = Integer.valueOf(account.getDuration());
         BigDecimal interestAmount = principal.multiply(new BigDecimal((durationInt / (double) 12) * interestRate));
+        interestAmount.setScale(4,RoundingMode.HALF_UP );
         return interestAmount;
     }
 

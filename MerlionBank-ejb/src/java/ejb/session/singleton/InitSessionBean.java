@@ -45,7 +45,7 @@ public class InitSessionBean {
     AccountManagementSessionBeanLocal amsbl;
     @PostConstruct
     public void init() {
-        Date date = new Date(2016 - 1900, 8, 19, 12,53, 0);
+        Date date = new Date(2017 - 1900, 8, 19, 12,53, 0);
         timerService = context.getTimerService();
         //Timer fixedDepositAccountTimer = timerService.createTimer(date, 86400000, "FixedDeposit-TIMER");
         //
