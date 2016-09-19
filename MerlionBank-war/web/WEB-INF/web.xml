@@ -27,8 +27,21 @@
         </session-timeout>     
     </session-config>
     <welcome-file-list>
-        <welcome-file>CustomerManagement/ModifyUserProfile.xhtml</welcome-file>
+        <welcome-file>CustomerManagement/LogInHome.xhtml</welcome-file>
     </welcome-file-list>
+    
+    <security-constraint>
+        <display-name>SSL Protection</display-name>
+        <web-resource-collection>
+            <web-resource-name>Default Secure Pages</web-resource-name>
+            <description>Default Secure Pages</description>
+            <url-pattern>/CustomerManagement/DisplayAccountTypeChoice.xhtml</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <description/>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
     
     <context-param>
         <param-name>primefaces.PRIVATE_CAPTCHA_KEY</param-name>

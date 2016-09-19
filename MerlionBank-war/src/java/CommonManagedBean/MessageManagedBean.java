@@ -152,7 +152,7 @@ public class MessageManagedBean implements Serializable {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
-        //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
     }
 
     public MessageEntity customerReadMessage(ActionEvent event) throws IOException {
@@ -180,7 +180,7 @@ public class MessageManagedBean implements Serializable {
             }
             System.out.println("delete message check: " + customerId);
             messages = imsbl.viewAllMessage(customerId);
-        // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
+            // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
         } catch (ListEmptyException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -217,8 +217,10 @@ public class MessageManagedBean implements Serializable {
         return message;
     }
 
-    public void countCusotmerUnreadEmail() {
+    public int countCusotmerUnreadEmail() {
+        customerUnreadMsg = imsbl.countNewMessage(customerId);
 
+        return customerUnreadMsg;
     }
 
 //    public void customerViewAllMessage(ActionEvent event){
