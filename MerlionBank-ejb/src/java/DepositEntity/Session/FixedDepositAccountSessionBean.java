@@ -303,6 +303,28 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account.setStatus("terminated");
         em.flush();
     }
+    
+    @Override
+    public void normalWithdrawTakeEffect(Long fixedAccountNum, Long savingAccountNum){
+        account = this.getAccount(fixedAccountNum);
+        interest = this.calculateInterestNormal(fixedAccountNum);
+        //credit principal and interest to saving account
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
+        q.setParameter("savingAccountNum", savingAccountNum);
+        SavingAccount savingAccount = (SavingAccount) q.getResultList().get(0);
+        System.out.print(savingAccount.getAvailableBalance().toString());
+        BigDecimal newBalance = savingAccount.getAvailableBalance().add(interest);
+        newBalance = newBalance.add(account.getBalance());
+        savingAccount.setAvailableBalance(newBalance);
+        System.out.print(savingAccount.getAvailableBalance().toString());
+                //close fixed deposit
+        account.setBalance(BigDecimal.valueOf(0));
+        account.setStatus("terminated");
+        em.flush();
+    }
+    
+    @Override
+    public void normalWithdrawMark()
 
     @Override
     public BigDecimal calculateInterestEarly(Long accountNum, Double interestRate1) {

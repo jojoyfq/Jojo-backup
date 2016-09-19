@@ -54,7 +54,7 @@ public class FixedDepositManagedBean implements Serializable {
     private String duration;
     private Date endDate;
     private Double interestRate;
-    private Long customerId = 2452L;
+    private Long customerId = 2L;
     private Boolean response;
 
     private Long accountNumber;
@@ -74,6 +74,15 @@ public class FixedDepositManagedBean implements Serializable {
     private List<Long> withdrawable;
     private List<Long> renewable;
     private String startDateNew;
+    private String withdrawTime;
+
+    public String getWithdrawTime() {
+        return withdrawTime;
+    }
+
+    public void setWithdrawTime(String withdrawTime) {
+        this.withdrawTime = withdrawTime;
+    }
 
     public String getStartDateNew() {
         return startDateNew;
@@ -241,12 +250,17 @@ public class FixedDepositManagedBean implements Serializable {
             }
     }
     
-    public void earlyWithdraw(ActionEvent event) throws IOException{
-         if (savingAcctSelected != null&& fixedDepositSelected !=null){
+    public void withdraw(ActionEvent event) throws IOException{
+         if (savingAcctSelected != null&& fixedDepositSelected !=null&& withdrawTime !=null){
+             if(withdrawTime.equalsIgnoreCase("withdraw now")){
              fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected);
              this.updateList(customerId);   
              ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
              ec.redirect("/MerlionBank-war/FixedDepositManagement/earlyWithdrawNext.xhtml");
+         }
+             else{
+                 
+             }
          }
     }
     

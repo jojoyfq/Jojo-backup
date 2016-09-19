@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Early Withdraw</title>
+    </h:head>
+    <h:body>
+        <h:form>
+                <h:panelGrid columns="2" id="earlyWithdrawPanel" cellpadding="5"> 
+                    
+                    <p:outputLabel for="fixedDepositList" value="Withdraw this fixed deposit account" />
+                    <p:selectOneMenu id="fixedDepositList" value="#{fixedDepositManagedBean.fixedDepositSelected}" >
+                        <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="false"  />
+                        <f:selectItems value="#{fixedDepositManagedBean.withdrawable}" />
+                    </p:selectOneMenu>
+                    
+                 
+                    <p:outputLabel for="savingAcctList" value="To your saving account" />
+                    <p:selectOneMenu id="savingAcctList" value="#{fixedDepositManagedBean.savingAcctSelected}" >
+                        <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="false"  />
+                        <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="withdrawTime" value="Withdraw Time" />
+                    <p:selectOneMenu id="withdrawTime" value="#{fixedDepositManagedBean.withdrawTime}" >
+                        <f:selectItem itemLabel = "Select One" noSelectionOption="false" />
+                        <f:selectItem itemLabel = "Withdraw Now" itemValue="Withdraw Now" />
+                        <f:selectItem itemLabel ="Withdraw later at end of deposit term" itemValue="Withdraw later at end of deposit term" />
+                    </p:selectOneMenu>
+                </h:panelGrid>
+
+                <p:commandButton value="Submit" id="earlyWithdrawButton"
+                                 actionListener="#{fixedDepositManagedBean.withdraw}" />
+        </h:form>
+    </h:body>
+</html>
+
+

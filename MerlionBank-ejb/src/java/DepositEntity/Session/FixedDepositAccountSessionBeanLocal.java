@@ -66,5 +66,9 @@ public interface FixedDepositAccountSessionBeanLocal {
     public BigDecimal getBalance(Long accountNum);
 
     public void checkFixedDepositAccountStatus();
+
+    public void normalWithdrawMark(Long fixedAccountNum, Long savingAccountNum);
+
+    public void normalWithdrawTakeEffect(Long fixedAccountNum, Long savingAccountNum);
     
 }
