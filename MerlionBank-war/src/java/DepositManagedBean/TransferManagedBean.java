@@ -42,7 +42,7 @@ public class TransferManagedBean implements Serializable{
     private Long payeeAccount;
     private String payeeAccountString;
     private String payeeName;
-    private Long customerID = Long.parseLong("6");
+    private Long customerID = Long.parseLong("2");
     private List payeeList;
     private Long payeeTransferAccount;
 
@@ -131,6 +131,7 @@ public class TransferManagedBean implements Serializable{
         try{
             payeeAccount = Long.parseLong(payeeAccountString);
             tfsb.addPayee(payeeAccount, payeeName,customerID);
+            this.getPayeeListfromDatabase();
             
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Add Payee Success!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
