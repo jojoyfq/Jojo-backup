@@ -70,5 +70,5 @@ public boolean updateAccountStatus(String ic);
 //Create Fixed Deposit Account - 2nd page - configure fixed deposit account
     public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration)throws EmailNotSendException;
 
-    public void checkOnlineBankingAccountStatus();
+    //public void checkOnlineBankingAccountStatus();
 }
