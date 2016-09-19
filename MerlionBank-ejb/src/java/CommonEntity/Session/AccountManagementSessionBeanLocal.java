@@ -69,4 +69,6 @@ public boolean updateAccountStatus(String ic);
     public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException;
 //Create Fixed Deposit Account - 2nd page - configure fixed deposit account
     public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration)throws EmailNotSendException;
+
+    public void checkOnlineBankingAccountStatus();
 }
