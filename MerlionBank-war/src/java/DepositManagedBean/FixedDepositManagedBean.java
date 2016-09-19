@@ -73,7 +73,25 @@ public class FixedDepositManagedBean implements Serializable {
     private String amountToTransferStr;
     private List<Long> withdrawable;
     private List<Long> renewable;
+    private String startDateNew;
 
+    public String getStartDateNew() {
+        return startDateNew;
+    }
+
+    public void setStartDateNew(String startDateNew) {
+        this.startDateNew = startDateNew;
+    }
+
+    public String getEndDateNew() {
+        return endDateNew;
+    }
+
+    public void setEndDateNew(String endDateNew) {
+        this.endDateNew = endDateNew;
+    }
+    private String endDateNew;
+    
 
 
     @Inject
@@ -241,10 +259,23 @@ public class FixedDepositManagedBean implements Serializable {
     
     public void renewFixed(ActionEvent event) throws IOException{
         fda.renewFixed(fixedDepositSelected);
+        this.updateList(customerId);
+       ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+       ec.redirect("/MerlionBank-war/FixedDepositManagement/renewFixedDepositSuccess.xhtml");
+
     }
+    
     public void displayRenewInfo(ActionEvent event) throws IOException{
-        
+       startDateString = fda.getRenewDates(fixedDepositSelected).get(0);
+       endDateString = fda.getRenewDates(fixedDepositSelected).get(1);
+       startDateNew = fda.getRenewDates(fixedDepositSelected).get(2);
+       endDateNew = fda.getRenewDates(fixedDepositSelected).get(3);
+       amountBD = fda.getBalance(fixedDepositSelected);
+       ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+       ec.redirect("/MerlionBank-war/FixedDepositManagement/renewFixedDepositInfo.xhtml");
+
     }
+    
     public String getAmountString() {
         return amountString;
     }
