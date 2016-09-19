@@ -45,18 +45,18 @@ public class InitSessionBean {
     AccountManagementSessionBeanLocal amsbl;
     @PostConstruct
     public void init() {
-        Date date = new Date(2016 - 1900, 8, 19, 12,53, 0);
+        Date date = new Date(2016 - 1900, 8, 19, 23, 0, 0);
         timerService = context.getTimerService();
         //Timer fixedDepositAccountTimer = timerService.createTimer(date, 86400000, "FixedDeposit-TIMER");
         //
-        Timer fixedDepositAccountTimer = timerService.createTimer(date, 2 * 60 * 1000, "FixedDeposit-TIMER");
+        Timer fixedDepositAccountTimer = timerService.createTimer(date, 24 * 60 * 60 * 1000, "FixedDeposit-TIMER");
         System.err.println("********** FixedDeposit-TIMER TIMER CREATED");
 //        **********for dummy timer************ 
 //        Date date= Calendar.getInstance().getTime(); //get current time
 //        timerService = context.getTimerService();
 //        Timer timer = timerService.createTimer(30*1000, 24*60*60*1000 , "FixedDeposit-TIMER");
 
-        Timer accountClosureTimer = timerService.createTimer(date, 2 * 60 * 1000, "OnlineBankingAccount-TIMER");
+        Timer accountClosureTimer = timerService.createTimer(date, 24 * 60 * 60 * 1000, "OnlineBankingAccount-TIMER");
         System.err.println("********** OnlineBankingAccount-TIMER TIMER CREATED");
     }
 
@@ -64,14 +64,13 @@ public class InitSessionBean {
     public void timeout(Timer timer) {
         System.err.println("********** get in timeout here!!!!");
         if (timer.getInfo().toString().equals("FixedDeposit-TIMER")) {
-            System.err.println("********** go to session bean here!!!!");
+            System.err.println("********** FixedDeposit-TIMER go to session bean here!!!!");
             fdasbl.checkFixedDepositAccountStatus();
-//        } else if (timer.getInfo().toString().equals("OnlineBankingAccount-TIMER")) {
-//            System.err.println("********** go to Common Entity Session bean now!!!!");
+        } else if (timer.getInfo().toString().equals("OnlineBankingAccount-TIMER")) {
+            System.err.println("********** OnlineBankingAccount-TIMER go to Common Entity Session bean now!!!!");
 //            amsbl.checkOnlineBankingAccountStatus();
-//        }
+        }
     }
-  }
     
     public void timeout() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
