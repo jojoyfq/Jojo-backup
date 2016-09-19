@@ -45,7 +45,7 @@ public class InitSessionBean {
     AccountManagementSessionBeanLocal amsbl;
     @PostConstruct
     public void init() {
-        Date date = new Date(2016 - 1900, 8, 18, 16, 20, 0);
+        Date date = new Date(2016 - 1900, 8, 19, 12,53, 0);
         timerService = context.getTimerService();
         //Timer fixedDepositAccountTimer = timerService.createTimer(date, 86400000, "FixedDeposit-TIMER");
         //
@@ -66,12 +66,13 @@ public class InitSessionBean {
         if (timer.getInfo().toString().equals("FixedDeposit-TIMER")) {
             System.err.println("********** go to session bean here!!!!");
             fdasbl.checkFixedDepositAccountStatus();
-        } else if (timer.getInfo().toString().equals("OnlineBankingAccount-TIMER")) {
-            System.err.println("********** go to Common Entity Session bean now!!!!");
-            amsbl.checkOnlineBankingAccountStatus();
-        }
+//        } else if (timer.getInfo().toString().equals("OnlineBankingAccount-TIMER")) {
+//            System.err.println("********** go to Common Entity Session bean now!!!!");
+//            amsbl.checkOnlineBankingAccountStatus();
+//        }
     }
-
+  }
+    
     public void timeout() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

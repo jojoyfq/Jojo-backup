@@ -133,7 +133,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         em.flush();
         System.out.print("Demi" + account.getStartDate());
         System.out.println("Fixed Deposit account created successfullly");
-        
+
         //for testting
         account.setBalance(BigDecimal.valueOf(1000));
         return accountNumber;
@@ -419,22 +419,22 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         Calendar dayOfMature = GregorianCalendar.getInstance();
         //for testing purpose
         //+7 for testing purpose     
-        sevenDayToStart.add(Calendar.DATE, 5);
+        sevenDayToStart.add(Calendar.DATE, 6);
         Date dateToday1 = sevenDayToStart.getTime();
         String newstring1 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday1);
         System.out.println(newstring1);
 
         //3 days before account mature date
         //to send email
-        threeDayToEnd.add(Calendar.DATE, 95);
+        threeDayToEnd.add(Calendar.DATE, 94);
         Date dateToday2 = threeDayToEnd.getTime();
         String newstring2 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday2);
         System.out.println(newstring2);
-
+        
         //date of mature
         //check date, and status
-        dayOfMature.add(Calendar.DATE, 98);
-        Date dateToday3 = threeDayToEnd.getTime();
+        dayOfMature.add(Calendar.DATE, 97);
+        Date dateToday3 = dayOfMature.getTime();
         String newstring3 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday3);
         System.out.println(newstring3);
 
@@ -446,8 +446,13 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             String accountStartDay = new SimpleDateFormat("yyyy-MM-dd").format(startDate);
             Date endDate = fixedDepositAccounts.get(i).getEndDate();
             String accountEndDay = new SimpleDateFormat("yyyy-MM-dd").format(endDate);
-
-            if (accountStartDay.equals(newstring1)) {
+            //get the end  -3 here
+            DateTime beforeMature = new DateTime(endDate);
+            DateTime threeDayBeforeMature = beforeMature.minusDays(3);
+            String day3BeforeMature = new SimpleDateFormat("yyyy-MM-dd").format(threeDayBeforeMature);
+            
+            if (accountStartDay.equals(newstring1) && fixedDepositAccounts.get(i).getStatus().equals("inactive")) {
+                System.out.println("**************** activate account *****************");
                 BigDecimal balance = fixedDepositAccounts.get(i).getBalance();
                 BigDecimal amount = fixedDepositAccounts.get(i).getAmount();
                 //balance >= amount
@@ -459,8 +464,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     fixedDepositAccounts.get(i).setStatus("terminated");
                     em.flush();
                 }
-            } else if (accountEndDay.equals(newstring2) && fixedDepositAccounts.get(i).getStatus().equals("active")) {
-                System.out.println("hey, you are here !!!!");
+            } else if (day3BeforeMature.equals(newstring2) && fixedDepositAccounts.get(i).getStatus().equals("active")) {
+                System.out.println("**************** account mature notification *****************");
                 String customerName = fixedDepositAccounts.get(i).getCustomer().getName();
                 String email = fixedDepositAccounts.get(i).getCustomer().getEmail();
                 Long fixedDepositAccountNum = fixedDepositAccounts.get(i).getAccountNumber();
@@ -477,7 +482,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     }
                 }
             } else if (accountEndDay.equals(newstring3) && fixedDepositAccounts.get(i).getStatus().equals("renew")) {
-                System.out.println("get it renew pls !!!!");
+                System.out.println("**************** renew account *****************");
                 String duration = account.getDuration();
                 Date endOld = account.getEndDate();
                 DateTime endOldTemp = new DateTime(endOld);
@@ -489,18 +494,21 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     endNewTemp = startNewTemp.plus(Period.months(6));
                 } else if (duration.equals("12")) {
                     endNewTemp = startNewTemp.plus(Period.months(12));
+
                 } else {
                     endNewTemp = startNewTemp.plus(Period.months(24));
                 }
-                
-                BigDecimal interestEnd = calculateInterestNormal(fixedDepositAccounts.get(i).getAccountNumber());                
+                System.out.print(" ******333******** " + endNewTemp);
+                BigDecimal interestEnd = calculateInterestNormal(fixedDepositAccounts.get(i).getAccountNumber());
                 BigDecimal newBalance = fixedDepositAccounts.get(i).getBalance().add(interestEnd);
                 fixedDepositAccounts.get(i).setBalance(newBalance);
+                em.flush();
+                fixedDepositAccounts.get(i).setStatus("active");
                 em.flush();
                 fixedDepositAccounts.get(i).setStartDate(startNewTemp.toDate()); //set new start and end date
                 em.flush();
                 fixedDepositAccounts.get(i).setEndDate(endNewTemp.toDate());
-                em.flush();      
+                em.flush();
             } else {
                 System.out.println("no thing to set !!!!!");
             }
@@ -513,7 +521,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.println("the email address is " + email);
         String content = "<h2>Dear " + name
                 + ",</h2><br /><h1> Your fixed deposit account will be matured in 3 days.</h1><br />"
-                + "<h1>Fixed Deposit Account Number :" +accountNum +"</h1>"
+                + "<h1>Fixed Deposit Account Number :" + accountNum + "</h1>"
                 + "<br />This email is to notify you that your Fixed Deposit Account" + accountNum + "</h2><br />"
                 + "<br /><p>will be matured on " + matureDate + " Please be noted that the account will be auto renew with the same duration</p >"
                 + "<br /><p>if no further instruction is given.</p >"
@@ -521,7 +529,4 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.println(content);
         sendEmail.run(email, subject, content);
     }
-
 }
-
-
