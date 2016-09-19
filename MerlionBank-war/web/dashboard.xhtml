@@ -14,13 +14,14 @@
             <div class="Container30 NoPadding Responsive100">
                 <div class="Container100">
                     <div class="Card ui-fluid">
-
-                        <span class="Blue Fs20 FontDosisSemiBold">Welcome, Yanmeng Li</span><br/>
-                        <span class="Leaden Fs14 FontDosisMedium">Your last login - 15.09.2016</span>
+                        <h:form>
+                        <span class="Blue Fs20 FontDosisSemiBold">Welcome, #{logInManagedBean.ic} </span><br/>
+                     
                         <div class="EmptyBox30"></div>
                         <div class="Container100 Responsive50"><p:button value="Update Profile" styleClass="White Fs16" outcome="/CustomerManagement/ModifyUserProfile"/></div>
                         <div class="Container100 Responsive50"><p:button value="Reset Password" styleClass="White Fs16"/></div>
                         <div class="Container100 Responsive50"><p:button value="Log Out" styleClass="White Fs16"/></div>
+                        </h:form>
                     </div>
                 </div>
             </div>
