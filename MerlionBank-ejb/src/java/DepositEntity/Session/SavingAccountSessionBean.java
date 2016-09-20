@@ -8,9 +8,16 @@ package DepositEntity.Session;
 import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
+import DepositEntity.TransactionRecord;
+import DepositEntity.TransferRecord;
+import Exception.UserHasNoInactiveSavingAccountException;
 import Exception.UserHasNoSavingAccountException;
+import Exception.UserHasPendingTransactionException;
+import Exception.UserNotEnoughBalanceException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -37,8 +44,8 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         List<Customer> customers = q.getResultList();
         Customer customer = customers.get(0);
         if (customer.getSavingAccounts().isEmpty()) {
-           System.out.print("Customer has no saving account");
-                throw new UserHasNoSavingAccountException("User has no saving account!");          
+            System.out.print("Customer has no saving account");
+            throw new UserHasNoSavingAccountException("User has no saving account!");
         } else {
             for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
                 if (customer.getSavingAccounts().get(i).getStatus().equals("active")) {
@@ -71,7 +78,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             return savingAccountString;
         }
     }
-    
+
     @Override
     public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
         List<Long> savingAccountNumbers = new ArrayList();
@@ -83,12 +90,159 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             throw new UserHasNoSavingAccountException("User has no saving account!");
         } else {
             for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
-                if(customer.getSavingAccounts().get(i).getStatus().equals("active")){
-                savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
+                if (customer.getSavingAccounts().get(i).getStatus().equals("active")) {
+                    savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
+                }
+            }
+            return savingAccountNumbers;
+            //haha
+        }
+    }
+    
+    @Override
+    public List<Long> getInactiveSavingAccountNumbers(Long customerID) throws UserHasNoInactiveSavingAccountException {
+        List<Long> savingAccountNumbers = new ArrayList();
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
+        q.setParameter("customerID", customerID);
+        List<Customer> customers = q.getResultList();
+        Customer customer = customers.get(0);
+        if (customer.getSavingAccounts().isEmpty()) {
+            throw new UserHasNoInactiveSavingAccountException("User has no Inactive saving account!");
+        } else {
+            for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
+                if (customer.getSavingAccounts().get(i).getStatus().equals("inactive")) {
+                    savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
                 }
             }
             return savingAccountNumbers;
         }
     }
+    
+    @Override
+    public List<SavingAccount> getSavingAccountForCloseAccount(Long savingAccountNum) {
+        List savingAccountForCloseAccount = new ArrayList();
 
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
+        q.setParameter("savingAccountNum", savingAccountNum);
+        List<SavingAccount> savingAccounts = q.getResultList();
+        SavingAccount savingAccount = savingAccounts.get(0);
+        
+        savingAccountForCloseAccount.add(savingAccount);
+//        savingAccountForCloseAccount.add(savingAccount.getAccountNumber());
+//        savingAccountForCloseAccount.add(savingAccount.getAvailableBalance());
+//        savingAccountForCloseAccount.add(savingAccount.getSavingAccountType().getAccountType());
+        
+        return savingAccountForCloseAccount;
+    }
+
+    @Override
+    public List<List> getTransactionRecord(Long savingAccountNumber) {
+        System.out.print("inside the getTransactionRecord SessionBean");
+        
+        List<List> displayList = new ArrayList();
+
+        Query m = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum");
+        m.setParameter("giverAccountNum", savingAccountNumber);
+        List<TransactionRecord> record1 = m.getResultList();
+        System.out.print("record1 size"+record1.size());
+        List<List>temp=new ArrayList();
+        temp=addTransferList(record1, "debit");
+        displayList.addAll(temp);
+        
+        System.out.print("in the middle of transaction session Bean"+ displayList.size());
+
+        Query n = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.recipientAccountNum = :recipientAccountNum");
+        n.setParameter("recipientAccountNum", savingAccountNumber);
+        List<TransactionRecord> record2 = n.getResultList();
+        List<List>temp2=new ArrayList();
+        temp2=addTransferList(record2, "credit");
+        displayList.addAll(temp2);
+
+        return displayList;
+
+    }
+
+  
+    private List<List> addTransferList(List<TransactionRecord> record, String type) {
+        
+        List<List> list = new ArrayList();
+        int count = 0;
+        if (type.equals("credit")) {
+            for (int i = 0; i < record.size(); i++) {
+                if (record.get(i).getStatus().equals("settled")) {
+                    list.add(count,new ArrayList<>());
+                    list.get(count).add(0, record.get(i).getTransactionTime());
+                    list.get(count).add(1, "TF");
+                    list.get(count).add(2, record.get(i).getDescription());
+                    list.get(count).add(3, null);
+                    list.get(count).add(4, record.get(i).getAmount());
+                    count = count + 1;
+                }
+
+            }
+
+        } else if (type.equals("debit")) {
+            System.out.print("Inside the addTransferList method");
+            for (int i = 0; i < record.size(); i++) {
+                if (record.get(i).getStatus().equals("settled")) {
+                    list.add(count,new ArrayList<>());
+                    list.get(count).add(0, record.get(i).getTransactionTime());
+                    list.get(count).add(1, "TF");
+                    list.get(count).add(2, record.get(i).getDescription());
+                    list.get(count).add(3, record.get(i).getAmount());
+                    list.get(count).add(4, null);
+                    count = count + 1;
+                }
+
+            }
+
+        }
+        System.out.print("Inside the addTransferList method "+ list.size());
+        return list;
+    }
+    
+    @Override
+    public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException {
+        String status = "pending";
+        //check whether got pending transaction as giverAccount
+        Query q = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum AND a.status =:giverStatus");
+        q.setParameter("giverAccountNum", savingAccountNum);
+        q.setParameter("giverStatus", status);
+        List<TransactionRecord> record1 = q.getResultList();
+        
+        //check whether got pending transaction as a recipientAccount
+        Query w = em.createQuery("SELECT b FROM TransactionRecord b WHERE b.recipientAccountNum = :recipientAccountNum AND b.status =:recipientStatus");
+        w.setParameter("recipientAccountNum", savingAccountNum);
+        w.setParameter("recipientStatus", status);
+        List<TransactionRecord> record2 = w.getResultList();
+        
+        if(record1.isEmpty() && record2.isEmpty()){
+            System.out.print("User has no pending transaction!");
+            Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
+            m.setParameter("savingAccountNum", savingAccountNum);
+            List<SavingAccount> records3 = m.getResultList();
+            SavingAccount record3 = records3.get(0);
+            record3.setStatus("terminated");
+            
+            em.flush();  
+        }else{
+            throw new UserHasPendingTransactionException("This Saving Account Has pending Transactions!");
+        }
+    }
+    
+    @Override
+    public void checkInactiveSavingAccount(Long inactiveSavingAccountNum) throws UserNotEnoughBalanceException {
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :inactiveSavingAccountNum");
+        q.setParameter("inactiveSavingAccountNum", inactiveSavingAccountNum);
+        List<SavingAccount> savingAccounts = q.getResultList();
+        SavingAccount savingAccount = savingAccounts.get(0);
+        
+        BigDecimal minAmount = savingAccount.getSavingAccountType().getMinAmount();
+        if(savingAccount.getAvailableBalance().compareTo(minAmount) == -1 ){
+            throw new UserNotEnoughBalanceException("You Do Not Have Enough Balance, We Are Sorry That We Cannot Activate Your Account. Please Go and Top Up Your Account! ");
+        }else{
+            savingAccount.setStatus("active");
+            em.flush();
+        }
+    }
 }

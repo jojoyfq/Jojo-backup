@@ -64,8 +64,19 @@ public boolean updateAccountStatus(String ic);
      public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException;
  public Long lockAccount(Long customerId);
  public Customer diaplayCustomerId(Long id);
+
 //Create Fixed Deposit Account - 1st page - create online banking account
     public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException;
  //Create Fixed Deposit Account - 2nd page - configure fixed deposit account 
     public Long createFixedAccount(Customer customer, BigDecimal amount, String duration)throws EmailNotSendException;
+
+ 
+
+
+//Teller Create Fixed Deposit Account - 1st page - create online banking account
+    public Customer tellerCreateFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo,String enterPassword) throws UserExistException, EmailNotSendException;
+
+ //Teller Create saving Account 
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException;
+
 }

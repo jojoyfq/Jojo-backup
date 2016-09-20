@@ -98,4 +98,6 @@ public interface StaffManagementSessionBeanLocal {
     // invalid log in - acccount lock
 
     public Long lockAccount(Long staffId);
+    
+    public Staff viewStaff(Long staffID)throws UserNotExistException;
 }

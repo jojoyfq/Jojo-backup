@@ -44,7 +44,7 @@ public class CommonInfraManagedBean implements Serializable {
     private String customerAddress;
     private String customerEmail;
     private String customerPhoneNumber;
-    // private String savingAccountType;
+
 
     private String customerOccupation;
     private String customerFamilyInfo;
@@ -64,17 +64,19 @@ public class CommonInfraManagedBean implements Serializable {
 
     public Long getDepositAccountNumber() {
         return depositAccountNumber;
+
     }
 
     public void setDepositAccountNumber(Long depositAccountNumber) {
         this.depositAccountNumber = depositAccountNumber;
     }
 
+
     //  private final static Logger LOGGER = Logger.getLogger(CommonInfraManagedBean.class.getName());
     /**
      * Creates a new instance of CommonInfraManaged
      */
-    //  public CommonInfraManagedBean() {
+
     //     try {
     //         MyLogger.setup();
     //     } catch (IOException e) {
@@ -86,7 +88,7 @@ public class CommonInfraManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         customer = new Customer();
-        //   savingAccountType = new SavingAccountType();
+
         savingAccountTypes = new ArrayList<>();
         savingAccountTypes.add("MerLion Monthly Saving Account");
         savingAccountTypes.add("MerLion Youth Saving Account");
@@ -101,6 +103,7 @@ public class CommonInfraManagedBean implements Serializable {
                 return;
             }
 
+
             try {
                 System.out.println("ahdhdhdhdaad ");
 
@@ -108,6 +111,7 @@ public class CommonInfraManagedBean implements Serializable {
                 //savingAccountType = (SavingAccountType) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("savingAccountType");
                 //  savingAccountID = savingAccountType.getId();
                 //          }catch()
+
 //            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
 //            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
 //            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
@@ -119,8 +123,10 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
+
                 //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
                 amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
+
 
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
@@ -143,6 +149,7 @@ public class CommonInfraManagedBean implements Serializable {
         } else {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
+
 
     }
 

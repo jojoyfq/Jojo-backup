@@ -993,4 +993,21 @@ public Staff viewStaff(Long staffID)throws UserNotExistException{
         return staff.getId();
     }
 
+<<<<<<< HEAD
+=======
+    // view staff by staffID
+@Override
+public Staff viewStaff(Long staffID)throws UserNotExistException{
+     Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        q.setParameter("id", staffID);
+        List<Staff> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty()) {
+            System.out.println("Staff does not exist!");
+            throw new UserNotExistException("Staff does not exist, please try again");
+        }
+        return temp.get(0);
+}
+
+
+>>>>>>> refs/remotes/origin/master
 }

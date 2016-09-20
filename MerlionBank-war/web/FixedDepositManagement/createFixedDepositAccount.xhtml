@@ -1,40 +1,82 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
 
-    <h:head>
-        <title>Create Fixed Deposit Account</title>
-        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"/>-->
-    </h:head>
-    <h:body>
-        <h:form>
-            <p:panel header="Open a Fixed Deposit Account">
-                <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:h="http://java.sun.com/jsf/html"
+                 xmlns:f="http://java.sun.com/jsf/core"
+                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/WEB-INF/template.xhtml">
+ 
+     <ui:define name="head">
+ 
+     </ui:define>
+ 
+     <ui:define name="content">
+ 
+         <!-- Left Column -->
+         <div class="Container25 NoPadding Responsive100">
+ 
+         </div>
+ 
+         <!-- Center Column -->
+         <div class="Container50 NoPadding Responsive50">
+             <div class="Container100">
+                 <div class="Card Flex FlexWrap">
+                     <div class="CardBigTopic"> Open a Fixed Deposit Account </div>
+                     <div class="Separator"></div>
+ 
+                     <div class="Container100 ui-fluid">
+                         <h:form>
+                             <div class="Card">
+                                 <div class="Container10"></div>
+                                 <div class="Container80">
+                                     <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+ 
+                                         <h:outputLabel for="amount" value="Amount(S$):" />
+                                         <p:inputText id="amount" value="#{fixedDepositManagedBean.amountString}" label="amount" required="true" />
+ 
+ 
+ 
+                                         <h:outputLabel for="term" value="Deposit Term(Months):" />
+                                         <p:selectOneMenu id="duration" value="#{fixedDepositManagedBean.duration}" label="duration" required="true" >
+                                             <f:selectItem itemValue="3" itemLabel="3"/>
+                                             <f:selectItem itemValue="6" itemLabel="6"/>
+                                             <f:selectItem itemValue="12" itemLabel="12"/>
+                                             <f:selectItem itemValue="24" itemLabel="24"/> 
+                                         </p:selectOneMenu> 
+ 
+                                     </h:panelGrid>
+                         
+                                 </div>
+                                 <div class="Container10"></div>
+ 
+                                 <div class="EmptyBox20"></div>
+                                 <div class="Container30"></div>
+                                 <div class="Container40">
+                                     <p:commandButton actionListener="#{fixedDepositManagedBean.createFixedDepositAccount}" value="Submit" />
+                                 </div>
+                                 <div class="Container30"></div>
+                                 <div class="EmptyBox20"></div>
+                                 <h:outputLabel class="Red" for="note" value="Note: The start of the deposit term will be 7 days after account opening." />
+                                 
+                             </div>
+                         </h:form>
+                     </div>
+                     
+ 
+                 </div>
+             </div> 
+ 
+ 
+ 
+         </div>
+ 
+         <!-- Right Column -->
+         <div class="Container25 NoPadding Responsive50">
+ 
+ 
+         </div>
+ 
+     </ui:define>
+ 
+ </ui:composition> 
 
-                    <h:outputLabel for="amount" value="Amount(S$):" />
-                    <p:inputText id="amount" value="#{fixedDepositManagedBean.amountString}" label="amount" required="true" />
-
-
-
-                    <h:outputLabel for="term" value="Deposit Term(Months):" />
-                    <h:selectOneMenu id="duration" value="#{fixedDepositManagedBean.duration}" label="duration" required="true" >
-                        <f:selectItem itemValue="3" itemLabel="3"/>
-                        <f:selectItem itemValue="6" itemLabel="6"/>
-                        <f:selectItem itemValue="12" itemLabel="12"/>
-                        <f:selectItem itemValue="24" itemLabel="24"/> 
-                    </h:selectOneMenu> 
-
-                </h:panelGrid>
-                
-
-                <p:commandButton actionListener="#{fixedDepositManagedBean.createFixedDepositAccount}" value="Submit" />
-
-                 
-            </p:panel>
-             Note:The start of the deposit term will be 7 days after account opening.
-        </h:form>
-    </h:body>
-</html>

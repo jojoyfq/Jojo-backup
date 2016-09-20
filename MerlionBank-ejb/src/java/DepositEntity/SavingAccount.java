@@ -9,6 +9,7 @@ import CommonEntity.Customer;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -31,6 +33,10 @@ public class SavingAccount implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long accountNumber;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date startDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date endDate;
     private BigDecimal balance;
     private BigDecimal availableBalance;
     private String status; //activated, inactive, terminated, below balance
@@ -41,8 +47,6 @@ public class SavingAccount implements Serializable {
     @ManyToOne
     private SavingAccountType savingAccountType = new SavingAccountType();
     
-    @OneToMany(cascade={CascadeType.ALL},mappedBy="SavingAccount")
-    private List<TransactionRecord> transactionRecords;
 
     public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, SavingAccountType savingAccountType) {
         this.accountNumber = accountNumber;
@@ -52,25 +56,7 @@ public class SavingAccount implements Serializable {
         this.customer = customer;
         this.savingAccountType = savingAccountType;
     }
-//    @OneToMany(cascade = {CascadeType.ALL},mappedBy="savingAccount")
-//    private List<TransactionRecord> transactionRecords = new ArrayList<TransactionRecord>();
-//
-//    public List<TransactionRecord> getTransactionRecords() {
-//        return transactionRecords;
-//    }
-//
-//    public void setTransactionRecords(List<TransactionRecord> transactionRecords) {
-//        this.transactionRecords = transactionRecords;
-//    }
 
-   // @OneToMany(cascade = {CascadeType.ALL},mappedBy = "receipientSavingAccount")
-    // private List<IntrabankTransferRecord> intrabankTransferRecords = new ArrayList<IntrabankTransferRecord>();
-   // public List<IntrabankTransferRecord> getIntrabankTransferRecords() {
-    //     return intrabankTransferRecords;
-    // }
-   // public void setIntrabankTransferRecords(List<IntrabankTransferRecord> intrabankTransferRecords) {
-    //     this.intrabankTransferRecords = intrabankTransferRecords;
-    // }
     public Long getId() {
         return id;
     }
@@ -190,12 +176,21 @@ public class SavingAccount implements Serializable {
     public void setSavingAccountType(SavingAccountType savingAccountType) {
         this.savingAccountType = savingAccountType;
     }
-
-    public List<TransactionRecord> getTransactionRecords() {
-        return transactionRecords;
+    
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setTransactionRecords(List<TransactionRecord> transactionRecords) {
-        this.transactionRecords = transactionRecords;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
 }
