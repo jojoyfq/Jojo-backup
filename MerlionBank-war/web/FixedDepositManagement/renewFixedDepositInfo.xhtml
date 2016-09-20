@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Renew Fixed Deposit Info</title>
+    </h:head>
+    <h:body>
+        <h:form>
+                <h:panelGrid columns="2" id="fixedDepositRenewInfoPanel" cellpadding="5"> 
+                    
+                <h:outputLabel value="Your fixed deposit will be renewed as follows" />
+                <h:outputLabel />
+                
+                <h:outputLabel for="accountNumber" value="Account Number:" />
+                <p:outputLabel id="accountNumber" value="#{fixedDepositManagedBean.fixedDepositSelected}"  />          
+                
+                <h:outputLabel for="amount" value="Amount:" />
+                <p:outputLabel id="amount" value="#{fixedDepositManagedBean.amountBD}"  />
+                
+                <h:outputLabel for="originalStartDate" value="Orginal Start Date:" />
+                <p:outputLabel id="originalStartDate" value="#{fixedDepositManagedBean.startDateString}" />
+                
+                <h:outputLabel for="originalEndDate" value="Orginal End Date:" />
+                <p:outputLabel id="originalEndDate" value="#{fixedDepositManagedBean.endDateString}" />
+  
+                <h:outputLabel for="renewedStartDate" value="Renewed Start Date:" />
+                <p:outputLabel id="renewedStartDate" value="#{fixedDepositManagedBean.startDateNew}" />
+                
+                <h:outputLabel for="renewedEndDate" value="Renewed End Date:" />
+                <p:outputLabel id="renewedEndDate" value="#{fixedDepositManagedBean.endDateNew}" />
+                    
+                   
+                </h:panelGrid>
+
+                <p:commandButton value="Confirm" id="fixedDepositRenewInfoButton"
+                                 actionListener="#{fixedDepositManagedBean.renewFixed}" />
+        </h:form>
+    </h:body>
+</html>
+
