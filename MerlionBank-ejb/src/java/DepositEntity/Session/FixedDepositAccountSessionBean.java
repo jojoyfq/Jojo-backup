@@ -31,6 +31,7 @@ import org.joda.time.Period;
 import Exception.EmailNotSendException;
 import Other.Session.sendEmail;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
@@ -470,7 +471,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         //date of mature
         //check date, and status
         dayOfMature.add(Calendar.DATE, 98);
-        Date dateToday3 = threeDayToEnd.getTime();
+        Date dateToday3 = dayOfMature.getTime();
         String newstring3 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday3);
         System.out.println(newstring3);
 
@@ -482,7 +483,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             String accountStartDay = new SimpleDateFormat("yyyy-MM-dd").format(startDate);
             Date endDate = fixedDepositAccounts.get(i).getEndDate();
             String accountEndDay = new SimpleDateFormat("yyyy-MM-dd").format(endDate);
-
+            
+            //check either to activate / terminate account 
             if (accountStartDay.equals(newstring1)) {
                 BigDecimal balance = fixedDepositAccounts.get(i).getBalance();
                 BigDecimal amount = fixedDepositAccounts.get(i).getAmount();
@@ -495,7 +497,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     fixedDepositAccounts.get(i).setStatus("terminated");
                     em.flush();
                 }
-            } else if (accountEndDay.equals(newstring2) && fixedDepositAccounts.get(i).getStatus().equals("active")) {
+            }
+            //3 days before, check whether to send the email to notify renew
+            else if (accountEndDay.equals(newstring2) && fixedDepositAccounts.get(i).getStatus().equals("active")) {
                 System.out.println("hey, you are here !!!!");
                 String customerName = fixedDepositAccounts.get(i).getCustomer().getName();
                 String email = fixedDepositAccounts.get(i).getCustomer().getEmail();
@@ -512,7 +516,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                         Logger.getLogger(FixedDepositAccountSessionBean.class.getName()).log(Level.SEVERE, null, ex1);
                     }
                 }
-            } else if (accountEndDay.equals(newstring3) && fixedDepositAccounts.get(i).getStatus().equals("renew")) {
+                // at the end day, "active","renew","withdrawl,account number"
+            } else if (accountEndDay.equals(newstring3)) {
+                if(fixedDepositAccounts.get(i).getStatus().equals("renew") || fixedDepositAccounts.get(i).getStatus().equals("active")){
                 System.out.println("get it renew pls !!!!");
                 String duration = account.getDuration();
                 Date endOld = account.getEndDate();
@@ -536,7 +542,19 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                 fixedDepositAccounts.get(i).setStartDate(startNewTemp.toDate()); //set new start and end date
                 em.flush();
                 fixedDepositAccounts.get(i).setEndDate(endNewTemp.toDate());
-                em.flush();      
+                em.flush(); 
+                }
+                else {
+                    //"withdrawl,account number"
+                    //terminate the fixed deposit account 
+                    //deposit the saving account
+                    String status = fixedDepositAccounts.get(i).getStatus();
+                    String[] statusAccountNum = status.split("\\\\s*,\\\\s*");
+                    String accountNumber = statusAccountNum[1]; //account number
+                    System.out.println("************************** split split !!!");
+                    System.out.println(accountNumber);
+                    normalWithdrawTakeEffect(fixedDepositAccounts.get(i).getAccountNumber(), Long.parseLong(accountNumber));      
+                }
             } else {
                 System.out.println("no thing to set !!!!!");
             }
