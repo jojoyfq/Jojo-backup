@@ -221,7 +221,7 @@ public void modifyUserProfile(){}
 
     public void viewOneCustomer() throws IOException, ListEmptyException{
         //this.ic = selectedCustomer.getIc();
-        selectedCustomer = amsbl.diaplayCustomer(ic);
+    try{    selectedCustomer = amsbl.diaplayCustomer(ic);
         System.out.println("Username is " + selectedCustomer);
 
         // this.ic = selectedCustomer.getIc();
@@ -247,7 +247,13 @@ public void modifyUserProfile(){}
      //   System.out.println(customerFinancialGoal);
         System.out.println(selectedCustomer.getId());
         System.out.println(selectedCustomer.getIc());
+    }catch(ListEmptyException ex){
+    
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", ex.getMessage());
 
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+    }
         // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerLION-war/GRNSWeb/admin/updateUser.xhtml");
     }
 
