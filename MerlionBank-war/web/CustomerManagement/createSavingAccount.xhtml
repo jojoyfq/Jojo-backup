@@ -19,7 +19,6 @@ and open the template in the editor.
                 <meta name="apple-mobile-web-app-capable" content="yes" />
             </f:facet>
             <title>Create New Saving Account</title>
-            <ui:insert name="head" />
         </h:head>
         <h:body>
             <h:form>
@@ -38,28 +37,67 @@ and open the template in the editor.
 
 
                     <h:outputLabel for="customerAddress" value="Address:" />
-                    <p:inputText id="customerAddress" value="#{commonInfraManagedBean.customerAddress}" label="customerAddress" required="true" />
+                    <p:inputText id="customerAddress" value="#{commonInfraManagedBean.customerAddress}" label="customerAddress" required="true" requiredMessage="Please input your address"/>
+                    <p:message for="customerAddress" display="icon" />
+
 
                     <h:outputLabel for="customerEmail" value="Email:" />
-                    <p:inputText id="customerEmail" value="#{commonInfraManagedBean.customerEmail}" label="customerEmail" required="true" />
+                    <p:inputText id="customerEmail" value="#{commonInfraManagedBean.customerEmail}" label="customerEmail" required="true" requiredMessage="Please input your email"/>
+                    <p:message for="customerEmail" display="icon" />
+
 
                     <h:outputLabel for="customerPhoneNumber" value="Phone Number:" />
-                    <p:inputText id="customerPhoneNumber" value="#{commonInfraManagedBean.customerPhoneNumber}" label="customerPhoneNumber" required="true" />
+                    <p:inputText id="customerPhoneNumber" value="#{commonInfraManagedBean.customerPhoneNumber}" label="customerPhoneNumber" required="true" requiredMessage="Please input your phone number"/>
+                    <p:message for="customerPhoneNumber" display="icon" />
+
 
                     <h:outputLabel for="customerOccupation" value="Occupation:" />
-                    <p:inputText id="customerOccupation" value="#{commonInfraManagedBean.customerOccupation}" label="customerOccupation" required="true" />
+                    <p:inputText id="customerOccupation" value="#{commonInfraManagedBean.customerOccupation}" label="customerOccupation" required="true" requiredMessage="Please input your Occupation"/>
+                    <p:message for="customerOccupation" display="icon" />
+
 
                     <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
-                    <p:inputText id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" />
-<h:outputLabel for="savingAccountType" value="Saving Account Type:" />
-                     <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}" style="width:150px">
+                    <p:inputText id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" requiredMessage="Please input your family information"/>
+                    <p:message for="customerFamilyInfo" display="icon" />
+
+
+                    <h:outputLabel for="savingAccountType" value="Saving Account Type:" />
+                    <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}">
 
                         <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
                         <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
                     </p:selectOneMenu>
                 </h:panelGrid>
 
-                <p:commandButton update="createSavingAccount" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />
+
+                <div class="EmptyBox20"></div>   
+                <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />
+
+
+
+                </p:panel>
+
+
+            </h:form>                                        
+            </div>
+            </div>
+
+
+            </div>
+            </div>
+            </div>
+
+            </div>
+            </div>
+
+            <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+            >>>>>>> origin/master
+
+            <p:commandButton update="createSavingAccount" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />
             </h:form>
 
         </h:body>

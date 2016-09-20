@@ -6,10 +6,12 @@
 package CommonManagedBean;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerMessage;
 import CommonEntity.MessageEntity;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import java.io.IOException;
@@ -20,8 +22,11 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -34,49 +39,78 @@ public class MessageManagedBean implements Serializable {
     @EJB
     InboxManagementSessionBeanLocal imsbl;
 
-    private String customerIc;
+    //maintain the log in function from LogInManagedBean
+    @Inject
+    private LogInManagedBean logInManagedBean;
+    @Inject
+    private StaffMessageManagedBean staffMessageManagedBean;
+//setter for LogInManagedBean
+
+    public void setStaffMessageManagedBean(StaffMessageManagedBean staffMessageManagedBean) {
+        this.staffMessageManagedBean = staffMessageManagedBean;
+    }
+
+    public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
+        this.logInManagedBean = logInManagedBean;
+    }
+
+    private String customerIc = "S4444";
     private Long staffId;
     private String messageSubject;
     private String content;
     private Customer customer;
-    private Long customerId;
+    private Long customerId = 2L;
     private Staff staff;
     private List<MessageEntity> messages;
     private Long messageId;
     private MessageEntity message;
     private String customerName;
+    private String status;
+    private String customerReplyContent;
+    private String customerReplyMsgStatus = "new";
+    private int customerUnreadMsg;
+    private CustomerMessage msgAddToStaff;
 
-    public List<MessageEntity> getMessages() {
-        return messages;
+    public CustomerMessage getMsgAddToStaff() {
+        return msgAddToStaff;
     }
 
-    public void setMessages(List<MessageEntity> messages) {
-        this.messages = messages;
+    public void setMsgAddToStaff(CustomerMessage msgAddTostaff) {
+        this.msgAddToStaff = msgAddTostaff;
     }
 
-    public MessageEntity getMessage() {
-        return message;
+    public int getCustomerUnreadMsg() {
+        return customerUnreadMsg;
     }
 
-    public void setMessage(MessageEntity message) {
-        this.message = message;
+    public void setCustomerUnreadMsg(int customerUnreadMsg) {
+        this.customerUnreadMsg = customerUnreadMsg;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public String getCustomerReplyMsgStatus() {
+        return customerReplyMsgStatus;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setCustomerReplyMsgStatus(String customerReplyMsgStatus) {
+        this.customerReplyMsgStatus = customerReplyMsgStatus;
     }
 
-    public Long getMessageId() {
-        return messageId;
+    public String getCustomerReplyContent() {
+        return customerReplyContent;
     }
 
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
+    public void setCustomerReplyContent(String customerReplyContent) {
+        this.customerReplyContent = customerReplyContent;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 //    public List getMessages() {
 //        return messages;
 //    }
@@ -88,6 +122,9 @@ public class MessageManagedBean implements Serializable {
 
     @PostConstruct
     public void init() {
+
+        System.err.println("************ ic: " + logInManagedBean.getIc());
+
         staff = new Staff();
         customer = new Customer();
 //        customerId = customer.getId();
@@ -95,67 +132,95 @@ public class MessageManagedBean implements Serializable {
         message = new MessageEntity();
         messages = new ArrayList<>();
         //customerId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id");
-        customerId = 2L;
-        customerIc = "S9276";
-        customerName = "gao";
+//      *******This is going to be used in the future!!!**********
+//        customerId = logInManagedBean.getCustomerId();
+//        customerIc = logInManagedBean.getIc();
+//        customerName = logInManagedBean.getCustomerName();
 
         System.out.println("Logged in customer IC is : " + customerId);
-       messages = imsbl.viewAllMessage(customerId);
+        //       messages = imsbl.viewAllMessage(customerId);
 //        System.out.println("message size is: "+messages.size());
+        customerUnreadMsg = imsbl.countNewMessage(customerId);
 
     }
-    public void customerViewAllMessages(ActionEvent event) throws IOException{
-          
-          messages = imsbl.viewAllMessage(customerId);
-          FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
-    }
 
-    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
-        if (customerIc != null) {
-            try {
-                Long msg = imsbl.verifyCustomer(customerIc);
+    public void customerViewAllMessages(ActionEvent event) throws IOException, ListEmptyException {
 
-                System.out.println(msg + "Customer verification is successful!");
-
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
-
-            } catch (UserNotExistException | UserNotActivatedException ex) {
-                System.out.println(ex.getMessage());
-            }
-        } else {
-
-            System.out.println("Please do not leave any blanks");
+        try {
+            messages = imsbl.viewAllMessage(customerId);
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
-    }
-
-    public void sendMessageToCustomer(ActionEvent event) throws EmailNotSendException {
-        if (messageSubject != null && content != null) {
-            try {
-                imsbl.sendMessage(customerId, staffId, messageSubject, content);
-            } catch (EmailNotSendException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
     }
 
     public MessageEntity customerReadMessage(ActionEvent event) throws IOException {
+        message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
+        System.err.println("********** message.getId(): " + message.getId());
         //messageId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("MessageID");
-      //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/displaySingleMessage.xhtml");
-        messageId = 6L;
-        message = imsbl.readMessage(messageId);
+        //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/displaySingleMessage.xhtml");
+//        messageId = 6L;
+        message = imsbl.readMessage(message.getId());
+        messageId = message.getId();
+        messageSubject = message.getSubject();
+        content = message.getContent();
+        staffId = message.getStaff().getId();
+        status = message.getStatus();
         return message;
     }
-    public void customerDeleteMessage(Long msgID) throws IOException {
-    
-           boolean checkDelete = imsbl.deleteMessage(msgID);
-          
-           if (checkDelete == false) {
-            System.out.println("Message deleted unsuccessfully!!!!");
+
+    public void customerDeleteMessage(Long msgID) throws IOException, ListEmptyException {
+
+        try {
+            boolean checkDelete = imsbl.deleteMessage(msgID);
+
+            if (checkDelete == false) {
+                System.out.println("Message deleted unsuccessfully!!!!");
+            }
+            System.out.println("delete message check: " + customerId);
+            messages = imsbl.viewAllMessage(customerId);
+            // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
-           System.out.println("delete message check: "+customerId);
-              messages = imsbl.viewAllMessage(customerId);
-             // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/customerViewMessage.xhtml");
-        
+    }
+
+    public void customerReplyMessage(ActionEvent event) throws EmailNotSendException {
+        try {
+            //    message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
+            System.err.println("********** message.getId(): " + messageId);
+            System.err.println("********** message.getMessageSubject(): " + messageSubject);
+            System.err.println("********** message.getContent: " + content);
+            System.err.println("********** message.getStaffId(): " + staffId);
+            msgAddToStaff = imsbl.customerSendMessage(message.getSubject(), customerReplyContent, message.getStatus(), staffId, customerId);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your reply has been successfully sent!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            staffMessageManagedBean.getCustomerMessages().add(msgAddToStaff);
+
+        } catch (EmailNotSendException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+    }
+
+    public MessageEntity replyMessage(ActionEvent event) {
+        message = (MessageEntity) event.getComponent().getAttributes().get("selectedMessage");
+        System.err.println("********** message.getId(): " + message.getId());
+        System.out.println("***********Message from Managed Bean: ");
+        //   replyID = msg.getSender().getId();
+        System.out.println("Subject is " + message.getSubject());
+        // sendID = msg.getReceiverId();
+        System.out.println("Staff ID is  " + message.getStaff().getId());
+        //   replyTitle = "RE: " + msg.getTitle();
+        return message;
+    }
+
+    public int countCusotmerUnreadEmail() {
+        customerUnreadMsg = imsbl.countNewMessage(customerId);
+
+        return customerUnreadMsg;
     }
 
 //    public void customerViewAllMessage(ActionEvent event){
@@ -230,4 +295,35 @@ public class MessageManagedBean implements Serializable {
         this.staff = staff;
     }
 
+    public List<MessageEntity> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<MessageEntity> messages) {
+        this.messages = messages;
+    }
+
+    public MessageEntity getMessage() {
+        return message;
+    }
+
+    public void setMessage(MessageEntity message) {
+        this.message = message;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
+    }
 }

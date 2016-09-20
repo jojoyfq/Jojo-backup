@@ -10,6 +10,7 @@ import CommonEntity.CustomerMessage;
 import CommonEntity.MessageEntity;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import Other.Session.sendEmail;
@@ -64,7 +65,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  }
     // 2nd- staff send customer message
   @Override  
- public boolean sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException{
+ public MessageEntity sendMessage(Long customerId,Long staffID, String subject,String content)throws EmailNotSendException{
       Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
@@ -93,7 +94,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
         }
-        return true;    
+        return internalMessage;    
 }
  
  //send notification email to customer
@@ -112,7 +113,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
     
  // customer view list of message
  @Override
- public List viewAllMessage(Long customerId){
+ public List viewAllMessage(Long customerId)throws ListEmptyException{
    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
   // System.out.println("Customer Ic is "+customerName);
        q.setParameter("id", customerId);
@@ -131,6 +132,8 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
                 newMessages.add(messages.get(i));
             }
         }
+        if (newMessages.size()==0)
+            throw new ListEmptyException("There are no messages!");
         return newMessages;
         
         
@@ -162,7 +165,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         em.flush();
         return true;
         
- }
+ } 
  
  //system display number of new messages for customer
  @Override
@@ -184,7 +187,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  
  //customer reply staff message
  @Override  
- public boolean customerSendMessage(String subject, String content, String status, Long staffID, Long customerID)throws EmailNotSendException{
+ public CustomerMessage customerSendMessage(String subject, String content, String status, Long staffID, Long customerID)throws EmailNotSendException{
   Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
@@ -213,7 +216,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
         }
-        return true;    
+        return customerMessage;    
         
         
  }
@@ -235,30 +238,32 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  
  // staff view list of message
  @Override
- public List<CustomerMessage> StaffViewAllMessage(Long staffId){
+ public List<CustomerMessage> StaffViewAllMessage(Long staffId)throws ListEmptyException{
      Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffId);
         Staff staff = (Staff)query.getSingleResult();     
         List <CustomerMessage> messages=staff.getCustomerMessages();
         List<CustomerMessage>newMessages=new ArrayList<CustomerMessage>();
         for (int i=0;i<messages.size();i++){
-            if (!messages.get(i).getStatus().equals("delected")){
+            if (!messages.get(i).getStatus().equals("deleted")){
                 newMessages.add(messages.get(i));
             }
         }
+        if (newMessages.size()==0)
+            throw new ListEmptyException("There are no messages!");
         return newMessages;
      
  }
  
  // staff update status from new to read
  @Override
- public boolean readCustomerMessage(Long messageID){
+ public CustomerMessage readCustomerMessage(Long messageID){
      Query q = em.createQuery("SELECT a FROM CustomerMessage a WHERE a.id = :id");
         q.setParameter("id", messageID);
         CustomerMessage message = (CustomerMessage)q.getSingleResult();  
         message.setStatus("read");
         em.persist(message);
-        return true;
+        return message;
      
  }
  
@@ -279,6 +284,28 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         return count;
      
      
+ }
+ 
+     
+    @Override
+    public MessageEntity diaplayMessage(Long id) {
+        Query q = em.createQuery("SELECT a FROM MessageEntity a WHERE a.id = :id");
+        q.setParameter("id", id);
+        MessageEntity message =(MessageEntity) q.getSingleResult();
+        return message;
+    }
+    
+     //staff delete message
+ @Override
+ public boolean deleteCustomerMessage(Long messageID){
+     Query q = em.createQuery("SELECT a FROM CustomerMessage a WHERE a.id = :id");
+        q.setParameter("id", messageID);
+        CustomerMessage message = (CustomerMessage)q.getSingleResult();  
+        message.setStatus("deleted");
+        em.persist(message);
+        em.flush();
+        return true;
+        
  }
  
  

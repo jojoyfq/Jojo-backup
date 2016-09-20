@@ -11,10 +11,12 @@ import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
+import Exception.UserAlreadyHasSavingAccountException;
 import Exception.UserExistException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import com.twilio.sdk.TwilioRestException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -30,6 +32,9 @@ public interface AccountManagementSessionBeanLocal {
 
     public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName) throws UserExistException, EmailNotSendException;
 
+//Create Another Saving Account
+    public void createSavingAccountExistingCustomer(Long customerID, String savingAccountName) throws UserAlreadyHasSavingAccountException, EmailNotSendException;
+    
 //Update Account Details  
     public Customer diaplayCustomer(String ic);
 
@@ -57,6 +62,17 @@ public boolean updateAccountStatus(String ic);
 
 //Log in
      public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException;
-
+ public Long lockAccount(Long customerId);
+ public Customer diaplayCustomerId(Long id);
  
+ //Create Fixed Deposit Account - 1st page - create online banking account
+    public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException;
+//Create Fixed Deposit Account - 2nd page - configure fixed deposit account
+    public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration)throws EmailNotSendException;
+
+//Teller Create Fixed Deposit Account - 1st page - create online banking account
+    public Customer tellerCreateFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo,String enterPassword) throws UserExistException, EmailNotSendException;
+
+ //Teller Create saving Account 
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException;
 }

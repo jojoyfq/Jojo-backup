@@ -19,13 +19,24 @@ and open the template in the editor.
         <h:body>
 
             <h:form id="form">
-                <p:panel id="panel" header="Message Management System">
+                <p:panel id="panel" header="Message Management System" >
 
                     <p:messages id="msgs" />
 
                     <h:panelGrid columns="4" cellpadding="5">
+                        <p:notificationBar position="top" effect="slide" styleClass="top" widgetVar="bar">
+                        <h:outputText value="Number of Unread Message:  #{messageManagedBean.customerUnreadMsg}" style="font-size:18px;" />
+                        </p:notificationBar>
+                        <p:outputLabel value="Show my unread message " />
+                        <p:commandButton value="Show" onclick="PF('bar').show()" type="button" icon="ui-icon-arrow-1-s"/>
+                        <p:commandButton value="Hide" onclick="PF('bar').hide()" type="button" icon="ui-icon-arrow-1-n"/>
+                       
+                        <p:separator />
+
+                        
                         <p:dataTable var="messageEntity" value="#{messageManagedBean.messages}">
-                            <p:column headerText="MessageID">
+
+                            <p:column headerText="MessageID" style="width: 80px;">
                                 <h:outputText value="#{messageEntity.id}" />
                             </p:column>
 
@@ -35,8 +46,8 @@ and open the template in the editor.
 
                             <p:column headerText="View" style="width: 80px;" >
                                 <center>
-                                    <p:commandButton icon="ui-icon-mail-open" oncomplete="PF('msgDialog').show()" actionListener="#{messageManagedBean.customerReadMessage}" update=":form:panel" ajax="true" type="submit" >
-                                        <f:setPropertyActionListener value="#{messageEntity}" target="#{messageManagedBean.message}" />
+                                    <p:commandButton icon="ui-icon-mail-open" oncomplete="PF('msgDialog').show()" actionListener="#{messageManagedBean.customerReadMessage}" update=":form:panel :form:dialogMessage" ajax="true" type="submit" >
+                                        <f:attribute name="selectedMessage" value="#{messageEntity}"  />
                                     </p:commandButton>
                                 </center>
                             </p:column>
@@ -47,9 +58,21 @@ and open the template in the editor.
                                                                  return false;"/>
                                 </center>
                             </p:column>
+                            <p:column headerText="Reply" style="width: 80px;" >
+                                <center>
+                                    <p:commandButton icon="ui-icon-pencil" oncomplete="PF('replyDialog').show()" actionListener="#{messageManagedBean.customerReadMessage}" update=":form:panel :form:dialogMessage" ajax="true" type="submit" >
+                                        <f:attribute name="selectedMessage" value="#{messageEntity}"  />
+                                    </p:commandButton>      
+                                </center>
+                            </p:column>
                         </p:dataTable>
+
                     </h:panelGrid>
-                    <p:dialog  appendTo="@(body)" header="Message Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
+                    <p:dialog header="Reply" widgetVar="replyDialog" showEffect="fade" hideEffect="fade" resizable="true" >
+                        <p:editor id="reply" widgetVar="replyWidget" value="#{messageManagedBean.customerReplyContent}" width="600" />
+                        <p:commandButton icon="ui-icon-mail-closed" value="Send Reply" actionListener="#{messageManagedBean.customerReplyMessage}" update=":form:panel" ajax="false" type="submit" />
+                    </p:dialog>
+                    <p:dialog id="dialogMessage"  appendTo="@(body)" header="Message Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
                         <p:outputPanel id="msgDetail" style="text-align:center;">
                             <p:panelGrid  columns="2"  >
 

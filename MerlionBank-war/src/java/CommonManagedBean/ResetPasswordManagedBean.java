@@ -24,6 +24,8 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -32,7 +34,12 @@ import javax.faces.event.ActionEvent;
 @Named(value = "resetPasswordManagedBean")
 @SessionScoped
 public class ResetPasswordManagedBean implements Serializable {
+@Inject
+    private LogInManagedBean logInManagedBean;
 
+    public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
+        this.logInManagedBean = logInManagedBean;
+    }
     /**
      * Creates a new instance of ResetPasswordManagedBean
      */
@@ -59,7 +66,7 @@ public class ResetPasswordManagedBean implements Serializable {
 
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException,UserNotActivatedException, IOException, TwilioRestException{
 
-         customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
+         //customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
          System.out.println(customerIc);
         if (customerIc != null && customerName != null && dateOfBirth != null && customerEmail != null) {
             String msg = amsbl.forgetPasswordVerifyDetail(customerIc, customerName, dateOfBirth, customerEmail);
@@ -99,17 +106,18 @@ public class ResetPasswordManagedBean implements Serializable {
 
     public void resetForgetPassword(ActionEvent event) throws PasswordTooSimpleException {
         try {
-            String errorMsg = amsbl.updateForgetPassword("S9782223", password, confirmPassword);
+            String errorMsg = amsbl.updateForgetPassword(customerIc, password, confirmPassword);
             System.out.println("after entring the confirmed password: " + errorMsg);
+            amsbl.updateAccountStatus(customerIc);
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Password has been successfully changed!", "");
-            FacesContext.getCurrentInstance().addMessage(null, message);
+           FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Password has been successfully changed!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
             //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Submit", "erroMsg"));
         } catch (PasswordTooSimpleException ex) {
-            String msg = "Password is very simple!!!!!";
-            System.out.println(msg);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Submit", "msg"));
+             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
         }
     }
 

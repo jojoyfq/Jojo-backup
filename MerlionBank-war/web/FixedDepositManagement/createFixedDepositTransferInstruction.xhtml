@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+                        <div class="Card">
+                            <h:form>
+                                <p:panel>
+                                    <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+
+                                        <h:outputLabel value="Please transfer S$#{fixedDepositManagedBean.amountString} to your fixed deposit account #{fixedDepositManagedBean.accountNumberStr} by #{fixedDepositManagedBean.startDateString}" />
+                                        <h:outputLabel />
+                                        <h:outputLabel />
+                                        <h:outputLabel />
+
+                                        <h:outputLabel value="You can do it by transfering from your saving account in another bank," />
+                                        <h:outputLabel />
+                                        <h:outputLabel value="OR deposit cash at our counter." />
+                                        <h:outputLabel />
+
+                                        <h:outputLabel />
+                                        <h:outputLabel />
+                                        <h:outputLabel />
+                                        <h:outputLabel />
+
+
+
+                                        <p:commandLink value="Alternatively, you can transfer from your Merlion saving account." type="submit" actionListener="#{fixedDepositManagedBean.goToTransferToFixedPage}"/>
+
+                                        <h:outputLabel />
+                                        <h:outputLabel />
+                                        <h:outputLabel />
+
+
+
+
+                                    </h:panelGrid>
+                                </p:panel>
+
+                                <div class="EmptyBox20"></div>
+
+                                <div class="Container30"></div>
+                                <div class="Container40">
+                                    <p:commandButton actionListener="#{fixedDepositManagedBean.goToHomePage}" value="Return to Homepage" />
+                                </div>
+                                <div class="Container30"></div>
+
+
+
+                            </h:form>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition> 

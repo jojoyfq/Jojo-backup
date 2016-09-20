@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+    <ui:define name="content">
+
+
+        <div class="Container100 NoPadding Responsive50">
+
+            <div class="Container30 NoPadding Responsive100">
+                <div class="Container100">
+                    <div class="Card ui-fluid">
+                        <h:form>
+                        <span class="Blue Fs20 FontDosisSemiBold">Welcome, #{logInManagedBean.ic} </span><br/>
+                     
+                        <div class="EmptyBox30"></div>
+                        <div class="Container100 Responsive50"><p:button value="Update Profile" styleClass="White Fs16" outcome="/CustomerManagement/ModifyUserProfile"/></div>
+                        <div class="Container100 Responsive50"><p:button value="Reset Password" styleClass="White Fs16"/></div>
+                        <div class="Container100 Responsive50"><p:button value="Log Out" styleClass="White Fs16"/></div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="Container70">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic">Your Quick Summary</div>
+                    <div class="Separator"></div>
+                    <div class="Container30 Responsive50 Flex">
+
+                    </div>
+
+                    <div class="Container40 Responsive50 Flex">
+                        <div class="Card">
+                            <div class="CardBigTopic TexAlCenter">Saving Account Balance</div>
+                            <p:chart id="bar" type="bar" model="#{barChartManagedBean.barModel}" responsive="true"/>
+                        </div>
+                    </div>
+
+                    <div class="Container30 Responsive50 Flex">
+
+                    </div>
+
+                </div>
+            </div> 
+
+        </div>
+
+
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,61 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pa="http://primefaces.org/atlas">
+
+    <h:form id="menuform">
+
+        <div id="layout-menu-cover">
+            <pa:menu id="layout-menu" widgetVar="AtlasMenu">
+
+                <p:menuitem id="pa_dashboards" value="Home" outcome="/dashboard" />
+
+
+                <p:submenu id="deposit_management" label="Deposit Management">
+       
+                     <p:submenu id="saving_account" label="Saving Account" icon="icon-plus">
+                        <p:menuitem id="create_saving_account" value="Create Saving Account" outcome="/DepositManagement/createSavingAccountEC"/>
+                        <p:menuitem id="activate_saving_account" value="Activate Saving Account" outcome="/DepositManagement/activateSavingAccount_selectAccounts"/> 
+                        <p:menuitem id="view_details" value="My Accounts" outcome="/DepositManagement/displaySavingAccountDetail"/> 
+                        <p:menuitem id="view_transactionRecord" value="View Transaction History" outcome="/DepositManagement/viewTransactionRecords_selectAccounts"/>
+                        <p:menuitem id="close_saving_account" value="Close Saving Account" outcome="/DepositManagement/closeSavingAccount_selectAccounts"/> 
+                    </p:submenu>
+
+                    <p:submenu id="fixed_deposit_account" label="Fixed Deposit Account" icon="icon-plus">
+                        <p:menuitem id="create_fixed_deposit_account" value="Apply for Fixed Deposit Account" outcome="/FixedDepositManagement/createFixedDepositAccount"/>
+                        <p:menuitem id="place_a_fixed_deposit" value="Place a Fixed Deposit" outcome="/FixedDepositManagement/transferToFixed"/> 
+                    </p:submenu>
+
+                </p:submenu>
+
+                <p:submenu id="pa_theme" label="Card Management">
+                    <p:menuitem id="pa_sample" value="Sample Page" icon="icon-key" outcome="/sample" />
+                    <p:menuitem id="pa_forms" value="Form Elements" icon="icon-text-document" outcome="/forms" />
+                    <p:menuitem id="pa_data" value="Data Components" icon="icon-archive" outcome="/data" />
+                    <p:menuitem id="pa_datatable" value="DataTable" icon="icon-sweden" outcome="/datatable" />
+
+                </p:submenu>
+                <p:submenu id="pa_default" label="Loan Management">
+                    <p:menuitem id="pa_empty" value="Empty Page" icon="icon-browser" outcome="/empty-page" />
+
+                </p:submenu>
+                <p:submenu id="pa_hierarchy" label="Bill and Payment">
+
+                    <p:submenu id="pa_sm2" label="Transfer" icon="icon-plus">
+                        <p:menuitem id="pa_lnk21" value="To Merlion Account" outcome="/TransferManagement/selectSavingAccount" />                   
+                    </p:submenu>
+                </p:submenu>
+
+                <p:menuitem id="pa_icons" value="Wealth Management" outcome="/font-icons" />
+
+                <p:submenu id="pa_docs" label="Portfolio Management">
+                </p:submenu>
+
+            </pa:menu>
+        </div>
+    </h:form>
+
+</ui:composition>

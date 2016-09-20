@@ -20,3 +20,6 @@ hs_err_pid*
 /MerlionBank-war/build/
 /MerlionBank-war/dist/
 MerlionBank-ejb/setup/sun-resources.xml
+/MerlionBankBackOffice/nbproject/private/
+/MerlionBankBackOffice/build/
+/MerlionBankBackOffice/dist/

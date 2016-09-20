@@ -37,7 +37,7 @@
                     <div class="Container100">
                         <div class="Card ui-fluid">
                             <div class="Container100">
-                                <h:form>
+                                <h:form id= "form" >
                                     <div class="CardBigTopic TexAlCenter Purple">Login</div>
                                     <div class="Container100">
                                         <p:inputText id="ic" value="#{logInManagedBean.ic}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
@@ -45,27 +45,34 @@
                                     </div>
                                     <div class="Container100">
 
-                                        <p:inputText id="password" value="#{logInManagedBean.customerPassword}"  placeholder="Password" required="true" requiredMessage="Please fill in your password!" />
+                                        <p:password id="password" value="#{logInManagedBean.customerPassword}"  placeholder="Password" required="true" requiredMessage="Please fill in your password!" />
                                         <p:message for="password"/>
                                     </div>
 
-                                    <div class="Container100"><p:commandButton id="login" value="Login Now" styleClass="White Fs16" actionListener="#{logInManagedBean.customerLogIn}"/></div>
+
+
+                                    <div class="Container100">
+                                        <center><p:captcha label="Captcha" theme="dark" rendered="#{logInManagedBean.logInAttempts >= 3}" required="#{logInManagedBean.logInAttempts >= 3}"  /></center>
+                                        <p:commandButton update="form" id="login" value="Login Now" styleClass="White Fs16" icon="ui-icon-script" actionListener="#{logInManagedBean.customerLogIn}"/>
+                                    </div>
+
+
                                 </h:form>
-                                
+
                                 <h:form>
                                     <div class="Container100 TexAlRight"><p:commandLink id="registerNewUser" value="New User? Register Now!" type="submit" actionListener="#{registerManagedBean.goToSelectAccountTypePage}"/></div>
                                 </h:form>
-                                
+
                                 <h:form>
-                                    <div class="Container100 TexAlRight"><p:commandLink value="Forgot Your Password or Username?" type="submit" actionListener="#{resetPasswordManagedBean.goToResetPasswordVerifyCustomerDetailsPage}"/></div>
+                                    <div class="Container100 TexAlRight"><p:commandLink update ="form" value="Forgot Your Password or Username?" type="submit" actionListener="#{resetPasswordManagedBean.goToResetPasswordVerifyCustomerDetailsPage}"/></div>
                                 </h:form>
-                              
+
                             </div>
                             <div class="EmptyBox20"></div>
                             <div class="SeparatorFull"></div>
                             <div class="EmptyBox20"></div>
 
-                          
+
                             <div class="Container100"><p:button value="Activate Account" styleClass="GrayButton" /></div>
 
 

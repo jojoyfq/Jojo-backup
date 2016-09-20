@@ -25,17 +25,17 @@ and open the template in the editor.
 
                     <h:panelGrid columns="3" cellpadding="5">
                         <p:outputLabel for="subject" value="Subject: " />
-                        <p:inputText id="subject" value="#{messageManagedBean.messageSubject}" required="true" label="subject" requiredMessage="Please enter the message subject!"/>
+                        <p:inputText id="subject" value="#{staffMessageManagedBean.messageSubject}" required="true" label="subject" requiredMessage="Please enter the message subject!"/>
                         <p:message for="subject" display="icon" />
 
 
                         <p:outputLabel for="content" value="Message: " />
 
-                        <p:inputTextarea rows="6" cols="33" id="content" value ="#{messageManagedBean.content}" required="true" label = "content" requiredMessage="Cannot send blank message!"/>
+                        <p:inputTextarea rows="6" cols="33" id="content" value ="#{staffMessageManagedBean.content}" required="true" label = "content" requiredMessage="Cannot send blank message!"/>
                         <p:message for="content" display="icon" />
                     </h:panelGrid>
 
-                    <p:commandButton value="Submit" update="panel" actionListener="#{messageManagedBean.sendMessageToCustomer}" icon="ui-icon-check" />
+                    <p:commandButton value="Submit" update="panel" actionListener="#{staffMessageManagedBean.sendMessageToCustomer}" icon="ui-icon-check" />
                 </p:panel>
             </h:form>
         </h:body>

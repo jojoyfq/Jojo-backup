@@ -6,6 +6,11 @@
 package DepositEntity.Session;
 
 import DepositEntity.SavingAccount;
+import DepositEntity.TransactionRecord;
+import Exception.UserHasNoInactiveSavingAccountException;
+import Exception.UserHasNoSavingAccountException;
+import Exception.UserHasPendingTransactionException;
+import Exception.UserNotEnoughBalanceException;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -16,6 +21,12 @@ import javax.ejb.Local;
 @Local
 public interface SavingAccountSessionBeanLocal {
 
-    public List<SavingAccount> getSavingAccount(Long customerID);
-    
+    public List<SavingAccount> getSavingAccount(Long customerID)throws UserHasNoSavingAccountException;
+    public List<String> getSavingAccountType();
+    public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
+    public List<List> getTransactionRecord(Long savingAccountNumber);
+    public List<SavingAccount> getSavingAccountForCloseAccount(Long savingAccountNum);
+    public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException;
+    public List<Long> getInactiveSavingAccountNumbers(Long customerID) throws UserHasNoInactiveSavingAccountException;
+    public void checkInactiveSavingAccount(Long inactiveSavingAccountNum) throws UserNotEnoughBalanceException;
 }

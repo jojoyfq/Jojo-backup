@@ -9,12 +9,16 @@ import CommonEntity.OnlineAccount;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.Permission;
+import DepositEntity.FixedDepositAccount;
+import DepositEntity.FixedDepositRate;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
+import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
+import Exception.UserAlreadyHasSavingAccountException;
 //import Exception.AccountTypeNotExistException;
 //import Exception.PasswordTooSimpleException;
 import Exception.UserExistException;
@@ -47,12 +51,16 @@ import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.TwilioRestException;
 import com.twilio.sdk.resource.factory.MessageFactory;
 import com.twilio.sdk.resource.instance.Message;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import static java.util.Collections.list;
+import java.util.GregorianCalendar;
 import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 /**
  *
@@ -66,6 +74,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     public static final int SALT_LENGTH = 8;
     @PersistenceContext
     private EntityManager em;
+    FixedDepositAccountSessionBeanLocal fdasbl;
 //    private GoogleMail gm;
 
     @Override
@@ -81,13 +90,16 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             System.out.println("User " + ic + " exists!");
             for (int i = 0; i < temp.size(); i++) {
                 if (temp.get(i).getStatus().equals("active")) {
-                    throw new UserExistException("User " + ic + " exists!");
-                }
-                else if (temp.get(i).getStatus().equals("unverified"))                
+                    throw new UserExistException("User " + ic + " exists! Please go and login");
+                } else if (temp.get(i).getStatus().equals("unverified")) {
                     throw new UserExistException("User " + ic + "has not been verified by MerlionBank!");
-                else if (temp.get(i).getStatus().equals("inactive"))
-                    throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");    
-            }           
+
+                } else if (temp.get(i).getStatus().equals("locked")) {
+                    throw new UserExistException("User " + ic + " account has been locked. Please unlock your account!");
+                } else if (temp.get(i).getStatus().equals("inactive")) {
+                    throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");
+                }
+            }
 
         }
         System.out.println("customer does not exist!");
@@ -105,38 +117,39 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("In Creating saving account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
         em.persist(onlineAccount);
-            Customer customer = new Customer(ic,name,gender,dateOfBirth,address,email,phoneNumber,occupation,familyInfo, null, "0.0000", onlineAccount,"unverified");          
-            em.persist(customer);
-            System.out.println("Create Customer successfully");
-            
-            //create saving account
-            long savingAccoutNumber= Math.round(Math.random()*1000000000);
-            BigDecimal initialValue=new BigDecimal("0.0000");
-            
-            System.out.println("Saving Account Type is: "+savingAccountName);
-            Query queryType = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified");
+        em.persist(customer);
+        System.out.println("Create Customer successfully");
+
+        //create saving account
+        long savingAccoutNumber = generateSavingAccountNumber();
+        BigDecimal initialValue = new BigDecimal("0.0000");
+
+        System.out.println("Saving Account Type is: " + savingAccountName);
+        Query queryType = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
         queryType.setParameter("accountType", savingAccountName);
         SavingAccountType savingAccountType = (SavingAccountType) queryType.getSingleResult();
-            SavingAccount savingAccount= new SavingAccount(savingAccoutNumber, initialValue, initialValue, "inactive", customer,savingAccountType);
-            em.persist(savingAccount);
-            List<SavingAccount> savingAccounts=new ArrayList<SavingAccount>();
-            savingAccounts.add(0,savingAccount);
-            customer.setSavingAccounts(savingAccounts);
-            em.persist(customer);
-            em.flush();
-            //log an action
-            CustomerAction action=new CustomerAction(Calendar.getInstance().getTime(),"Create a new Saving Account",customer);
-            em.persist(action);
-            List<CustomerAction> customerActions=new ArrayList<CustomerAction>();
-            customerActions.add(0,action);
-            customer.setCustomerActions(customerActions);
-            em.persist(customer);
-            em.flush();
-            
-            System.out.println("Debit Account successfully created");
-            
-           try {
-            SendPendingVerificationEmail(name, email);
+        SavingAccount savingAccount = new SavingAccount(savingAccoutNumber, initialValue, initialValue, "inactive", customer, savingAccountType);
+        em.persist(savingAccount);
+        List<SavingAccount> savingAccounts = new ArrayList<SavingAccount>();
+        savingAccounts.add(0, savingAccount);
+        customer.setSavingAccounts(savingAccounts);
+        em.persist(customer);
+        em.flush();
+        //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create a new Saving Account", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = new ArrayList<CustomerAction>();
+        customerActions.add(0, action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
+        System.out.println("Debit Account successfully created");
+
+        try {
+            // reminder: remove password
+            SendPendingVerificationEmail(name, email, tempPassword);
 
         } catch (MessagingException ex) {
             System.out.println("Error sending email.");
@@ -145,6 +158,89 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     }
 
+    @Override
+    public void createSavingAccountExistingCustomer(Long customerID, String savingAccountName) throws UserAlreadyHasSavingAccountException, EmailNotSendException {
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        System.out.println("Inside createSavingAccount FOR Existing customer");
+
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
+        q.setParameter("customerID", customerID);
+        List<Customer> customers = new ArrayList(q.getResultList());
+        Customer customer = customers.get(0);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        if (savingAccounts.size() == 3) {
+            System.out.print("You already have 3 saving accounts!");
+            throw new UserAlreadyHasSavingAccountException("User Already has 3 saving accounts, cannot create more!");
+
+        } else {
+            for (int i = 0; i < savingAccounts.size(); i++) {
+                if (savingAccounts.get(i).getSavingAccountType().getAccountType().equals(savingAccountName)) {
+                    System.out.print("User already has the same saving account.");
+                    throw new UserAlreadyHasSavingAccountException("User already has the same saving account.");
+                }
+            }
+
+            //create saving account
+            //long savingAccoutNumber = Math.round(Math.random() * 1000000000);
+            Long savingAccoutNumber = generateSavingAccountNumber();
+            BigDecimal initialValue = new BigDecimal("0.0000");
+            System.out.println("Saving Account Type is: " + savingAccountName);
+            Query queryType = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
+            queryType.setParameter("accountType", savingAccountName);
+            SavingAccountType savingAccountType = (SavingAccountType) queryType.getSingleResult();
+            SavingAccount savingAccount = new SavingAccount(savingAccoutNumber, initialValue, initialValue, "inactive", customer, savingAccountType);
+            em.persist(savingAccount);
+            savingAccounts.add(savingAccount);
+            customer.setSavingAccounts(savingAccounts);
+            em.persist(customer);
+            em.flush();
+
+            //log an action
+            CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create a new Saving Account", customer);
+            em.persist(action);
+            List<CustomerAction> customerActions = customer.getCustomerActions();
+            customerActions.add(action);
+            customer.setCustomerActions(customerActions);
+            em.persist(customer);
+            em.flush();
+
+            System.out.println("Saving Account successfully created");
+
+            String email = customer.getEmail();
+
+            try {
+                SendSavingAccountActivationEmail(savingAccountName, email);
+
+            } catch (MessagingException ex) {
+                System.out.println("Error sending email.");
+                throw new EmailNotSendException("Error sending email.");
+            }
+
+        }
+
+    }
+
+    private long generateSavingAccountNumber() {
+        int a = 1;
+        Random rnd = new Random();
+        int number = 100000000 + rnd.nextInt(900000000);
+        Long accountNumber = Long.valueOf(number);
+        Query q2 = em.createQuery("SELECT c.accountNumber FROM SavingAccount c");
+        List<Long> existingAcctNum = new ArrayList(q2.getResultList());
+        while (a == 1) {
+
+            if ((existingAcctNum.contains(accountNumber)) || (number / 100000000 == 0)) {
+                number = 100000000 + rnd.nextInt(900000000);
+                accountNumber = Long.valueOf(number);
+                a = 1;
+            } else {
+                a = 0;
+            }
+        }
+
+        return accountNumber;
+    }
 
     @Override
     public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) {
@@ -173,6 +269,14 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
 
     @Override
+    public Customer diaplayCustomerId(Long id) {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", id);
+        Customer customer = (Customer) q.getSingleResult();
+        return customer;
+    }
+
+    @Override
     public Customer diaplayCustomer(String ic) {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
@@ -181,21 +285,34 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         return customer;
     }
 
-    
-    
-    private void SendPendingVerificationEmail(String name, String email) throws MessagingException {
-      String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Verification";
+    private void SendSavingAccountActivationEmail(String name, String email) throws MessagingException {
+        String subject = "Merlion Bank - " + name + "Saving Account Activation";
+        System.out.println("Inside send SavingAccount Activation email");
+
+        String content = "<h2>Dear " + name
+                + ",</h2><br /><h1>  Congratulations! You have successfully created a Merlion " + name + " Saving Account!</h1><br />"
+                + "<h1>Welcome to Merlion Bank.</h1>"
+                + "<br />Please logins to your iBanking to activate your Saving Account</h2><br />"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>MerLION Platform User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
+    }
+
+    private void SendPendingVerificationEmail(String name, String email, String password) throws MessagingException {
+        String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Verification";
+
         System.out.println("Inside send email");
 
         String content = "<h2>Dear " + name
                 + ",</h2><br /><h1>  Congratulations! You have successfully registered a Merlion Online Banking Account!</h1><br />"
                 + "<h1>Welcome to Merlion Bank.</h1>"
-                + "<br />Please activate your account through this link: " + "</h2><br />" 
+                + "<br />Temporary Password: " + password + "<br />Please activate your account through this link: " + "</h2><br />"
                 + "<p style=\"color: #ff0000;\">Please kindly wait for 1 to 2 working days for staff to verify you account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>MerLION Platform User Support</p>";
         System.out.println(content);
-        sendEmail.run(email, subject, content);  
+        sendEmail.run(email, subject, content);
     }
 
     private String passwordHash(String pass) {
@@ -228,27 +345,20 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");
         }
 
-        
-            int size=temp.size();
-            Customer customer=temp.get(size-1);
-            if (customer.getStatus().equals("terminated")){
-                 System.out.println("Username " + ic + " does not exist!");
-            throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
-            }
-            else if (customer.getStatus().equals("unverified")){
-                 System.out.println("Username " + ic + " does not exist!");
-            throw new UserNotExistException("Username " + ic + "has not been verified");    
-            }
-            else if (customer.getStatus().equals("active")){
-                 System.out.println("Username " + ic + "You have already activated your account!"); 
-             throw new UserAlreadyActivatedException("You have already activated your account!");
-            }
-            else if (customer.getOnlineAccount().getAccountStatus().equals("locked")){
-                System.out.println("Username " + ic + "Acount locked"); 
-
+        int size = temp.size();
+        Customer customer = temp.get(size - 1);
+        if (customer.getStatus().equals("terminated")) {
+            System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");
+        } else if (customer.getStatus().equals("unverified")) {
+            System.out.println("Username " + ic + " does not exist!");
+            throw new UserNotExistException("Username " + ic + "has not been verified");
+        } else if (customer.getStatus().equals("active")) {
+            System.out.println("Username " + ic + "You have already activated your account!");
             throw new UserAlreadyActivatedException("You have already activated your account!");
         } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
             System.out.println("Username " + ic + "Acount locked");
+
             throw new UserAlreadyActivatedException("You have already activated your account!");
         } else {
             System.out.println("Username " + ic + " IC check pass!");
@@ -303,18 +413,16 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             if (!checkPasswordComplexity(newPassword)) {
                 throw new PasswordTooSimpleException("password is too simple");
             }
-                String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
-                customer.getOnlineAccount().setPassword(resetPassword);
-                em.flush();
-                return ic;
-           }
-           else return "invalid details";
-    } 
+            String resetPassword = passwordHash(newPassword + customer.getOnlineAccount().getSalt());
+            customer.getOnlineAccount().setPassword(resetPassword);
+            em.flush();
+            return ic;
+        } else {
+            return "invalid details";
+        }
+    }
 
-   
     //Password complexity check
-   
-
     private boolean checkPasswordComplexity(String password) {
         if (password.length() < 8) {
             return false;
@@ -340,7 +448,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     //Activate account - 4th step update account status
     @Override
 
-    public boolean updateAccountStatus(String ic){
+    public boolean updateAccountStatus(String ic) {
 
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
@@ -466,7 +574,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             customer.getOnlineAccount().setPassword(resetPassword);
             em.flush();
             OnlineAccount onlineAccount = customer.getOnlineAccount();
-            onlineAccount.setAccountStatus("locked");
+            onlineAccount.setAccountStatus("active");
             em.persist(onlineAccount);
             em.flush();
             customer.setStatus("active");
@@ -504,18 +612,17 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         Customer customer = temp.get(size - 1);
         if (customer.getStatus().equals("terminated")) {
             System.out.println("Username " + ic + " does not exist!");
-            throw new UserNotExistException("Username " + ic + " does not exist, please try again");    
+            throw new UserNotExistException("Username " + ic + " does not exist, please try again");
         } else if (customer.getStatus().equals("inactive")) {
             System.out.println("Username " + ic + " please activate your account!");
 
-
-           throw new UserNotActivatedException("Username " + ic + " please activate your account!");
+            throw new UserNotActivatedException("Username " + ic + " please activate your account!");
 
         } else if (customer.getOnlineAccount().getAccountStatus().equals("locked")) {
             System.out.println("Username " + ic + " Account locked! Please Reset Password!");
             throw new UserNotExistException("Username " + ic + " Account locked! Please Reset Password!");
 
-        } else if (customer.getOnlineAccount().getAccountStatus().equals("unverified")) {
+        } else if (customer.getStatus().equals("unverified")) {
             System.out.println("Username " + ic + "Please wait for your account to be verified!");
             throw new UserNotExistException("Username " + ic + "Please wait for your account to be verified!");
 
@@ -540,6 +647,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         return customer.getId();
     }
 
+    @Override
     public Long lockAccount(Long customerId) {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
         q.setParameter("id", customerId);
@@ -553,6 +661,245 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         customer.setOnlineAccount(onlineAccount);
         return customer.getId();
     }
-   
 
+    //Create Fixed Deposit Account - 1st page - create online banking account
+    @Override
+    public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException {
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        System.out.println("Inside createAccount");
+
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        if (!temp.isEmpty()) {
+            System.out.println("User " + ic + " exists!");
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).getStatus().equals("active")) {
+                    throw new UserExistException("User " + ic + " exists! Please go and login");
+                } else if (temp.get(i).getStatus().equals("unverified")) {
+                    throw new UserExistException("User " + ic + "has not been verified by MerlionBank!");
+
+                } else if (temp.get(i).getStatus().equals("locked")) {
+                    throw new UserExistException("User " + ic + " account has been locked. Please unlock your account!");
+                } else if (temp.get(i).getStatus().equals("inactive")) {
+                    throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");
+                }
+            }
+
+        }
+        System.out.println("customer does not exist!");
+
+        for (int i = 0; i < SALT_LENGTH; i++) {
+            int index = (int) (RANDOM.nextDouble() * letters.length());
+            salt += letters.substring(index, index + 1);
+        }
+        String password = GeneratePassword.createPassword();
+        String tempPassword = password;
+
+        password = passwordHash(password + salt);
+        System.out.println("Password after hash&salt:" + password);
+
+        System.out.println("In Creating  account");
+        OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
+        em.persist(onlineAccount);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified");
+        em.persist(customer);
+        em.flush();
+        System.out.println("Create Customer successfully");
+        return customer;
+    }
+
+    //Create Fixed Deposit Account - 2nd page - configure fixed deposit account
+    @Override
+    public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration) throws EmailNotSendException {
+        Long accountNumber = fdasbl.createFixedAccount(customer.getId(), amount, dateOfStart, dateOfEnd, duration);
+        String password = GeneratePassword.createPassword();
+        String tempPassword = password;
+
+        password = passwordHash(password + customer.getOnlineAccount().getSalt());
+        customer.getOnlineAccount().setPassword(password);
+        System.out.println("Password after hash&salt:" + password);
+
+        try {
+            // reminder: remove password
+            SendPendingVerificationEmail(customer.getName(), customer.getEmail(), tempPassword);
+
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+        return customer.getId();
+    }
+    
+    //Teller Create Fixed Deposit Account - 1st page - create online banking account
+   @Override
+    public Customer tellerCreateFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo,String enterPassword) throws UserExistException, EmailNotSendException {
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        System.out.println("Inside createAccount");
+
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        if (!temp.isEmpty()) {
+            System.out.println("User " + ic + " exists!");
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).getStatus().equals("active")) {
+                    throw new UserExistException("User " + ic + " exists! Please go and login");
+                } else if (temp.get(i).getStatus().equals("unverified")) {
+                    throw new UserExistException("User " + ic + "has not been verified by MerlionBank!");
+
+                } 
+                else if (temp.get(i).getStatus().equals("locked"))                
+                    throw new UserExistException("User " + ic + " account has been locked. Please unlock your account!");
+                else if (temp.get(i).getStatus().equals("inactive"))
+                    throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");    
+            }           
+
+
+        }
+        System.out.println("customer does not exist!");
+
+        for (int i = 0; i < SALT_LENGTH; i++) {
+            int index = (int) (RANDOM.nextDouble() * letters.length());
+            salt += letters.substring(index, index + 1);
+        }
+        
+        String tempPassword = enterPassword;
+
+        enterPassword = passwordHash(enterPassword + salt);
+        System.out.println("Password after hash&salt:" + enterPassword);
+
+        System.out.println("In Creating  account");
+        OnlineAccount onlineAccount = new OnlineAccount(ic, "active", salt, enterPassword);
+        em.persist(onlineAccount);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active");
+        em.persist(customer);
+        em.flush();
+        System.out.println("Create Customer successfully");
+return customer;
+    }
+    
+    //Teller Create saving Account 
+    @Override
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException {
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        System.out.println("Inside createAccount");
+
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        if (!temp.isEmpty()) {
+            System.out.println("User " + ic + " exists!");
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).getStatus().equals("active")) {
+                    throw new UserExistException("User " + ic + " exists! Please go and login");
+                } else if (temp.get(i).getStatus().equals("unverified")) {
+                    throw new UserExistException("User " + ic + "has not been verified by MerlionBank!");
+
+                } 
+                else if (temp.get(i).getStatus().equals("locked"))                
+                    throw new UserExistException("User " + ic + " account has been locked. Please unlock your account!");
+                else if (temp.get(i).getStatus().equals("inactive"))
+                    throw new UserExistException("User " + ic + " has an inavtive account. Please proceed to activation.");    
+            }           
+
+
+        }
+        System.out.println("customer does not exist!");
+
+        for (int i = 0; i < SALT_LENGTH; i++) {
+            int index = (int) (RANDOM.nextDouble() * letters.length());
+            salt += letters.substring(index, index + 1);
+        }
+        String password = enterPassword;
+        String tempPassword = password;
+
+        password = passwordHash(password + salt);
+        System.out.println("Password after hash&salt:" + password);
+
+        System.out.println("In Creating saving account");
+        OnlineAccount onlineAccount = new OnlineAccount(ic, "active", salt, password);
+        em.persist(onlineAccount);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active");
+        em.persist(customer);
+        System.out.println("Create Customer successfully");
+
+        //create saving account
+        long savingAccoutNumber = generateSavingAccountNumber();
+        BigDecimal initialValue = new BigDecimal("0.0000");
+
+        System.out.println("Saving Account Type is: " + savingAccountName);
+        Query queryType = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
+        queryType.setParameter("accountType", savingAccountName);
+        SavingAccountType savingAccountType = (SavingAccountType) queryType.getSingleResult();
+        SavingAccount savingAccount = new SavingAccount(savingAccoutNumber, initialValue, initialValue, "active", customer, savingAccountType);
+        em.persist(savingAccount);
+        List<SavingAccount> savingAccounts = new ArrayList<SavingAccount>();
+        savingAccounts.add(0, savingAccount);
+        customer.setSavingAccounts(savingAccounts);
+        em.persist(customer);
+        em.flush();
+        //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create a new Saving Account", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = new ArrayList<CustomerAction>();
+        customerActions.add(0, action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+
+        System.out.println("Debit Account successfully created");
+
+    }
+
+//    @Override
+//    public void checkOnlineBankingAccountStatus() {
+//        //check fixed deposit account
+//        Query q1 = em.createQuery("SELECT a FROM FixedDepositAccount a");
+//        List<FixedDepositAccount> fixedDepositAccounts = new ArrayList(q1.getResultList());
+//        Query q2 = em.createQuery("SELECT b FROM OnlineAccount b");
+//        List<OnlineAccount> onlineAccounts = new ArrayList(q2.getResultList());
+//        Query q3 = em.createQuery("SELECT c FROM SavingAccount c");
+//        List<SavingAccount> savingAccounts = new ArrayList(q3.getResultList());
+//
+//        //get time now 
+//        DateTime now = new DateTime();
+//        System.out.println(now);
+//        DateTime dateSixMonthBefore = now.minus(Period.months(6)); //date of 6 months before 
+//        System.out.println(dateSixMonthBefore);
+//
+//        for (int j = 0; j < onlineAccounts.size(); j++) {
+//            //get customer ID here
+//            if(onlineAccounts.get(j).getAccountStatus().equals("active")){
+//            Long customerID = onlineAccounts.get(j).getId();
+//            for (int i = 0; i < fixedDepositAccounts.size(); i++) {
+//                if (fixedDepositAccounts.get(i).getCustomer().getId().equals(customerID)) {
+//                    //check account status
+//                    if (fixedDepositAccounts.get(i).getStatus().equals("terminated") && fixedDepositAccounts.get(i).getEndDate().after(dateSixMonthBefore.toDate())) {
+//                        int check1 = 1;
+//                    } else {
+//                        int check1 = -1;
+//                    }
+//                } else {
+//                    System.out.print("the fixed deposite account has not been terminated for 6 months");
+//                }
+//
+//                for (int k = 0; k < savingAccounts.size(); k++) {
+//                    if (savingAccounts.get(k).getCustomer().getId().equals(customerID)) {
+////                        if (savingAccounts.get(k).getStatus().equals("terminated") && savingAccounts.get(k).getEndDate().after(dateSixMonthBefore.toDate())) {
+////                            int check2 = 1;
+////                        } else {
+////                            int check2 = -1;
+////                        }
+//                    } else {
+//                        System.out.print("the saving account has not been terminated for 6 months");
+//                    }
+//                }
+//            }
+//        }
+//        }
+//    }
 }

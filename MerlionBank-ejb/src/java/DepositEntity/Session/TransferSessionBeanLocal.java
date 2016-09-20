@@ -5,6 +5,9 @@
  */
 package DepositEntity.Session;
 
+import Exception.PayeeNotFoundException;
+import Exception.TransferException;
+import Exception.UserHasNoSavingAccountException;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Local;
@@ -15,8 +18,9 @@ import javax.ejb.Local;
  */
 @Local
 public interface TransferSessionBeanLocal {
-     public Boolean intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount);
-     public Boolean addPayee(Long payeeAccount, String payeeName, Long customerID);
+     public void intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount)throws TransferException;
+     public void addPayee(Long payeeAccount, String payeeName, Long customerID)throws PayeeNotFoundException;
      public List getPayeeList(Long customerID);
      public String searchPayeeName (Long payeeAccount);
+     public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
 }

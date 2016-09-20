@@ -27,9 +27,19 @@ import javax.persistence.OneToMany;
 @Entity
 public class Staff implements Serializable {
     private static final long serialVersionUID = 1L;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    private Long id;
+    private String staffIc;
+    private String staffName;
+    private String password;
+    private String staffEmail;
+    private String mobileNumber;
+    private String status;
+    private String salt;
+    
     @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-
-    private List<MessageEntity> messages;
+   private List<MessageEntity> messages;
 
     
     //@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
@@ -42,6 +52,53 @@ public class Staff implements Serializable {
       
 @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<CustomerMessage> customerMessages;
+
+    public Staff() {
+    }
+
+    public Staff(String staffIc, String staffName, String password, String staffEmail, String mobileNumber, String status, List<StaffRole> staffRoles) {
+        this.staffIc = staffIc;
+        this.staffName = staffName;
+        this.password = password;
+        this.staffEmail = staffEmail;
+        this.mobileNumber = mobileNumber;
+        this.status = status;
+        this.staffRoles = staffRoles;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    
+    public String getStaffIc() {
+        return staffIc;
+    }
+
+    public void setStaffIc(String staffIc) {
+        this.staffIc = staffIc;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 
     public List<CustomerMessage> getCustomerMessages() {
         return customerMessages;
@@ -59,12 +116,6 @@ public class Staff implements Serializable {
         this.staffActions = staffActions;
     }
       
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Id
-    private Long id;
-    private String staffName;
-    private String password;
-    private String staffEmail;
 
     public String getStaffEmail() {
         return staffEmail;
@@ -88,7 +139,7 @@ public class Staff implements Serializable {
         return staffRoles;
     }
 
-    public void setStaffRoles(ArrayList<StaffRole> staffRoles) {
+    public void setStaffRoles(List<StaffRole> staffRoles) {
         this.staffRoles = staffRoles;
     }
 
