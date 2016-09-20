@@ -14,6 +14,7 @@ import CommonEntity.Staff;
 import CommonEntity.StaffRole;
 import CustomerRelationshipEntity.StaffAction;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.RoleAlreadyExistedException;
@@ -55,13 +56,13 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     private EntityManager em;
 
     @Override
-    public Long createRole(Long staffId, String roleName) throws RoleAlreadyExistedException {
+    public StaffRole createRole(Long staffId, String roleName) throws RoleAlreadyExistedException {
 
         Query q = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :roleName");
         q.setParameter("roleName", roleName);
         List<StaffRole> temp = new ArrayList(q.getResultList());
 
-        if (temp.isEmpty()) {
+        if (!temp.isEmpty()) {
             throw new RoleAlreadyExistedException("This role already existed in the system");
         }
         List<Staff> staffList = new ArrayList<Staff>();
@@ -82,12 +83,12 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         em.persist(staff);
         em.flush();
 
-        return staffRole.getId();
+        return staffRole;
 
     }
 
     @Override
-    public boolean grantRole(Long staffId, Long staffRoleId, boolean systemUserWorkspace, boolean systemUserAccount, boolean operationalCRM,
+    public boolean grantRole(Long staffId, String roleName, boolean systemUserWorkspace, boolean systemUserAccount, boolean operationalCRM,
             boolean collaborativeCRM, boolean fixedDeposit, boolean savingAccount,
             boolean counterCash, boolean debitCard, boolean creditCard, boolean secureLoan, boolean unsecureLoan,
             boolean billModule, boolean transferModule, boolean customerPlan, boolean executedPlan, boolean finalcialInstrument,
@@ -97,8 +98,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         queryStaff.setParameter("id", staffId);
         Staff staff = (Staff) queryStaff.getSingleResult();
 
-        Query queryRole = em.createQuery("SELECT c FROM StaffRole c WHERE c.id = :id");
-        queryRole.setParameter("id", staffRoleId);
+        Query queryRole = em.createQuery("SELECT c FROM StaffRole c WHERE c.roleName = :roleName");
+        queryRole.setParameter("roleName", roleName);
         StaffRole staffRole = (StaffRole) queryRole.getSingleResult();
 
         Query query = em.createQuery("SELECT a FROM Permission a");
@@ -313,6 +314,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     @Override
     public List<StaffRole> viewRoles() {
         Query query = em.createQuery("SELECT a FROM StaffRole a");
+
         List<StaffRole> roleList = new ArrayList(query.getResultList());
         return roleList;
     }
@@ -473,7 +475,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
 //Super Admin create staff accounts
     @Override
-    public boolean createStaff(Long staffID, String staffIc, String staffName, String staffEmail, String mobileNumber, String status) throws UserExistException, EmailNotSendException {
+    public Staff createStaff(Long staffID, String staffIc, String staffName, String staffEmail, String mobileNumber, String status) throws UserExistException, EmailNotSendException {
 
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -523,7 +525,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
             throw new EmailNotSendException("Error sending email.");
         }
 
-        return true;
+        return staff;
 
     }
 
@@ -570,20 +572,20 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     @Override
-    public Long assignStaffRole(Long staffId, Long newStaffId, Long staffRoleId) throws StaffRoleExistException {
+    public Long assignStaffRole(Long staffId, Long newStaffId, String staffRoleName) throws StaffRoleExistException {
 
         Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         queryStaff.setParameter("id", newStaffId);
         Staff newStaff = (Staff) queryStaff.getSingleResult();
 
-        Query queryRole = em.createQuery("SELECT b FROM StaffRole b WHERE b.id = :id");
-        queryRole.setParameter("id", staffRoleId);
+        Query queryRole = em.createQuery("SELECT b FROM StaffRole b WHERE b.roleName = :roleName");
+        queryRole.setParameter("roleName", staffRoleName);
         StaffRole staffRole = (StaffRole) queryRole.getSingleResult();
 
         List<StaffRole> staffRoles = newStaff.getStaffRoles();
 
         for (int i = 0; i < staffRoles.size(); i++) {
-            if (staffRoles.get(i).getId() == staffRoleId) {
+            if (staffRoles.get(i).getRoleName() == staffRoleName) {
                 throw new StaffRoleExistException("staff already has this role");
             }
         }
@@ -728,7 +730,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
     }
 
-  //view system users
+    //view system users
     @Override
     public List<Staff> displayListOfStaff() {
         Query query = em.createQuery("SELECT a FROM Staff a");
@@ -907,10 +909,10 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
             throw new UnexpectedErrorException("Invalid account detailes");
         }
     }
-    
+
     //log in
     @Override
-    public Staff checkLogin(String ic, String password,StaffRole staffRole) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
+    public Long checkLogin(String ic, String password, String staffRoleName) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
         Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffIc = :ic");
         q.setParameter("ic", ic);
         List<Staff> temp = new ArrayList(q.getResultList());
@@ -939,38 +941,56 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
         if (!passwordHash(password + staff.getSalt()).equals(staff.getPassword())) {
 
-            throw new PasswordNotMatchException("Invalid account details");
+            Long i = Long.parseLong("1");
+            return i;
         }
 
-        List<Staff> staffList=staffRole.getStaffList();
-        boolean flag=false;
-        
-        for (int i=0;i<staffList.size();i++){
-            if (staffList.get(i).equals(staff))
-                flag=true;
+        Query m = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :staffRoleName");
+        q.setParameter("staffRoleName", staffRoleName);
+        List<StaffRole> temp1 = new ArrayList(q.getResultList());
+        if (temp1.isEmpty()) {
+            System.out.println("StaffRole does not exist!");
+            throw new UserNotExistException("StaffRole does not exist, please try again");
         }
-        
-        if (flag==false)
+        StaffRole staffRole=temp1.get(0);
+        List<Staff> staffList = staffRole.getStaffList();
+        boolean flag = false;
+
+        for (int i = 0; i < staffList.size(); i++) {
+            if (staffList.get(i).equals(staff)) {
+                flag = true;
+            }
+        }
+
+        if (flag == false) {
             throw new UserNotExistException("Invalid account details");
-        
+        }
+
         recordStaffAction(staff.getId(), "Log in", null);
 
-        return staff;
+        return staff.getId();
     }
-    
-    // invalid log in - acccount lock
 @Override
+public Staff viewStaff(Long staffID)throws UserNotExistException{
+     Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        q.setParameter("id", staffID);
+        List<Staff> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty()) {
+            System.out.println("Staff does not exist!");
+            throw new UserNotExistException("Staff does not exist, please try again");
+        }
+        return temp.get(0);
+}
+    // invalid log in - acccount lock
+    @Override
     public Long lockAccount(Long staffId) {
         Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         q.setParameter("id", staffId);
         Staff staff = (Staff) q.getSingleResult();
         staff.setStatus("locked");
         em.persist(staff);
-        em.flush();      
+        em.flush();
         return staff.getId();
     }
-
-
-
 
 }

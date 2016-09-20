@@ -37,12 +37,12 @@ public class StaffVerifyCustomerAccountSessionBean implements StaffVerifyCustome
     
 //system retrieve list of pending verification customers
 @Override
-public List<Customer> viewPendingVerificationList()throws ListEmptyException{
+public List<Customer> viewPendingVerificationList()/*throws ListEmptyException*/{
    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.status = :status");
         q.setParameter("status", "unverified");
         List<Customer> temp = new ArrayList(q.getResultList()); 
-        if (temp.size()==0)
-            throw new ListEmptyException("There are pending verifications!");
+      //  if (temp.size()==0)
+          //  throw new ListEmptyException("There are pending verifications!");
         return temp;
 }
 
@@ -59,6 +59,7 @@ public boolean verifySavingAccountCustomer (Long staffID, Long customerID, Strin
         
         Query query = em.createQuery("SELECT a FROM SavingAccount a WHERE a.id = :id");
         query.setParameter("id", savingAccountId);
+        System.out.println("@@@@@@@@@@@ Saving Account Id: "+savingAccountId);
         SavingAccount savingAccount = (SavingAccount)query.getSingleResult();
         
         String password = GeneratePassword.createPassword();
@@ -118,7 +119,7 @@ public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID,
         q.setParameter("id", customerID);
         Customer customer = (Customer)q.getSingleResult();
         
-        Query query = em.createQuery("SELECT a FROM FixedDepositAcount a WHERE a.id = :id");
+        Query query = em.createQuery("SELECT a FROM FixedDepositAccount a WHERE a.id = :id");
         query.setParameter("id", accountId);
         FixedDepositAccount fixedDepositAccount = (FixedDepositAccount)query.getSingleResult();
         

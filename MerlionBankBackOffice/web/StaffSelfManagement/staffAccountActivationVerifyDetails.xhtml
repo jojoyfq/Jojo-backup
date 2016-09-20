@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view>
+        <h:head>
+            <title>Account Activation</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        </h:head>
+        <h:body>
+            <div>Account Activation</div>
+            <h:form>
+                <p:panel id="panel" header="Activate Account">
+
+                    <p:messages id="msgs" />
+
+                    <h:panelGrid columns="3" cellpadding="5">
+                        <p:outputLabel for="ic" value="IC: " />
+                        <p:inputText id="ic" value="#{staffSelfManagementManagedBean.staffIc}" required="true" label="ic" requiredMessage="Please enter your IC!"/>
+                        <p:message for="ic" display="icon" />
+
+
+
+                        <p:outputLabel for="name" value="Name: " />
+                        <p:inputText id="name" value="#{staffSelfManagementManagedBean.name}"  required="true" label="name" requiredMessage="Please fill in your Name!" />
+                        <p:message for="name" display="icon"/>
+
+                       
+
+                        <p:outputLabel for="email" value="Email: " />
+                        <p:inputText id="email" value="#{staffSelfManagementManagedBean.email}"  required="true" label = "email" requiredMessage="Please fill in email!" />
+                        <p:message for="email" display="icon"/>
+                        
+                    </h:panelGrid>
+
+                    <p:commandButton value="Save" update="panel" actionListener="#{staffSelfManagementManagedBean.acctActivationVerifyDetails}" icon="ui-icon-check" />
+                </p:panel>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

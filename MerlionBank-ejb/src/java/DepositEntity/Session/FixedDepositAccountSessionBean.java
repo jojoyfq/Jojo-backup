@@ -53,6 +53,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     public Long createFixedAccount(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration){
          
          customer = em.find(Customer.class, customerId);
+         System.out.println("customer IC"+customer.getIc());
         //generate and check account number
         accountNumber = Math.round(Math.random() * 99999999);
         int a = 1;
@@ -67,6 +68,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                a =0; }
            a=0;
         }
+        System.out.println(" accountNumber"+accountNumber);
         
         BigDecimal balance = new BigDecimal("0.0000"); //initial balance 
         //find interest rate according to duration
@@ -92,9 +94,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         
         interestRate = rate.getInterestRate();
         account = new FixedDepositAccount(accountNumber,amount,balance, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
-       
         em.persist(account);
         account.setCustomer(customer);
+         System.out.println(" accountid"+account.getId());
         //customer may alr have fixed acct
         List<FixedDepositAccount> fixedAccounts = new ArrayList<FixedDepositAccount>();
         fixedAccounts.add(account);
@@ -102,7 +104,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         
         em.persist(customer);
         em.flush();
-        
+        System.out.println(" customer"+customer.getIc());
         //log an action
         CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create a new Fixed deposit account", customer);
         em.persist(customer);

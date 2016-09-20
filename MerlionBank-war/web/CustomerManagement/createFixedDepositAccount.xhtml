@@ -30,14 +30,14 @@ and open the template in the editor.
                     <div class="Wid60 MarAuto WidAutoOnMobile">
                         <div class="Container100">
                             <div class="Card ui-fluid">
-                                <div class="CardBigTopic TexAlCenter Purple">Create New Saving Account</div>
+                                <div class="CardBigTopic TexAlCenter Purple">Create New Fixed Deposit Account</div>
                                 <div class="SeparatorFull"></div>
 
 
                                 <div class="Container100 ui-fluid">
                                     <div class="Card">
                                         <h:form>
-                                            <p:panel id="panel" header="Create Saving Account">
+                                            <p:panel id="panel" header="Create Fixed Deposit Account">
                                                 <p:messages id="msgs" />
 
                                                 <h:panelGrid columns="3" id="createSavingAccount" cellpadding="5">                   
@@ -82,17 +82,12 @@ and open the template in the editor.
                                                     <p:message for="customerFamilyInfo" display="icon" />
 
 
-                                                    <h:outputLabel for="savingAccountType" value="Saving Account Type:" />
-                                                    <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}">
-
-                                                        <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
-                                                        <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
-                                                    </p:selectOneMenu>
+                                                 
                                                 </h:panelGrid>
 
 
                                                 <div class="EmptyBox20"></div>   
-                                                <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />
+                                                <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.createFixedDepositAccount}" value="Submit" />
 
 
 

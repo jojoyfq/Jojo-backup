@@ -8,6 +8,7 @@ package CommonEntity.Session;
 import CommonEntity.Customer;
 
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
@@ -16,6 +17,7 @@ import Exception.UserExistException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import com.twilio.sdk.TwilioRestException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -35,12 +37,11 @@ public interface AccountManagementSessionBeanLocal {
     public void createSavingAccountExistingCustomer(Long customerID, String savingAccountName) throws UserAlreadyHasSavingAccountException, EmailNotSendException;
     
 //Update Account Details  
-    public Customer diaplayCustomer(String ic);
-
+public Customer diaplayCustomer(String ic) throws ListEmptyException;
     public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException;
 
 //Activation function
-    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth, String phoneNumber) throws UserNotExistException, UserAlreadyActivatedException;
+    public Customer activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth, String phoneNumber) throws UserNotExistException, UserAlreadyActivatedException;
  
 
     public String verifyAccountBalance(String ic);
@@ -63,4 +64,8 @@ public boolean updateAccountStatus(String ic);
      public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException;
  public Long lockAccount(Long customerId);
  public Customer diaplayCustomerId(Long id);
+//Create Fixed Deposit Account - 1st page - create online banking account
+    public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException;
+ //Create Fixed Deposit Account - 2nd page - configure fixed deposit account 
+    public Long createFixedAccount(Customer customer, BigDecimal amount, String duration)throws EmailNotSendException;
 }

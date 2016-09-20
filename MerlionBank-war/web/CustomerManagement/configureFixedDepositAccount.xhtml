@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<f:view>
+    <h:head>
+        <title>Create Fixed Deposit Account</title>
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"/>-->
+    </h:head>
+    
+    <h:body>
+        <h:form>
+            <p:panel id ="panel" header="Open a Fixed Deposit Account">
+                <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+
+                    <h:outputLabel for="amount" value="Amount(S$):" />
+                    <p:inputText id="amount" value="#{commonInfraManagedBean.amount}" label="amount" required="true" requiredMessage="Please enter your amount!" />
+                    <p:message for="amount" display="icon"/>
+                    <h:outputLabel />
+
+
+                    <h:outputLabel for="term" value="Deposit Term(Months):" />
+                    <h:selectOneMenu id="duration" value="#{commonInfraManagedBean.duration}" label="duration" required="true" requiredMessage="Please choose the duration!">
+                        <f:selectItem itemValue="3" itemLabel="3"/>
+                        <f:selectItem itemValue="6" itemLabel="6"/>
+                        <f:selectItem itemValue="12" itemLabel="12"/>
+                        <f:selectItem itemValue="24" itemLabel="24"/>    
+                    </h:selectOneMenu> 
+                <p:message for="duration" display="icon"/>
+                </h:panelGrid>
+                
+
+                <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.configureFixedDeposit}" value="Submit" />
+
+                 
+            </p:panel>
+            <h4> Note:The start of the deposit term will be 7 days after account opening.</h4>
+        </h:form>
+    </h:body>
+    </f:view>
+</html>
