@@ -10,6 +10,8 @@ import DepositEntity.Payee;
 import DepositEntity.SavingAccount;
 import DepositEntity.TransactionRecord;
 import DepositEntity.TransferRecord;
+import Exception.PayeeNotFoundException;
+import Exception.TransferException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +45,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     private Long customerID;
 
     @Override
-    public Boolean intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) {
+    public void intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount)throws TransferException {
         BigDecimal giverBalance;
         BigDecimal recipientBalance;
         BigDecimal updatedGiverBalance;
@@ -57,7 +59,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
 
         //if balance<transferAmount, the transfer is not allowed, return false
         if (giverBalance.compareTo(transferAmount) == -1) {
-            return false;
+            throw new TransferException("Your saving account " + giverBankAccountNum + " does not have enough fund!");
         } else {
 
             Query m = em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :recipientBankAccountNum");
@@ -66,7 +68,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
 
             //if the query returns an empty result, then the recipientAccountNum doesn't exists
             if (recipientSavingAccounts.isEmpty()) {
-                return false;
+                throw new TransferException("The Recipient Account Number You have Entered is incorrect!");
             } else {
 
                 SavingAccount recipientSavingAccount = recipientSavingAccounts.get(0);
@@ -84,20 +86,21 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 TransferRecord transferRecord = new TransferRecord("TF", transferAmount, "settled", "iBanking Transfer",currentTimestamp,giverBankAccountNum,recipientBankAccountNum, "intraTransfer","MerlionBank","MerlionBank");
                 em.persist(transferRecord);
                 em.flush();
-                return true;
+                
+                System.out.println("transfer successfully!");
             }
         }
 
     }
 
     @Override
-    public Boolean addPayee(Long payeeAccount, String payeeName, Long customerID) {
+    public void addPayee(Long payeeAccount, String payeeName, Long customerID) throws PayeeNotFoundException {
 
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :payeeAccount");
         q.setParameter("payeeAccount", payeeAccount);
         List<SavingAccount> payeeAccountLists = q.getResultList();
         if (payeeAccountLists.isEmpty()) {
-            return false;
+            throw new PayeeNotFoundException("The Payee Account You have Entered is incorrect! Please Enter Again!");
         } else {
             SavingAccount payeeAccountList = payeeAccountLists.get(0);
 
@@ -110,7 +113,8 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             List<Customer> customers = m.getResultList();
             Customer customer = customers.get(0);
             customer.getPayees().add(payee);
-            return true;
+            
+            System.out.print("Add Payee Success!");
         }
     }
 

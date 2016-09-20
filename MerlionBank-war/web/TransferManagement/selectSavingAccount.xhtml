@@ -26,16 +26,20 @@
 
                     <div class="Container80 NoPadding Responsive50 ui-fluid">
                         <h:form>
-                            <div class="Container70 Responsive50">
-                                <p:selectOneMenu id="savingAccountList" value="#{transferManagedBean.giverAccountNumLong}">
-                                    <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
-                                    <f:selectItems value="#{transferManagedBean.savingAccountList}" />
-                                </p:selectOneMenu>  
-                            </div>
-                            <div class="Container30 Responsive50">
-                                <p:commandButton value="Submit" id="gotointraTransfer"
-                                                 actionListener="#{transferManagedBean.goToIntraTransferPage}"/>   
-                            </div>
+                            <p:panel id="panel" header="Select Your Saving Account">
+                            <p:messages id="msgs" />
+                            
+                                <div class="Container70 Responsive50">
+                                    <p:selectOneMenu id="savingAccountList" value="#{transferManagedBean.giverAccountNumLong}">
+                                        <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
+                                        <f:selectItems value="#{transferManagedBean.savingAccountList}" />
+                                    </p:selectOneMenu>  
+                                </div>
+                                <div class="Container30 Responsive50">
+                                    <p:commandButton value="Submit" id="gotointraTransfer"
+                                                     actionListener="#{transferManagedBean.goToIntraTransferPage}"/>   
+                                </div>
+                            </p:panel>
                         </h:form>
                     </div>
 
