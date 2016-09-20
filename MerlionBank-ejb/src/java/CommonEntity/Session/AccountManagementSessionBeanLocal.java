@@ -8,6 +8,7 @@ package CommonEntity.Session;
 import CommonEntity.Customer;
 
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
@@ -36,12 +37,11 @@ public interface AccountManagementSessionBeanLocal {
     public void createSavingAccountExistingCustomer(Long customerID, String savingAccountName) throws UserAlreadyHasSavingAccountException, EmailNotSendException;
     
 //Update Account Details  
-    public Customer diaplayCustomer(String ic);
-
+public Customer diaplayCustomer(String ic) throws ListEmptyException;
     public void updateProfile(String ic, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal) throws UserExistException;
 
 //Activation function
-    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth, String phoneNumber) throws UserNotExistException, UserAlreadyActivatedException;
+    public Customer activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth, String phoneNumber) throws UserNotExistException, UserAlreadyActivatedException;
  
 
     public String verifyAccountBalance(String ic);
@@ -64,15 +64,19 @@ public boolean updateAccountStatus(String ic);
      public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException;
  public Long lockAccount(Long customerId);
  public Customer diaplayCustomerId(Long id);
- 
- //Create Fixed Deposit Account - 1st page - create online banking account
+
+//Create Fixed Deposit Account - 1st page - create online banking account
     public Customer createFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException;
-//Create Fixed Deposit Account - 2nd page - configure fixed deposit account
-    public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration)throws EmailNotSendException;
+ //Create Fixed Deposit Account - 2nd page - configure fixed deposit account 
+    public Long createFixedAccount(Customer customer, BigDecimal amount, String duration)throws EmailNotSendException;
+
+ 
+
 
 //Teller Create Fixed Deposit Account - 1st page - create online banking account
     public Customer tellerCreateFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo,String enterPassword) throws UserExistException, EmailNotSendException;
 
  //Teller Create saving Account 
     public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException;
+
 }

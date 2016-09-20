@@ -12,6 +12,7 @@ import Exception.EmailNotSendException;
 import Exception.UserExistException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -54,14 +55,20 @@ public class CommonInfraManagedBean implements Serializable {
 
     private String savingAccountType;
     private Long savingAccountID;
+    private BigDecimal amount;
+    private Date dateOfStart;
+    private Date dateOfEnd;
+    private String duration;
+    private Long depositAccountNumber;
+    
 
+    public Long getDepositAccountNumber() {
+        return depositAccountNumber;
 
-    public Long getSavingAccountID() {
-        return savingAccountID;
     }
 
-    public void setSavingAccountID(Long savingAccountID) {
-        this.savingAccountID = savingAccountID;
+    public void setDepositAccountNumber(Long depositAccountNumber) {
+        this.depositAccountNumber = depositAccountNumber;
     }
 
 
@@ -90,20 +97,19 @@ public class CommonInfraManagedBean implements Serializable {
 
     public void setAllVariables(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
 
+        if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null && savingAccountType != null) {
+            if (FacesContext.getCurrentInstance().getResponseComplete()) {
+                System.out.println("lala");
+                return;
+            }
 
-        if(ic!=null && customerName!=null && customerGender!=null && customerDateOfBirth!=null && customerAddress!=null && customerEmail!=null && customerPhoneNumber!=null && customerOccupation!=null && customerFamilyInfo!=null &&savingAccountType!=null){
-        if (FacesContext.getCurrentInstance().getResponseComplete()) {
-            System.out.println("lala");
-            return;
-        }
 
-        try {
-            System.out.println("ahdhdhdhdaad ");
+            try {
+                System.out.println("ahdhdhdhdaad ");
 
-          //  try {
+                //  try {
                 //savingAccountType = (SavingAccountType) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("savingAccountType");
-
-      //  savingAccountID = savingAccountType.getId();
+                //  savingAccountID = savingAccountType.getId();
                 //          }catch()
 
 //            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
@@ -127,8 +133,6 @@ public class CommonInfraManagedBean implements Serializable {
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-
-
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -140,14 +144,46 @@ public class CommonInfraManagedBean implements Serializable {
 
             } catch (EmailNotSendException ex1) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex1.getMessage());
-
-
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
         } else {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
 
+
+    }
+
+    public void createFixedDepositAccount(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
+        try {
+            if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null ) {
+
+                customer = amsbl.createFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
+              //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
+              //  amsbl.createFixedAccount(customer, amount, duration);
+            } else {
+                System.out.println("Message from managed bean: please do not leave blanks!");
+            }
+        } catch (UserExistException | EmailNotSendException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void configureFixedDeposit(ActionEvent event) throws EmailNotSendException {
+        try {
+            System.out.println("*******Customer IC "+customer.getIc());
+            
+            Long check = amsbl.createFixedAccount(customer, amount, duration);
+            if (customer.getId().equals(check)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your Account created Successfully!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } catch (EmailNotSendException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        }
 
     }
 
@@ -261,6 +297,46 @@ public class CommonInfraManagedBean implements Serializable {
 
     public void setSavingAccountType(String savingAccountType) {
         this.savingAccountType = savingAccountType;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public Date getDateOfStart() {
+        return dateOfStart;
+    }
+
+    public void setDateOfStart(Date dateOfStart) {
+        this.dateOfStart = dateOfStart;
+    }
+
+    public Date getDateOfEnd() {
+        return dateOfEnd;
+    }
+
+    public void setDateOfEnd(Date dateOfEnd) {
+        this.dateOfEnd = dateOfEnd;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public Long getSavingAccountID() {
+        return savingAccountID;
+    }
+
+    public void setSavingAccountID(Long savingAccountID) {
+        this.savingAccountID = savingAccountID;
     }
 //        public void viewOneCustomer() throws IOException {
 //        //this.ic = selectedCustomer.getIc();

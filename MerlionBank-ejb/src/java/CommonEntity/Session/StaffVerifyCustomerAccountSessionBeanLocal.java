@@ -18,7 +18,7 @@ import javax.ejb.Local;
 @Local
 public interface StaffVerifyCustomerAccountSessionBeanLocal {
  //system retrieve list of pending verification customers
-public List<Customer> viewPendingVerificationList()throws ListEmptyException;  
+public List<Customer> viewPendingVerificationList()/*throws ListEmptyException*/;  
 public boolean verifySavingAccountCustomer (Long staffID, Long customerID, String result,Long savingAccountId) throws EmailNotSendException;
 
 //staff verify customer and choose"reject" or "approve"

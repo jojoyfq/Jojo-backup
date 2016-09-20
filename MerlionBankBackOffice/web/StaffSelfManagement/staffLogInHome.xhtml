@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Merlion Bank</title>
+        <ui:insert name="head" />
+    </h:head>
+
+    <!--<h:body styleClass="BlackBack" >-->
+    <h:body>
+        <style type="text/css">
+            body {
+                background-image: url('.../resources/atlas-layout/images/singapore_merlionbg.jpg') ;
+                background-repeat: no-repeat;
+                background-size: 100%;
+            }
+        </style>
+
+
+        <div class="Wid80 MarAuto">
+            <div class="Wid80 MarAuto WidAutoOnMobile TexAlCenter">
+                <div style="margin-top:10rem;"></div>
+                <h:graphicImage name="images/the-merlion.svg" library="atlas-layout" style="height:45px;"/>
+                <span class="White Fs20 FontDosisRegular"><br/>Welcome to Merlion Bank</span>
+                <div class="EmptyBox30"></div>
+                <div class="Wid60 MarAuto WidAutoOnMobile">
+                    <div class="Container100">
+                        <div class="Card ui-fluid">
+                            <div class="Container100">
+                                <h:form id= "form" >
+                                    <div class="CardBigTopic TexAlCenter Purple">Login</div>
+                                    <div class="Container100">
+                                        <p:inputText id="ic" value="#{staffLogInManagedBean.staffIc}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
+                                        <p:message for="ic" display="icon" />
+                                    </div>
+                                    <div class="Container100">
+
+                                        <p:password id="password" value="#{staffLogInManagedBean.password}"  placeholder="Password" required="true" requiredMessage="Please fill in your password!" />
+                                        <p:message for="password"/>
+                                    </div>
+                                    <div class="Container100">
+
+                                        <h:outputLabel for="roleName" value="Role Name:" />
+                                        <p:selectOneMenu id="roleName" value="#{staffLogInManagedBean.roleName}" required="true" requiredMessage="Please choose one role!">
+
+                                            <f:selectItem itemLabel="Select the role you want to log in as" itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{staffLogInManagedBean.roleNames}" />   
+
+                                        </p:selectOneMenu>
+                                    </div>
+
+
+
+                                    <div class="Container100">
+                                        <center><p:captcha label="Captcha" theme="dark" rendered="#{staffLogInManagedBean.logInAttempts >= 3}" required="#{staffLogInManagedBean.logInAttempts >= 3}"  /></center>
+                                        <p:commandButton update="form" id="login" value="Login Now" styleClass="White Fs16" icon="ui-icon-script" actionListener="#{staffLogInManagedBean.staffLogIn}"/>
+                                    </div>
+
+
+                                </h:form>
+
+                                <h:form>
+                                    <div class="Container100 TexAlRight"><p:commandLink id="registerNewUser" value="New User? Register Now!" type="submit" actionListener="#{registerManagedBean.goToSelectAccountTypePage}"/></div>
+                                </h:form>
+
+                                <h:form>
+                                    <div class="Container100 TexAlRight"><p:commandLink update ="form" value="Forgot Your Password or Username?" type="submit" actionListener="#{resetPasswordManagedBean.goToResetPasswordVerifyCustomerDetailsPage}"/></div>
+                                </h:form>
+
+                            </div>
+                            <div class="EmptyBox20"></div>
+                            <div class="SeparatorFull"></div>
+                            <div class="EmptyBox20"></div>
+
+
+                            <div class="Container100"><p:button value="Activate Account" styleClass="GrayButton" /></div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+
+    </h:body>
+
+</html>

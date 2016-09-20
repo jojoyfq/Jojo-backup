@@ -15,6 +15,7 @@ import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
@@ -57,6 +58,7 @@ import java.util.Calendar;
 import static java.util.Collections.list;
 import java.util.GregorianCalendar;
 import java.util.List;
+import javax.ejb.EJB;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
@@ -74,6 +76,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     public static final int SALT_LENGTH = 8;
     @PersistenceContext
     private EntityManager em;
+    @EJB
     FixedDepositAccountSessionBeanLocal fdasbl;
 //    private GoogleMail gm;
 
@@ -277,12 +280,17 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
 
     @Override
-    public Customer diaplayCustomer(String ic) {
+    public Customer diaplayCustomer(String ic) throws ListEmptyException{
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
+        if(q.getResultList().isEmpty())
+            throw new ListEmptyException("Customer does not exist!");
+        else{
         List<Customer> temp = new ArrayList(q.getResultList());
         Customer customer = temp.get(temp.size() - 1);
+        
         return customer;
+        }
     }
 
     private void SendSavingAccountActivationEmail(String name, String email) throws MessagingException {
@@ -336,7 +344,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     //Activate account- 1st step verify account details
     @Override
-    public String activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth, String phoneNumber) throws UserNotExistException, UserAlreadyActivatedException {
+    public Customer activateAccountVerifyDetail(String ic, String fullName, Date dateOfBirth, String phoneNumber) throws UserNotExistException, UserAlreadyActivatedException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -366,8 +374,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
         System.out.println(customer.getDateOfBirth());
         if (!fullName.equals(customer.getName())) {
-            //throw new UserNotExistException("Username " + ic + "invaid account details");
-            return customer.getName();
+            throw new UserNotExistException("Username " + ic + "invaid account details");
+            //return customer.getName();
 
         } else if (!dateOfBirth.equals(customer.getDateOfBirth())) {
             throw new UserNotExistException("Username " + ic + "invaid account details");
@@ -376,7 +384,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new UserNotExistException("Username " + ic + "invaid account details");
             //return customer.getPhoneNumber();
         } else {
-            return ic;
+            return customer;
         }
 
     }
@@ -712,9 +720,40 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     //Create Fixed Deposit Account - 2nd page - configure fixed deposit account
     @Override
-    public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration) throws EmailNotSendException {
-        Long accountNumber = fdasbl.createFixedAccount(customer.getId(), amount, dateOfStart, dateOfEnd, duration);
-        String password = GeneratePassword.createPassword();
+
+    public Long createFixedAccount(Customer customer, BigDecimal amount, String duration)throws EmailNotSendException{
+        //compute start date
+        Calendar calE;
+  Calendar calS;
+  
+            calS = GregorianCalendar.getInstance();
+            calS.add(GregorianCalendar.DATE, 7);
+            Date dateOfStart = calS.getTime();
+            
+            calE = Calendar.getInstance();
+            calE.setTime(dateOfStart);
+    
+            Date dateOfEnd;
+            //compute end date
+            if (duration.equals("3")){
+              calE.add(Calendar.MONTH, 3);
+            } else if (duration.equals("6")){
+              calE.add(Calendar.MONTH, 6);
+            }
+            else if (duration.equals("12")){
+              calE.add(Calendar.MONTH, 12);
+            }
+            else if (duration.equals("24")){
+              calE.add(Calendar.MONTH, 24);
+            }
+            
+            dateOfEnd=calE.getTime();
+           
+        System.out.println("@@@@@@@"+customer.getIc()+"@@@@@@"+amount+"@@@@@"+dateOfStart +"@@@@"+dateOfEnd+"@@@@@@@@@@"+duration);
+       Long accountNumber=fdasbl.createFixedAccount(customer.getId(), amount, dateOfStart, dateOfEnd, duration);
+       System.out.println("accountNumber"+ accountNumber);
+     String password = GeneratePassword.createPassword();
+
         String tempPassword = password;
 
         password = passwordHash(password + customer.getOnlineAccount().getSalt());

@@ -30,10 +30,10 @@ import javax.ejb.Local;
 public interface StaffManagementSessionBeanLocal {
 
     // create role without assigning permissions
-    public Long createRole(Long staffId, String roleName) throws RoleAlreadyExistedException;
+    public StaffRole createRole(Long staffId, String roleName) throws RoleAlreadyExistedException;
 
 // System administrators grant permissions for different roles
-    public boolean grantRole(Long staffId, Long staffRoleId, boolean systemUserWorkspace, boolean systemUserAccount, boolean operationalCRM,
+    public boolean grantRole(Long staffId, String roleName, boolean systemUserWorkspace, boolean systemUserAccount, boolean operationalCRM,
             boolean collaborativeCRM, boolean fixedDeposit, boolean savingAccount,
             boolean counterCash, boolean debitCard, boolean creditCard, boolean secureLoan, boolean unsecureLoan,
             boolean billModule, boolean transferModule, boolean customerPlan, boolean executedPlan, boolean finalcialInstrument,
@@ -54,24 +54,22 @@ public interface StaffManagementSessionBeanLocal {
     public boolean deletePermission(Long staffId, Long staffRoleId, Long permissionId);
 
 // Create staff, at the same time assign staff roles
-    public boolean createStaff(Long staffID, String staffIc, String staffName, String staffEmail, String mobileNumber, String status) throws UserExistException, EmailNotSendException;
+    public Staff createStaff(Long staffID, String staffIc, String staffName, String staffEmail, String mobileNumber, String status) throws UserExistException, EmailNotSendException;
 
     public List<StaffRole> displayListOfRole();
 
-    public Long assignStaffRole(Long staffId, Long newStaffId, Long staffRoleId) throws StaffRoleExistException;
+    public Long assignStaffRole(Long staffId, Long newStaffId, String staffRoleName) throws StaffRoleExistException;
 
 //Activate account- 1st step verify account details
     public Long activateAccountVerifyDetail(String staffIc, String fullName, String email) throws UserNotExistException, UserAlreadyActivatedException;
 
     //Activate account - 2nd intial password reset
-
     public Long updatePassword(Long staffId, String oldPassword, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UserNotExistException;
 
     //Activate account - 3rd step update account status
-
     public boolean updateAccountStatus(Long staffId);
 
-  //view system users
+    //view system users
     public List<Staff> displayListOfStaff();
 
 // delete staff, 1st delete staff, 2nd delete staff from role
@@ -91,12 +89,14 @@ public interface StaffManagementSessionBeanLocal {
     public Staff forgetPasswordVerifyDetail(String ic, String fullName, String email) throws UserNotExistException, UserNotActivatedException;
 
     public boolean updateForgetPassword(Staff staff, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException;
-    
-    //log in
-    public Staff checkLogin(String ic, String password,StaffRole staffRole) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException ;
 
-     // invalid log in - acccount lock
+    //log in
+    public Long checkLogin(String ic, String password, String staffRoleName) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException;
+
+    public Staff viewStaff(Long staffID) throws UserNotExistException;
+
+    // invalid log in - acccount lock
+
     public Long lockAccount(Long staffId);
     
-    public Staff viewStaff(Long staffID)throws UserNotExistException;
 }
