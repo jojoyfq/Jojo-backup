@@ -1,51 +1,81 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:define name="head">
 
-    <f:view>
-        <h:head>
-            <title>View Transaction Records</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        </h:head>
-        <h:body>
+    </ui:define>
 
-            <h:form>
-                <p:panel id="viewTransactionRecord" header="Your Transaction Records">
+    <ui:define name="content">
 
-                    <h:panelGrid columns="5" cellpadding="5">
-                        <p:dataTable var="TransactionRecord" value="#{savingAccountManagedBean.transactionRecordList}">
-                            <p:column headerText="Date">
-                                <h:outputLabel value="#{TransactionRecord.get(0)}" >
-                                 <f:convertDateTime pattern="dd/MM/yyyy" />
-                                </h:outputLabel>
-                            </p:column>
+        <!-- Left Column -->
+        <div class="Container5 NoPadding Responsive100">
 
-                            <p:column headerText="Code">
-                                <h:outputText value="#{TransactionRecord.get(1)}" />
-                            </p:column>
-                            
-                            <p:column headerText="Reference No">
-                                <h:outputText value="#{TransactionRecord.get(2)}" />
-                            </p:column>
-                            
-                            <p:column headerText="Debit">
-                                <h:outputText value="#{TransactionRecord.get(3)}" />
-                            </p:column>
-                            
-                            <p:column headerText="Credit">
-                                <h:outputText value="#{TransactionRecord.get(4)}" />
-                            </p:column>
-                            
-                          
-                        </p:dataTable>
-                    </h:panelGrid>
-                </p:panel>
-            </h:form>
-        </h:body>
-    </f:view>
-</html>
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container90 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <p:panel id="viewTransactionRecord" header="Your Transaction Records">
+
+                                <h:panelGrid columns="5" cellpadding="5">
+                                    <p:dataTable var="TransactionRecord" value="#{savingAccountManagedBean.transactionRecordList}">
+                                        <p:column headerText="Date">
+                                            <h:outputLabel value="#{TransactionRecord.get(0)}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputLabel>
+                                        </p:column>
+
+                                        <p:column headerText="Code">
+                                            <h:outputText value="#{TransactionRecord.get(1)}" />
+                                        </p:column>
+
+                                        <p:column headerText="Reference No">
+                                            <h:outputText value="#{TransactionRecord.get(2)}" />
+                                        </p:column>
+
+                                        <p:column headerText="Debit">
+                                            <h:outputText value="#{TransactionRecord.get(3)}" />
+                                        </p:column>
+
+                                        <p:column headerText="Credit">
+                                            <h:outputText value="#{TransactionRecord.get(4)}" />
+                                        </p:column>
+
+
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+
+
+                    </div>
+
+
+
+
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container5 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,52 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pa="http://primefaces.org/atlas">
+
+    <h:form id="menuform">
+
+        <div id="layout-menu-cover">
+            <pa:menu id="layout-menu" widgetVar="AtlasMenu">
+
+                <p:menuitem id="pa_dashboards" value="Home" outcome="/StaffDashboard" />
+
+
+                <p:submenu id="staff_management" label="Staff Management">
+
+                </p:submenu>
+
+                <p:submenu id="customer_management" label="Customer Management">
+
+                </p:submenu>
+                
+                <p:submenu id="deposit_management" label="Deposit Management">
+ 
+                </p:submenu>
+                
+                <p:submenu id="card_management" label="Card Management">
+                
+                </p:submenu>
+
+                <p:menuitem id="loan_management" value="Loan Management" />
+                
+                <p:submenu id="bill_and_transfer" label="Bill and Transfer">
+                
+                </p:submenu>
+
+                <p:submenu id="wealth_management" label="Wealth Management">
+                </p:submenu>
+                
+                <p:submenu id="portfolio_management" label="Portfolio Management">
+                </p:submenu>
+                
+                <p:submenu id="customer_analytics" label="Customer Analytics">
+                </p:submenu>
+
+            </pa:menu>
+        </div>
+    </h:form>
+
+</ui:composition>

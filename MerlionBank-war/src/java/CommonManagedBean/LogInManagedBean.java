@@ -7,6 +7,7 @@ package CommonManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import Exception.ListEmptyException;
 import Exception.PasswordNotMatchException;
 import Exception.UserExistException;
 import Exception.UserNotActivatedException;
@@ -60,7 +61,7 @@ public class LogInManagedBean implements Serializable {
     private Customer selectedCustomer;
     private String birthdate;
     private String customerPassword;
-    private final int max_attempts = 5;
+    private final int max_attempts = 6;
     private int logInAttempts;
 //    private String accountType = "Saving Account";
 
@@ -159,8 +160,13 @@ public class LogInManagedBean implements Serializable {
 //        }
 //
 //    }
-//
+
+    
+public void modifyUserProfile(){}
+   
+
     public void customerLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
+
         try {
             if (ic != null && customerPassword != null) {
                 customerId = amsbl.checkLogin(ic, customerPassword);
@@ -213,7 +219,7 @@ public class LogInManagedBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public void viewOneCustomer() throws IOException {
+    public void viewOneCustomer() throws IOException, ListEmptyException{
         //this.ic = selectedCustomer.getIc();
         selectedCustomer = amsbl.diaplayCustomer(ic);
         System.out.println("Username is " + selectedCustomer);
@@ -230,7 +236,7 @@ public class LogInManagedBean implements Serializable {
         this.customerPhoneNumber = selectedCustomer.getPhoneNumber();
         this.customerOccupation = selectedCustomer.getOccupation();
         this.customerFamilyInfo = selectedCustomer.getFamilyInfo();
-        this.customerFinancialGoal = selectedCustomer.getFinancialGoal();
+    //    this.customerFinancialGoal = selectedCustomer.getFinancialGoal();
         System.out.println(customerName);
         System.out.println(customerGender);
         System.out.println(customerDateOfBirth);
@@ -238,7 +244,7 @@ public class LogInManagedBean implements Serializable {
         System.out.println(customerPhoneNumber);
         System.out.println(customerOccupation);
         System.out.println(customerFamilyInfo);
-        System.out.println(customerFinancialGoal);
+     //   System.out.println(customerFinancialGoal);
         System.out.println(selectedCustomer.getId());
         System.out.println(selectedCustomer.getIc());
 

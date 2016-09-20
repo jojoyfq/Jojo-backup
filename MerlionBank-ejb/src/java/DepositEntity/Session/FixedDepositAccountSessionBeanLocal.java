@@ -51,7 +51,7 @@ public interface FixedDepositAccountSessionBeanLocal {
 
     public void logAction(String description, Long customerId);
 
-    public void earlyWithdraw(Long fixedAccountNum, Long savingAccountNum);
+    public BigDecimal earlyWithdraw(Long fixedAccountNum, Long savingAccountNum);
 
     public BigDecimal calculateInterestEarly(Long accountNum, Double interestRate);
 
@@ -66,5 +66,11 @@ public interface FixedDepositAccountSessionBeanLocal {
     public BigDecimal getBalance(Long accountNum);
 
     public void checkFixedDepositAccountStatus();
+
+    public void normalWithdrawMark(Long fixedAccountNum, Long savingAccountNum);
+
+    public void normalWithdrawTakeEffect(Long fixedAccountNum, Long savingAccountNum);
+
+    public BigDecimal calculateInterestNormal(Long accountNum);
     
 }

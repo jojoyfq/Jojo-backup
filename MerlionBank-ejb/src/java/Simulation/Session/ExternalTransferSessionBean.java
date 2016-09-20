@@ -8,9 +8,12 @@ package Simulation.Session;
 import CommonEntity.Staff;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
+import DepositEntity.TransferRecord;
 import Exception.AccountNotExistedException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -27,7 +30,7 @@ public class ExternalTransferSessionBean implements ExternalTransferSessionBeanL
     private EntityManager em;
 
 @Override
-public boolean transferSavingAccount(Long accountNumber, BigDecimal amount)throws AccountNotExistedException{
+public boolean transferSavingAccount(Long accountNumber, BigDecimal amount,Long giverBankAccountNum, String giverBankAccountName)throws AccountNotExistedException{
    Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :accountNumber");
         q.setParameter("accountNumber", accountNumber);
         List<SavingAccount> savingAccounts = new ArrayList(q.getResultList()); 
@@ -41,6 +44,13 @@ public boolean transferSavingAccount(Long accountNumber, BigDecimal amount)throw
         savingAccount.setAvailableBalance(targetAvailableBalance);
         em.persist(savingAccount);
         em.flush();
+        
+        Date currentTime = Calendar.getInstance().getTime();
+                java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+                
+                TransferRecord transferRecord = new TransferRecord("TF", amount, "settled", "Interbank Transfer",currentTimestamp,giverBankAccountNum,accountNumber, "interTransfer",giverBankAccountName,"MerlionBank");
+                em.persist(transferRecord);
+                em.flush();
         return true;
 }
 
