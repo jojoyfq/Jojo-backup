@@ -26,9 +26,8 @@
 
                     <div class="Container80 NoPadding Responsive50 ui-fluid">
                         <h:form>
-                            <p:panel id="panel" header="Create Saving Account">
-                            <p:messages id="msgs" />
-                                
+                            
+                
                             <div class="Container70 Responsive50">
                                 <p:selectOneMenu id="savingAccountType" value="#{savingAccountManagedBean.savingAccountName}">
                                     <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
@@ -39,7 +38,7 @@
                                 <p:commandButton  actionListener="#{savingAccountManagedBean.createSavingAccountExistingCustomer}" value="Submit" /> 
                             </div>
                                 
-                            </p:panel>
+                            
                         </h:form>
                     </div>
 
