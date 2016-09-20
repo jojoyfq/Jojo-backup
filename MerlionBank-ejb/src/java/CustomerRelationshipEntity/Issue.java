@@ -44,6 +44,15 @@ public class Issue implements Serializable {
   
     @ManyToOne
     private CaseEntity caseEntity;
+
+    public CaseEntity getCaseEntity() {
+        return caseEntity;
+    }
+
+    public void setCaseEntity(CaseEntity caseEntity) {
+        this.caseEntity = caseEntity;
+    }
+    
     
     public String getContent() {
         return content;
@@ -58,15 +67,15 @@ public class Issue implements Serializable {
     
     public Issue(){
     }
-    
-    public Issue(Long id, String content, String issueType, String status, String assignedStaff, Double rating) {
-        this.id = id;
+
+    public Issue(String content, String issueType, String status, String assignedStaff, CaseEntity caseEntity) {
         this.content = content;
         this.issueType = issueType;
         this.status = status;
         this.assignedStaff = assignedStaff;
-        this.rating = rating;
+        this.caseEntity = caseEntity;
     }
+   
     public Long getId() {
         return id;
     }

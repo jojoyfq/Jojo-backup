@@ -31,12 +31,11 @@ public class CaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String content;
-
-  
     private String status;
     @Temporal(TemporalType.TIMESTAMP)
     private Date caseCreatedTime;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date caseClosedTime;
     
     @ManyToOne
     private Customer customer;
@@ -45,9 +44,16 @@ public class CaseEntity implements Serializable {
     @OneToMany(cascade={CascadeType.ALL},mappedBy="caseEntity")
     private List<Issue> issues;
     
-   // @ManyToOne
+    public Date getCaseClosedTime() {
+        return caseClosedTime;
+    }
+
+    // @ManyToOne
     //private CaseStaff caseStaff;
-    
+    public void setCaseClosedTime(Date caseClosedTime) {    
+        this.caseClosedTime = caseClosedTime;
+    }
+
     public Date getCaseCreatedTime() {
         return caseCreatedTime;
     }
@@ -93,13 +99,6 @@ public class CaseEntity implements Serializable {
      //   this.issues = new ArrayList<Issue>();
 }
     
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
     public Long getId() {
         return id;
     }
