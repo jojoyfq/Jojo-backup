@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <h:head>
+            <f:facet name="first">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+            </f:facet>
+            <title>Create New Role</title>
+        </h:head>
+
+        <h:body styleClass="BlackBack">
+
+            <div class="Wid100 MarAuto">
+                <div class="Wid80 MarAuto WidAutoOnMobile">
+                    <div style="margin-top:10rem;"></div>
+
+                    <div class="Wid60 MarAuto WidAutoOnMobile">
+                        <div class="Container100">
+                            <div class="Card ui-fluid">
+                                <div class="CardBigTopic TexAlCenter Purple">Create New Saving Account</div>
+                                <div class="SeparatorFull"></div>
+
+
+                                <div class="Container100 ui-fluid">
+                                    <div class="Card">
+                                        <h:form>
+                                            <p:panel id="panel" header="Create Saving Account">
+                                                <p:messages id="msgs" />
+
+                                                <h:panelGrid columns="3" id="createRole" cellpadding="5">                   
+                                                    <h:outputLabel for="staffId" value="ID" />
+                                                    <h:outputLabel id="staffId" value="#{staffManagementManagedBean.staffId}" />
+                                                    <h:outputLabel/>
+
+                                                    <h:outputLabel for="roleName" value="Role Name:" />
+                                                    <p:inputText id="roleName" value="#{staffManagementManagedBean.roleName}" label="roleName" required="true" requiredMessage="Please input the role name"/>
+                                                    <p:message for="roleName" display="icon"/>
+                                                    <h:outputLabel for="roleName" value="Role Name:" />
+                                                    <p:selectOneMenu id="roleName" value="#{staffManagementManagedBean.allRoles}">
+
+                                                        <f:selectItem itemLabel="Select Roles" itemValue="" noSelectionOption="true" />
+                                                        <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
+                                                    </p:selectOneMenu>
+
+                                                </h:panelGrid>
+
+
+                                                <div class="EmptyBox20"></div>   
+                                                <p:commandButton update="panel" actionListener="#{staffManagementManagedBean.adminCreateStaffRole}" value="Submit" />
+
+
+
+                                            </p:panel>
+
+
+                                        </h:form>                                        
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+
+
+        </h:body>
+    </f:view>
+</html>

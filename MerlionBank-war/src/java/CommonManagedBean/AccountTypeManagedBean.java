@@ -25,9 +25,10 @@ import javax.faces.event.ActionEvent;
 @Named(value = "accountTypeManagedBean")
 @SessionScoped
 public class AccountTypeManagedBean implements Serializable {
-  private List accountTypes;
-  private String accountType = "Saving Account";
-  //private List data = new ArrayList();
+
+    private List accountTypes;
+    private String accountType;
+    //private List data = new ArrayList();
 
     public List getAccountTypes() {
         return accountTypes;
@@ -44,41 +45,46 @@ public class AccountTypeManagedBean implements Serializable {
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
-    
 
     /**
      * Creates a new instance of AccountTypeManagedBean
      */
     public AccountTypeManagedBean() {
     }
-    
+
     @PostConstruct
     public void init() {
-        
+
         try {
             accountTypes = new ArrayList();
             accountTypes.add("Saving Account");
+            accountTypes.add("Fixed Deposit Account");
             accountTypes.add("Credit Account");
             accountTypes.add("Loan Account");
             accountTypes.add("Wealth Managment Account");
             System.out.println(accountTypes);
-           
-        //    System.out.println("Account Type chosen is " + accountType);
+
+            //    System.out.println("Account Type chosen is " + accountType);
         } catch (Exception ex) {
             System.out.println(ex);
         }
 
     }
-     public void chooseAccountType(ActionEvent event) throws IOException {
+
+    public void chooseAccountType(ActionEvent event) throws IOException {
 
 //        FacesMessage msg;
 //        msg = new FacesMessage("Selected" + accountType);
-        System.out.println("Account Type chosen is " );
+        System.out.println("Account Type chosen is ");
         try {
             switch (accountType) {
                 case "Saving Account":
                     System.out.println("Saving account has been selected");
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/createSavingAccount.xhtml");
+                    break;
+                case "Fixed Deposit Account":
+                    System.out.println("Fixed deposit account has been selected");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/createFixedDepositAccount.xhtml");
                     break;
                 case "Credit Account":
                     System.out.println("This service is currently not available!");
@@ -97,5 +103,5 @@ public class AccountTypeManagedBean implements Serializable {
             System.out.println(ex);
         }
 
-     }
+    }
 }

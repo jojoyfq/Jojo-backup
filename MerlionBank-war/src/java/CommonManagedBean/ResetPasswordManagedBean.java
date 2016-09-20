@@ -34,7 +34,8 @@ import org.primefaces.context.RequestContext;
 @Named(value = "resetPasswordManagedBean")
 @SessionScoped
 public class ResetPasswordManagedBean implements Serializable {
-@Inject
+
+    @Inject
     private LogInManagedBean logInManagedBean;
 
     public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
@@ -63,18 +64,16 @@ public class ResetPasswordManagedBean implements Serializable {
         customer = new Customer();
     }
 
+    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException, TwilioRestException {
 
-    public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException,UserNotActivatedException, IOException, TwilioRestException{
-
-         //customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
-         System.out.println(customerIc);
+        //customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
+        System.out.println(customerIc);
         if (customerIc != null && customerName != null && dateOfBirth != null && customerEmail != null) {
             String msg = amsbl.forgetPasswordVerifyDetail(customerIc, customerName, dateOfBirth, customerEmail);
             System.out.println(msg);
             if (msg.equals(customerIc)) {
 
-                try 
-                {
+                try {
                     String msg2 = amsbl.sendTwoFactorAuthentication(customerIc);
                     System.out.println("Message displayed after 2fa  was sent: " + msg2);
                     if (msg2.equals(customerIc)) {
@@ -82,9 +81,7 @@ public class ResetPasswordManagedBean implements Serializable {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/SubmitTwoFA.xhtml");
 
                     }
-                } 
-                catch (TwilioRestException ex) 
-                {
+                } catch (TwilioRestException ex) {
 //                    Logger.getLogger(ResetPasswordManagedBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
@@ -109,13 +106,15 @@ public class ResetPasswordManagedBean implements Serializable {
             String errorMsg = amsbl.updateForgetPassword(customerIc, password, confirmPassword);
             System.out.println("after entring the confirmed password: " + errorMsg);
             amsbl.updateAccountStatus(customerIc);
+            if (!errorMsg.equals(customerIc)) {
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", errorMsg);
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            } else if (errorMsg.equals(customerIc)) {
+                //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
 
-           FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Password has been successfully changed!");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-
-            //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Submit", "erroMsg"));
+            }
         } catch (PasswordTooSimpleException ex) {
-             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
         }
@@ -191,7 +190,7 @@ public class ResetPasswordManagedBean implements Serializable {
         this.password = password;
     }
 
-    public void goToResetPasswordVerifyCustomerDetailsPage(ActionEvent event){
+    public void goToResetPasswordVerifyCustomerDetailsPage(ActionEvent event) {
         try {
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CustomerManagement/ResetPasswordVerifyCustomerDetails.xhtml");

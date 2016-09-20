@@ -17,8 +17,11 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -41,12 +44,17 @@ public class AccountActivationManagedBean implements Serializable {
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
-    private String customerIc = "S9276";
+    private String customerIc;
     private String customerName;
     private String phoneNumber;
     private String initialPassword;
     private String newPassword;
     private String confirmedPassword;
+
+    public void init() {
+        customer = new Customer();
+
+    }
 
     public String getConfirmedPassword() {
         return confirmedPassword;
@@ -65,51 +73,59 @@ public class AccountActivationManagedBean implements Serializable {
 //        this.dateOfBirth = dateOfBirth;
         try {
             if (customerIc != null && customerName != null && dateOfBirth != null && phoneNumber != null) {
-                String msg = amsbl.activateAccountVerifyDetail(customerIc, customerName, dateOfBirth, phoneNumber);
-                System.out.println("GAO MEI REN:" + msg);
-                if (msg.equals(customerIc)) {
-                    System.out.println("lala");
-                    String msg2 = amsbl.verifyAccountBalance(customerIc);
+                customer = amsbl.activateAccountVerifyDetail(customerIc, customerName, dateOfBirth, phoneNumber);
+                // System.out.println("GAO MEI REN:" + msg);
 
-                    if (msg2.equals(customerIc)) {
-                        System.out.println("Account activated successfully!");
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
-                    } else {
-                        System.out.println(msg2);
-                    }
+                System.out.println("lala");
+                if (!customer.getSavingAccounts().isEmpty()) {
+                    String msg2 = amsbl.verifyAccountBalance(customerIc);
                 } else {
-                    System.out.println(msg);
+                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
+
                 }
             } else {
                 System.out.println("Please dont leave blanks!");
             }
         } catch (UserNotExistException ex) {
-            System.out.println("User not existed!" + ex.getMessage());
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         } catch (UserAlreadyActivatedException ex1) {
-            System.out.println("Problem with activation");
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex1.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
 
     public void resetInitialPassword(ActionEvent event) throws PasswordTooSimpleException {
-        if(customerIc!=null && initialPassword!=null && newPassword!=null && confirmedPassword != null){
-        String msg = msg = amsbl.updatePassword(customerIc, initialPassword, newPassword, confirmedPassword);
+        try {
+            if (customerIc != null && initialPassword != null && newPassword != null && confirmedPassword != null) {
+                String msg = msg = amsbl.updatePassword(customerIc, initialPassword, newPassword, confirmedPassword);
 
-        System.out.println(msg);
+                System.out.println(msg);
 
-        if (msg.equals(customerIc)) {
-            System.out.println("Your password has been successfully changed!");
-            boolean msg2 = amsbl.updateAccountStatus(msg);
-            if (msg2 == true) {
-                System.out.println("Status has been updated!");
+                if (msg.equals(customerIc)) {
+                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has been successfully changed!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
+                    boolean msg2 = amsbl.updateAccountStatus(msg);
+                    if (msg2 == true) {
+                        System.out.println("Status has been updated!");
+                    } else {
+                        System.out.println("Status has NOT been updated!");
+
+                    }
+                } else {
+                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has been successfully changed!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                    System.out.println("password has not been changed!");
+                }
             } else {
-                System.out.println("Status has NOT been updated!");
-
+                System.out.println("Please do not leave blanks!");
             }
-        } else {
-            System.out.println("password has not been changed!");
-        }
-        }else{
-            System.out.println("Please do not leave blanks!");
+        } catch (PasswordTooSimpleException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
 
     }
@@ -165,9 +181,4 @@ public class AccountActivationManagedBean implements Serializable {
     /**
      * Creates a new instance of AccountActivationManagedBean
      */
-    public void init() {
-        customer = new Customer();
-
-    }
-
 }

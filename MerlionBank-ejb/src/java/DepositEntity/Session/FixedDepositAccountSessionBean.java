@@ -98,10 +98,11 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         }
 
         interestRate = rate.getInterestRate();
-        account = new FixedDepositAccount(accountNum, amount, balance, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
 
+        account = new FixedDepositAccount(accountNum, amount, balance, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
         em.persist(account);
         account.setCustomer(customer);
+
         List<FixedDepositAccount> fixedAccounts = new ArrayList<FixedDepositAccount>();
         //customer may alr have fixed acct
         if (customer.getFixedDepositeAccounts() == null) {
@@ -443,7 +444,6 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         dates.add(3, df.format(endNew));
         return dates;
     }
-
     @Override
     public BigDecimal calculateInterestNormal(Long accountNum) {
         account = this.getAccount(accountNum);
@@ -454,7 +454,6 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         interestAmount.setScale(4, RoundingMode.HALF_UP);
         return interestAmount;
     }
-
     @Override
     public void checkFixedDepositAccountStatus() {
 
@@ -556,6 +555,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     em.flush();
                     System.out.print("new dates set");
                 } else if(fixedDepositAccounts.get(i).getStatus().contains(",")){
+
                     //"withdrawl,account number"
                     //terminate the fixed deposit account 
                     //deposit the saving account
@@ -588,5 +588,4 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.println(content);
         sendEmail.run(email, subject, content);
     }
-
 }
