@@ -210,10 +210,11 @@ public class FixedDepositManagedBean implements Serializable {
     }
 
     public void transferToFixedSeparate(ActionEvent event) throws IOException {
-        if (savingAcctSelected != null && fixedDepositSelected != null && amountToTransferStr != null) {
+        if (savingAcctSelected != null && fixedDepositSelected != null) {
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             amountBD = fda.getAmount(fixedDepositSelected);
             amountLessBalance = fda.amountLessBalance(fixedDepositSelected);
+            
             ec.redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSeparateNext.xhtml");
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select accounts and enter amount");

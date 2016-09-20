@@ -76,7 +76,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         customer = em.find(Customer.class, customerId);
         //generate and check account number
         accountNum = this.generateFixedDepositNumber();
-        BigDecimal balance = new BigDecimal("0.0000"); //initial balance 
+        BigDecimal balance = new BigDecimal("0"); //initial balance 
         //find interest rate according to duration
 
         if (duration.equalsIgnoreCase("3")) {
@@ -124,7 +124,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.print("Demi" + account.getStartDate());
         System.out.println("Fixed Deposit account created successfullly");
         //for testting
-        account.setBalance(BigDecimal.valueOf(1000));
+       
         return accountNum;
     }
 
@@ -249,10 +249,18 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     @Override
     public BigDecimal amountLessBalance(Long accountNum) {
         account = this.getAccount(accountNum);
-        if ((account.getAmount().subtract(account.getBalance())).compareTo(BigDecimal.valueOf(0)) == 1) {
+        System.out.print("balance"+account.getBalance());
+        if(account.getBalance().equals(BigDecimal.valueOf(0))){
+            return account.getAmount();
+        }
+        else if((account.getAmount().subtract(account.getBalance())).compareTo(BigDecimal.valueOf(0)) == 1) {
+            System.out.print("balance =" +account.getBalance());
+            System.out.print("needed =" +account.getAmount().subtract(account.getBalance()));
             return account.getAmount().subtract(account.getBalance());
         } else {
-            return BigDecimal.valueOf(0);
+           System.out.print("this is wrong");
+           return BigDecimal.valueOf(0);
+            
         }
     }
 
@@ -454,7 +462,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         Calendar dayOfMature = GregorianCalendar.getInstance();
         //for testing purpose
         //+7 for testing purpose     
-        sevenDayToStart.add(Calendar.DATE, 7);
+        sevenDayToStart.add(Calendar.DATE, 0);
         Date dateToday1 = sevenDayToStart.getTime();
         String newstring1 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday1);
         System.out.println(newstring1);
@@ -517,8 +525,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             } else if (accountEndDay.equals(newstring3)) {
                 if (fixedDepositAccounts.get(i).getStatus().equals("renew") || fixedDepositAccounts.get(i).getStatus().equals("active")) {
                     System.out.println("get it renew pls !!!!");
-                    String duration = account.getDuration();
-                    Date endOld = account.getEndDate();
+     
+                    String duration = fixedDepositAccounts.get(i).getDuration();
+                    Date endOld = fixedDepositAccounts.get(i).getEndDate();
                     DateTime endOldTemp = new DateTime(endOld);
                     DateTime startNewTemp = endOldTemp.plus(Period.days(1));
                     DateTime endNewTemp = new DateTime();
@@ -531,16 +540,22 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     } else {
                         endNewTemp = startNewTemp.plus(Period.months(24));
                     }
-
+                    System.out.print("Dates calculated");
                     BigDecimal interestEnd = calculateInterestNormal(fixedDepositAccounts.get(i).getAccountNumber());
                     BigDecimal newBalance = fixedDepositAccounts.get(i).getBalance().add(interestEnd);
                     fixedDepositAccounts.get(i).setBalance(newBalance);
+                    System.out.print("new balance is **************" + newBalance);
                     em.flush();
+                    System.out.print("balance set");
                     fixedDepositAccounts.get(i).setStartDate(startNewTemp.toDate()); //set new start and end date
                     em.flush();
                     fixedDepositAccounts.get(i).setEndDate(endNewTemp.toDate());
                     em.flush();
-                } else if (fixedDepositAccounts.get(i).getStatus().contains(",")) {
+                    fixedDepositAccounts.get(i).setStatus("active");
+                    em.flush();
+                    System.out.print("new dates set");
+                } else if(fixedDepositAccounts.get(i).getStatus().contains(",")){
+
                     //"withdrawl,account number"
                     //terminate the fixed deposit account 
                     //deposit the saving account
