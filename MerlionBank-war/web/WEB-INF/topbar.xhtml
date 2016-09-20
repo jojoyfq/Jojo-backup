@@ -4,7 +4,8 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui">
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
 
 
     <!-- LAYOUT TOPBAR COVER -->
@@ -18,8 +19,12 @@
 
             <ul id="topbar-menu">
 
-                <li><a href="#" onclick="return messageListener();"><i class="icon-message"></i><span class="tb-menu-text"> Message </span><span class="bubble animated rubberBand">5</span></a></li>               
-
+                
+                <li>
+                    <h:form>
+                        <a jsf:id="link1" jsf:actionListener="#{messageManagedBean.customerViewAllMessages}" ><i class="icon-message"></i><span class="tb-menu-text"> Message </span><span class="bubble animated rubberBand"> #{messageManagedBean.countCusotmerUnreadEmail()} </span></a>              
+                    </h:form>
+                </li> 
                 <script type="text/javascript">
                     function messageListener() {
                         window.location.href = "/MerlionBank-war/MessageManagement/customerViewMessage.xhtml";
