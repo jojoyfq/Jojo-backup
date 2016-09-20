@@ -15,7 +15,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface ExternalTransferSessionBeanLocal {
-    public boolean transferSavingAccount(Long accountNumber, BigDecimal amount)throws AccountNotExistedException;
     public boolean transferFixedDepositAccount(Long accountNumber, BigDecimal amount)throws AccountNotExistedException;
-    
+    public boolean transferSavingAccount(Long accountNumber, BigDecimal amount,Long giverBankAccountNum, String giverBankAccountName)throws AccountNotExistedException;
 }
