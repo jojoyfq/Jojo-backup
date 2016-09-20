@@ -70,5 +70,9 @@ public boolean updateAccountStatus(String ic);
 //Create Fixed Deposit Account - 2nd page - configure fixed deposit account
     public Long createFixedAccount(Customer customer, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration)throws EmailNotSendException;
 
-    //public void checkOnlineBankingAccountStatus();
+//Teller Create Fixed Deposit Account - 1st page - create online banking account
+    public Customer tellerCreateFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo,String enterPassword) throws UserExistException, EmailNotSendException;
+
+ //Teller Create saving Account 
+    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException;
 }
