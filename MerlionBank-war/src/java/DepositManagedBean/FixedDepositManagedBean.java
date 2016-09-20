@@ -189,21 +189,6 @@ public class FixedDepositManagedBean implements Serializable {
 
         }
     }
-    //to return the most recently created fixed deposit account info after successful creation
- /*   public ArrayList<String> getLastDepositAccount(){
-     customerId = (String) FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-     ArrayList<String> result = fda.displayLastAccount(customerId);
-     // accountNum, endDate, amount
-     return result; 
-     }
-    
-     public void withdraw(){
-     customerId = (String) FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-     accountNumberStr = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("accountNumber");
-     accountNumber = Long.valueOf(accountNumberStr);
-     // havent finished  
-           
-     } **/
 
     public void transferToFixed(ActionEvent event) throws IOException {
 
@@ -269,6 +254,9 @@ public class FixedDepositManagedBean implements Serializable {
              this.updateList(customerId);   
              ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
              ec.redirect("/MerlionBank-war/FixedDepositManagement/earlyWithdrawNext.xhtml");
+             //log an action
+             String description = "Premature withdraw fixed deposit " + fixedDepositSelected+ " to saving account " + savingAcctSelected;
+             fda.logAction(description, customerId);
          }
              else{
                 amountBD = fda.getBalance(fixedDepositSelected);
@@ -278,8 +266,14 @@ public class FixedDepositManagedBean implements Serializable {
                 this.updateList(customerId);
              ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
              ec.redirect("/MerlionBank-war/FixedDepositManagement/normalWithdrawNext.xhtml");
+             //log an action
+             String description = "Set fixed deposit "+fixedDepositSelected+" as withdraw at end of term to saving account "+savingAcctSelected;
+             fda.logAction(description, customerId);
              
              }
+         }else{
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select accounts and withdraw time");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
          }
     }
     
@@ -293,12 +287,16 @@ public class FixedDepositManagedBean implements Serializable {
     public void renewFixed(ActionEvent event) throws IOException{
         fda.renewFixed(fixedDepositSelected);
         this.updateList(customerId);
+        //log an action
+        String description = "Renew fixed deposit "+fixedDepositSelected;
+        fda.logAction(description, customerId);
        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
        ec.redirect("/MerlionBank-war/FixedDepositManagement/renewFixedDepositSuccess.xhtml");
 
     }
     
     public void displayRenewInfo(ActionEvent event) throws IOException{
+       if(fixedDepositSelected != null){
        startDateString = fda.getRenewDates(fixedDepositSelected).get(0);
        endDateString = fda.getRenewDates(fixedDepositSelected).get(1);
        startDateNew = fda.getRenewDates(fixedDepositSelected).get(2);
@@ -306,6 +304,10 @@ public class FixedDepositManagedBean implements Serializable {
        amountBD = fda.getBalance(fixedDepositSelected);
        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
        ec.redirect("/MerlionBank-war/FixedDepositManagement/renewFixedDepositInfo.xhtml");
+       }else{
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select account");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+       }
 
     }
     

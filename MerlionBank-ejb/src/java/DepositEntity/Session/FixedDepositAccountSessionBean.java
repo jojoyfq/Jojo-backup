@@ -10,6 +10,7 @@ import CommonEntity.CustomerAction;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.FixedDepositRate;
 import DepositEntity.SavingAccount;
+import DepositEntity.TransferRecord;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.text.DateFormat;
@@ -47,7 +48,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private EntityManager em;
     private FixedDepositAccount account;
     private BigDecimal savingBalance; //from manage bean
-    private Long accountNumber; //generate 
+    private Long accountNum; //generate 
     private BigDecimal fixedAccountBalance; //from managed bean
     private String fixedDuration;//from managed bean
     //private BigDecimal amount; // amount the account should have 
@@ -71,26 +72,12 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         this.interest = interest;
     }
 
+    @Override
     public Long createFixedAccount(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration) {
 
         customer = em.find(Customer.class, customerId);
         //generate and check account number
-        accountNumber = Math.round(Math.random() * 99999999);
-        int a = 1;
-        while (a == 1) {
-            Query q2 = em.createQuery("SELECT c.accountNumber FROM FixedDepositAccount c");
-            List<Long> existingAcctNum = new ArrayList(q2.getResultList());
-
-            if (!existingAcctNum.isEmpty()) {
-                if (existingAcctNum.contains(accountNumber)) {
-                    accountNumber = Math.round(Math.random() * 999999999);
-                } else {
-                    a = 0;
-                }
-            }
-            a = 0;
-        }
-
+        accountNum = this.generateFixedDepositNumber();
         BigDecimal balance = new BigDecimal("0.0000"); //initial balance 
         //find interest rate according to duration
 
@@ -113,7 +100,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         }
 
         interestRate = rate.getInterestRate();
-        account = new FixedDepositAccount(accountNumber, amount, balance, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
+        account = new FixedDepositAccount(accountNum, amount, balance, dateOfStart, dateOfEnd, duration, "inactive", interestRate);
 
         em.persist(account);
         account.setCustomer(customer);
@@ -131,19 +118,38 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         em.flush();
 
         //log an action
-        String description = "Create a new Fixed deposit account " + accountNumber;
+        String description = "Create a new Fixed deposit account " + accountNum;
         this.logAction(description, customerId);
         em.persist(customer);
         em.flush();
         System.out.print("Demi" + account.getStartDate());
         System.out.println("Fixed Deposit account created successfullly");
-        
         //for testting
         account.setBalance(BigDecimal.valueOf(1000));
-        return accountNumber;
+        return accountNum;
     }
 
+    private long generateFixedDepositNumber() {
+        int a = 1;
+        Random rnd = new Random();
+        int number = 10000000 + rnd.nextInt(90000000);
+        Long accountNumber = Long.valueOf(number);
+        Query q2 = em.createQuery("SELECT c.accountNumber FROM FixedDepositAccount c");
+        List<Long> existingAcctNum = new ArrayList(q2.getResultList());
+        while (a == 1) {
 
+            if ((existingAcctNum.contains(accountNumber)) || (number / 10000000 == 0)) {
+                number = 10000000 + rnd.nextInt(90000000);
+                accountNumber = Long.valueOf(number);
+                a = 1;
+            } else {
+                a = 0;
+            }
+        }
+
+        return accountNumber;
+    }
+    
     public Long createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -184,7 +190,13 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             String description = "Transfer from saving account " + savingAccountNum + " to fixed deposit " + fixedDepositAccountNum;
             this.logAction(description, customerId);
             em.flush();
-
+            //create a transaction record for saving account
+            String description1 = "Transfer to fixed deposit " + fixedDepositAccountNum; 
+            Date currentTime = Calendar.getInstance().getTime();
+            java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+            TransferRecord transferRecord = new TransferRecord("TFF",amount,"settled",description1,currentTimestamp,savingAccountNum,null, "intraTransfer","MerlionBank","MerlionBank");
+            em.persist(transferRecord);
+            em.flush();
             System.out.println("Fixed Deposit account transferred successfullly");
             return true;
         }
@@ -206,6 +218,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             customer.getCustomerActions().add(action);
         }
         em.persist(customer);
+        em.flush();
     }
 
     //shows active and inactive fixed accts for display page
@@ -284,6 +297,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         rate = em.find(FixedDepositRate.class, rateIdLong);
         interestRate = rate.getInterestRate();
         interest = this.calculateInterestEarly(fixedAccountNum, interestRate);
+        BigDecimal totalAmount = interest.add(account.getBalance());
 
         //credit principal and interest to savingaccount
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
@@ -298,6 +312,14 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account.setBalance(BigDecimal.valueOf(0));
         account.setStatus("terminated");
         em.flush();
+        //create a transaction record for saving account
+            String description1 = "Withdraw fixed deposit " + fixedAccountNum; 
+            Date currentTime = Calendar.getInstance().getTime();
+            java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+            TransferRecord transferRecord = new TransferRecord("TFF",totalAmount,"settled",description1,currentTimestamp,null,savingAccountNum, "intraTransfer","MerlionBank","MerlionBank");
+            em.persist(transferRecord);
+            em.flush();
+            System.out.println("Fixed Deposit account transferred successfullly");
         return interest;
     }
     
@@ -305,6 +327,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     public void normalWithdrawTakeEffect(Long fixedAccountNum, Long savingAccountNum){
         account = this.getAccount(fixedAccountNum);
         interest = this.calculateInterestNormal(fixedAccountNum);
+        BigDecimal totalAmount = interest.add(account.getBalance());
         //credit principal and interest to saving account
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
         q.setParameter("savingAccountNum", savingAccountNum);
@@ -317,6 +340,13 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                 //close fixed deposit
         account.setBalance(BigDecimal.valueOf(0));
         account.setStatus("terminated");
+        em.flush();
+        //create transaction record
+        String description1 = "Withdraw fixed deposit " + fixedAccountNum; 
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        TransferRecord transferRecord = new TransferRecord("TFF",totalAmount,"settled",description1,currentTimestamp,null,savingAccountNum, "intraTransfer","MerlionBank","MerlionBank");
+        em.persist(transferRecord);
         em.flush();
     }
     
