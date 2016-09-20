@@ -6,6 +6,7 @@
 package DepositEntity.Session;
 
 import DepositEntity.SavingAccount;
+import DepositEntity.SavingAccountType;
 import DepositEntity.TransactionRecord;
 import Exception.UserHasNoInactiveSavingAccountException;
 import Exception.UserHasNoSavingAccountException;
@@ -32,4 +33,6 @@ public interface SavingAccountSessionBeanLocal {
     public void checkInactiveSavingAccount(Long inactiveSavingAccountNum) throws UserNotEnoughBalanceException;
     public void cashWithdraw(Long accountNum, BigDecimal withdrawAmount ) throws UserNotEnoughBalanceException;
     public void cashDeposit(Long accountNum, BigDecimal depositAmount);
+    public List<Long> getNotTerminatedAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
+    public List<SavingAccountType> getSavingAccountTypeList();
 }

@@ -80,6 +80,14 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             return savingAccountString;
         }
     }
+    
+    @Override
+    public List<SavingAccountType> getSavingAccountTypeList() {
+        System.out.print("inside the getSavingAccountTypeList() session Bean method");
+        Query q = em.createQuery("SELECT a FROM SavingAccountType a");
+        List<SavingAccountType> savingAccountTypes = q.getResultList();
+        return savingAccountTypes;
+    }
 
     @Override
     public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
@@ -112,6 +120,26 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         } else {
             for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
                 if (customer.getSavingAccounts().get(i).getStatus().equals("inactive")) {
+                    savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
+                }
+            }
+            return savingAccountNumbers;
+        }
+    }
+    
+    @Override
+    public List<Long> getNotTerminatedAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
+        List<Long> savingAccountNumbers = new ArrayList();
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
+        q.setParameter("customerID", customerID);
+        List<Customer> customers = q.getResultList();
+        Customer customer = customers.get(0);
+        if (customer.getSavingAccounts().isEmpty()) {
+            throw new UserHasNoSavingAccountException("User has no saving account!");
+        } else {
+            for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
+                //Get all the not terminated saving accounts
+                if (!customer.getSavingAccounts().get(i).getStatus().equals("terminated")) {
                     savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
                 }
             }

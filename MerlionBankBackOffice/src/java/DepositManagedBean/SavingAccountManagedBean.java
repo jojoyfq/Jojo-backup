@@ -8,6 +8,7 @@ package DepositManagedBean;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import DepositEntity.SavingAccount;
+import DepositEntity.SavingAccountType;
 import Exception.EmailNotSendException;
 import Exception.UserAlreadyHasSavingAccountException;
 import Exception.UserHasNoSavingAccountException;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -44,9 +46,12 @@ public class SavingAccountManagedBean implements Serializable {
     private List<String> savingAccountTypeList;
     private boolean createSavingAccountStatus;
     private List<Long> savingAccountNumberList;
+    private List<Long> notTerminAccountNumList;
     private Long savingAccountSelected;
+    private Long notTerminAccountSelected;
     private List<List> transactionRecordList;
     private List<SavingAccount> savingAccountForCloseAccount;
+    private List<SavingAccountType> savingAccountTypes;
     private BigDecimal withdrawAmount;
     private String withdrawAmountString;
     private BigDecimal depositAmount;
@@ -58,6 +63,9 @@ public class SavingAccountManagedBean implements Serializable {
             this.getSavingAccountType();
             savingAccounts = sasb.getSavingAccount(customerID);
             this.getSavingAccountNumbers();
+            this.getNotTerminatedAccountNumbers();
+            savingAccountTypes = sasb.getSavingAccountTypeList();
+            System.out.print(savingAccountTypes);
         } catch (Exception e) {
             System.out.print("Init encounter error");
         }
@@ -72,7 +80,8 @@ public class SavingAccountManagedBean implements Serializable {
             System.out.print(savingAccountName);
             amsb.createSavingAccountExistingCustomer(customerID, savingAccountName);
             //get data from database and assign the new value to the variable after createSavingAccount success!
-            getSavingAccountNumbers();
+            this.getSavingAccountNumbers();
+            this.getNotTerminatedAccountNumbers();
             savingAccounts = sasb.getSavingAccount(customerID);
 
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
@@ -88,6 +97,15 @@ public class SavingAccountManagedBean implements Serializable {
     public void getSavingAccountNumbers() throws UserHasNoSavingAccountException {
         System.out.print("inside the getSavingAccountNumbers()");
         savingAccountNumberList = sasb.getSavingAccountNumbers(customerID);
+    }
+    
+    public void getNotTerminatedAccountNumbers() throws UserHasNoSavingAccountException{
+        try{
+            notTerminAccountNumList = sasb.getNotTerminatedAccountNumbers(customerID);
+        }catch(UserHasNoSavingAccountException ex){
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
     }
 
     public void getSavingAccountType() {
@@ -123,9 +141,9 @@ public class SavingAccountManagedBean implements Serializable {
     
     public void cashDeposit(ActionEvent event) {
         try {
-            if (savingAccountSelected != null) {
+            if (notTerminAccountSelected != null) {
                 depositAmount = new BigDecimal(depositAmountString);
-                sasb.cashDeposit(savingAccountSelected, depositAmount);
+                sasb.cashDeposit(notTerminAccountSelected, depositAmount);
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Cash Deposit Success!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }else{
@@ -137,6 +155,7 @@ public class SavingAccountManagedBean implements Serializable {
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
+    
 
     public void goToViewTransactionRecord(ActionEvent event) {
         try {
@@ -284,6 +303,30 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void setDepositAmountString(String depositAmountString) {
         this.depositAmountString = depositAmountString;
+    }
+    
+     public List<Long> getNotTerminAccountNumList() {
+        return notTerminAccountNumList;
+    }
+
+    public void setNotTerminAccountNumList(List<Long> notTerminAccountNumList) {
+        this.notTerminAccountNumList = notTerminAccountNumList;
+    }
+    
+    public Long getNotTerminAccountSelected() {
+        return notTerminAccountSelected;
+    }
+
+    public void setNotTerminAccountSelected(Long notTerminAccountSelected) {
+        this.notTerminAccountSelected = notTerminAccountSelected;
+    }
+    
+     public List<SavingAccountType> getSavingAccountTypes() {
+        return savingAccountTypes;
+    }
+
+    public void setSavingAccountTypes(List<SavingAccountType> savingAccountTypes) {
+        this.savingAccountTypes = savingAccountTypes;
     }
 
 }

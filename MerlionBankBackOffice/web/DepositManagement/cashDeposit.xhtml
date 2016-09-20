@@ -14,9 +14,9 @@
         <h:form>
             <p:panel id="panel" header="Cash Deposit">
                 <p:messages id="msgs" />
-                <p:selectOneMenu id="savingAccountList" value="#{savingAccountManagedBean.savingAccountSelected}">
+                <p:selectOneMenu id="savingAccountList" value="#{savingAccountManagedBean.notTerminAccountSelected}">
                     <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
-                    <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
+                    <f:selectItems value="#{savingAccountManagedBean.notTerminAccountNumList}" />
                 </p:selectOneMenu>  
 
                 <h:outputLabel for="DepositAmount" value="Deposit Amount $" />
