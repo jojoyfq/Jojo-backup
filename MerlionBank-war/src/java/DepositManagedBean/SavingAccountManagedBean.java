@@ -33,7 +33,7 @@ public class SavingAccountManagedBean implements Serializable{
     SavingAccountSessionBeanLocal sasb;
     @EJB
     AccountManagementSessionBeanLocal amsb;
-    private Long customerID=Long.parseLong("2");
+    private Long customerID=Long.parseLong("2452");
     private List<SavingAccount> savingAccounts;
     private String savingAccountName;
     private List<String> savingAccountTypeList;
