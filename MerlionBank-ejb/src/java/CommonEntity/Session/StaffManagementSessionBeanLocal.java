@@ -99,5 +99,4 @@ public interface StaffManagementSessionBeanLocal {
 
     public Long lockAccount(Long staffId);
     
-    public Staff viewStaff(Long staffID)throws UserNotExistException;
 }
