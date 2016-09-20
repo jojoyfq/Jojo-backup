@@ -61,8 +61,6 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private Integer rateIdInt;
     private Customer customer;
     private BigDecimal interest;
-  
- 
 
     public BigDecimal getInterest() {
         return interest;
@@ -149,7 +147,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 
         return accountNumber;
     }
-    
+
     public Long createFixedAccount(String ic, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -191,10 +189,10 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             this.logAction(description, customerId);
             em.flush();
             //create a transaction record for saving account
-            String description1 = "Transfer to fixed deposit " + fixedDepositAccountNum; 
+            String description1 = "Transfer to fixed deposit " + fixedDepositAccountNum;
             Date currentTime = Calendar.getInstance().getTime();
             java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-            TransferRecord transferRecord = new TransferRecord("TFF",amount,"settled",description1,currentTimestamp,savingAccountNum,null, "intraTransfer","MerlionBank","MerlionBank");
+            TransferRecord transferRecord = new TransferRecord("TFF", amount, "settled", description1, currentTimestamp, savingAccountNum, null, "intraTransfer", "MerlionBank", "MerlionBank");
             em.persist(transferRecord);
             em.flush();
             System.out.println("Fixed Deposit account transferred successfullly");
@@ -313,18 +311,18 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account.setStatus("terminated");
         em.flush();
         //create a transaction record for saving account
-            String description1 = "Withdraw fixed deposit " + fixedAccountNum; 
-            Date currentTime = Calendar.getInstance().getTime();
-            java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-            TransferRecord transferRecord = new TransferRecord("TFF",totalAmount,"settled",description1,currentTimestamp,null,savingAccountNum, "intraTransfer","MerlionBank","MerlionBank");
-            em.persist(transferRecord);
-            em.flush();
-            System.out.println("Fixed Deposit account transferred successfullly");
+        String description1 = "Withdraw fixed deposit " + fixedAccountNum;
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        TransferRecord transferRecord = new TransferRecord("TFF", totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, "intraTransfer", "MerlionBank", "MerlionBank");
+        em.persist(transferRecord);
+        em.flush();
+        System.out.println("Fixed Deposit account transferred successfullly");
         return interest;
     }
-    
+
     @Override
-    public void normalWithdrawTakeEffect(Long fixedAccountNum, Long savingAccountNum){
+    public void normalWithdrawTakeEffect(Long fixedAccountNum, Long savingAccountNum) {
         account = this.getAccount(fixedAccountNum);
         interest = this.calculateInterestNormal(fixedAccountNum);
         BigDecimal totalAmount = interest.add(account.getBalance());
@@ -337,24 +335,26 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         newBalance = newBalance.add(account.getBalance());
         savingAccount.setAvailableBalance(newBalance);
         System.out.print(savingAccount.getAvailableBalance().toString());
-                //close fixed deposit
+        //close fixed deposit
         account.setBalance(BigDecimal.valueOf(0));
+        System.out.print("set balance to 0");
         account.setStatus("terminated");
+        System.out.print("set status to termianted");
         em.flush();
         //create transaction record
-        String description1 = "Withdraw fixed deposit " + fixedAccountNum; 
+        String description1 = "Withdraw fixed deposit " + fixedAccountNum;
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-        TransferRecord transferRecord = new TransferRecord("TFF",totalAmount,"settled",description1,currentTimestamp,null,savingAccountNum, "intraTransfer","MerlionBank","MerlionBank");
+        TransferRecord transferRecord = new TransferRecord("TFF", totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, "intraTransfer", "MerlionBank", "MerlionBank");
         em.persist(transferRecord);
         em.flush();
     }
-    
+
     @Override
-    public void normalWithdrawMark(Long fixedAccountNum, Long savingAccountNum){
-        account= this.getAccount(fixedAccountNum);
-        String temp = "normalWithdraw,"+savingAccountNum.toString();
-        account.setStatus(temp);       
+    public void normalWithdrawMark(Long fixedAccountNum, Long savingAccountNum) {
+        account = this.getAccount(fixedAccountNum);
+        String temp = "normalWithdraw," + savingAccountNum.toString();
+        account.setStatus(temp);
     }
 
     @Override
@@ -370,7 +370,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.print("number of days = " + numOfDays);
         BigDecimal interestAmount = principal.multiply(new BigDecimal((numOfDays / (double) 365) * interestRate1));
         System.out.print("interest amount =" + interestAmount);
-        interestAmount.setScale(4,RoundingMode.HALF_UP );
+        interestAmount.setScale(4, RoundingMode.HALF_UP);
         return interestAmount;
     }
 
@@ -381,7 +381,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
             //active and renew and normal withdraw accounts can be withdraw
-            if (account.getStatus().equalsIgnoreCase("active")||account.getStatus().equalsIgnoreCase("renew")||account.getStatus().contains(",")) {
+            if (account.getStatus().equalsIgnoreCase("active") || account.getStatus().equalsIgnoreCase("renew") || account.getStatus().contains(",")) {
                 fixedDepositsAcctNum.add(account.getAccountNumber());
             }
         }
@@ -395,7 +395,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
             //active and normal withdraw accts can be renewed
-            if (account.getStatus().equalsIgnoreCase("active")||account.getStatus().contains(",")) {
+            if (account.getStatus().equalsIgnoreCase("active") || account.getStatus().contains(",")) {
                 fixedDepositsAcctNum.add(account.getAccountNumber());
             }
         }
@@ -435,8 +435,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         dates.add(3, df.format(endNew));
         return dates;
     }
-    
-    
+
     @Override
     public BigDecimal calculateInterestNormal(Long accountNum) {
         account = this.getAccount(accountNum);
@@ -444,7 +443,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         BigDecimal principal = account.getBalance();
         Integer durationInt = Integer.valueOf(account.getDuration());
         BigDecimal interestAmount = principal.multiply(new BigDecimal((durationInt / (double) 12) * interestRate));
-        interestAmount.setScale(4,RoundingMode.HALF_UP );
+        interestAmount.setScale(4, RoundingMode.HALF_UP);
         return interestAmount;
     }
 
@@ -456,21 +455,21 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         Calendar dayOfMature = GregorianCalendar.getInstance();
         //for testing purpose
         //+7 for testing purpose     
-        sevenDayToStart.add(Calendar.DATE, 5);
+        sevenDayToStart.add(Calendar.DATE, 7);
         Date dateToday1 = sevenDayToStart.getTime();
         String newstring1 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday1);
         System.out.println(newstring1);
 
         //3 days before account mature date
         //to send email
-        threeDayToEnd.add(Calendar.DATE, 95);
+        threeDayToEnd.add(Calendar.DATE, 3);
         Date dateToday2 = threeDayToEnd.getTime();
         String newstring2 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday2);
         System.out.println(newstring2);
 
         //date of mature
         //check date, and status
-        dayOfMature.add(Calendar.DATE, 98);
+        dayOfMature.add(Calendar.DATE, 0);
         Date dateToday3 = dayOfMature.getTime();
         String newstring3 = new SimpleDateFormat("yyyy-MM-dd").format(dateToday3);
         System.out.println(newstring3);
@@ -483,7 +482,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             String accountStartDay = new SimpleDateFormat("yyyy-MM-dd").format(startDate);
             Date endDate = fixedDepositAccounts.get(i).getEndDate();
             String accountEndDay = new SimpleDateFormat("yyyy-MM-dd").format(endDate);
-            
+
             //check either to activate / terminate account 
             if (accountStartDay.equals(newstring1)) {
                 BigDecimal balance = fixedDepositAccounts.get(i).getBalance();
@@ -497,8 +496,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     fixedDepositAccounts.get(i).setStatus("terminated");
                     em.flush();
                 }
-            }
-            //3 days before, check whether to send the email to notify renew
+            } //3 days before, check whether to send the email to notify renew
             else if (accountEndDay.equals(newstring2) && fixedDepositAccounts.get(i).getStatus().equals("active")) {
                 System.out.println("hey, you are here !!!!");
                 String customerName = fixedDepositAccounts.get(i).getCustomer().getName();
@@ -518,56 +516,57 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                 }
                 // at the end day, "active","renew","withdrawl,account number"
             } else if (accountEndDay.equals(newstring3)) {
-                if(fixedDepositAccounts.get(i).getStatus().equals("renew") || fixedDepositAccounts.get(i).getStatus().equals("active")){
-                System.out.println("get it renew pls !!!!");
-                String duration = account.getDuration();
-                Date endOld = account.getEndDate();
-                DateTime endOldTemp = new DateTime(endOld);
-                DateTime startNewTemp = endOldTemp.plus(Period.days(1));
-                DateTime endNewTemp = new DateTime();
-                if (duration.equals("3")) {
-                    endNewTemp = startNewTemp.plus(Period.months(3));
-                } else if (duration.equals("6")) {
-                    endNewTemp = startNewTemp.plus(Period.months(6));
-                } else if (duration.equals("12")) {
-                    endNewTemp = startNewTemp.plus(Period.months(12));
-                } else {
-                    endNewTemp = startNewTemp.plus(Period.months(24));
-                }
-                
-                BigDecimal interestEnd = calculateInterestNormal(fixedDepositAccounts.get(i).getAccountNumber());                
-                BigDecimal newBalance = fixedDepositAccounts.get(i).getBalance().add(interestEnd);
-                fixedDepositAccounts.get(i).setBalance(newBalance);
-                em.flush();
-                fixedDepositAccounts.get(i).setStartDate(startNewTemp.toDate()); //set new start and end date
-                em.flush();
-                fixedDepositAccounts.get(i).setEndDate(endNewTemp.toDate());
-                em.flush(); 
-                }
-                else {
+                if (fixedDepositAccounts.get(i).getStatus().equals("renew") || fixedDepositAccounts.get(i).getStatus().equals("active")) {
+                    System.out.println("get it renew pls !!!!");
+                    String duration = account.getDuration();
+                    Date endOld = account.getEndDate();
+                    DateTime endOldTemp = new DateTime(endOld);
+                    DateTime startNewTemp = endOldTemp.plus(Period.days(1));
+                    DateTime endNewTemp = new DateTime();
+                    if (duration.equals("3")) {
+                        endNewTemp = startNewTemp.plus(Period.months(3));
+                    } else if (duration.equals("6")) {
+                        endNewTemp = startNewTemp.plus(Period.months(6));
+                    } else if (duration.equals("12")) {
+                        endNewTemp = startNewTemp.plus(Period.months(12));
+                    } else {
+                        endNewTemp = startNewTemp.plus(Period.months(24));
+                    }
+
+                    BigDecimal interestEnd = calculateInterestNormal(fixedDepositAccounts.get(i).getAccountNumber());
+                    BigDecimal newBalance = fixedDepositAccounts.get(i).getBalance().add(interestEnd);
+                    fixedDepositAccounts.get(i).setBalance(newBalance);
+                    em.flush();
+                    fixedDepositAccounts.get(i).setStartDate(startNewTemp.toDate()); //set new start and end date
+                    em.flush();
+                    fixedDepositAccounts.get(i).setEndDate(endNewTemp.toDate());
+                    em.flush();
+                } else if(fixedDepositAccounts.get(i).getStatus().contains(",")){
                     //"withdrawl,account number"
                     //terminate the fixed deposit account 
                     //deposit the saving account
                     String status = fixedDepositAccounts.get(i).getStatus();
-                    String[] statusAccountNum = status.split("\\\\s*,\\\\s*");
+                    System.out.println("****** status" + status);
+                    String[] statusAccountNum = status.split(",");
                     String accountNumber = statusAccountNum[1]; //account number
                     System.out.println("************************** split split !!!");
                     System.out.println(accountNumber);
-                    normalWithdrawTakeEffect(fixedDepositAccounts.get(i).getAccountNumber(), Long.parseLong(accountNumber));      
+                    normalWithdrawTakeEffect(fixedDepositAccounts.get(i).getAccountNumber(), Long.parseLong(accountNumber));
                 }
             } else {
                 System.out.println("no thing to set !!!!!");
             }
         }
     }
-  // haha 
+
+    // haha 
     private void SendFixedDepositAccountMatureEmail(String name, String email, Long accountNum, Date matureDate) throws MessagingException {
         String subject = "Merlion Bank - " + name + "Fixed Deposit Account Maturity Notification";
         System.out.println("Inside send Fixed Deposit Account Maturity email");
         System.out.println("the email address is " + email);
         String content = "<h2>Dear " + name
                 + ",</h2><br /><h1> Your fixed deposit account will be matured in 3 days.</h1><br />"
-                + "<h1>Fixed Deposit Account Number :" +accountNum +"</h1>"
+                + "<h1>Fixed Deposit Account Number :" + accountNum + "</h1>"
                 + "<br />This email is to notify you that your Fixed Deposit Account" + accountNum + "</h2><br />"
                 + "<br /><p>will be matured on " + matureDate + " Please be noted that the account will be auto renew with the same duration</p >"
                 + "<br /><p>if no further instruction is given.</p >"
@@ -577,5 +576,3 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     }
 
 }
-
-
