@@ -76,7 +76,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         customer = em.find(Customer.class, customerId);
         //generate and check account number
         accountNum = this.generateFixedDepositNumber();
-        BigDecimal balance = new BigDecimal("0.0000"); //initial balance 
+        BigDecimal balance = new BigDecimal("0"); //initial balance 
         //find interest rate according to duration
 
         if (duration.equalsIgnoreCase("3")) {
@@ -123,7 +123,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.print("Demi" + account.getStartDate());
         System.out.println("Fixed Deposit account created successfullly");
         //for testting
-        account.setBalance(BigDecimal.valueOf(1000));
+       
         return accountNum;
     }
 
@@ -248,10 +248,18 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     @Override
     public BigDecimal amountLessBalance(Long accountNum) {
         account = this.getAccount(accountNum);
-        if ((account.getAmount().subtract(account.getBalance())).compareTo(BigDecimal.valueOf(0)) == 1) {
+        System.out.print("balance"+account.getBalance());
+        if(account.getBalance().equals(BigDecimal.valueOf(0))){
+            return account.getAmount();
+        }
+        else if((account.getAmount().subtract(account.getBalance())).compareTo(BigDecimal.valueOf(0)) == 1) {
+            System.out.print("balance =" +account.getBalance());
+            System.out.print("needed =" +account.getAmount().subtract(account.getBalance()));
             return account.getAmount().subtract(account.getBalance());
         } else {
-            return BigDecimal.valueOf(0);
+           System.out.print("this is wrong");
+           return BigDecimal.valueOf(0);
+            
         }
     }
 
