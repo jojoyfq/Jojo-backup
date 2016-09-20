@@ -12,15 +12,18 @@
 
     <h:body>
         <h:form>
-            <p:panel id="panel" header="Change Interest Rate">
-                <p:selectOneMenu id="savingAccountList" value="#{savingAccountManagedBean.savingAccountSelected}">
-                    <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
-                    <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
-                </p:selectOneMenu>  
+            <p:panel id="panel" header="Select Saving Account Type">
+                <p:messages id="msgs" />
 
-                <p:commandButton value="Submit" id="goToCloseSavingAccount"
-                                 actionListener="#{savingAccountManagedBean.goToCloseSavingAccount}"/>
-
+                <div class="Container70 Responsive50">
+                    <p:selectOneMenu id="savingAccountType" value="#{savingAccountManagedBean.savingAccountName}">
+                        <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{savingAccountManagedBean.savingAccountTypeList}" />                
+                    </p:selectOneMenu>
+                </div>
+                <div class="Container30 Responsive50">
+                    <p:commandButton  actionListener="#{savingAccountManagedBean.changeInterestRate}" value="Submit" /> 
+                </div>
 
             </p:panel>
         </h:form>

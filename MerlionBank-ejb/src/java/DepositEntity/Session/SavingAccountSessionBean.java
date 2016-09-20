@@ -82,11 +82,33 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     }
     
     @Override
-    public List<SavingAccountType> getSavingAccountTypeList() {
-        System.out.print("inside the getSavingAccountTypeList() session Bean method");
-        Query q = em.createQuery("SELECT a FROM SavingAccountType a");
+    public Double getInterestRate(String accountType, String interestName){
+        Query q = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
+        q.setParameter("accountType", accountType);
         List<SavingAccountType> savingAccountTypes = q.getResultList();
-        return savingAccountTypes;
+        SavingAccountType temp = savingAccountTypes.get(0);
+        
+        if(interestName.equals("InterestRate1")){
+            return temp.getInterestRate1();
+        }else if(interestName.equals("InterestRate2")){
+            return temp.getInterestRate2();
+        }else{
+            return temp.getInterestRate3();
+        }
+    }
+    
+    @Override
+    public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3){
+        Query q = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
+        q.setParameter("accountType", accountType);
+        List<SavingAccountType> savingAccountTypes = q.getResultList();
+        SavingAccountType temp = savingAccountTypes.get(0);
+        
+        temp.setInterestRate1(interest1);
+        temp.setInterestRate2(interest2);
+        temp.setInterestRate3(interest3);
+        
+        em.flush();
     }
 
     @Override
