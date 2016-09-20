@@ -5,6 +5,7 @@
  */
 package CustomerRelationshipEntity;
 
+import CommonEntity.Staff;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,11 +40,14 @@ public class Issue implements Serializable {
     private String content;
     private String issueType; 
     private String status;
-    private String assignedStaff;
     private Double rating;
+    private String solution;
   
     @ManyToOne
     private CaseEntity caseEntity;
+    
+    @ManyToOne
+    private Staff staff;
 
     public CaseEntity getCaseEntity() {
         return caseEntity;
@@ -61,6 +65,14 @@ public class Issue implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getSolution() {
+        return solution;
+    }
+
+    public void setSolution(String solution) {
+        this.solution = solution;
+    }
    
     
    
@@ -68,13 +80,16 @@ public class Issue implements Serializable {
     public Issue(){
     }
 
-    public Issue(String content, String issueType, String status, String assignedStaff, CaseEntity caseEntity) {
+    public Issue(String content, String issueType, String status, String solution, CaseEntity caseEntity, Staff staff) {
         this.content = content;
         this.issueType = issueType;
         this.status = status;
-        this.assignedStaff = assignedStaff;
+        this.solution = solution;
         this.caseEntity = caseEntity;
+        this.staff = staff;
     }
+
+    
    
     public Long getId() {
         return id;
@@ -137,19 +152,14 @@ public class Issue implements Serializable {
         this.status = status;
     }
 
-    /**
-     * @return the assignedStaff
-     */
-    public String getAssignedStaff() {
-        return assignedStaff;
+    public Staff getStaff() {
+        return staff;
     }
 
-    /**
-     * @param assignedStaff the assignedStaff to set
-     */
-    public void setAssignedStaff(String assignedStaff) {
-        this.assignedStaff = assignedStaff;
+    public void setStaff(Staff staff) {
+        this.staff = staff;
     }
+
 
     /**
      * @return the rating

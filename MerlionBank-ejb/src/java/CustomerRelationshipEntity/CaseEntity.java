@@ -6,6 +6,7 @@
 package CustomerRelationshipEntity;
 
 import CommonEntity.Customer;
+import CommonEntity.Staff;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +44,26 @@ public class CaseEntity implements Serializable {
   
     @OneToMany(cascade={CascadeType.ALL},mappedBy="caseEntity")
     private List<Issue> issues;
+    
+    @ManyToOne
+    private Staff staff;
+
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
+    public CaseEntity(String status, Date caseCreatedTime, Customer customer,Staff staff) {
+        this.status = status;
+        this.caseCreatedTime = caseCreatedTime;
+        this.customer = customer;
+        this.staff = staff;
+    }
+    
+    
     
     public Date getCaseClosedTime() {
         return caseClosedTime;
