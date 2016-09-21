@@ -19,6 +19,7 @@ import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.RoleAlreadyExistedException;
 import Exception.RoleHasStaffException;
+import Exception.StaffAlreadyHasRoleException;
 import Exception.StaffRoleExistException;
 import Exception.UnexpectedErrorException;
 import Exception.UserAlreadyActivatedException;
@@ -392,11 +393,13 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         queryPermission.setParameter("id", permissionId);
         Permission falsePermission = (Permission) queryPermission.getSingleResult();
 
+        Long truePermissionId=(Long)permissionId-1;        
         Query queryPermission2 = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
-        queryPermission2.setParameter("id", permissionId - 1L);
+        queryPermission2.setParameter("id", truePermissionId);
         Permission truePermission = (Permission) queryPermission2.getSingleResult();
 
-        currentPermissions.add(truePermission);
+        int flag=(truePermission.getId()).intValue()/2;
+        currentPermissions.set(flag,truePermission);
         staffRole.setPermissions(currentPermissions);
         em.persist(staffRole);
         em.flush();
@@ -411,7 +414,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         List<StaffRole> updateStaffRoles = new ArrayList<StaffRole>();
 
         for (int i = 0; i < falseStaffRoles.size(); i++) {
-            if (falseStaffRoles.get(0).getId() != staffRoleId) {
+            if (falseStaffRoles.get(i).getId() != staffRoleId) {
                 updateStaffRoles.add(falseStaffRoles.get(i));
             }
         }
@@ -439,17 +442,20 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         queryPermission.setParameter("id", permissionId);
         Permission truePermission = (Permission) queryPermission.getSingleResult();
 
+        Long falsePermissionId=(Long)permissionId+1;
         Query queryPermission2 = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
-        queryPermission2.setParameter("id", permissionId + 1L);
+        queryPermission2.setParameter("id", falsePermissionId);
         Permission falsePermission = (Permission) queryPermission2.getSingleResult();
 
-        List<Permission> temp = new ArrayList<Permission>();
-        for (int i = 0; i < currentPermissions.size(); i++) {
-            if (currentPermissions.get(0).getId() != permissionId) {
-                temp.add(currentPermissions.get(i));
-            }
-        }
-        staffRole.setPermissions(temp);
+//        List<Permission> temp = new ArrayList<Permission>();
+//        for (int i = 0; i < currentPermissions.size(); i++) {
+//            if (currentPermissions.get(0).getId() != permissionId) {
+//                temp.add(currentPermissions.get(i));
+//            }
+//        }
+        int flag=(truePermission.getId()).intValue()/2;
+        currentPermissions.set(flag,falsePermission);
+        staffRole.setPermissions(currentPermissions);
         em.persist(staffRole);
         em.flush();
 
@@ -462,7 +468,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         updateStaffRoles = truePermission.getStaffRoles();
         List<StaffRole> tempRole = new ArrayList<StaffRole>();
         for (int i = 0; i < updateStaffRoles.size(); i++) {
-            if (updateStaffRoles.get(0).getId() != staffRoleId) {
+            if (updateStaffRoles.get(i).getId() != staffRoleId) {
                 tempRole.add(updateStaffRoles.get(i));
             }
         }
@@ -804,7 +810,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     @Override
-    public boolean staffAddRole(Long staffId, String roleName) {
+    public boolean staffAddRole(Long staffId, String roleName) throws StaffAlreadyHasRoleException{
         Query q = em.createQuery("Select a FROM StaffRole a WHERE a.roleName=:roleName");
         q.setParameter("roleName", roleName);
         StaffRole staffRole = (StaffRole) q.getSingleResult();
@@ -812,8 +818,14 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
           Query query = em.createQuery("Select a FROM Staff a WHERE a.id=:id");
         query.setParameter("id", staffId);
         Staff staff = (Staff) q.getSingleResult(); 
+        
 
         List<StaffRole> currentRoleList = staff.getStaffRoles();
+        
+        for (int i=0;i<currentRoleList.size();i++){
+            if (currentRoleList.get(i).getRoleName().equals(roleName))
+                throw new StaffAlreadyHasRoleException("Staff already has this role");
+        }
         currentRoleList.add(staffRole);
         staff.setStaffRoles(currentRoleList);
         em.persist(staff);
@@ -822,7 +834,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         List<Staff> currentList = staffRole.getStaffList();
         currentList.add(staff);
         staffRole.setStaffList(currentList);
-        em.persist(currentList);
+        em.persist(staffRole);
         em.flush();
 
         return true;
