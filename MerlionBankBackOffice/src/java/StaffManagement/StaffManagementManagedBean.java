@@ -14,6 +14,7 @@ import Exception.EmailNotSendException;
 import Exception.RoleAlreadyExistedException;
 import Exception.StaffRoleExistException;
 import Exception.UserExistException;
+import Exception.UserNotExistException;
 import java.io.IOException;
 import java.io.Serializable;
 //import java.awt.event.ActionEvent;
@@ -107,7 +108,52 @@ public class StaffManagementManagedBean implements Serializable {
     private String selectedRoleNameForPermission;
     private List roleNamesStaffHas;
     private List oneStaffRoleNames;
-private Staff selectedStaff;
+    private Staff selectedStaff;
+    private String roleNameToDelete;
+    private List<StaffRole> roles;
+    private Long editedStaffId;
+    private Long roleId;
+    private String selectedRoleNameToAdd;
+
+    public String getSelectedRoleNameToAdd() {
+        return selectedRoleNameToAdd;
+    }
+
+    public void setSelectedRoleNameToAdd(String selectedRoleNameToAdd) {
+        this.selectedRoleNameToAdd = selectedRoleNameToAdd;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public Long getEditedStaffId() {
+        return editedStaffId;
+    }
+
+    public void setEditedStaffId(Long editedStaffId) {
+        this.editedStaffId = editedStaffId;
+    }
+
+    public List<StaffRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<StaffRole> roles) {
+        this.roles = roles;
+    }
+
+    public String getRoleNameToDelete() {
+        return roleNameToDelete;
+    }
+
+    public void setRoleNameToDelete(String roleNameToDelete) {
+        this.roleNameToDelete = roleNameToDelete;
+    }
 
     public Staff getSelectedStaff() {
         return selectedStaff;
@@ -116,6 +162,7 @@ private Staff selectedStaff;
     public void setSelectedStaff(Staff selectedStaff) {
         this.selectedStaff = selectedStaff;
     }
+
     public List getOneStaffRoleNames() {
         return oneStaffRoleNames;
     }
@@ -172,13 +219,14 @@ private Staff selectedStaff;
         availablePermissionNames = new ArrayList<>();
         selectedPermissionNames = new ArrayList<>();
         availablePermissionNames = this.displayPermissions();
-selectedStaff = new Staff();
+        selectedStaff = new Staff();
         permissionNames = new DualListModel<String>(availablePermissionNames, selectedPermissionNames);
         allRoles = new ArrayList<>();
 
         allRoles = this.adminDisplayRole();
         roleNamesStaffHas = new ArrayList<>();
         oneStaffRoleNames = new ArrayList<>();
+        roles = new ArrayList<>();
 
     }
 
@@ -193,16 +241,16 @@ selectedStaff = new Staff();
 
     public List adminDisplayStaffs() {
         staffs = smsbl.displayListOfStaff();
+
         return staffs;
     }
 
-    public List rolesOneStaffHas() {
-        for (int i = 0; i < staffs.size(); i++) {
-            oneStaffRoleNames.add(staffs.get(i).getStaffName());
-        }
-        return oneStaffRoleNames;
-    }
-
+//    public List rolesOneStaffHas() {
+//        for (int i = 0; i < staffs.size(); i++) {
+//            oneStaffRoleNames.add(staffs.get(i).getStaffName());
+//        }
+//        return oneStaffRoleNames;
+//    }
     public void adminCreateStaffRole(ActionEvent event) throws RoleAlreadyExistedException {
         try {
             if (roleName != null && staffId != null) {
@@ -342,19 +390,69 @@ selectedStaff = new Staff();
         }
     }
 
-    public void adminDeleteStaff(Long bankStaffID) {
+    public List adminViewOneStaff(ActionEvent event) throws UserNotExistException {
+//        try {
+        oneStaffRoleNames = new ArrayList<String>();
+        staff = (Staff) event.getComponent().getAttributes().get("selectedStaff");
+        System.out.println("************Message from managed bean-staffId is " + staff.getId());
+        //    staff = smsbl.viewStaff(staffId);
+        System.out.println("************Message from managed bean-staffId is " + staff.getStaffRoles().size());
+        for (int i = 0; i < staff.getStaffRoles().size(); i++) {
+            oneStaffRoleNames.add(staff.getStaffRoles().get(i).getRoleName());
+        }
 
-        boolean check = smsbl.deleteStaff(bankStaffID, staffId);
-        if (check = true) {
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Staff Deleted Successfully!");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        } else {
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Staff Deleted Unsuccessfully!");
+//        } catch (UserNotExistException ex) {
+//            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+//        }
+        return oneStaffRoleNames;
+    }
+
+    public void adminDeleteStaff(Long bankStaffID) throws UserNotExistException {
+        try {
+            boolean check = smsbl.deleteStaff(bankStaffID, staffId);
+            if (check = true) {
+                System.out.println("**********Message from managed bean: Staff is successfully deleted");
+                staff = smsbl.viewStaff(bankStaffID);
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Staff Deleted Successfully!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
+            } else {
+                System.out.println("**********Message from managed bean: Staff is unsuccessfully deleted");
+
+            }
+        } catch (UserNotExistException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
-    
-   
+
+    public void onRowEdit(RowEditEvent event) {
+        System.out.println("lalalalalalalala");
+        // if(bankStaffId != null && staffId != null && staffIc != null && staffName != null && staffEmail !=null && mobileNumber!=null){
+        FacesMessage msg = new FacesMessage("Car Edited", ((Staff) event.getObject()).getStaffIc());
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        bankStaffId = ((Staff) event.getObject()).getId();
+        staffIc = ((Staff) event.getObject()).getStaffIc();
+        staffName = ((Staff) event.getObject()).getStaffName();
+        staffEmail = ((Staff) event.getObject()).getStaffName();
+        mobileNumber = ((Staff) event.getObject()).getMobileNumber();
+
+        System.out.println("************Message from managed bean staffid is ; " + bankStaffId);
+        System.out.println("************Message from managed bean staffIC is ; " + staffIc);
+        System.out.println("************Message from managed bean staffName is ; " + staffName);
+        System.out.println("************Message from managed bean staffEmail is ; " + staffEmail);
+        System.out.println("************Message from managed bean staffid is ; " + mobileNumber);
+
+        smsbl.updateStaffInfo(staffId, bankStaffId, staffIc, staffName, staffEmail, mobileNumber);
+        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Updated Successfully");
+        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        smsbl.displayListOfStaff();
+        // }else{
+        //     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Don't leave blanks!");
+        //        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        // }
+    }
 //    public void updateStaffProfile(ActionEvent event){
 //        staff = (Staff) event.getComponent().getAttributes().get("selectedStaff");
 //        smsbl.updateStaffInfo(staffId, staff, staffIc, staffName, staffEmail, mobileNumber)
@@ -362,6 +460,47 @@ selectedStaff = new Staff();
 
     public void adminViewAllStaffs() {
         staffs = smsbl.displayListOfStaff();
+    }
+
+    public void editRole(Staff staff) throws IOException {
+        roles = staff.getStaffRoles();
+        editedStaffId = staff.getId();
+
+        System.out.println("***** Selected Staff ID is " + editedStaffId);
+        System.out.println("*********Role size is " + roles.size());
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
+
+        //      smsbl.staffDeleteRole(bankStaffId, roleName);
+    }
+
+    public void editRoleDelete(ActionEvent event) throws IOException {
+        roleId = ((StaffRole) event.getComponent().getAttributes().get("selectedRole")).getId();
+        roleName = ((StaffRole) event.getComponent().getAttributes().get("selectedRole")).getRoleName();
+        System.out.println("***** Selected Staff ID is " + roleName);
+
+        boolean msg = smsbl.staffDeleteRole(staffId, roleName);
+        System.out.println("**************Message after pressing delete role: " + msg);
+        if (msg = false) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Deleted Unsuccessfully");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        } else {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
+
+        }
+
+    }
+
+    public void addOneRoleForStaff(ActionEvent event) throws IOException {
+
+        boolean msg = smsbl.staffAddRole(staffId, selectedRoleNameToAdd);
+        if (msg = false) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Added Unsuccessfully");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        } else {
+            System.out.println("***************Added one role successfully!");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
+
+        }
     }
 
     public String getRoleName() {

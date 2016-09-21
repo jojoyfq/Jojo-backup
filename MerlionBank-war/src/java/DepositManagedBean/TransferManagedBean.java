@@ -42,7 +42,7 @@ public class TransferManagedBean implements Serializable{
     private Long payeeAccount;
     private String payeeAccountString;
     private String payeeName;
-    private Long customerID = Long.parseLong("2");
+    private Long customerID;
     private List payeeList;
     private Long payeeTransferAccount;
 
@@ -81,27 +81,15 @@ public class TransferManagedBean implements Serializable{
         }
     }
     
-    public void goToIntraTransferPage(ActionEvent event){
-        try{
-            if(giverAccountNumLong!=null){
-                FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/TransferManagement/intraTransfer.xhtml");
-            }else{
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have no saving account!");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-            }
-        } catch (Exception e) {
-            System.out.print("Redirect to intraTransfer Page fails");
-        }
-    }
     
-    public void transferByPayee(ActionEvent event) throws TransferException {
+    
+    public void transferByPayee(ActionEvent event) throws TransferException, IOException {
         try{
             amountBD = new BigDecimal(amountString);
             tfsb.intraOneTimeTransferCheck(giverAccountNumLong,payeeTransferAccount,amountBD);
             
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Transfer Success!");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/transferSuccess.xhtml");
         }catch (TransferException ex){
             System.out.print("Transfer By Payee Encounter Error");
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -109,7 +97,7 @@ public class TransferManagedBean implements Serializable{
         }
     }
     
-    public void oneTimeTransfer(ActionEvent event) throws TransferException {
+    public void oneTimeTransfer(ActionEvent event) throws TransferException, IOException {
         try{
             amountBD = new BigDecimal(amountString);
             recipientAccountNumLong = Long.parseLong(recipientAccountNumString);  
@@ -117,8 +105,8 @@ public class TransferManagedBean implements Serializable{
             System.out.print(recipientAccountNumLong);
             tfsb.intraOneTimeTransferCheck(giverAccountNumLong,recipientAccountNumLong,amountBD);
 
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Transfer Success!");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/transferSuccess.xhtml");
             
         } catch (TransferException ex){
             System.out.print("OneTimeTransfer Encounter Error");
@@ -127,14 +115,14 @@ public class TransferManagedBean implements Serializable{
         }
     }
     
-    public void addPayee(ActionEvent event)throws PayeeNotFoundException{
+    public void addPayee(ActionEvent event)throws PayeeNotFoundException, IOException{
         try{
             payeeAccount = Long.parseLong(payeeAccountString);
             tfsb.addPayee(payeeAccount, payeeName,customerID);
             this.getPayeeListfromDatabase();
             
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Add Payee Success!");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/addNewPayeeSuccess.xhtml");
             
         } catch(PayeeNotFoundException ex){
             System.out.print("Add Payee Encounter Error");
@@ -157,6 +145,20 @@ public class TransferManagedBean implements Serializable{
         }
     }
     
+    public void goToIntraTransferPage(ActionEvent event){
+        try{
+            if(giverAccountNumLong!=null){
+                FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/intraTransfer.xhtml");
+            }else{
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have no saving account!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
+        } catch (Exception e) {
+            System.out.print("Redirect to intraTransfer Page fails");
+        }
+    }
+    
     public void goToTransferByPayeeListPage(ActionEvent event){
         try {
             FacesContext.getCurrentInstance().getExternalContext()
@@ -173,6 +175,15 @@ public class TransferManagedBean implements Serializable{
         } catch (Exception e) {
             System.out.print("Redirect to AddNewPayee page fails");
         }       
+    }
+    
+    public void goBackToHomePage(ActionEvent event) {
+        try{
+            FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/dashboard.xhtml");
+        }catch(Exception e){
+            System.out.print("Redirect to Home Page Encounter Error!");
+        }    
     }
     
   
