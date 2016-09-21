@@ -89,13 +89,18 @@ public class FixedDepositStaffManagedBean implements Serializable{
             accountNumber = fda.createFixedAccount(customerId, amountBD, startDate, endDate, duration);
             fda.getAccount(accountNumber).setStatus("active");
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-            ec.redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositAccountSuccess.xhtml");
+            ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDepositSuccess.xhtml");
 
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please enter amount");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
 
+    }
+    
+    public void goToHomePage(ActionEvent event)throws IOException{
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDeposit.xhtml");
     }
 
     public Long getAccountNumber() {
