@@ -1,3 +1,4 @@
+
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
@@ -12,64 +13,51 @@
     <ui:define name="content">
 
         <!-- Left Column -->
-        <div class="Container25 NoPadding Responsive100">
+        <div class="Container20 NoPadding Responsive100">
 
         </div>
 
         <!-- Center Column -->
-        <div class="Container50 NoPadding Responsive50">
+        <div class="Container60 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Transfer By Payee List </div>
+                    <div class="CardBigTopic"> Place a Fixed Deposit </div>
                     <div class="Separator"></div>
 
                     <div class="Container100 ui-fluid">
-                        <div class="Card">
-                            <h:form>
+                        <h:form>
+                            <div class="Card">
+                                <div class="Container20"></div>
+                                <div class="Container60">
+                                    
+                                    <h:panelGrid columns="1" id="transferToFixedPanel" cellpadding="15"> 
 
-                                <div class="Container10"></div>
-                                <div class="Container80">
-                                    <h:panelGrid columns="2" id="transferByPayee" cellpadding="5" > 
+                                        <p:selectOneMenu id="fixedDepositList" value="#{fixedDepositManagedBean.fixedDepositSelected}" >
+                                            <f:selectItem itemLabel="Transfer to this fixed deposit account" itemValue="" noSelectionOption="false"  />
+                                            <f:selectItems value="#{fixedDepositManagedBean.fixedDepositNoMoney}" />
+                                        </p:selectOneMenu>
 
-                                        <h:outputLabel for="payeeAccount" value="Payee Account Number:" />
-                                        <h:outputLabel id="payee_Account" value="#{transferManagedBean.payeeTransferAccount}"/>
-
-                                        <h:outputLabel for="payeeName" value="Payee Name:" />
-                                        <h:outputLabel id="payee_Name" value="#{transferManagedBean.payeeName}" />
-
-                                        <h:outputLabel for="transferAmount" value="Amount: $" />
-                                        <p:inputText id="transfer_Amount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." />
+                                        
+                                        <p:selectOneMenu id="savingAcctsList" value="#{fixedDepositManagedBean.savingAcctSelected}" >
+                                            <f:selectItem itemLabel="From your saving account" itemValue="" noSelectionOption="false"  />
+                                            <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
+                                        </p:selectOneMenu>
 
                                     </h:panelGrid>
+
                                 </div>
-                                <div class="Container10"></div>
+                                <div class="Container20"></div>
 
                                 <div class="EmptyBox20"></div>
                                 <div class="Container30"></div>
                                 <div class="Container40">
-                                    <p:commandButton value="Submit" actionListener="#{transferManagedBean.transferByPayee}" />
+                                   <p:commandButton value="Submit" id="transferToFixedButton" actionListener="#{fixedDepositManagedBean.transferToFixedSeparate}" />
                                 </div>
                                 <div class="Container30"></div>
-
-                            </h:form>
-                            
-                            <h:form>
-                                <div class="Container10"></div>
-                                <div class="Container80"></div>
-                                <div class="Container10"></div>
-                                
-                                <div class="Container30"></div>
-                                <div class="Container40">
-                                    <p:commandButton value="Back" actionListener="#{transferManagedBean.goToTransferByPayeeListPage}" />
-                                </div>
-                                <div class="Container30"></div>
-                            </h:form>
-                        </div>
+                                <div class="EmptyBox20"></div>
+                            </div>
+                        </h:form>
                     </div>
-
-
-
-
 
 
                 </div>
@@ -80,11 +68,12 @@
         </div>
 
         <!-- Right Column -->
-        <div class="Container25 NoPadding Responsive50">
+        <div class="Container20 NoPadding Responsive50">
 
 
         </div>
 
     </ui:define>
 
-</ui:composition>
+</ui:composition> 
+

@@ -1,42 +1,82 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-       xmlns:h="http://java.sun.com/jsf/html"
-       xmlns:f="http://java.sun.com/jsf/core"
-       xmlns:ui="http://java.sun.com/jsf/facelets"
-       xmlns:p="http://primefaces.org/ui">
-    
-    <head>
-        <title>Set as Withdraw at End of Deposit Term Success</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <h:form>
-            <h:panelGrid columns="2" id="earlyWithdrawSuccess" cellpadding="5"> 
-                
-                <h:outputLabel value="Your fixed deposit will be withdrawn at end of the deposit term." />
-                <h:outputLabel />
-                
-                <h:outputLabel for="fixedAccountNumber" value="Fixed deposit account number:" />
-                <p:outputLabel id="accountNumber" value="#{fixedDepositManagedBean.fixedDepositSelected}"  />          
-                <h:outputLabel for="savingAccountNumber" value="Withdrawn to this saving account:" />
-                <p:outputLabel id="savingaccountNumber" value="#{fixedDepositManagedBean.savingAcctSelected}"  /> 
-                <h:outputLabel for="principalAmount" value="Principal Amount(S$):" />
-                <p:outputLabel id="principal" value="#{fixedDepositManagedBean.amountBD}"  />  
-                <h:outputLabel for="interest" value="Interest you will earn(S$):" />
-                <p:outputLabel id="interest" value="#{fixedDepositManagedBean.interest}"  />  
-                <h:outputLabel for="withdrawDate" value="Withdraw Date:" />
-                <p:outputLabel id="withdrawDate" value="#{fixedDepositManagedBean.endDateString}"  />  
-            </h:panelGrid>
-               
-            <p:commandButton action="createFixedDepositAccount" value="Return to Homepage" />
-        </h:form>
-    </body>
-</html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Withdraw at End of Deposit Term </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <div class="Container10"></div>
+                            <div class="Container80">
+                                <h:panelGrid columns="2" id="createFixedDepositAccountSuccess" cellpadding="5"> 
+
+                                    <h:outputLabel class="FontItalic Red TexAlCenter" value="Your fixed deposit will be withdrawn at end of the deposit term." />
+                                    <h:outputLabel />
+
+                                    <h:outputLabel />
+                                    <h:outputLabel />
+
+                                    <h:outputLabel for="fixedAccountNumber" value="Fixed deposit account number:" />
+                                    <p:outputLabel id="accountNumber" value="#{fixedDepositManagedBean.fixedDepositSelected}"  />          
+                                   
+                                    <h:outputLabel for="savingAccountNumber" value="Withdrawn to this saving account:" />
+                                    <p:outputLabel id="savingaccountNumber" value="#{fixedDepositManagedBean.savingAcctSelected}"  /> 
+                                    
+                                    <h:outputLabel for="principalAmount" value="Principal Amount(S$):" />
+                                    <p:outputLabel id="principal" value="#{fixedDepositManagedBean.amountBD}"  />  
+                                    
+                                    <h:outputLabel for="interest" value="Interest you will earn(S$):" />
+                                    <p:outputLabel id="interest" value="#{fixedDepositManagedBean.interest}"  />  
+                                    
+                                    <h:outputLabel for="withdrawDate" value="Withdraw Date:" />
+                                    <p:outputLabel id="withdrawDate" value="#{fixedDepositManagedBean.endDateString}"  />  
+
+                                </h:panelGrid>
+                            </div>
+                            <div class="Container10"></div>
+
+                            <div class="EmptyBox20"></div>
+                            <div class="Container30"></div>
+                            <div class="Container40">              
+                                <p:commandButton actionListener="#{fixedDepositManagedBean.goToHomePage}" value="Return to Homepage" />
+                            </div>
+                            <div class="Container30"></div>
+                        </h:form>
+                    </div>
 
 
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition> 
