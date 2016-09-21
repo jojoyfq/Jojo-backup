@@ -27,26 +27,27 @@
                     <div class="Container100 ui-fluid">
                         <h:form>
                             <div class="Card">
-                                <div class="Container20"></div>
-                                <div class="Container60">
+                                <div class="Container10"></div>
+                                <div class="Container80">
                                     
-                                    <h:panelGrid columns="1" id="transferToFixedPanel" cellpadding="15"> 
-
+                                    <h:panelGrid columns="2" id="transferToFixedPanel" cellpadding="5"> 
+                                        
+                                        <h:outputLabel value="Transfer to Fixed Deposit Account " />
                                         <p:selectOneMenu id="fixedDepositList" value="#{fixedDepositManagedBean.fixedDepositSelected}" >
-                                            <f:selectItem itemLabel="Transfer to this fixed deposit account" itemValue="" noSelectionOption="false"  />
+                                            <f:selectItem itemLabel="Select One   " itemValue="" noSelectionOption="true"  />
                                             <f:selectItems value="#{fixedDepositManagedBean.fixedDepositNoMoney}" />
                                         </p:selectOneMenu>
 
-                                        
+                                        <h:outputLabel value="From Saving Account " />
                                         <p:selectOneMenu id="savingAcctsList" value="#{fixedDepositManagedBean.savingAcctSelected}" >
-                                            <f:selectItem itemLabel="From your saving account" itemValue="" noSelectionOption="false"  />
+                                            <f:selectItem itemLabel="Select One   " itemValue="" noSelectionOption="true"  />
                                             <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
                                         </p:selectOneMenu>
 
                                     </h:panelGrid>
 
                                 </div>
-                                <div class="Container20"></div>
+                                <div class="Container10"></div>
 
                                 <div class="EmptyBox20"></div>
                                 <div class="Container30"></div>
