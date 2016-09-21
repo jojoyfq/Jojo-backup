@@ -40,12 +40,15 @@
                                     <h:outputLabel for="name" value="Name:" /> 
                                     <h:outputLabel value="#{logInManagedBean.customerName}" />
                                     <h:outputLabel/>
+                                    
                                     <h:outputLabel for="gender" value="Gender:" /> 
                                     <h:outputLabel value=" #{logInManagedBean.customerGender}" /> 
                                     <h:outputLabel/>
+                                    
                                     <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
                                     <h:outputLabel value="#{logInManagedBean.birthdate}" />
                                     <h:outputLabel/>
+                                    
                                     <h:outputLabel for="email" value="Email:" /> 
                                     <p:inputText id="email" value="#{logInManagedBean.customerEmail}"  required="true" requiredMessage="Please fill in your email!" />
                                     <p:message for="email" display="icon" />
