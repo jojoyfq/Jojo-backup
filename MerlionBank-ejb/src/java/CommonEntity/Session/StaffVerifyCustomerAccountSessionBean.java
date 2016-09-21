@@ -14,6 +14,7 @@ import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Other.Session.GeneratePassword;
 import Other.Session.sendEmail;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -81,7 +82,7 @@ public boolean verifySavingAccountCustomer (Long staffID, Long customerID, Strin
             em.flush();
             
             try {
-            sendEmail(customer.getName(),customer.getEmail(),tempPassword,savingAccount.getAccountNumber());
+            sendEmail(customer.getName(),customer.getEmail(),tempPassword,savingAccount.getAccountNumber(),savingAccount.getSavingAccountType().getMinAmount());
             } catch (MessagingException ex) {
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
@@ -142,7 +143,7 @@ public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID,
             em.flush();
             
             try {
-            sendEmail(customer.getName(),customer.getEmail(),tempPassword,fixedDepositAccount.getAccountNumber());
+            sendFixedEmail(customer.getName(),customer.getEmail(),tempPassword,fixedDepositAccount.getAccountNumber(),fixedDepositAccount.getAmount());
             } catch (MessagingException ex) {
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
@@ -169,21 +170,38 @@ public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID,
         else return false;
 }
 
- private void sendEmail(String name, String email, String password,Long accountNumber) throws MessagingException {
+ private void sendEmail(String name, String email, String password,Long accountNumber,BigDecimal minAmount) throws MessagingException {
         String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Activation";
         System.out.println("Inside send email");
 
         String content = "<h2>Dear " + name
                 + ",</h2><br /><h1>  Congratulations! You have successfully registered a Merlion Online Banking Account!</h1><br />"
                 + "<h1>Welcome to Merlion Bank.</h1>"
-                + "<h2 align=\"center\">AccountNumber: " + accountNumber
-                + "<br />Temporary Password: " + password + "<br />Please activate your account through this link: " + "</h2><br />" 
-                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum SG$500 to your account in order to activate your saving account. Thank you.</p>"
+                + "<h2 align=\"center\">Saving Account Number: " + accountNumber
+                + "<br />Temporary Password: " + password + "<br />Please activate your account through activation link on the Login page " + "</h2><br />" 
+                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum"+minAmount+" to your account in order to activate your saving account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
         sendEmail.run(email, subject, content);
     }
+ 
+ private void sendFixedEmail(String name, String email, String password,Long accountNumber,BigDecimal minAmount) throws MessagingException {
+        String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Activation";
+        System.out.println("Inside send email");
+
+        String content = "<h2>Dear " + name
+                + ",</h2><br /><h1>  Congratulations! You have successfully registered a Merlion Online Banking Account!</h1><br />"
+                + "<h1>Welcome to Merlion Bank.</h1>"
+                + "<h2 align=\"center\">Fixed Deposit Account Number: " + accountNumber
+                + "<br />Temporary Password: " + password + "<br />Please activate your account through activation link on the Login page " + "</h2><br />" 
+                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum"+minAmount+" to your account within seven days. Otherwise your account will be terminated. Thank you.</p>"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
+    }
+
 
 private void sendRejectVerificationEmail(String name, String email) throws MessagingException {
       String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Application Rejected";
