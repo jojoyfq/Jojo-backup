@@ -55,7 +55,7 @@ public class FixedDepositManagedBean implements Serializable {
     private String duration;
     private Date endDate;
     private Double interestRate;
-    private Long customerId;
+    private Long customerId = 2L;
     private Boolean response;
 
     private Long accountNumber;
@@ -104,7 +104,6 @@ public class FixedDepositManagedBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        setCustomerId(logInManagedBean.getCustomerId());
         savingAccountManagedBean.init();
         fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
         fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
@@ -135,7 +134,7 @@ public class FixedDepositManagedBean implements Serializable {
 
             setEndDate(getCalE().getTime());
 
-            setCustomerId(logInManagedBean.getCustomerId());
+            //setCustomerId(logInManagedBean.getCustomerId());
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             endDateString = df.format(endDate);
             startDateString = df.format(startDate);
@@ -156,7 +155,7 @@ public class FixedDepositManagedBean implements Serializable {
     }
 
     public void transferToFixed(ActionEvent event) throws IOException {
-         customerId = logInManagedBean.getCustomerId();
+
         //check if customer have select any account
         if (savingAcctSelected != null && amountToTransferStr != null) {
             amountToTransfer = new BigDecimal(amountToTransferStr);
@@ -179,7 +178,6 @@ public class FixedDepositManagedBean implements Serializable {
     }
 
     public void transferToFixedSeparate(ActionEvent event) throws IOException {
-        
         if (savingAcctSelected != null && fixedDepositSelected != null) {
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             amountBD = fda.getAmount(fixedDepositSelected);
@@ -193,8 +191,6 @@ public class FixedDepositManagedBean implements Serializable {
     }
 
     public void transferToFixedSeparateNext(ActionEvent event) throws IOException {
-        customerId = logInManagedBean.getCustomerId();
-        
         amountToTransfer = new BigDecimal(amountToTransferStr);
         response = fda.transferToFixedDeposit(savingAcctSelected, fixedDepositSelected, amountToTransfer, customerId);
 
@@ -214,7 +210,6 @@ public class FixedDepositManagedBean implements Serializable {
 
     
     public void withdraw(ActionEvent event) throws IOException{
-        customerId = logInManagedBean.getCustomerId();
          if (savingAcctSelected != null&& fixedDepositSelected !=null&& withdrawTime !=null){
              if(withdrawTime.equalsIgnoreCase("withdraw now")){
              amountBD = fda.getBalance(fixedDepositSelected);
@@ -248,7 +243,6 @@ public class FixedDepositManagedBean implements Serializable {
 
 
     public void earlyWithdraw(ActionEvent event) throws IOException {
-        customerId = logInManagedBean.getCustomerId();
         if (savingAcctSelected != null && fixedDepositSelected != null) {
             fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected);
             this.updateList(customerId);
@@ -293,7 +287,6 @@ public class FixedDepositManagedBean implements Serializable {
     }
 
     public void renewFixed(ActionEvent event) throws IOException {
-        customerId = logInManagedBean.getCustomerId();
         fda.renewFixed(fixedDepositSelected);
         this.updateList(customerId);
         //log an action
@@ -306,7 +299,6 @@ public class FixedDepositManagedBean implements Serializable {
 
     
     public void displayRenewInfo(ActionEvent event) throws IOException{
-        
        if(fixedDepositSelected != null){
        startDateString = fda.getRenewDates(fixedDepositSelected).get(0);
        endDateString = fda.getRenewDates(fixedDepositSelected).get(1);
