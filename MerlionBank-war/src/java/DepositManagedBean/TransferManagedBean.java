@@ -5,6 +5,7 @@
  */
 package DepositManagedBean;
 
+import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.TransferSessionBeanLocal;
 import Exception.PayeeNotFoundException;
 import Exception.TransferException;
@@ -19,6 +20,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.context.RequestContext;
 
@@ -32,6 +34,8 @@ public class TransferManagedBean implements Serializable{
 
     @EJB
     TransferSessionBeanLocal tfsb;
+    @Inject
+    private LogInManagedBean logInManagedBean;
     private List savingAccountList;
     private String recipientName;
     private String amountString;
@@ -51,6 +55,7 @@ public class TransferManagedBean implements Serializable{
     @PostConstruct
     public void init() {
         try{
+            setCustomerID(logInManagedBean.getCustomerId());
             this.getSavingAccountNumbers();
             this.getPayeeListfromDatabase();
         }catch(Exception e){

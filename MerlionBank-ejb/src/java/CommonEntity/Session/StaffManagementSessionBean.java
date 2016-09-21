@@ -795,15 +795,23 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         staffRole.setStaffList(newList);
         em.persist(staffRole);
         em.flush();
+        
+        for (int i=0;i<newList.size();i++){
+        System.out.println(newList.get(i).getId());
+        }
         return true;
 
     }
 
     @Override
-    public boolean staffAddRole(Staff staff, Long roleId) {
-        Query q = em.createQuery("Select a FROM StaffRole a WHERE a.id=:id");
-        q.setParameter("id", roleId);
+    public boolean staffAddRole(Long staffId, String roleName) {
+        Query q = em.createQuery("Select a FROM StaffRole a WHERE a.roleName=:roleName");
+        q.setParameter("roleName", roleName);
         StaffRole staffRole = (StaffRole) q.getSingleResult();
+        
+          Query query = em.createQuery("Select a FROM Staff a WHERE a.id=:id");
+        query.setParameter("id", staffId);
+        Staff staff = (Staff) q.getSingleResult(); 
 
         List<StaffRole> currentRoleList = staff.getStaffRoles();
         currentRoleList.add(staffRole);
@@ -822,7 +830,11 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     @Override
-    public Long updateStaffInfo(Long adminId, Staff staff, String staffIc, String staffName, String staffEmail, String mobileNumber) {
+    public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String staffName, String staffEmail, String mobileNumber) {
+        Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        q.setParameter("id", staffId);
+        Staff staff = (Staff) q.getSingleResult();
+        
         staff.setStaffIc(staffIc);
         staff.setStaffName(staffName);
         staff.setStaffEmail(staffEmail);
@@ -837,10 +849,14 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     @Override
-    public boolean staffDeleteRole(Staff staff, Long roleId) {
-        Query q = em.createQuery("Select a FROM StaffRole a WHERE a.id=:id");
-        q.setParameter("id", roleId);
+    public boolean staffDeleteRole(Long staffId, String roleName) {
+        Query q = em.createQuery("Select a FROM StaffRole a WHERE a.roleName=:roleName");
+        q.setParameter("roleName", roleName);
         StaffRole staffRole = (StaffRole) q.getSingleResult();
+        
+        Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        query.setParameter("id", staffId);
+        Staff staff = (Staff) query.getSingleResult();
 
         List<StaffRole> staffRoles = staff.getStaffRoles();
         List<StaffRole> newList = new ArrayList<StaffRole>();
@@ -854,7 +870,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         em.persist(staff);
         em.flush();
 
-        deleteStaffFromRole(staff, roleId);
+        deleteStaffFromRole(staff, staffRole.getId());
         return true;
     }
 
