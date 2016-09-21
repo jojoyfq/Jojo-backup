@@ -47,7 +47,7 @@ public class LogInManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
 
     private Customer customer;
-    private String ic = "S4444";
+    private String ic;
     private String customerName;
     private String customerGender;
     private Date customerDateOfBirth;
