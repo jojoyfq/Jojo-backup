@@ -288,6 +288,15 @@ public void modifyUserProfile(){}
 
         }
     }
+    
+    public void goToActivateAccountPage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CustomerManagement/CustomerAccountActivation.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to ActivateAccount page fails");
+        }
+    }
 
     public String getBirthdate() {
         return birthdate;
