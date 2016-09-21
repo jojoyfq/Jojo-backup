@@ -12,6 +12,7 @@ import CommonEntity.Staff;
 import CommonEntity.StaffRole;
 import Exception.EmailNotSendException;
 import Exception.RoleAlreadyExistedException;
+import Exception.StaffAlreadyHasRoleException;
 import Exception.StaffRoleExistException;
 import Exception.UserExistException;
 import Exception.UserNotExistException;
@@ -490,8 +491,8 @@ public class StaffManagementManagedBean implements Serializable {
 
     }
 
-    public void addOneRoleForStaff(ActionEvent event) throws IOException {
-
+    public void addOneRoleForStaff(ActionEvent event) throws IOException,StaffAlreadyHasRoleException {
+        try{
         boolean msg = smsbl.staffAddRole(staffId, selectedRoleNameToAdd);
         if (msg = false) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Added Unsuccessfully");
@@ -500,6 +501,11 @@ public class StaffManagementManagedBean implements Serializable {
             System.out.println("***************Added one role successfully!");
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
 
+        }
+        }catch (StaffAlreadyHasRoleException ex){
+             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            
         }
     }
 
