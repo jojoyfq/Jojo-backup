@@ -795,16 +795,12 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         staffRole.setStaffList(newList);
         em.persist(staffRole);
         em.flush();
-        
-        for (int i=0;i<newList.size();i++){
-        System.out.println(newList.get(i).getId());
-        }
         return true;
 
     }
 
     @Override
-    public boolean staffAddRole(Long staffId, String roleName) {
+   public boolean staffAddRole(Long staffId, String roleName) {
         Query q = em.createQuery("Select a FROM StaffRole a WHERE a.roleName=:roleName");
         q.setParameter("roleName", roleName);
         StaffRole staffRole = (StaffRole) q.getSingleResult();
@@ -829,6 +825,9 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
     }
 
+
+  
+
     @Override
     public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String staffName, String staffEmail, String mobileNumber) {
         Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
@@ -847,6 +846,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         return staff.getId();
 
     }
+
 
     @Override
     public boolean staffDeleteRole(Long staffId, String roleName) {
@@ -873,6 +873,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         deleteStaffFromRole(staff, staffRole.getId());
         return true;
     }
+
 
 //forget password- 1st step verify account details
     @Override

@@ -14,6 +14,7 @@ import Exception.UserAlreadyHasSavingAccountException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserHasPendingTransactionException;
 import Exception.UserNotEnoughBalanceException;
+import TellerManagedBean.ServiceCustomerManagedBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -39,7 +41,9 @@ public class SavingAccountManagedBean implements Serializable {
     SavingAccountSessionBeanLocal sasb;
     @EJB
     AccountManagementSessionBeanLocal amsb;
-    private Long customerID = Long.parseLong("2");
+    @Inject
+    private ServiceCustomerManagedBean serviceCustomerManagedBean;
+    private Long customerID;
     private List<SavingAccount> savingAccounts;
     private String savingAccountName;
     private List<String> savingAccountTypeList;
@@ -61,6 +65,9 @@ public class SavingAccountManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         try {
+            System.out.print("inside the init() method");
+            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+            System.out.print("customer is"+customerID);
             this.getSavingAccountType();
             savingAccounts = sasb.getSavingAccount(customerID);
             this.getSavingAccountNumbers();
@@ -84,8 +91,8 @@ public class SavingAccountManagedBean implements Serializable {
             this.getNotTerminatedAccountNumbers();
             savingAccounts = sasb.getSavingAccount(customerID);
 
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/DepositManagement/createSavingAccountECsuccess.xhtml");
 
         } catch (UserAlreadyHasSavingAccountException ex) {
             System.out.println(ex.getMessage());
@@ -128,13 +135,13 @@ public class SavingAccountManagedBean implements Serializable {
         //System.out.print(transactionRecordList);
     }
 
-    public void cashWithdraw(ActionEvent event) throws UserNotEnoughBalanceException {
+    public void cashWithdraw(ActionEvent event) throws UserNotEnoughBalanceException, IOException {
         try {
             if (savingAccountSelected != null) {
                 withdrawAmount = new BigDecimal(withdrawAmountString);
                 sasb.cashWithdraw(savingAccountSelected, withdrawAmount);
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Cash Withdraw Success!");
-                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/DepositManagement/cashWithdrawSuccess.xhtml");
             } else {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Saving Account!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -150,8 +157,8 @@ public class SavingAccountManagedBean implements Serializable {
             if (notTerminAccountSelected != null) {
                 depositAmount = new BigDecimal(depositAmountString);
                 sasb.cashDeposit(notTerminAccountSelected, depositAmount);
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Cash Deposit Success!");
-                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/DepositManagement/cashDepositSuccess.xhtml");
             } else {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Saving Account!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -213,6 +220,15 @@ public class SavingAccountManagedBean implements Serializable {
         }
     }
 
+    public void goBackToHomePage(ActionEvent event) {
+        try{
+            FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
+        }catch(Exception e){
+            System.out.print("Redirect to Home Page Encounter Error!");
+        }    
+    }
+    
     public void checkPendingTransaction(ActionEvent event) throws UserHasPendingTransactionException, IOException, UserHasNoSavingAccountException {
         try {
             sasb.checkPendingTransaction(savingAccountSelected);
