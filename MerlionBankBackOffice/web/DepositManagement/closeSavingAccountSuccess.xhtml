@@ -1,12 +1,21 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Close Saving Account Success!</title>
+        <title>Close Account Success</title>
     </h:head>
     <h:body>
-        Close Saving Account Success!
+        <h:form>
+            <p:panel>
+                <h:outputLabel value="Close Saving Account Successfully" />
+                <p:commandButton value="Back To HomePage" 
+                                 actionListener="#{savingAccountManagedBean.goBackToHomePage}"/>
+            </p:panel>
+        </h:form>
     </h:body>
 </html>
 

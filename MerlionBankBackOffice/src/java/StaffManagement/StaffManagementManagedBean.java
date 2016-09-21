@@ -426,11 +426,11 @@ public class StaffManagementManagedBean implements Serializable {
     }
 
     public void deleteStaffRole(ActionEvent event, Long bankStaffId) {
-        roleNameToDelete = (String) event.getComponent().getAttributes().get("selectedRoleName");
-        System.out.println("************Message from managed bean staff id is: " + bankStaffId);
-        System.out.println("************Message from managed bean role name selected is: " + roleNameToDelete);
+     //   roleNameToDelete = (String) event.getComponent().getAttributes().get("selectedRoleName");
+     //   System.out.println("************Message from managed bean staff id is: " + bankStaffId);
+     //   System.out.println("************Message from managed bean role name selected is: " + roleNameToDelete);
 
-        smsbl.staffDeleteRole(bankStaffId, roleName);
+   //     smsbl.staffDeleteRole(bankStaffId, roleName);
     }
 
     public String getRoleName() {

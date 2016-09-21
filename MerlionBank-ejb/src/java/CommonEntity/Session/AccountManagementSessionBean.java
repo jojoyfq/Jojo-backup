@@ -211,9 +211,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             System.out.println("Saving Account successfully created");
 
             String email = customer.getEmail();
+            
+            BigDecimal minAmount = savingAccount.getSavingAccountType().getMinAmount();
 
             try {
-                SendSavingAccountActivationEmail(savingAccountName, email);
+                SendSavingAccountActivationEmail(savingAccountName, minAmount,email);
 
             } catch (MessagingException ex) {
                 System.out.println("Error sending email.");
@@ -293,7 +295,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         }
     }
 
-    private void SendSavingAccountActivationEmail(String name, String email) throws MessagingException {
+    private void SendSavingAccountActivationEmail(String name, BigDecimal minAmount,String email) throws MessagingException {
         String subject = "Merlion Bank - " + name + "Saving Account Activation";
         System.out.println("Inside send SavingAccount Activation email");
 
@@ -301,6 +303,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
                 + ",</h2><br /><h1>  Congratulations! You have successfully created a Merlion " + name + " Saving Account!</h1><br />"
                 + "<h1>Welcome to Merlion Bank.</h1>"
                 + "<br />Please logins to your iBanking to activate your Saving Account</h2><br />"
+                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum SG$"+minAmount+" to your account in order to activate your saving account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>MerLION Platform User Support</p>";
         System.out.println(content);
