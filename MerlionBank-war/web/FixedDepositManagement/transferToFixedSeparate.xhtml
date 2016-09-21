@@ -9,25 +9,24 @@
     </h:head>
     <h:body>
         <h:form>
-                <h:panelGrid columns="2" id="transferToFixedPanel" cellpadding="5"> 
+            <h:panelGrid columns="2" id="transferToFixedPanel" cellpadding="5"> 
 
-                    <p:selectOneMenu id="fixedDepositList" value="#{fixedDepositManagedBean.fixedDepositSelected}" >
-                        <f:selectItem itemLabel="Transfer to this fixed deposit account" itemValue="" noSelectionOption="false"  />
-                        <f:selectItems value="#{fixedDepositManagedBean.fixedDepositNoMoney}" />
-                    </p:selectOneMenu>
-                    
-                    <br/>
+                <p:selectOneMenu id="fixedDepositList" value="#{fixedDepositManagedBean.fixedDepositSelected}" >
+                    <f:selectItem itemLabel="Transfer to this fixed deposit account" itemValue="" noSelectionOption="false"  />
+                    <f:selectItems value="#{fixedDepositManagedBean.fixedDepositNoMoney}" />
+                </p:selectOneMenu>
 
-                    <br/>
-                    <p:selectOneMenu id="savingAcctsList" value="#{fixedDepositManagedBean.savingAcctSelected}" >
-                        <f:selectItem itemLabel="From your saving account" itemValue="" noSelectionOption="false"  />
-                        <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
-                    </p:selectOneMenu>
+                <br/>
+                <br/>
+                <p:selectOneMenu id="savingAcctsList" value="#{fixedDepositManagedBean.savingAcctSelected}" >
+                    <f:selectItem itemLabel="From your saving account" itemValue="" noSelectionOption="false"  />
+                    <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
+                </p:selectOneMenu>
 
-                </h:panelGrid>
+            </h:panelGrid>
 
-                <p:commandButton value="Submit" id="transferToFixedButton"
-                                 actionListener="#{fixedDepositManagedBean.transferToFixedSeparate}" />
+            <p:commandButton value="Submit" id="transferToFixedButton"
+                             actionListener="#{fixedDepositManagedBean.transferToFixedSeparate}" />
         </h:form>
     </h:body>
 </html>

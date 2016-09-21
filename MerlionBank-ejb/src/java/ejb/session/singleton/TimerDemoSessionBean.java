@@ -40,10 +40,10 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
     public void createTimers(Date startTime){
         timerService = context.getTimerService();
         System.out.println("hihihihihihihihihi"+startTime);
-        Timer fixedDepositAccountTimer = timerService.createTimer(startTime, 8 * 60 * 60 * 1000, "FixedDeposit-TIMER");
+        Timer fixedDepositAccountTimer = timerService.createTimer(startTime, 1 * 60  * 1000, "FixedDeposit-TIMER");
         System.err.println("********** FixedDeposit-TIMER TIMER CREATED");
     
-        Timer accountClosureTimer = timerService.createTimer(startTime, 8 * 60 * 60 * 1000, "OnlineBankingAccount-TIMER");
+        Timer accountClosureTimer = timerService.createTimer(startTime, 1 * 60  * 1000, "OnlineBankingAccount-TIMER");
         System.err.println("********** OnlineBankingAccount-TIMER TIMER CREATED");
     }
     
