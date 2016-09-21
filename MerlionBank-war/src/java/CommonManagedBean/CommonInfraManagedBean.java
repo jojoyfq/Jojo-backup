@@ -136,8 +136,6 @@ public class CommonInfraManagedBean implements Serializable {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
-                                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
-
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -163,7 +161,6 @@ public class CommonInfraManagedBean implements Serializable {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
               //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
               //  amsbl.createFixedAccount(customer, amount, duration);
-           
             } else {
                 System.out.println("Message from managed bean: please do not leave blanks!");
             }

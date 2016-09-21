@@ -77,20 +77,14 @@ public class AccountActivationManagedBean implements Serializable {
                 // System.out.println("GAO MEI REN:" + msg);
 
                 System.out.println("lala");
-                
+                if (!customer.getSavingAccounts().isEmpty()) {
                     String msg2 = amsbl.verifyAccountBalance(customerIc);
-                    if (msg2.equals("invalid amount")) {
-                        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have not reached the minimum top up amount!!");
-                        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                    }
+                } else {
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
 
-
-              
-                    
-                
+                }
             } else {
                 System.out.println("Please dont leave blanks!");
             }
@@ -121,12 +115,8 @@ public class AccountActivationManagedBean implements Serializable {
                         System.out.println("Status has NOT been updated!");
 
                     }
-                }else if(msg.equals("Does not match with new password")){
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password does not match with new password!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                
                 } else {
-                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has not been  changed!");
+                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has been successfully changed!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                     System.out.println("password has not been changed!");
                 }
