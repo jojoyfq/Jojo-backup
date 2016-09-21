@@ -811,7 +811,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         
           Query query = em.createQuery("Select a FROM Staff a WHERE a.id=:id");
         query.setParameter("id", staffId);
-        Staff staff = (Staff) q.getSingleResult(); 
+        Staff staff = (Staff) query.getSingleResult(); 
 
         List<StaffRole> currentRoleList = staff.getStaffRoles();
         currentRoleList.add(staffRole);
