@@ -29,21 +29,19 @@
                         <p:menuitem id="place_a_fixed_deposit" value="Place a Fixed Deposit" outcome="/FixedDepositManagement/transferToFixedSeparate"/> 
                         <p:menuitem id="view_fixed_details" value="My Accounts" outcome="/FixedDepositManagement/displayFixedDepositDetails"/>
                         <p:menuitem id="withdraw_fixed" value="Withdraw Fixed Deposit" outcome="/FixedDepositManagement/withdrawFixedDeposit"/> 
+                        <p:menuitem id="renew_fixed_deposit" value="Renew Fixed Deposit" outcome="/FixedDepositManagement/renewFixedDeposit"/> 
                     </p:submenu>
 
                 </p:submenu>
 
                 <p:submenu id="pa_theme" label="Card Management">
-                    <p:menuitem id="pa_sample" value="Sample Page" icon="icon-key" outcome="/sample" />
-                    <p:menuitem id="pa_forms" value="Form Elements" icon="icon-text-document" outcome="/forms" />
-                    <p:menuitem id="pa_data" value="Data Components" icon="icon-archive" outcome="/data" />
-                    <p:menuitem id="pa_datatable" value="DataTable" icon="icon-sweden" outcome="/datatable" />
-
+                    
                 </p:submenu>
+                
                 <p:submenu id="pa_default" label="Loan Management">
-                    <p:menuitem id="pa_empty" value="Empty Page" icon="icon-browser" outcome="/empty-page" />
-
+ 
                 </p:submenu>
+                
                 <p:submenu id="pa_hierarchy" label="Bill and Payment">
 
                     <p:submenu id="pa_sm2" label="Transfer" icon="icon-plus">
@@ -51,8 +49,9 @@
                     </p:submenu>
                 </p:submenu>
 
-                <p:menuitem id="pa_icons" value="Wealth Management" outcome="/font-icons" />
-
+                <p:submenu id="wealth_management" label="Wealth Management">
+                </p:submenu>
+                
                 <p:submenu id="pa_docs" label="Portfolio Management">
                 </p:submenu>
 
