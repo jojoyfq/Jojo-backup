@@ -6,6 +6,8 @@
 package FixedDeposit;
 
 import CommonEntity.Customer;
+import DepositEntity.FixedDepositAccount;
+import DepositEntity.Session.FixedDepositAccountSessionBean;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import TellerManagedBean.ServiceCustomerManagedBean;
 import java.io.IOException;
@@ -16,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.Dependent;
@@ -33,7 +37,7 @@ import org.primefaces.context.RequestContext;
  */
 @Named(value = "fixedDepositStaffManagedBean")
 @SessionScoped
-public class FixedDepositStaffManagedBean implements Serializable{
+public class FixedDepositStaffManagedBean implements Serializable {
 
     @EJB
     FixedDepositAccountSessionBeanLocal fda;
@@ -47,14 +51,29 @@ public class FixedDepositStaffManagedBean implements Serializable{
     private String startDateString;
     private String endDateString;
     private Long accountNumber;
+    private List<FixedDepositAccount> fixedDepositAccounts;
 
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
-
+    
+    @EJB
+    FixedDepositAccountSessionBeanLocal fdasb;
     /**
      * Creates a new instance of FixedDepositStaffManagedBean
      */
-
+     @PostConstruct
+    public void init() {
+        try {
+            System.out.print("inside the init method");
+            //serviceCustomerManagedBean.init();
+            customerId = serviceCustomerManagedBean.getCustomer().getId();
+            System.out.print("************************");
+            System.out.print(customerId);
+            fixedDepositAccounts = fdasb.getFixedDepositAccounts(customerId);
+        } catch (Exception e) {
+            System.out.print("Init encounter error");
+        }
+    }
     public FixedDepositStaffManagedBean() {
     }
 
@@ -97,6 +116,12 @@ public class FixedDepositStaffManagedBean implements Serializable{
         }
 
     }
+//    
+//    public void displayAccountInfo(Long customerId){
+//        fixedDepositAccounts = fdasb.getFixedDepositAccounts(customerId);
+//        System.out.println(fixedDepositAccounts);
+//        
+//    }
 
     public Long getAccountNumber() {
         return accountNumber;
@@ -176,6 +201,20 @@ public class FixedDepositStaffManagedBean implements Serializable{
 
     public void setEndDateString(String endDateString) {
         this.endDateString = endDateString;
+    }
+
+    public List<FixedDepositAccount> getFixedDepositAccounts() {
+        return fixedDepositAccounts;
+    }
+
+    public void setFixedDepositAccounts(List<FixedDepositAccount> fixedDepositAccounts) {
+        this.fixedDepositAccounts = fixedDepositAccounts;
+    }
+
+    private static class customerId {
+
+        public customerId() {
+        }
     }
 
 }

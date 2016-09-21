@@ -58,12 +58,13 @@ public class ServiceCustomerManagedBean implements Serializable {
         if(customerIc != null){
             if(!scsb.selectCustomer(customerIc).equals(false)){
         this.customer = (Customer) scsb.selectCustomer(customerIc);
+        System.out.print(customerIc);
         System.out.print("customer set!");
        // redirect to homepage
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer selected");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
         FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDeposit.xhtml");
+                    .redirect("/MerlionBankBackOffice/FixedDepositManagement/displayFixedDepositAccountDetail.xhtml");
             }else{
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer not found. Please enter correct IC.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -78,5 +79,10 @@ public class ServiceCustomerManagedBean implements Serializable {
         System.out.print("customer cleared!");
         //redirect to homepage
     }
+
+    public void init() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
 }
