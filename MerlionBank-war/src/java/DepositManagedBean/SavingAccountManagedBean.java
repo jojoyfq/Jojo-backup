@@ -6,7 +6,6 @@
 package DepositManagedBean;
 
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
-import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
@@ -25,7 +24,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -40,9 +38,7 @@ public class SavingAccountManagedBean implements Serializable {
     SavingAccountSessionBeanLocal sasb;
     @EJB
     AccountManagementSessionBeanLocal amsb;
-    @Inject
-    private LogInManagedBean logInManagedBean;
-    private Long customerID;
+    private Long customerID = Long.parseLong("2");
     private List<SavingAccount> savingAccounts;
     private String savingAccountName;
     private List<String> savingAccountTypeList;
@@ -57,7 +53,6 @@ public class SavingAccountManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         try {
-            setCustomerID(logInManagedBean.getCustomerId());
             this.getSavingAccountType();
             savingAccounts = sasb.getSavingAccount(customerID);
             this.getSavingAccountNumbers();

@@ -47,7 +47,7 @@ public class LogInManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
 
     private Customer customer;
-    private String ic;
+    private String ic = "S4444";
     private String customerName;
     private String customerGender;
     private Date customerDateOfBirth;
@@ -80,10 +80,7 @@ public class LogInManagedBean implements Serializable {
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
-public void goToLogInPage(ActionEvent event) throws IOException{
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
 
-}
 //    public List getAccountTypes() {
 //        return accountTypes;
 //    }
