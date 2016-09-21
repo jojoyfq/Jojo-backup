@@ -59,7 +59,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
 
         //if balance<transferAmount, the transfer is not allowed, return false
         if (giverBalance.compareTo(transferAmount) == -1) {
-            throw new TransferException("Your saving account " + giverBankAccountNum + " does not have enough fund!");
+            throw new TransferException("Saving account " + giverBankAccountNum + " does not have enough fund!");
         } else {
 
             Query m = em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :recipientBankAccountNum");

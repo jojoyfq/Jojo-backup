@@ -18,7 +18,7 @@ and open the template in the editor.
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
                 <meta name="apple-mobile-web-app-capable" content="yes" />
             </f:facet>
-            <title>Assign Role To Staff</title>
+            <title>Simulation</title>
         </h:head>
 
         <h:body styleClass="BlackBack">
@@ -30,33 +30,33 @@ and open the template in the editor.
                     <div class="Wid60 MarAuto WidAutoOnMobile">
                         <div class="Container100">
                             <div class="Card ui-fluid">
-                                <div class="CardBigTopic TexAlCenter Purple">Assign Role To Staff</div>
+                                <div class="CardBigTopic TexAlCenter Purple">Simulation for fixed account transfer</div>
                                 <div class="SeparatorFull"></div>
 
 
                                 <div class="Container100 ui-fluid">
                                     <div class="Card">
                                         <h:form>
-                                            <p:panel id="panel" header="Create New Staff">
+                                            <p:panel id="panel">
                                                 <p:messages id="msgs" />
 
-                                                <h:panelGrid columns="2" id="create" cellpadding="5">                   
-                                                    <h:outputLabel for="staffId" value="Staff ID:" />
-                                                    <h:outputLabel id="staffId" value="#{staffManagementManagedBean.staff.id}" />
+                                                <h:panelGrid columns="3" id="createSavingAccount" cellpadding="5">                   
+                                                    <h:outputLabel for="actNum" value="Account Number: " />
+                                                    <p:inputText id="actNum" value="#{simulationManagedBean.accountNumber}" label="actNum" required="true" requiredMessage="Please input the account number"/>
+                                                    <p:message for="actNum" display="icon" />
 
+                                                    <h:outputLabel for="amount" value="Transfer Amount: " />
+                                                    <p:inputText id="amount" value="#{simulationManagedBean.amount}" label="customerName" required="true" requiredMessage="Please input your name"/>
+                                                    <p:message for="amount" display="icon"/>
 
-                                                    <h:outputLabel for="roles" value="Roles:" />
-                                                    <p:selectOneMenu id="roles" value="#{staffManagementManagedBean.selectedRoleName}" required="true" requiredMessage="Please choose one role!">
-
-                                                        <f:selectItem itemLabel="Select the role for staff" itemValue="" noSelectionOption="true" />
-                                                        <f:selectItems value="#{staffManagementManagedBean.allRoles}" />                
-                                                    </p:selectOneMenu>
-                                                    <p:message for="roles" display="icon">
-
-
+                                                  
                                                 </h:panelGrid>
+
+
                                                 <div class="EmptyBox20"></div>   
-                                                <p:commandButton update="panel" actionListener="#{staffManagementManagedBean.adminAssignStaffRole}" value="Submit" />
+                                                <p:commandButton update="panel" actionListener="#{simulationManagedBean.transferToFixed}" value="Submit" />
+
+
 
                                             </p:panel>
 

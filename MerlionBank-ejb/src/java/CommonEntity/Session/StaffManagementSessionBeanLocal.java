@@ -76,15 +76,14 @@ public interface StaffManagementSessionBeanLocal {
 // delete staff, 1st delete staff, 2nd delete staff from role
     public boolean deleteStaff(Long staffId, Long adminId);
 
-  public boolean deleteStaffFromRole(Staff staff, Long roleId);
+    public boolean deleteStaffFromRole(Staff staff, Long roleId);
 
 // modify staff- update staff personal info
-    public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String staffName, String staffEmail, String mobileNumber);
-
+public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String staffName, String staffEmail, String mobileNumber) ;
 //modify staff- modify staff roles
     public boolean staffAddRole(Long staffId, String roleName)throws StaffAlreadyHasRoleException;
 
-public boolean staffDeleteRole(Long staffId, String roleName);
+   public boolean staffDeleteRole(Long staffId, String roleName);
 
 //forget password/unlock account- 1st step verify account details, 2nd update new password and status
     public Staff forgetPasswordVerifyDetail(String ic, String fullName, String email) throws UserNotExistException, UserNotActivatedException;

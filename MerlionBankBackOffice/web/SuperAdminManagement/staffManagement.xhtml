@@ -19,46 +19,32 @@ and open the template in the editor.
         <h:body>
 
             <h:form id="form">
-                <p:growl id="msgs" showDetail="true"/>
                 <p:panel id="panel" header="Merlion Bank Staff Management System" >
 
-
+                    <p:messages id="msgs" />
 
                     <h:panelGrid columns="4" cellpadding="5">
 
 
-                        <p:dataTable var="staffEntity" value="#{staffManagementManagedBean.staffs}" editable="true" style="margin-bottom:20px">
+                        <p:dataTable var="staffEntity" value="#{staffManagementManagedBean.staffs}">
 
-                            <p:ajax event="rowEdit" listener="#{staffManagementManagedBean.onRowEdit}" update=":form:msgs" />
-
-
-                            <p:column headerText="Staff Id">
-
+                            <p:column headerText="Staff ID" style="width: 80px;">
+                                
                                 <h:outputText value="#{staffEntity.id}" />
-
                             </p:column>
-
-
 
                             <p:column headerText="Staff Name">
-                                <p:cellEditor>
-                                    <f:facet name="output"><h:outputText value="#{staffEntity.staffName}" /></f:facet>
-                                    <f:facet name="input"><p:inputText id="staffName" value="#{staffEntity.staffName}" style="width:100%"/></f:facet>
-                                </p:cellEditor>
+                                <h:outputText value="#{staffEntity.staffName}" />
+                            </p:column>
+                            <p:column headerText="Staff IC">
+                                <h:outputText value="#{staffEntity.staffIc}" />
+                            </p:column>
+                            
+                            <p:column headerText="Staff Email">
+                                <h:outputText value="#{staffEntity.staffEmail}" />
                             </p:column>
 
-                            <p:column headerText="Staff IC">
-                                <p:cellEditor>
-                                    <f:facet name="output"><h:outputText value="#{staffEntity.staffIc}" /></f:facet>
-                                    <f:facet name="input"><p:inputText id="staffIc" value="#{staffEntity.staffIc}" style="width:100%"/></f:facet>
-                                </p:cellEditor>
-                            </p:column>
-                            <p:column headerText="Staff Email">
-                                <p:cellEditor>
-                                    <f:facet name="output"><h:outputText value="#{staffEntity.staffEmail}" /></f:facet>
-                                    <f:facet name="input"><p:inputText id="staffEmail" value="#{staffEntity.staffEmail}" style="width:100%"/></f:facet>
-                                </p:cellEditor>
-                            </p:column>
+                            
                             <p:column headerText="Staff Mobile Number">
                                 <p:cellEditor>
                                     <f:facet name="output"><h:outputText value="#{staffEntity.mobileNumber}" /></f:facet>
@@ -66,6 +52,7 @@ and open the template in the editor.
                                     <p:message for="mobileNumber" display="icon"/>
                                 </p:cellEditor>
                             </p:column>
+                            
                             <p:column headerText="Staff Status">
                                 <p:cellEditor>
                                     <f:facet name="output"><h:outputText value="#{staffEntity.status}" /></f:facet>
@@ -75,7 +62,6 @@ and open the template in the editor.
                             </p:column>
 
 
-
                             <p:column headerText="Delete" style="width: 80px;" >
                                 <center>
                                     <p:commandButton icon="ui-icon-trash" actionListener="#{staffManagementManagedBean.adminDeleteStaff(staffEntity.id)}" update=":form:panel" ajax="false" type="submit" 
@@ -83,13 +69,21 @@ and open the template in the editor.
                                                                  return false;"/>
                                 </center>
                             </p:column>
-                            <p:column headerText="View Roles" style="width: 80px;" >
+                            <p:column headerText="Reply" style="width: 80px;" >
                                 <center>
-                                    <p:commandButton icon="ui-icon-check" oncomplete="PF('replyDialog').show()" actionListener="#{staffManagementManagedBean.adminViewOneStaff}" update=":form:panel form:dialogMessage" ajax="true" type="submit" >
+                                    <p:commandButton icon="ui-icon-pencil" oncomplete="PF('replyDialog').show()" actionListener="#{messageManagedBean.customerReadMessage}" update=":form:panel :form:dialogMessage" ajax="true" type="submit" >
                                         <f:attribute name="selectedStaff" value="#{staffEntity}"  />
                                     </p:commandButton>      
                                 </center>
                             </p:column>
+
+                              <p:column headerText="Edit Roles" style="width: 80px;" >
+                                    <center>
+                                        <p:commandButton icon="ui-icon-pencil" actionListener="#{staffManagementManagedBean.editRole(staffEntity)}" update=":form:panel:dialogMessage" ajax="false" type="submit" >
+                                        <f:attribute name="selectedRoleName" value="#{staffManagementManagedBean.roleNameToDelete}"  />
+                                        </p:commandButton>
+                                    </center>
+                                </p:column>
                             <p:column style="width:32px">
                                 <p:rowEditor />
                             </p:column>
@@ -103,17 +97,9 @@ and open the template in the editor.
 
                                 <p:column headerText="Roles" style="width: 80px;">
 
-                                    <h:outputText value="#{roles}" />
+                                    <h:outputText value="#{roles}"/>
                                 </p:column>
-                                <p:column headerText="Delete" style="width: 80px;" >
-                                    <center>
-                                        <p:commandButton icon="ui-icon-trash" actionListener="#{staffManagementManagedBean.deleteStaffRole(staffEntity.id)}" update=":form:panel" ajax="false" type="submit" 
-                                                         onclick="if (!confirm('Are you sure you want to delete this message'))
-                                                                     return false;">
-                                        <f:attribute name="selectedRoleName" value="#{staffManagementManagedBean.roleNameToDelete}"  />
-                                        </p:commandButton>
-                                    </center>
-                                </p:column>
+                              
                             </p:dataTable>
 
                         </p:outputPanel>

@@ -1,42 +1,92 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
-    <h:head>
-        <title>Renew Fixed Deposit Info</title>
-    </h:head>
-    <h:body>
-        <h:form>
-                <h:panelGrid columns="2" id="fixedDepositRenewSuccessPanel" cellpadding="5"> 
-                    
-                <h:outputLabel value="Your fixed deposit renewal is successful!" />
-                <h:outputLabel />
-                
-                <h:outputLabel for="accountNumber" value="Account Number:" />
-                <p:outputLabel id="accountNumber" value="#{fixedDepositManagedBean.fixedDepositSelected}"  />          
-                
-                <h:outputLabel for="amount" value="Amount:" />
-                <p:outputLabel id="amount" value="#{fixedDepositManagedBean.amountBD}"  />
-                
-                <h:outputLabel for="originalStartDate" value="Orginal Start Date:" />
-                <p:outputLabel id="originalstartDate" value="#{fixedDepositManagedBean.startDateString}" />
-                
-                <h:outputLabel for="originalEndDate" value="Orginal End Date:" />
-                <p:outputLabel id="originalendDate" value="#{fixedDepositManagedBean.endDateString}" />
-  
-                <h:outputLabel for="renewedStartDate" value="Renewed Start Date:" />
-                <p:outputLabel id="renewedstartDate" value="#{fixedDepositManagedBean.startDateNew}" />
-                
-                <h:outputLabel for="renewedEndDate" value="Renewed End Date:" />
-                <p:outputLabel id="renewedendDate" value="#{fixedDepositManagedBean.endDateNew}" />
-                    
-                   
-                </h:panelGrid>
 
-                <p:commandButton value="Return to Homepage" id="fixedDepositRenewSuccessButton"
-                                 action="createFixedDepositAccount" />
-        </h:form>
-    </h:body>
-</html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Renew Fixed Deposit </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <div class="Card">
+                                <div class="Container10"></div>
+                                <div class="Container80">
+                                    <h:panelGrid columns="2" id="fixedDepositRenewInfoPanel" cellpadding="5"> 
+
+                                        <h:outputLabel class="FontItalic Red TexAlCenter" style="font-size: 110%" value="Your fixed deposit renewal is successful !" />
+                                        <h:outputLabel />
+
+                                        <h:outputLabel />
+                                        <h:outputLabel />
+
+                                        <h:outputLabel for="accountNumber" value="Account Number:" />
+                                        <p:outputLabel id="accountNumber" value="#{fixedDepositManagedBean.fixedDepositSelected}"  />          
+
+                                        <h:outputLabel for="amount" value="Amount:" />
+                                        <p:outputLabel id="amount" value="#{fixedDepositManagedBean.amountBD}"  />
+
+                                        <h:outputLabel for="originalStartDate" value="Orginal Start Date:" />
+                                        <p:outputLabel id="originalstartDate" value="#{fixedDepositManagedBean.startDateString}" />
+
+                                        <h:outputLabel for="originalEndDate" value="Orginal End Date:" />
+                                        <p:outputLabel id="originalendDate" value="#{fixedDepositManagedBean.endDateString}" />
+
+                                        <h:outputLabel for="renewedStartDate" value="Renewed Start Date:" />
+                                        <p:outputLabel id="renewedstartDate" value="#{fixedDepositManagedBean.startDateNew}" />
+
+                                        <h:outputLabel for="renewedEndDate" value="Renewed End Date:" />
+                                        <p:outputLabel id="renewedendDate" value="#{fixedDepositManagedBean.endDateNew}" />
+
+
+                                    </h:panelGrid>
+
+                                </div>
+                                <div class="Container10"></div>
+
+                                <div class="EmptyBox20"></div>
+                                <div class="Container30"></div>
+                                <div class="Container40">
+                                    <p:commandButton value="Return to Homepage" id="fixedDepositRenewSuccessButton" actionListener="#{fixedDepositManagedBean.goToHomePage}"/>
+                                </div>
+                                <div class="Container30"></div>
+                                <div class="EmptyBox20"></div>
+                            </div>
+                        </h:form>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition> 
+

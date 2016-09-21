@@ -110,6 +110,42 @@ public class StaffManagementManagedBean implements Serializable {
     private List oneStaffRoleNames;
     private Staff selectedStaff;
     private String roleNameToDelete;
+    private List<StaffRole> roles;
+    private Long editedStaffId;
+    private Long roleId;
+    private String selectedRoleNameToAdd;
+
+    public String getSelectedRoleNameToAdd() {
+        return selectedRoleNameToAdd;
+    }
+
+    public void setSelectedRoleNameToAdd(String selectedRoleNameToAdd) {
+        this.selectedRoleNameToAdd = selectedRoleNameToAdd;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public Long getEditedStaffId() {
+        return editedStaffId;
+    }
+
+    public void setEditedStaffId(Long editedStaffId) {
+        this.editedStaffId = editedStaffId;
+    }
+
+    public List<StaffRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<StaffRole> roles) {
+        this.roles = roles;
+    }
 
     public String getRoleNameToDelete() {
         return roleNameToDelete;
@@ -190,6 +226,7 @@ public class StaffManagementManagedBean implements Serializable {
         allRoles = this.adminDisplayRole();
         roleNamesStaffHas = new ArrayList<>();
         oneStaffRoleNames = new ArrayList<>();
+        roles = new ArrayList<>();
 
     }
 
@@ -411,7 +448,7 @@ public class StaffManagementManagedBean implements Serializable {
         FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Updated Successfully");
         RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         smsbl.displayListOfStaff();
-    // }else{
+        // }else{
         //     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Don't leave blanks!");
         //        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         // }
@@ -425,12 +462,45 @@ public class StaffManagementManagedBean implements Serializable {
         staffs = smsbl.displayListOfStaff();
     }
 
-    public void deleteStaffRole(ActionEvent event, Long bankStaffId) {
-        roleNameToDelete = (String) event.getComponent().getAttributes().get("selectedRoleName");
-        System.out.println("************Message from managed bean staff id is: " + bankStaffId);
-        System.out.println("************Message from managed bean role name selected is: " + roleNameToDelete);
+    public void editRole(Staff staff) throws IOException {
+        roles = staff.getStaffRoles();
+        editedStaffId = staff.getId();
 
-        smsbl.staffDeleteRole(bankStaffId, roleName);
+        System.out.println("***** Selected Staff ID is " + editedStaffId);
+        System.out.println("*********Role size is " + roles.size());
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
+
+        //      smsbl.staffDeleteRole(bankStaffId, roleName);
+    }
+
+    public void editRoleDelete(ActionEvent event) throws IOException {
+        roleId = ((StaffRole) event.getComponent().getAttributes().get("selectedRole")).getId();
+        roleName = ((StaffRole) event.getComponent().getAttributes().get("selectedRole")).getRoleName();
+        System.out.println("***** Selected Staff ID is " + roleName);
+
+        boolean msg = smsbl.staffDeleteRole(staffId, roleName);
+        System.out.println("**************Message after pressing delete role: " + msg);
+        if (msg = false) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Deleted Unsuccessfully");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        } else {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
+
+        }
+
+    }
+
+    public void addOneRoleForStaff(ActionEvent event) throws IOException {
+
+        boolean msg = smsbl.staffAddRole(staffId, selectedRoleNameToAdd);
+        if (msg = false) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Added Unsuccessfully");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        } else {
+            System.out.println("***************Added one role successfully!");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
+
+        }
     }
 
     public String getRoleName() {

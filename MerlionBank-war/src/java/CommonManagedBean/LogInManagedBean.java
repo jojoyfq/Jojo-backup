@@ -47,7 +47,7 @@ public class LogInManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
 
     private Customer customer;
-    private String ic;
+    private String ic = "S4444";
     private String customerName;
     private String customerGender;
     private Date customerDateOfBirth;
@@ -80,10 +80,7 @@ public class LogInManagedBean implements Serializable {
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
-public void goToLogInPage(ActionEvent event) throws IOException{
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
 
-}
 //    public List getAccountTypes() {
 //        return accountTypes;
 //    }
@@ -294,6 +291,27 @@ public void goToLogInPage(ActionEvent event) throws IOException{
 
         }
     }
+
+     public void logout() throws IOException {
+        System.out.println("Inside logout");
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        System.out.println("testtest");
+        String serverName = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
+        String serverPort = "8080";
+        FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+    }
+
+
+    
+    public void goToActivateAccountPage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CustomerManagement/CustomerAccountActivation.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to ActivateAccount page fails");
+        }
+    }
+
 
     public String getBirthdate() {
         return birthdate;
