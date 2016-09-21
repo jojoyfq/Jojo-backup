@@ -16,7 +16,7 @@
 
             <h:form>
                 <p:panel id="panel" header="Customer Fixed Deposit Account Details">
-
+                    <h:outputLabel value="#{serviceCustomerManagedBean.customerIc}"/>
                     <h:panelGrid columns="4" cellpadding="5">
                         <p:dataTable var="FixedDepositAccount" value="#{fixedDepositStaffManagedBean.fixedDepositAccounts}">
                             <p:column headerText="Account Number">
