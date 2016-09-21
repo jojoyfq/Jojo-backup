@@ -175,14 +175,7 @@ public class TransferManagedBean implements Serializable{
         }       
     }
     
-    public void goBackTranferByPayeeListPage(ActionEvent event){
-        try {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/TransferManagement/transferByPayeeList.xhtml");
-        } catch (Exception e) {
-            System.out.print("Redirect to TranferByPayeeList Page fails");
-        }       
-    }
+  
     
     public String getRecipientAccountNumString() {
         return recipientAccountNumString;

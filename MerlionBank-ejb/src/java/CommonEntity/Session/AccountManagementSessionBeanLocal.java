@@ -78,5 +78,7 @@ public boolean updateAccountStatus(String ic);
 
  //Teller Create saving Account 
     public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException;
+    
+    public void checkOnlineBankingAccountStatus();
 
 }

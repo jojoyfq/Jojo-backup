@@ -894,51 +894,66 @@ return customer;
 
     }
 
-//    @Override
-//    public void checkOnlineBankingAccountStatus() {
-//        //check fixed deposit account
-//        Query q1 = em.createQuery("SELECT a FROM FixedDepositAccount a");
-//        List<FixedDepositAccount> fixedDepositAccounts = new ArrayList(q1.getResultList());
-//        Query q2 = em.createQuery("SELECT b FROM OnlineAccount b");
-//        List<OnlineAccount> onlineAccounts = new ArrayList(q2.getResultList());
-//        Query q3 = em.createQuery("SELECT c FROM SavingAccount c");
-//        List<SavingAccount> savingAccounts = new ArrayList(q3.getResultList());
-//
-//        //get time now 
-//        DateTime now = new DateTime();
-//        System.out.println(now);
-//        DateTime dateSixMonthBefore = now.minus(Period.months(6)); //date of 6 months before 
-//        System.out.println(dateSixMonthBefore);
-//
-//        for (int j = 0; j < onlineAccounts.size(); j++) {
-//            //get customer ID here
-//            if(onlineAccounts.get(j).getAccountStatus().equals("active")){
-//            Long customerID = onlineAccounts.get(j).getId();
-//            for (int i = 0; i < fixedDepositAccounts.size(); i++) {
-//                if (fixedDepositAccounts.get(i).getCustomer().getId().equals(customerID)) {
-//                    //check account status
-//                    if (fixedDepositAccounts.get(i).getStatus().equals("terminated") && fixedDepositAccounts.get(i).getEndDate().after(dateSixMonthBefore.toDate())) {
-//                        int check1 = 1;
-//                    } else {
-//                        int check1 = -1;
-//                    }
-//                } else {
-//                    System.out.print("the fixed deposite account has not been terminated for 6 months");
-//                }
-//
-//                for (int k = 0; k < savingAccounts.size(); k++) {
-//                    if (savingAccounts.get(k).getCustomer().getId().equals(customerID)) {
-////                        if (savingAccounts.get(k).getStatus().equals("terminated") && savingAccounts.get(k).getEndDate().after(dateSixMonthBefore.toDate())) {
-////                            int check2 = 1;
-////                        } else {
-////                            int check2 = -1;
-////                        }
-//                    } else {
-//                        System.out.print("the saving account has not been terminated for 6 months");
-//                    }
-//                }
-//            }
-//        }
-//        }
-//    }
+    @Override
+    public void checkOnlineBankingAccountStatus() {
+        int check1 = 0;
+        int check2 = 0;
+        int check3 = 0;
+        //check fixed deposit account
+        Query q1 = em.createQuery("SELECT a FROM FixedDepositAccount a");
+        List<FixedDepositAccount> fixedDepositAccounts = new ArrayList(q1.getResultList());
+        Query q2 = em.createQuery("SELECT b FROM Customer b");
+        List<Customer> customers = new ArrayList(q2.getResultList());
+        Query q3 = em.createQuery("SELECT c FROM SavingAccount c");
+        List<SavingAccount> savingAccounts = new ArrayList(q3.getResultList());
+        
+        //get time now 
+        DateTime now = new DateTime();
+        System.out.println(now);
+        DateTime dateSixMonthBefore = now.minus(Period.months(6));
+        System.out.println(" ***** I am here ! *****");
+
+        for (int j = 0; j < customers.size(); j++) {
+            System.out.println(" ***** Inside the for loop here !!! *****");
+            System.out.println("status is * " + customers.get(j).getStatus());
+            if (customers.get(j).getStatus().equals("active")) {
+                Long customerID = customers.get(j).getId();
+                System.out.println(" ***** Inside the if 1 loop !!! *****");
+                System.out.println(" ***** "+customerID);
+                for (int i = 0; i < fixedDepositAccounts.size(); i++) {
+                    System.out.println(" ***** Inside the fixedDepositAccount loop !!! *****");
+                    if (fixedDepositAccounts.get(i).getCustomer().getId().equals(customerID)) {
+                        System.out.println(" ***** Inside the if 2 loop !!! *****");
+                        
+                        if (fixedDepositAccounts.get(i).getStatus().equals("terminated") && fixedDepositAccounts.get(i).getEndDate().before(dateSixMonthBefore.toDate())) {
+                            check1 = 1;
+                            for (int k = 0; k < savingAccounts.size(); k++) {
+                                if (savingAccounts.get(k).getCustomer().getId().equals(customerID)) {
+                                    if (savingAccounts.get(k).getStatus().equals("terminated") && savingAccounts.get(k).getEndDate().before(dateSixMonthBefore.toDate())) {
+                                        check2 = 1;
+                                    } else {
+                                        check2 = -1;
+                                    }
+                                } else {
+                                    System.out.print("the saving account has not been terminated for 6 months");
+                                }
+                            }
+                        } else {
+                            check1 = 0;
+                        }
+                    } else {
+                        System.out.print("*********the fixed deposite account has not been terminated for 6 months*********");
+                    }
+                }
+            }
+            check3 = check1 + check2;
+            if (check3 == 2) {
+                customers.get(j).setStatus("terminated");
+            }
+                else{
+                        System.out.println("***** Account should not be terminated *****");
+                        }
+            }
+        }
+
 }
