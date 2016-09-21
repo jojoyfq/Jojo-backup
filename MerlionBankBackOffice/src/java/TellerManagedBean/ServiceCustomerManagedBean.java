@@ -56,13 +56,20 @@ public class ServiceCustomerManagedBean implements Serializable {
     
     public void selectCustomer(ActionEvent event) throws IOException{
         if(customerIc != null){
-        this.customer = scsb.selectCustomer(customerIc);
+            if(!scsb.selectCustomer(customerIc).equals(false)){
+        this.customer = (Customer) scsb.selectCustomer(customerIc);
         System.out.print("customer set!");
-        //redirect to homepage
-//        FacesContext.getCurrentInstance().getExternalContext()
-//                    .redirect("/MerlionBankBackOffice/DepositManagement/closeSavingAccountSuccess.xhtml");
+       // redirect to homepage
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer selected");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+        FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDeposit.xhtml");
+            }else{
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer not found. Please enter correct IC.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
         }else{
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please enter amount");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please enter customer IC");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }

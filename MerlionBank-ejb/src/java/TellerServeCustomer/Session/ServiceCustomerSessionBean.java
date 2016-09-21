@@ -23,12 +23,16 @@ public class ServiceCustomerSessionBean implements ServiceCustomerSessionBeanLoc
     EntityManager em;
     
     @Override
-    public Customer selectCustomer(String customerIc){
+    public Object selectCustomer(String customerIc){
         
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :customerIc");
         q.setParameter("customerIc", customerIc);
         List<Customer> customerList = q.getResultList();
+        if(!customerList.isEmpty()){
         Customer customer = customerList.get(0);
-        return customer;
+        return customer;}
+        else{
+            return false;
+        }
 }
 }

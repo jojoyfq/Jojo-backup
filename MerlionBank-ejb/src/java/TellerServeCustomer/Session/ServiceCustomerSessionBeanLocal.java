@@ -15,6 +15,6 @@ import javax.ejb.Local;
 @Local
 public interface ServiceCustomerSessionBeanLocal {
 
-    public Customer selectCustomer(String customerIc);
+    public Object selectCustomer(String customerIc);
     
 }
