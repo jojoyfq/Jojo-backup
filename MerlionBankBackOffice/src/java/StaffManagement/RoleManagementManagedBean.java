@@ -205,10 +205,12 @@ public class RoleManagementManagedBean implements Serializable {
        System.out.println("******Old validility: "+oldValidility);
               System.out.println("******New validility: "+newValidility);
               System.out.println("***************Role Id is "+roleId);
+                System.out.println("***************Permission Id is "+permissionId);
 
        if( oldValidility != newValidility){
            if(oldValidility = true){
-               smsbl.deletePermission(adminId, roleId, permissionId);
+            boolean msg =   smsbl.deletePermission(adminId, roleId, permissionId);
+            System.out.println("***********message from delete permission"+msg);
            }else{
                smsbl.addPermission(adminId, roleId, permissionId);
            }

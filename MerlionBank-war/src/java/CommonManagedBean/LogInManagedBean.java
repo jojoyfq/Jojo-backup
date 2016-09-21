@@ -288,6 +288,15 @@ public void modifyUserProfile(){}
 
         }
     }
+     public void logout() throws IOException {
+        System.out.println("Inside logout");
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        System.out.println("testtest");
+        String serverName = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
+        String serverPort = "8080";
+        FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+    }
+
 
     public String getBirthdate() {
         return birthdate;
