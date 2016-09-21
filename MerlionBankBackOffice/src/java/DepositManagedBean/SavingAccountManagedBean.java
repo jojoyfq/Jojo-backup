@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -51,11 +50,13 @@ public class SavingAccountManagedBean implements Serializable {
     private Long notTerminAccountSelected;
     private List<List> transactionRecordList;
     private List<SavingAccount> savingAccountForCloseAccount;
-    private List<SavingAccountType> savingAccountTypes;
     private BigDecimal withdrawAmount;
     private String withdrawAmountString;
     private BigDecimal depositAmount;
     private String depositAmountString;
+    private Double interestRate1;
+    private Double interestRate2;
+    private Double interestRate3;
 
     @PostConstruct
     public void init() {
@@ -64,8 +65,7 @@ public class SavingAccountManagedBean implements Serializable {
             savingAccounts = sasb.getSavingAccount(customerID);
             this.getSavingAccountNumbers();
             this.getNotTerminatedAccountNumbers();
-            savingAccountTypes = sasb.getSavingAccountTypeList();
-            System.out.print(savingAccountTypes);
+
         } catch (Exception e) {
             System.out.print("Init encounter error");
         }
@@ -94,15 +94,21 @@ public class SavingAccountManagedBean implements Serializable {
         }
     }
 
+    public void getInterestRate() {
+        interestRate1 = sasb.getInterestRate(savingAccountName, "InterestRate1");
+        interestRate2 = sasb.getInterestRate(savingAccountName, "InterestRate2");
+        interestRate3 = sasb.getInterestRate(savingAccountName, "InterestRate3");
+    }
+
     public void getSavingAccountNumbers() throws UserHasNoSavingAccountException {
         System.out.print("inside the getSavingAccountNumbers()");
         savingAccountNumberList = sasb.getSavingAccountNumbers(customerID);
     }
-    
-    public void getNotTerminatedAccountNumbers() throws UserHasNoSavingAccountException{
-        try{
+
+    public void getNotTerminatedAccountNumbers() throws UserHasNoSavingAccountException {
+        try {
             notTerminAccountNumList = sasb.getNotTerminatedAccountNumbers(customerID);
-        }catch(UserHasNoSavingAccountException ex){
+        } catch (UserHasNoSavingAccountException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
@@ -129,16 +135,16 @@ public class SavingAccountManagedBean implements Serializable {
                 sasb.cashWithdraw(savingAccountSelected, withdrawAmount);
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Cash Withdraw Success!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-            }else{
+            } else {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Saving Account!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }
         } catch (UserNotEnoughBalanceException ex) {
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
-    
+
     public void cashDeposit(ActionEvent event) {
         try {
             if (notTerminAccountSelected != null) {
@@ -146,16 +152,35 @@ public class SavingAccountManagedBean implements Serializable {
                 sasb.cashDeposit(notTerminAccountSelected, depositAmount);
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Cash Deposit Success!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-            }else{
+            } else {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Saving Account!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }
         } catch (Exception ex) {
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
-    
+
+    public void changeInterestRate(ActionEvent event) {
+        try {
+            this.getInterestRate();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/DepositManagement/changeInterestRate.xhtml");
+        } catch (Exception e) {
+            System.out.print("ChangeInterestRate Encounter some error!");
+        }
+    }
+
+    public void setInterestRate(ActionEvent event) {
+        try {
+            sasb.setInterestRate(savingAccountName, interestRate1, interestRate2, interestRate3);
+            FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/DepositManagement/changeInterestRateSuccess.xhtml");
+        } catch (Exception e) {
+            System.out.print("set interest rate encounter error!");
+        }
+    }
 
     public void goToViewTransactionRecord(ActionEvent event) {
         try {
@@ -288,7 +313,7 @@ public class SavingAccountManagedBean implements Serializable {
     public void setWithdrawAmountString(String withdrawAmountString) {
         this.withdrawAmountString = withdrawAmountString;
     }
-    
+
     public BigDecimal getDepositAmount() {
         return depositAmount;
     }
@@ -304,15 +329,15 @@ public class SavingAccountManagedBean implements Serializable {
     public void setDepositAmountString(String depositAmountString) {
         this.depositAmountString = depositAmountString;
     }
-    
-     public List<Long> getNotTerminAccountNumList() {
+
+    public List<Long> getNotTerminAccountNumList() {
         return notTerminAccountNumList;
     }
 
     public void setNotTerminAccountNumList(List<Long> notTerminAccountNumList) {
         this.notTerminAccountNumList = notTerminAccountNumList;
     }
-    
+
     public Long getNotTerminAccountSelected() {
         return notTerminAccountSelected;
     }
@@ -320,13 +345,28 @@ public class SavingAccountManagedBean implements Serializable {
     public void setNotTerminAccountSelected(Long notTerminAccountSelected) {
         this.notTerminAccountSelected = notTerminAccountSelected;
     }
-    
-     public List<SavingAccountType> getSavingAccountTypes() {
-        return savingAccountTypes;
+
+    public Double getInterestRate1() {
+        return interestRate1;
     }
 
-    public void setSavingAccountTypes(List<SavingAccountType> savingAccountTypes) {
-        this.savingAccountTypes = savingAccountTypes;
+    public void setInterestRate1(Double interestRate1) {
+        this.interestRate1 = interestRate1;
     }
 
+    public Double getInterestRate2() {
+        return interestRate2;
+    }
+
+    public void setInterestRate2(Double interestRate2) {
+        this.interestRate2 = interestRate2;
+    }
+
+    public Double getInterestRate3() {
+        return interestRate3;
+    }
+
+    public void setInterestRate3(Double interestRate3) {
+        this.interestRate3 = interestRate3;
+    }
 }

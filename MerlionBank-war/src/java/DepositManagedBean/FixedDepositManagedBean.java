@@ -78,38 +78,6 @@ public class FixedDepositManagedBean implements Serializable {
     private String withdrawTime;
     private BigDecimal interest;
 
-
-    public BigDecimal getInterest() {
-        return interest;
-    }
-
-    public void setInterest(BigDecimal interest) {
-        this.interest = interest;
-    }
-
-    public String getWithdrawTime() {
-        return withdrawTime;
-    }
-
-    public void setWithdrawTime(String withdrawTime) {
-        this.withdrawTime = withdrawTime;
-    }
-
-    public String getStartDateNew() {
-        return startDateNew;
-    }
-
-    public void setStartDateNew(String startDateNew) {
-        this.startDateNew = startDateNew;
-    }
-
-    public String getEndDateNew() {
-        return endDateNew;
-    }
-
-    public void setEndDateNew(String endDateNew) {
-        this.endDateNew = endDateNew;
-    }
     private String endDateNew;
     
 
@@ -619,6 +587,39 @@ public class FixedDepositManagedBean implements Serializable {
 
     public void setAmountToTransferStr(String amountToTransferStr) {
         this.amountToTransferStr = amountToTransferStr;
+    }
+    
+
+    public BigDecimal getInterest() {
+        return interest;
+    }
+
+    public void setInterest(BigDecimal interest) {
+        this.interest = interest;
+    }
+
+    public String getWithdrawTime() {
+        return withdrawTime;
+    }
+
+    public void setWithdrawTime(String withdrawTime) {
+        this.withdrawTime = withdrawTime;
+    }
+
+    public String getStartDateNew() {
+        return startDateNew;
+    }
+
+    public void setStartDateNew(String startDateNew) {
+        this.startDateNew = startDateNew;
+    }
+
+    public String getEndDateNew() {
+        return endDateNew;
+    }
+
+    public void setEndDateNew(String endDateNew) {
+        this.endDateNew = endDateNew;
     }
 
 }
