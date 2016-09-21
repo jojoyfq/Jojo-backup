@@ -79,8 +79,8 @@ public class SavingAccountManagedBean implements Serializable {
             getSavingAccountNumbers();
             savingAccounts = sasb.getSavingAccount(customerID);
 
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/createSavingAccountECsuccess.xhtml");
 
         } catch (UserAlreadyHasSavingAccountException ex) {
             System.out.println(ex.getMessage());
@@ -90,8 +90,13 @@ public class SavingAccountManagedBean implements Serializable {
     }
 
     public void getSavingAccountNumbers() throws UserHasNoSavingAccountException {
-        System.out.print("inside the getSavingAccountNumbers()");
-        savingAccountNumberList = sasb.getSavingAccountNumbers(customerID);
+        try {
+            System.out.print("inside the getSavingAccountNumbers()");
+            savingAccountNumberList = sasb.getSavingAccountNumbers(customerID);
+        } catch (UserHasNoSavingAccountException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
     }
 
     public void getInactiveSavingAccountNumbers() throws UserHasNoInactiveSavingAccountException {
@@ -146,23 +151,32 @@ public class SavingAccountManagedBean implements Serializable {
             System.out.print("go to close saving account encounter error");
         }
     }
-    
+
     public void goToActivateSavingAccount(ActionEvent event) throws UserNotEnoughBalanceException, UserHasNoSavingAccountException, IOException {
-        try{
-            if(inactiveSavingAccountSelected != null){
+        try {
+            if (inactiveSavingAccountSelected != null) {
                 sasb.checkInactiveSavingAccount(inactiveSavingAccountSelected);
                 this.getSavingAccountNumbers();
                 savingAccounts = sasb.getSavingAccount(customerID);
                 FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/activateSavingAccountSuccess.xhtml");
-            }else{
+                        .redirect("/MerlionBank-war/DepositManagement/activateSavingAccountSuccess.xhtml");
+            } else {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Saving Account to activate!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }
-        }catch(UserNotEnoughBalanceException ex){
+        } catch (UserNotEnoughBalanceException ex) {
             System.out.print("User Has Not Enough Balance!");
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void goBackToHomePage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/dashboard.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to Home Page Encounter Error!");
         }
     }
 
@@ -258,7 +272,7 @@ public class SavingAccountManagedBean implements Serializable {
     public void setInactiveSavingAccountNumberList(List<Long> inactiveSavingAccountNumberList) {
         this.inactiveSavingAccountNumberList = inactiveSavingAccountNumberList;
     }
-    
+
     public Long getInactiveSavingAccountSelected() {
         return inactiveSavingAccountSelected;
     }
