@@ -67,7 +67,7 @@ public class ResetPasswordManagedBean implements Serializable {
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException, TwilioRestException {
 
         //customerIc = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerIc");
-        System.out.println(customerIc);
+       try{ System.out.println(customerIc);
         if (customerIc != null && customerName != null && dateOfBirth != null && customerEmail != null) {
             String msg = amsbl.forgetPasswordVerifyDetail(customerIc, customerName, dateOfBirth, customerEmail);
             System.out.println(msg);
@@ -91,6 +91,10 @@ public class ResetPasswordManagedBean implements Serializable {
             System.out.println("Don't leave blank please!");
 
         }
+       }catch( UserNotExistException|UserNotActivatedException ex){
+         FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+       }
     }
 
     public void submitTwoFA(ActionEvent event) throws IOException {
@@ -101,7 +105,7 @@ public class ResetPasswordManagedBean implements Serializable {
 
     }
 
-    public void resetForgetPassword(ActionEvent event) throws PasswordTooSimpleException {
+    public void resetForgetPassword(ActionEvent event) throws PasswordTooSimpleException,IOException {
         try {
             String errorMsg = amsbl.updateForgetPassword(customerIc, password, confirmPassword);
             System.out.println("after entring the confirmed password: " + errorMsg);
@@ -110,7 +114,9 @@ public class ResetPasswordManagedBean implements Serializable {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", errorMsg);
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             } else if (errorMsg.equals(customerIc)) {
-                //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully changed your password!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
 
             }
         } catch (PasswordTooSimpleException ex) {
