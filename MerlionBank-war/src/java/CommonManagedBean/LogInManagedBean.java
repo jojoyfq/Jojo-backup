@@ -288,6 +288,7 @@ public void modifyUserProfile(){}
 
         }
     }
+
      public void logout() throws IOException {
         System.out.println("Inside logout");
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
@@ -295,6 +296,17 @@ public void modifyUserProfile(){}
         String serverName = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
         String serverPort = "8080";
         FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+    }
+
+
+    
+    public void goToActivateAccountPage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CustomerManagement/CustomerAccountActivation.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to ActivateAccount page fails");
+        }
     }
 
 
