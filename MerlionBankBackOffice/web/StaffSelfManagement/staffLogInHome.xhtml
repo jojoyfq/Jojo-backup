@@ -43,14 +43,16 @@
                                         <p:inputText id="ic" value="#{staffLogInManagedBean.staffIc}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
                                         <p:message for="ic" display="icon" />
                                     </div>
+                                    
                                     <div class="Container100">
 
                                         <p:password id="password" value="#{staffLogInManagedBean.password}"  placeholder="Password" required="true" requiredMessage="Please fill in your password!" />
                                         <p:message for="password"/>
                                     </div>
+                                    
                                     <div class="Container100">
 
-                                        <h:outputLabel for="roleName" value="Role Name:" />
+                      
                                         <p:selectOneMenu id="roleName" value="#{staffLogInManagedBean.roleName}" required="true" requiredMessage="Please choose one role!">
 
                                             <f:selectItem itemLabel="Select the role you want to log in as" itemValue="" noSelectionOption="true" />
@@ -67,10 +69,6 @@
                                     </div>
 
 
-                                </h:form>
-
-                                <h:form>
-                                    <div class="Container100 TexAlRight"><p:commandLink id="registerNewUser" value="New User? Register Now!" type="submit" actionListener="#{registerManagedBean.goToSelectAccountTypePage}"/></div>
                                 </h:form>
 
                                 <h:form>
