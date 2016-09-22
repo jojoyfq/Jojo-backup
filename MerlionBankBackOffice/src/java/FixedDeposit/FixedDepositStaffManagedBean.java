@@ -140,7 +140,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
     
     public void goToHomePage(ActionEvent event)throws IOException{
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-        ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDeposit.xhtml");
+        ec.redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
     }
     
     public void withdraw(ActionEvent event)throws IOException{
@@ -244,7 +244,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
     }
 
     public void setAccountNumber(Long accountNum) {
-        this.accountNumber = accountNumber;
+        this.accountNumber = accountNum;
     }
 
     public Customer getCustomer() {
@@ -327,9 +327,13 @@ public class FixedDepositStaffManagedBean implements Serializable {
         this.fixedDepositAccounts = fixedDepositAccounts;
     }
 
-    private static class customerId {
-
-        public customerId() {
-        }
+    public Staff getStaff() {
+        return staff;
     }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
+    
 }

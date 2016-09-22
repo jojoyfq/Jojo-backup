@@ -15,6 +15,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import org.primefaces.context.RequestContext;
 
@@ -30,7 +32,7 @@ public class FixedDepositNonTellerManagedBean implements Serializable {
     private List<FixedDepositRate> fixedDepositRates;
     private FixedDepositRate fixedRateSelected;
     private Double newInterestRate;
-    private Integer duration;
+    private Double oldInterestRate;
     
     @EJB
     FixedDepositAccountSessionBeanLocal fda;
@@ -46,7 +48,11 @@ public class FixedDepositNonTellerManagedBean implements Serializable {
     public void changeInterestRate(ActionEvent event)throws IOException{
         if(fixedRateSelected != null && newInterestRate != null){
             //call session bean to set the interest rate
+            oldInterestRate = fixedRateSelected.getInterestRate();
             fda.changeFixedInterestRate(fixedRateSelected, newInterestRate);
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/changeInterestRateSucces.xhtml");
+            fixedDepositRates = fda.getFixedDepositRate();
             
         }else{
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please choose account and enter new interest rate");
@@ -54,6 +60,11 @@ public class FixedDepositNonTellerManagedBean implements Serializable {
         }
     }
     public FixedDepositNonTellerManagedBean() {
+    }
+    
+    public void goToHomePage(ActionEvent event)throws IOException{
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
     }
 
     public List<FixedDepositRate> getFixedDepositRates() {
@@ -78,6 +89,14 @@ public class FixedDepositNonTellerManagedBean implements Serializable {
 
     public void setNewInterestRate(Double newInterestRate) {
         this.newInterestRate = newInterestRate;
+    }
+
+    public Double getOldInterestRate() {
+        return oldInterestRate;
+    }
+
+    public void setOldInterestRate(Double oldInterestRate) {
+        this.oldInterestRate = oldInterestRate;
     }
     
 }

@@ -20,7 +20,9 @@
             <h:outputText value="#{FixedDepositRate.duration}" />
         </p:column>
         <p:column headerText="Interest Rate">
-            <h:outputText value="#{FixedDepositRate.interestRate}" />
+            <h:outputText value="#{FixedDepositRate.interestRate}" >
+            <f:convertNumber pattern="0.0000"/>
+            </h:outputText>
         </p:column>
         <f:facet name="footer">
              <p:outputLabel value="Enter new interest:" />

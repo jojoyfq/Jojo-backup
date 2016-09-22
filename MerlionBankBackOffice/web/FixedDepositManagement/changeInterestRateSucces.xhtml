@@ -24,10 +24,18 @@ and open the template in the editor.
                 
                 <h:outputLabel for="duration" value="Fixed deposit account duration:" />
                 <p:outputLabel id="duration" value="#{fixedDepositNonTellerManagedBean.fixedRateSelected.duration}"  />          
+                
                 <h:outputLabel for="newInterestRate" value="New Interest Rate:" />
-                <p:outputLabel id="newInterestRate" value="#{fixedDepositNonTellerManagedBean.newInterestRate}"  /> 
-                <h:outputLabel for="InterestRate" value="Old Interest Rate:" />
-                <p:outputLabel id="interestRate" value="#{fixedDepositNonTellerManagedBean.fixedRateSelected.interestRate}"  /> 
+                    <p:outputLabel id="newinterestRate" value="#{fixedDepositNonTellerManagedBean.newInterestRate}"  > 
+                    <f:convertNumber pattern="0.0000"/>
+                </p:outputLabel>
+                
+                <h:outputLabel for="InterestRate" value="Old Interest Rate:" />        
+                <p:outputLabel id="newInterestRate" value="#{fixedDepositNonTellerManagedBean.oldInterestRate}"  > 
+                   
+                    <f:convertNumber pattern="0.0000"/>
+                </p:outputLabel>
+              
             </h:panelGrid>
                
             <p:commandButton actionListener="#{fixedDepositNonTellerManagedBean.goToHomePage}" value="Return to Homepage" />

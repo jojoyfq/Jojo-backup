@@ -713,30 +713,29 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     public void changeFixedInterestRate(FixedDepositRate rateEntity, Double newInterestRate) {
 //        Query query1 = em.createQuery("SELECT a FROM FixedDepositRate a");
 //        List<FixedDepositRate> fixedDepositRates = new ArrayList(query1.getResultList());
-       String duration = rateEntity.getDuration().toString(); 
+        String durationStr = rateEntity.getDuration().toString();
+        Integer duration = rateEntity.getDuration();
         Query query2 = em.createQuery("SELECT b FROM FixedDepositAccount b WHERE b.duration = :duration");
-        query2.setParameter("duration", duration);
+        query2.setParameter("duration", durationStr);
         List<FixedDepositAccount> fixedDepositAccounts = new ArrayList(query2.getResultList());
-//
-//        Query q3 = em.createQuery("SELECT a FROM FixedDepositRate a WHERE a.duration = :duration");
-//        q3.setParameter("duration", duration);
-//
+
+        Query q3 = em.createQuery("SELECT a FROM FixedDepositRate a WHERE a.duration = :duration");
+        q3.setParameter("duration", duration);
+
 //        System.out.print("herehere");
-//        FixedDepositRate rateEntity = (FixedDepositRate) q3.getResultList().get(0);
+        FixedDepositRate rateEntity1 = (FixedDepositRate) q3.getResultList().get(0);
 //        System.out.print(newInterestRate);
 //        
-//        rateEntity.setInterestRate(newInterestRate);
-        rateEntity.setInterestRate(newInterestRate);
+        rateEntity1.setInterestRate(newInterestRate);
+
         System.out.print(rateEntity.getInterestRate());
         em.flush();
-
         //update the fixedDepositAccount table
-        
-        System.out.print("Duration to set"+duration);
-        System.out.print("Duration of an account" + fixedDepositAccounts.get(0).getDuration());
-        for (int i = 0; i< fixedDepositAccounts.size(); i++) {
-          fixedDepositAccounts.get(i).setInterestRate(newInterestRate);
-          System.out.print("interest rate for account set"+ fixedDepositAccounts.get(i).getInterestRate());
+
+        System.out.print("Duration to set" + duration);
+        for (int i = 0; i < fixedDepositAccounts.size(); i++) {
+            fixedDepositAccounts.get(i).setInterestRate(newInterestRate);
+            System.out.print("interest rate for account set" + fixedDepositAccounts.get(i).getInterestRate());
         }
         em.flush();
     }
