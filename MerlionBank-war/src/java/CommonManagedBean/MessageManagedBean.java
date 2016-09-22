@@ -54,12 +54,12 @@ public class MessageManagedBean implements Serializable {
         this.logInManagedBean = logInManagedBean;
     }
 
-    private String customerIc = "S4444";
+    private String customerIc;
     private Long staffId;
     private String messageSubject;
     private String content;
     private Customer customer;
-    private Long customerId = 2L;
+    private Long customerId;
     private Staff staff;
     private List<MessageEntity> messages;
     private Long messageId;
@@ -133,9 +133,9 @@ public class MessageManagedBean implements Serializable {
         messages = new ArrayList<>();
         //customerId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id");
 //      *******This is going to be used in the future!!!**********
-//        customerId = logInManagedBean.getCustomerId();
-//        customerIc = logInManagedBean.getIc();
-//        customerName = logInManagedBean.getCustomerName();
+        customerId = logInManagedBean.getCustomerId();
+        customerIc = logInManagedBean.getIc();
+       customerName = logInManagedBean.getCustomerName();
 
         System.out.println("Logged in customer IC is : " + customerId);
         //       messages = imsbl.viewAllMessage(customerId);

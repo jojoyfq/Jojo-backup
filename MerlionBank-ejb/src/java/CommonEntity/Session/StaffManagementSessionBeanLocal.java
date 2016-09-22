@@ -13,6 +13,7 @@ import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.RoleAlreadyExistedException;
 import Exception.RoleHasStaffException;
+import Exception.StaffAlreadyHasRoleException;
 import Exception.StaffRoleExistException;
 import Exception.UnexpectedErrorException;
 import Exception.UserAlreadyActivatedException;
@@ -80,7 +81,7 @@ public interface StaffManagementSessionBeanLocal {
 // modify staff- update staff personal info
 public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String staffName, String staffEmail, String mobileNumber) ;
 //modify staff- modify staff roles
-    public boolean staffAddRole(Long staffId, String roleName);
+    public boolean staffAddRole(Long staffId, String roleName)throws StaffAlreadyHasRoleException;
 
    public boolean staffDeleteRole(Long staffId, String roleName);
 

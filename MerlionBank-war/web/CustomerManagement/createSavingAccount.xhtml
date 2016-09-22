@@ -83,13 +83,13 @@ and open the template in the editor.
 
 
                                                     <h:outputLabel for="savingAccountType" value="Saving Account Type:" />
-                                                    <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}">
+                                                    <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}" required="true" requiredMessage="Please select the saving account type!">
 
                                                         <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
                                                         <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
                                                     </p:selectOneMenu>
                                                 </h:panelGrid>
-
+                                                <p:message for="savingAccountType" display="icon"/>
 
                                                 <div class="EmptyBox20"></div>   
 
