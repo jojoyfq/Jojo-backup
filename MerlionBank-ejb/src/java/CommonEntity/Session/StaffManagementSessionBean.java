@@ -453,7 +453,10 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 //                temp.add(currentPermissions.get(i));
 //            }
 //        }
-        int flag=(truePermission.getId()).intValue()/2;
+        
+        
+        int flag=0;
+        
         currentPermissions.set(flag,falsePermission);
         staffRole.setPermissions(currentPermissions);
         em.persist(staffRole);
