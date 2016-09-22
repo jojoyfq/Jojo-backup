@@ -20,32 +20,21 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Transfer Using My Payee List </div>
+                    <div class="CardBigTopic">Choose a Payee to Delete </div>
                     <div class="Separator"></div>
 
                     <div class="Container80 NoPadding Responsive50 ui-fluid">
-                        <div class="Container70 Responsive50">
-                            <p:commandButton value="Add New Payee" id="addNewPayeeButton"
-                                             actionListener="#{transferManagedBean.goToAddNewPayeePage}"/>
-                        </div>
-                        <div class="EmptyBox20"></div>
                         
-                        <div class="Container70 Responsive50">
-                            <p:commandButton value="Delete Payee" id="deletePayeeButton"
-                                             actionListener="#{transferManagedBean.goToDeletePayeePage}"/>
-                        </div>
-                        
-                        <div class="EmptyBox20"></div>
                         <h:form>
                             <div class="Container70 Responsive50">
-                                <p:selectOneMenu id="payeeList" value="#{transferManagedBean.payeeTransferAccount}">
-                                    <f:selectItem itemLabel="Select Payee ..." itemValue="" noSelectionOption="true" />
+                                <p:selectOneMenu id="payeeList" value="#{transferManagedBean.payeeDelete}">
+                                    <f:selectItem itemLabel="Select Payee to Delete..." itemValue="" noSelectionOption="true" />
                                     <f:selectItems value="#{transferManagedBean.payeeList}" />
                                 </p:selectOneMenu>  
                             </div>
                             <div class="Container30 Responsive50">
                                 <p:commandButton value="Submit" id="transferByPayee"
-                                                 actionListener="#{transferManagedBean.goToTransferByPayee}"/> 
+                                                 actionListener="#{transferManagedBean.deletePayee}"/> 
                             </div>
                         </h:form>
                     </div>

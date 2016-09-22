@@ -45,7 +45,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     private Long customerID;
 
     @Override
-    public void intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount)throws TransferException {
+    public void intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException {
         BigDecimal giverBalance;
         BigDecimal recipientBalance;
         BigDecimal updatedGiverBalance;
@@ -79,14 +79,14 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 //update the available balance of recipient BankAccount (+)
                 updatedRecipientBalance = recipientBalance.add(transferAmount);
                 recipientSavingAccount.setAvailableBalance(updatedRecipientBalance);
-                
+
                 Date currentTime = Calendar.getInstance().getTime();
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-                
-                TransferRecord transferRecord = new TransferRecord("TF", transferAmount, "settled", "iBanking Transfer",currentTimestamp,giverBankAccountNum,recipientBankAccountNum, "intraTransfer","MerlionBank","MerlionBank");
+
+                TransferRecord transferRecord = new TransferRecord("TF", transferAmount, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, "intraTransfer", "MerlionBank", "MerlionBank");
                 em.persist(transferRecord);
                 em.flush();
-                
+
                 System.out.println("transfer successfully!");
             }
         }
@@ -113,9 +113,25 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             List<Customer> customers = m.getResultList();
             Customer customer = customers.get(0);
             customer.getPayees().add(payee);
-            
+
             System.out.print("Add Payee Success!");
         }
+    }
+
+    @Override
+    public void deletePayee(Long customerID, Long accountNum) {
+        Customer customer = em.find(Customer.class,customerID);
+        List<Payee> currentList = customer.getPayees();
+        List<Payee> newList = new ArrayList<Payee>();
+
+        for (int i = 0; i < currentList.size(); i++) {
+            if (!currentList.get(i).getSavingAccount().getAccountNumber().equals(accountNum)) {
+                newList.add(currentList.get(i));
+            }
+        }
+
+        customer.setPayees(newList);
+        em.flush();
     }
 
     @Override
@@ -146,8 +162,8 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             throw new UserHasNoSavingAccountException("User has no saving account!");
         } else {
             for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
-                if(customer.getSavingAccounts().get(i).getStatus().equals("active")){
-                savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
+                if (customer.getSavingAccounts().get(i).getStatus().equals("active")) {
+                    savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
                 }
             }
             return savingAccountNumbers;
@@ -162,53 +178,52 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         SavingAccount savingAccount = savingAccounts.get(0);
         return savingAccount.getCustomer().getName();
     }
-    
-    public List<List> getTransactionRecord(Long savingAccountNumber){
-        List<List> displayList=new ArrayList();
-        
+
+    public List<List> getTransactionRecord(Long savingAccountNumber) {
+        List<List> displayList = new ArrayList();
+
         Query m = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum");
         m.setParameter("giverAccountNum", savingAccountNumber);
         List<TransactionRecord> record1 = m.getResultList();
-        displayList.addAll(addTransferList(record1,"debit"));
-        
+        displayList.addAll(addTransferList(record1, "debit"));
+
         Query n = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.recipientAccountNum = :recipientAccountNum");
         n.setParameter("recipientAccountNum", savingAccountNumber);
         List<TransactionRecord> record2 = n.getResultList();
-        displayList.addAll(addTransferList(record2,"credit"));
-        
+        displayList.addAll(addTransferList(record2, "credit"));
+
         return displayList;
-        
+
     }
-    
-    public List<List> addTransferList(List<TransactionRecord> record,String type){
-        List<List> list=new ArrayList();
-        int count=0;
-        if (type.equals("credit")){
-            for (int i=0;i<record.size();i++){
-                if(record.get(i).equals("settled")){
-                   list.get(count).add(0,record.get(i).getTransactionTime());
-                   list.get(count).add(1,"TF");
-                   list.get(count).add(2,record.get(i).getDescription());
-                   list.get(count).add(3,null);
-                   list.get(count).add(4,record.get(i).getAmount());
-                   count=count+1;
+
+    public List<List> addTransferList(List<TransactionRecord> record, String type) {
+        List<List> list = new ArrayList();
+        int count = 0;
+        if (type.equals("credit")) {
+            for (int i = 0; i < record.size(); i++) {
+                if (record.get(i).equals("settled")) {
+                    list.get(count).add(0, record.get(i).getTransactionTime());
+                    list.get(count).add(1, record.get(i).getCode());
+                    list.get(count).add(2, record.get(i).getDescription());
+                    list.get(count).add(3, null);
+                    list.get(count).add(4, record.get(i).getAmount());
+                    count = count + 1;
                 }
-                
+
             }
-            
-        }
-        else if (type.equals("debit")){
-           for (int i=0;i<record.size();i++){
-                if(record.get(i).equals("settled")){
-                   list.get(count).add(0,record.get(i).getTransactionTime());
-                   list.get(count).add(1,"TF");
-                   list.get(count).add(2,record.get(i).getDescription());
-                   list.get(count).add(3,record.get(i).getAmount());
-                   list.get(count).add(4,null);
-                   count=count+1;
+
+        } else if (type.equals("debit")) {
+            for (int i = 0; i < record.size(); i++) {
+                if (record.get(i).equals("settled")) {
+                    list.get(count).add(0, record.get(i).getTransactionTime());
+                    list.get(count).add(1, record.get(i).getCode());
+                    list.get(count).add(2, record.get(i).getDescription());
+                    list.get(count).add(3, record.get(i).getAmount());
+                    list.get(count).add(4, null);
+                    count = count + 1;
                 }
-                
-            } 
+
+            }
         }
         return list;
     }
