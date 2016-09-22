@@ -34,5 +34,6 @@ public interface SavingAccountSessionBeanLocal {
     public void cashWithdraw(Long accountNum, BigDecimal withdrawAmount ) throws UserNotEnoughBalanceException;
     public void cashDeposit(Long accountNum, BigDecimal depositAmount);
     public List<Long> getNotTerminatedAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
-    public List<SavingAccountType> getSavingAccountTypeList();
+    public Double getInterestRate(String accountType, String interestName);
+    public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3);
 }

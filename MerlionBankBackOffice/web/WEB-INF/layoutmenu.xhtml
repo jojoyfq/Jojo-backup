@@ -23,7 +23,15 @@
                 </p:submenu>
                 
                 <p:submenu id="deposit_management" label="Deposit Management">
- 
+                    <p:submenu id="saving_account" label="Saving Account" icon="icon-plus">
+                        <p:menuitem id="create_saving_account" value="Create Saving Account" outcome="/DepositManagement/createSavingAccountEC"/>
+                        <p:menuitem id="cash_deposit" value="Cash Deposit" outcome="/DepositManagement/cashDeposit"/> 
+                        <p:menuitem id="cash_withdraw" value="Cash Withdraw" outcome="/DepositManagement/cashWithdraw"/>
+                        <p:menuitem id="change_ir" value="Change Interest Rate" outcome="/DepositManagement/changeInterestRate_selectType"/>
+                        <p:menuitem id="view_detail" value="View Saving Account" outcome="/DepositManagement/displaySavingAccountDetail"/> 
+                        <p:menuitem id="view_transactionRecord" value="View Transaction History" outcome="/DepositManagement/viewTransactionRecords_selectAccounts"/>
+                        <p:menuitem id="close_saving_account" value="Close Saving Account" outcome="/DepositManagement/closeSavingAccount_selectAccounts"/> 
+                    </p:submenu>
                 </p:submenu>
                 
                 <p:submenu id="card_management" label="Card Management">
@@ -33,7 +41,9 @@
                 <p:menuitem id="loan_management" value="Loan Management" />
                 
                 <p:submenu id="bill_and_transfer" label="Bill and Transfer">
-                
+                    <p:submenu id="transfer" label="Transfer" icon="icon-plus">
+                        <p:menuitem id="intraTransfer" value="Transfer to other Merlion Bank Account" outcome="/TransferManagement/intraTransfer"/>
+                    </p:submenu>
                 </p:submenu>
 
                 <p:submenu id="wealth_management" label="Wealth Management">

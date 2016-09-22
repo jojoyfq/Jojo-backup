@@ -123,6 +123,17 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified");
         em.persist(customer);
         System.out.println("Create Customer successfully");
+        
+        System.out.println("Debit Account successfully created");
+
+        try {
+            // reminder: remove password
+            SendPendingVerificationEmail(name, email, tempPassword);
+
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException(ex.getMessage());
+        }
 
         //create saving account
         long savingAccoutNumber = generateSavingAccountNumber();
@@ -148,16 +159,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.persist(customer);
         em.flush();
 
-        System.out.println("Debit Account successfully created");
-
-        try {
-            // reminder: remove password
-            SendPendingVerificationEmail(name, email, tempPassword);
-
-        } catch (MessagingException ex) {
-            System.out.println("Error sending email.");
-            throw new EmailNotSendException("Error sending email.");
-        }
+        
 
     }
 
@@ -211,9 +213,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             System.out.println("Saving Account successfully created");
 
             String email = customer.getEmail();
+            
+            BigDecimal minAmount = savingAccount.getSavingAccountType().getMinAmount();
 
             try {
-                SendSavingAccountActivationEmail(savingAccountName, email);
+                SendSavingAccountActivationEmail(savingAccountName, minAmount,email);
 
             } catch (MessagingException ex) {
                 System.out.println("Error sending email.");
@@ -293,7 +297,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         }
     }
 
-    private void SendSavingAccountActivationEmail(String name, String email) throws MessagingException {
+    private void SendSavingAccountActivationEmail(String name, BigDecimal minAmount,String email) throws MessagingException {
         String subject = "Merlion Bank - " + name + "Saving Account Activation";
         System.out.println("Inside send SavingAccount Activation email");
 
@@ -301,6 +305,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
                 + ",</h2><br /><h1>  Congratulations! You have successfully created a Merlion " + name + " Saving Account!</h1><br />"
                 + "<h1>Welcome to Merlion Bank.</h1>"
                 + "<br />Please logins to your iBanking to activate your Saving Account</h2><br />"
+                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum SG$"+minAmount+" to your account in order to activate your saving account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>MerLION Platform User Support</p>";
         System.out.println(content);
@@ -315,7 +320,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         String content = "<h2>Dear " + name
                 + ",</h2><br /><h1>  Congratulations! You have successfully registered a Merlion Online Banking Account!</h1><br />"
                 + "<h1>Welcome to Merlion Bank.</h1>"
-                + "<br />Temporary Password: " + password + "<br />Please activate your account through this link: " + "</h2><br />"
+               // + "<br />Temporary Password: " + password + "<br />Please activate your account through this link: " + "</h2><br />"
                 + "<p style=\"color: #ff0000;\">Please kindly wait for 1 to 2 working days for staff to verify you account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>MerLION Platform User Support</p>";
@@ -397,7 +402,9 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         List<Customer> temp = new ArrayList(q.getResultList());
         Customer customer = temp.get(temp.size() - 1);
         int amount = customer.getSavingAccounts().get(0).getBalance().intValueExact();
-        if (amount >= 500) {
+        BigDecimal currentAmount=new BigDecimal(amount);
+        int res=currentAmount.compareTo(customer.getSavingAccounts().get(0).getSavingAccountType().getMinAmount());
+        if (res==0 || res==1) {          
             return ic;
         } else {
             return "invalid amount";
