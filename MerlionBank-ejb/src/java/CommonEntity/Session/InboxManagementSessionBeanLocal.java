@@ -11,6 +11,7 @@ import CommonEntity.MessageEntity;
 
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
+import Exception.UnexpectedErrorException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import java.util.List;
@@ -46,7 +47,7 @@ public interface InboxManagementSessionBeanLocal {
  public CustomerMessage customerSendMessage(String subject, String content, String status, Long staffID, Long customerID)throws EmailNotSendException;
  
  // staff view list of message
- public List<CustomerMessage> StaffViewAllMessage(Long staffId)throws ListEmptyException;
+ public List<CustomerMessage> StaffViewAllMessage(Long staffId);//throws ListEmptyException;
  
  // staff update status from new to read
  public CustomerMessage readCustomerMessage(Long messageID);
@@ -57,6 +58,6 @@ public interface InboxManagementSessionBeanLocal {
  public MessageEntity diaplayMessage(Long id);
  
  //staff delete customer message
- public boolean deleteCustomerMessage(Long messageID);
+ public List<CustomerMessage> deleteCustomerMessage(Long messageID,Long staffId)throws UnexpectedErrorException;
  
 }

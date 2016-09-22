@@ -59,7 +59,7 @@ public interface StaffManagementSessionBeanLocal {
 
     public List<StaffRole> displayListOfRole();
 
-    public Long assignStaffRole(Long staffId, Long newStaffId, String staffRoleName) throws StaffRoleExistException;
+    public StaffRole assignStaffRole(Long staffId, Long newStaffId, String staffRoleName) throws StaffRoleExistException;
 
 //Activate account- 1st step verify account details
     public Long activateAccountVerifyDetail(String staffIc, String fullName, String email) throws UserNotExistException, UserAlreadyActivatedException;
@@ -81,9 +81,9 @@ public interface StaffManagementSessionBeanLocal {
 // modify staff- update staff personal info
 public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String staffName, String staffEmail, String mobileNumber) ;
 //modify staff- modify staff roles
-    public boolean staffAddRole(Long staffId, String roleName)throws StaffAlreadyHasRoleException;
+    public StaffRole staffAddRole(Long staffId, String roleName)throws StaffAlreadyHasRoleException;
 
-   public boolean staffDeleteRole(Long staffId, String roleName);
+   public List<StaffRole> staffDeleteRole(Long staffId, String roleName) throws UnexpectedErrorException;
 
 //forget password/unlock account- 1st step verify account details, 2nd update new password and status
     public Staff forgetPasswordVerifyDetail(String ic, String fullName, String email) throws UserNotExistException, UserNotActivatedException;
@@ -98,5 +98,7 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
     // invalid log in - acccount lock
 
     public Long lockAccount(Long staffId);
+    
+    public StaffRole getRoleByRoleName(String roleName);
     
 }

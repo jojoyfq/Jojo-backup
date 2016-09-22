@@ -11,6 +11,7 @@ import CommonEntity.MessageEntity;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
+import Exception.UnexpectedErrorException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import Other.Session.sendEmail;
@@ -43,7 +44,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         System.out.println("testing: "+temp.size());
         if (temp.isEmpty()) {
             System.out.println("Username " + customerIc + " does not exist!");
-          //  throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+          throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
         }
         
             int size=temp.size();
@@ -51,11 +52,11 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
             //System.out.println("testing: "+customer.getIc());
             if (customer.getStatus().equals("terminated")){
                  System.out.println("Username " + customerIc + " does not exist!");
-           // throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");    
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");    
             }
             else if (customer.getStatus().equals("inactive")){
                  System.out.println("Username " + customerIc + "Customer has not activated his or her account!"); 
-           //  throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
+             throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
             }
             else {
               System.out.println("Username " + customerIc + " IC check pass!");  
@@ -70,7 +71,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
         
-        
+        System.out.println("inside session bean, customer id: "+ customerId);
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
         q.setParameter("id", customerId);
         Customer customer = (Customer)q.getSingleResult();
@@ -238,7 +239,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
  
  // staff view list of message
  @Override
- public List<CustomerMessage> StaffViewAllMessage(Long staffId)throws ListEmptyException{
+ public List<CustomerMessage> StaffViewAllMessage(Long staffId)/*throws ListEmptyException*/{
      Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffId);
         Staff staff = (Staff)query.getSingleResult();     
@@ -249,8 +250,8 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
                 newMessages.add(messages.get(i));
             }
         }
-        if (newMessages.size()==0)
-            throw new ListEmptyException("There are no messages!");
+//        if (newMessages.size()==0)
+//            throw new ListEmptyException("There are no messages!");
         return newMessages;
      
  }
@@ -297,14 +298,30 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
     
      //staff delete message
  @Override
- public boolean deleteCustomerMessage(Long messageID){
+ public List<CustomerMessage> deleteCustomerMessage(Long messageID,Long staffId)throws UnexpectedErrorException{
      Query q = em.createQuery("SELECT a FROM CustomerMessage a WHERE a.id = :id");
         q.setParameter("id", messageID);
         CustomerMessage message = (CustomerMessage)q.getSingleResult();  
         message.setStatus("deleted");
         em.persist(message);
         em.flush();
-        return true;
+        
+         Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        query.setParameter("id", staffId);
+        Staff staff =(Staff) query.getSingleResult();
+        
+        List<CustomerMessage> currentList=staff.getCustomerMessages();
+        List<CustomerMessage>newList=new ArrayList<CustomerMessage>();
+        
+        for (int i=0;i<currentList.size();i++){
+           if (!currentList.get(i).getStatus().equals("deleted")) 
+               newList.add(currentList.get(i));
+        }
+        
+        if (currentList.size()==newList.size())
+            throw new UnexpectedErrorException("Staff deletes message fail.");
+        
+        return newList;
         
  }
  
