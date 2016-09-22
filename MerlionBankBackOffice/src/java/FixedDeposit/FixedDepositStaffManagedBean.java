@@ -62,32 +62,25 @@ public class FixedDepositStaffManagedBean implements Serializable {
 
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
-    
-    @EJB
-    FixedDepositAccountSessionBeanLocal fdasb;
+
     /**
      * Creates a new instance of FixedDepositStaffManagedBean
      */
-     @PostConstruct
+    @PostConstruct
     public void init() {
-        try {
             System.out.print("inside the init method");
             //serviceCustomerManagedBean.init();
-            
+            customerId = serviceCustomerManagedBean.getCustomer().getId();
             withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId);
             customer = serviceCustomerManagedBean.getCustomer();
-        
-            customerId = serviceCustomerManagedBean.getCustomer().getId();
             System.out.print("************************");
             System.out.print(customerId);
-            fixedDepositAccounts = fdasb.getFixedDepositAccounts(customerId);
+            fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
             //fixedDepositRates = fdasb.getFixedDepositRate();
-            System.out.println(fixedDepositRates);
-            
-        } catch (Exception e) {
-            System.out.print("Init encounter error");
-        }
+            //System.out.println(fixedDepositRates);
+        
     }
+    
     public FixedDepositStaffManagedBean() {
     }
 
@@ -165,7 +158,8 @@ public class FixedDepositStaffManagedBean implements Serializable {
     }
     
     private void updateList(Long customerId){
-       withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId);  
+       withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId); 
+       fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
     }
 
     public BigDecimal getInterest() {
