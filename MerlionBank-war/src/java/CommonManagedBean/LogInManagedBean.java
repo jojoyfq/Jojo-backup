@@ -112,6 +112,10 @@ public class LogInManagedBean implements Serializable {
         }
 
     }
+    public void goToLogInPage(ActionEvent event )throws IOException{
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+
+    }
 
 //   private void warnMsg(String message) {
 //        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, "");

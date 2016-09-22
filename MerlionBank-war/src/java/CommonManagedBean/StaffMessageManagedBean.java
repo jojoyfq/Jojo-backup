@@ -61,13 +61,13 @@ public class StaffMessageManagedBean implements Serializable {
         this.logInManagedBean = logInManagedBean;
     }
 
-    private String customerIc = "S4444";
-    private Long staffId = 4L;
+    private String customerIc;
+    private Long staffId=4L;
     private String messageSubject;
     private String content;
     private Customer customer;
     private Staff staff;
-    private Long customerId = 2L;
+    private Long customerId;
     private List<CustomerMessage> customerMessages;
     private Long messageId;
     private CustomerMessage customerMessage;
@@ -127,9 +127,9 @@ public class StaffMessageManagedBean implements Serializable {
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
         if (customerIc != null) {
             try {
-                Long msg = imsbl.verifyCustomer(customerIc);
+                 customerId = imsbl.verifyCustomer(customerIc);
 
-                System.out.println(msg + "Customer verification is successful!");
+                System.out.println(customerId + "Customer verification is successful!");
 
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
 

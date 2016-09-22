@@ -43,7 +43,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         System.out.println("testing: "+temp.size());
         if (temp.isEmpty()) {
             System.out.println("Username " + customerIc + " does not exist!");
-          //  throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+          throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
         }
         
             int size=temp.size();
@@ -51,11 +51,11 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
             //System.out.println("testing: "+customer.getIc());
             if (customer.getStatus().equals("terminated")){
                  System.out.println("Username " + customerIc + " does not exist!");
-           // throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");    
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");    
             }
             else if (customer.getStatus().equals("inactive")){
                  System.out.println("Username " + customerIc + "Customer has not activated his or her account!"); 
-           //  throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
+             throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
             }
             else {
               System.out.println("Username " + customerIc + " IC check pass!");  
