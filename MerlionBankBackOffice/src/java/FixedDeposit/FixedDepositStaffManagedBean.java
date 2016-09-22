@@ -54,6 +54,16 @@ public class FixedDepositStaffManagedBean implements Serializable {
     private Long accountNumber;
     private List<FixedDepositAccount> fixedDepositAccounts;
     private List<FixedDepositRate> fixedDepositRates;
+    private FixedDepositRate fixedRateSelected;
+    private Double newInterestRate;
+    
+    public List<FixedDepositRate> getFixedDepositRates() {
+        return fixedDepositRates;
+    }
+
+    public void setFixedDepositRates(List<FixedDepositRate> fixedDepositRates) {
+        this.fixedDepositRates = fixedDepositRates;
+    }
     private List<FixedDepositAccount> withdrawableFixedDeposit;
     private FixedDepositAccount selectedFixedDeposit;
     private String withdrawType;
@@ -62,32 +72,27 @@ public class FixedDepositStaffManagedBean implements Serializable {
 
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
-    
-    @EJB
-    FixedDepositAccountSessionBeanLocal fdasb;
+
     /**
      * Creates a new instance of FixedDepositStaffManagedBean
      */
      @PostConstruct
     public void init() {
-        try {
             System.out.print("inside the init method");
             //serviceCustomerManagedBean.init();
-            
             withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId);
             customer = serviceCustomerManagedBean.getCustomer();
         
             customerId = serviceCustomerManagedBean.getCustomer().getId();
             System.out.print("************************");
             System.out.print(customerId);
-            fixedDepositAccounts = fdasb.getFixedDepositAccounts(customerId);
-            //fixedDepositRates = fdasb.getFixedDepositRate();
-            System.out.println(fixedDepositRates);
+            fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
             
-        } catch (Exception e) {
-            System.out.print("Init encounter error");
-        }
+            System.out.print("***********get interest rate*************");
+            fixedDepositRates = fda.getFixedDepositRate();
+            System.out.println(fixedDepositRates);
     }
+            
     public FixedDepositStaffManagedBean() {
     }
 
@@ -162,6 +167,24 @@ public class FixedDepositStaffManagedBean implements Serializable {
         RequestContext.getCurrentInstance().showMessageInDialog(message);    
         }
       
+    }
+    
+
+
+    public FixedDepositRate getFixedRateSelected() {
+        return fixedRateSelected;
+    }
+
+    public void setFixedRateSelected(FixedDepositRate fixedRateSelected) {
+        this.fixedRateSelected = fixedRateSelected;
+    }
+
+    public Double getNewInterestRate() {
+        return newInterestRate;
+    }
+
+    public void setNewInterestRate(Double newInterestRate) {
+        this.newInterestRate = newInterestRate;
     }
     
     private void updateList(Long customerId){

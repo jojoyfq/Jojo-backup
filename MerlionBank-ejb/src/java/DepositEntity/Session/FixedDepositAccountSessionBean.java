@@ -124,16 +124,16 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.print("Demi" + account.getStartDate());
         System.out.println("Fixed Deposit account created successfullly");
         //for testting
-       
+
         return accountNum;
     }
-    
+
     @Override
-    public Long createFixedDepositCounter(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration){
+    public Long createFixedDepositCounter(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration) {
         customer = em.find(Customer.class, customerId);
         //generate and check account number
         accountNum = this.generateFixedDepositNumber();
-        BigDecimal balance = amount; 
+        BigDecimal balance = amount;
         //find interest rate according to duration
 
         if (duration.equalsIgnoreCase("3")) {
@@ -172,9 +172,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 
         em.persist(customer);
         em.flush();
-        return accountNum; 
+        return accountNum;
     }
-    
+
     private long generateFixedDepositNumber() {
         int a = 1;
         Random rnd = new Random();
@@ -295,18 +295,17 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     @Override
     public BigDecimal amountLessBalance(Long accountNum) {
         account = this.getAccount(accountNum);
-        System.out.print("balance"+account.getBalance());
-        if(account.getBalance().equals(BigDecimal.valueOf(0))){
+        System.out.print("balance" + account.getBalance());
+        if (account.getBalance().equals(BigDecimal.valueOf(0))) {
             return account.getAmount();
-        }
-        else if((account.getAmount().subtract(account.getBalance())).compareTo(BigDecimal.valueOf(0)) == 1) {
-            System.out.print("balance =" +account.getBalance());
-            System.out.print("needed =" +account.getAmount().subtract(account.getBalance()));
+        } else if ((account.getAmount().subtract(account.getBalance())).compareTo(BigDecimal.valueOf(0)) == 1) {
+            System.out.print("balance =" + account.getBalance());
+            System.out.print("needed =" + account.getAmount().subtract(account.getBalance()));
             return account.getAmount().subtract(account.getBalance());
         } else {
-           System.out.print("this is wrong");
-           return BigDecimal.valueOf(0);
-            
+            System.out.print("this is wrong");
+            return BigDecimal.valueOf(0);
+
         }
     }
 
@@ -375,22 +374,22 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.println("Fixed Deposit account transferred successfullly");
         return interest;
     }
-    
+
     @Override
-    public List<BigDecimal> earlyWithdrawCounter(Long fixedAccountNum){
-      account = this.getAccount(fixedAccountNum);
+    public List<BigDecimal> earlyWithdrawCounter(Long fixedAccountNum) {
+        account = this.getAccount(fixedAccountNum);
         //interest rate for early withdraw
-       List<BigDecimal> amountsToDisplay = new ArrayList<>();
-       
+        List<BigDecimal> amountsToDisplay = new ArrayList<>();
+
         rateIdInt = 5;
         rateIdLong = rateIdInt.longValue();
         rate = em.find(FixedDepositRate.class, rateIdLong);
         interestRate = rate.getInterestRate();
         interest = this.calculateInterestEarly(fixedAccountNum, interestRate);
         amountsToDisplay.add(0, account.getBalance());
-        amountsToDisplay.add(1,interest);
+        amountsToDisplay.add(1, interest);
         BigDecimal totalAmount = interest.add(account.getBalance());
-        amountsToDisplay.add(2,totalAmount);       
+        amountsToDisplay.add(2, totalAmount);
 //        //close fixed deposit
         account.setBalance(BigDecimal.valueOf(0));
         account.setStatus("terminated");
@@ -426,17 +425,17 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         em.persist(transferRecord);
         em.flush();
     }
-    
+
     @Override
-    public List<BigDecimal> normalWithdrawCounter(Long fixedAccountNum){
+    public List<BigDecimal> normalWithdrawCounter(Long fixedAccountNum) {
         account = this.getAccount(fixedAccountNum);
         interest = this.calculateInterestNormal(fixedAccountNum);
         BigDecimal totalAmount = interest.add(account.getBalance());
         List<BigDecimal> amountsToDisplay = new ArrayList<>();
-        amountsToDisplay.add(0,account.getBalance());
-        amountsToDisplay.add(1,interest);
-        amountsToDisplay.add(2,totalAmount);
-        
+        amountsToDisplay.add(0, account.getBalance());
+        amountsToDisplay.add(1, interest);
+        amountsToDisplay.add(2, totalAmount);
+
         //close fixed deposit
         account.setBalance(BigDecimal.valueOf(0));
         System.out.print("set balance to 0");
@@ -483,10 +482,10 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         }
         return fixedDepositsAcctNum;
     }
-    
+
     @Override
-    public List<FixedDepositAccount> getWithdrawableAccount(Long customerId){
-    customer = em.find(Customer.class, customerId);
+    public List<FixedDepositAccount> getWithdrawableAccount(Long customerId) {
+        customer = em.find(Customer.class, customerId);
         List<FixedDepositAccount> withdrawable = new ArrayList<>();
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
@@ -495,7 +494,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                 withdrawable.add(account);
             }
         }
-        return withdrawable;    
+        return withdrawable;
     }
 
     @Override
@@ -545,6 +544,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         dates.add(3, df.format(endNew));
         return dates;
     }
+
     @Override
     public BigDecimal calculateInterestNormal(Long accountNum) {
         account = this.getAccount(accountNum);
@@ -555,6 +555,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         interestAmount.setScale(4, RoundingMode.HALF_UP);
         return interestAmount;
     }
+
     @Override
     public void checkFixedDepositAccountStatus() {
 
@@ -626,7 +627,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             } else if (accountEndDay.equals(newstring3)) {
                 if (fixedDepositAccounts.get(i).getStatus().equals("renew") || fixedDepositAccounts.get(i).getStatus().equals("active")) {
                     System.out.println("get it renew pls !!!!");
-     
+
                     String duration = fixedDepositAccounts.get(i).getDuration();
                     Date endOld = fixedDepositAccounts.get(i).getEndDate();
                     DateTime endOldTemp = new DateTime(endOld);
@@ -655,7 +656,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     fixedDepositAccounts.get(i).setStatus("active");
                     em.flush();
                     System.out.print("new dates set");
-                } else if(fixedDepositAccounts.get(i).getStatus().contains(",")){
+                } else if (fixedDepositAccounts.get(i).getStatus().contains(",")) {
 
                     //"withdrawl,account number"
                     //terminate the fixed deposit account 
@@ -690,23 +691,46 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         sendEmail.run(email, subject, content);
     }
 
-////    @Override
-//    public List<FixedDepositRate> getFixedDepositRate() {
-//        Double fixedDepositRate;
-//        List<String> fixedDepositRateString = new ArrayList<String>();
-////         Query q = em.createNamedQuery("SELECT a FROM FixedDepositRate a");
-////         List<FixedDepositRate> fixedDepositRates = q.getResultList();
-////         
-////         if(fixedDepositRates.isEmpty()){
-////            System.out.print("The accountType Table is Empty");
-////    }else {
-////             System.out.println(fixedDepositRates.size());
-////             for(int i = 0; i < fixedDepositRates.size(); i ++){
-////                 fixedDepositRate = fixedDepositRates.get(i).getInterestRate();
-////                 System.out.print(fixedDepositRates.get(i).getInterestRate());
-////                 fixedDepositRateString.add(fixedDepositRate.toString());
-////             }
-////         }
-//         return fixedDeositRateString;
-////    }
+    @Override
+    public List<FixedDepositRate> getFixedDepositRate() {
+        System.out.print("***** inside the fixedDepositRate *****");
+        List<FixedDepositRate> fixedRates = new ArrayList<>();
+        Query query1 = em.createQuery("SELECT a FROM FixedDepositRate a");
+        fixedRates = new ArrayList(query1.getResultList());
+        return fixedRates;
+    }
+
+    @Override
+    public void changeFixedInterestRate(Integer duration, Double newInterestRate) {
+        Query query1 = em.createQuery("SELECT a FROM FixedDepositRate a");
+        List<FixedDepositRate> fixedDepositRates = new ArrayList(query1.getResultList());
+
+        Query query2 = em.createQuery("SELECT b FROM FixedDepositAccount b");
+        List<FixedDepositAccount> fixedDepositAccounts = new ArrayList(query2.getResultList());
+
+        Query q3 = em.createQuery("SELECT a FROM FixedDepositRate a WHERE a.duration = :duration");
+        q3.setParameter("duration", duration);
+
+        System.out.print("herehere");
+        FixedDepositRate rateEntity = (FixedDepositRate) q3.getResultList().get(0);
+        System.out.print(newInterestRate);
+        
+        rateEntity.setInterestRate(newInterestRate);
+        System.out.print(rateEntity.getInterestRate());
+        em.flush();
+
+        //update the fixedDepositAccount table
+        for (int j = 0; j < fixedDepositAccounts.size(); j++) {
+            if (duration.equals(fixedDepositAccounts.get(j).getDuration())) {
+                fixedDepositAccounts.get(j).setInterestRate(newInterestRate);
+                em.flush();
+            }
+       
+
+        else {
+                System.out.println("***** Should not be here *****");
+        System.out.println("No matched duration");
+    }
+}
+    }
 }
