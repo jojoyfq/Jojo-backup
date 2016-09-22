@@ -127,7 +127,6 @@ public class FixedDepositStaffManagedBean implements Serializable {
             startDateString = df.format(startDate);
             accountNumber = fda.createFixedDepositCounter(customerId, amountBD, startDate, endDate, duration);
             this.updateList(customerId);
-            System.out.print("halallala"+fda.getAccount(accountNumber).getAmount());
 //            String description = "Staff " +staff.getStaffIc()+" create fixed deposit "+accountNumber+" for customer "+customerId;
            // fda.logStaffAction(description, customerId, staff);
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
@@ -155,7 +154,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
           amountBD = amountsToDisplay.get(0);
           interest = amountsToDisplay.get(1).setScale(4, RoundingMode.HALF_UP);
           total = amountsToDisplay.get(2).setScale(4, RoundingMode.HALF_UP);
-          String description = "Staff "+staff.getStaffIc()+" perform normal withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customerId;
+     //     String description = "Staff "+staff.getStaffIc()+" perform normal withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customerId;
         //  fda.logStaffAction(description, customerId, staff);
       }else{
           withdrawType = "Premature Withdraw";
@@ -163,7 +162,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
           amountBD = amountsToDisplay.get(0);
           interest = amountsToDisplay.get(1).setScale(4, RoundingMode.HALF_UP);
           total = amountsToDisplay.get(2).setScale(4, RoundingMode.HALF_UP);
-          String description = "Staff "+staff.getStaffIc()+" perform prematur withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customerId;
+   //       String description = "Staff "+staff.getStaffIc()+" perform prematur withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customerId;
         //  fda.logStaffAction(description, customerId, staff);
       }
       this.updateList(customerId);
