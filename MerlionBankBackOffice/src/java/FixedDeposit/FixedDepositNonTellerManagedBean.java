@@ -44,13 +44,12 @@ public class FixedDepositNonTellerManagedBean implements Serializable {
     }
     
     public void changeInterestRate(ActionEvent event)throws IOException{
-        if(fixedRateSelected != null){
+        if(fixedRateSelected != null && newInterestRate != null){
             //call session bean to set the interest rate
-            duration = fixedRateSelected.getDuration();
-            fda.changeFixedInterestRate(duration, newInterestRate);
+            fda.changeFixedInterestRate(fixedRateSelected, newInterestRate);
             
         }else{
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please choose account");
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please choose account and enter new interest rate");
         RequestContext.getCurrentInstance().showMessageInDialog(message);    
         }
     }

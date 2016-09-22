@@ -86,7 +86,7 @@ public interface FixedDepositAccountSessionBeanLocal {
     public Long createFixedDepositCounter(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration);
 
 
-    public void changeFixedInterestRate(Integer duration, Double newInterestRate);  
+    public void changeFixedInterestRate(FixedDepositRate rateEntity, Double newInterestRate);  
 
     public void logStaffAction(String description, Long customerId, Staff staff);
     

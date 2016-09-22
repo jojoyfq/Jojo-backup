@@ -258,18 +258,18 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         }
         em.flush();
     }
-    
+
     @Override
-    public void logStaffAction(String description, Long customerId, Staff staff){
+    public void logStaffAction(String description, Long customerId, Staff staff) {
         List<StaffAction> actions = new ArrayList<>();
-        StaffAction action = new StaffAction(Calendar.getInstance().getTime(),description,customerId,staff);
+        StaffAction action = new StaffAction(Calendar.getInstance().getTime(), description, customerId, staff);
         em.persist(action);
         System.out.print(action.getDescription());
-        if(staff.getStaffActions() == null){
+        if (staff.getStaffActions() == null) {
             actions.add(action);
             staff.setStaffActions(actions);
             em.persist(actions);
-        }else{
+        } else {
             staff.getStaffActions().add(action);
         }
         em.flush();
@@ -710,36 +710,34 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     }
 
     @Override
-    public void changeFixedInterestRate(Integer duration, Double newInterestRate) {
-        Query query1 = em.createQuery("SELECT a FROM FixedDepositRate a");
-        List<FixedDepositRate> fixedDepositRates = new ArrayList(query1.getResultList());
-
-        Query query2 = em.createQuery("SELECT b FROM FixedDepositAccount b");
+    public void changeFixedInterestRate(FixedDepositRate rateEntity, Double newInterestRate) {
+//        Query query1 = em.createQuery("SELECT a FROM FixedDepositRate a");
+//        List<FixedDepositRate> fixedDepositRates = new ArrayList(query1.getResultList());
+       String duration = rateEntity.getDuration().toString(); 
+        Query query2 = em.createQuery("SELECT b FROM FixedDepositAccount b WHERE b.duration = :duration");
+        query2.setParameter("duration", duration);
         List<FixedDepositAccount> fixedDepositAccounts = new ArrayList(query2.getResultList());
-
-        Query q3 = em.createQuery("SELECT a FROM FixedDepositRate a WHERE a.duration = :duration");
-        q3.setParameter("duration", duration);
-
-        System.out.print("herehere");
-        FixedDepositRate rateEntity = (FixedDepositRate) q3.getResultList().get(0);
-        System.out.print(newInterestRate);
-        
+//
+//        Query q3 = em.createQuery("SELECT a FROM FixedDepositRate a WHERE a.duration = :duration");
+//        q3.setParameter("duration", duration);
+//
+//        System.out.print("herehere");
+//        FixedDepositRate rateEntity = (FixedDepositRate) q3.getResultList().get(0);
+//        System.out.print(newInterestRate);
+//        
+//        rateEntity.setInterestRate(newInterestRate);
         rateEntity.setInterestRate(newInterestRate);
         System.out.print(rateEntity.getInterestRate());
         em.flush();
 
         //update the fixedDepositAccount table
-        for (int j = 0; j < fixedDepositAccounts.size(); j++) {
-            if (duration.equals(fixedDepositAccounts.get(j).getDuration())) {
-                fixedDepositAccounts.get(j).setInterestRate(newInterestRate);
-                em.flush();
-            }
-       
-
-        else {
-                System.out.println("***** Should not be here *****");
-        System.out.println("No matched duration");
-    }
-}
+        
+        System.out.print("Duration to set"+duration);
+        System.out.print("Duration of an account" + fixedDepositAccounts.get(0).getDuration());
+        for (int i = 0; i< fixedDepositAccounts.size(); i++) {
+          fixedDepositAccounts.get(i).setInterestRate(newInterestRate);
+          System.out.print("interest rate for account set"+ fixedDepositAccounts.get(i).getInterestRate());
+        }
+        em.flush();
     }
 }
