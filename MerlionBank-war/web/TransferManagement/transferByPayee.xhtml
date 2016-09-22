@@ -26,7 +26,9 @@
                     <div class="Container100 ui-fluid">
                         <div class="Card">
                             <h:form>
-
+                                 <p:panel id="panel">
+                                     <p:messages id="msgs" />
+                                     
                                 <div class="Container10"></div>
                                 <div class="Container80">
                                     <h:panelGrid columns="2" id="transferByPayee" cellpadding="5" > 
@@ -47,10 +49,10 @@
                                 <div class="EmptyBox20"></div>
                                 <div class="Container30"></div>
                                 <div class="Container40">
-                                    <p:commandButton value="Submit" actionListener="#{transferManagedBean.transferByPayee}" />
+                                    <p:commandButton update="panel" value="Submit" actionListener="#{transferManagedBean.transferByPayee}" />
                                 </div>
                                 <div class="Container30"></div>
-
+                                 </p:panel>
                             </h:form>
                             
                             <h:form>

@@ -1,40 +1,72 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
-    <h:head>
-        <title>View Saving Account Detail</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </h:head>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-    <h:body>
-        <h:form>
-            <p:panel id="panel" header="Your Saving Account Details">
+    <ui:define name="head">
 
-                <h:panelGrid columns="4" cellpadding="5">
-                    <p:dataTable var="SavingAccount" value="#{savingAccountManagedBean.savingAccounts}">
-                        <p:column headerText="Account Number">
-                            <h:outputText value="#{SavingAccount.accountNumber}" />
-                        </p:column>
+    </ui:define>
 
-                        <p:column headerText="Available Balance">
-                            <h:outputText value="#{SavingAccount.availableBalance}" />
-                        </p:column>
+    <ui:define name="content">
 
-                        <p:column headerText="Balance">
-                            <h:outputText value="#{SavingAccount.balance}" />
-                        </p:column>
+        <!-- Left Column -->
+        <div class="Container10 NoPadding Responsive100">
 
-                        <p:column headerText="Type">
-                            <h:outputText value="#{SavingAccount.savingAccountType.accountType}" />
-                        </p:column>
+        </div>
 
-                    </p:dataTable>
-                </h:panelGrid>
-            </p:panel>
-        </h:form>
-    </h:body>
-</html>
+        <!-- Center Column -->
+        <div class="Container80 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+       
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <p:panel id="panel" header="Your Saving Account Details">
+
+                                <h:panelGrid columns="4" cellpadding="5">
+                                    <p:dataTable var="SavingAccount" value="#{savingAccountManagedBean.savingAccounts}">
+                                        <p:column headerText="Account Number">
+                                            <h:outputText value="#{SavingAccount.accountNumber}" />
+                                        </p:column>
+
+                                        <p:column headerText="Available Balance">
+                                            <h:outputText value="#{SavingAccount.availableBalance}" />
+                                        </p:column>
+
+                                        <p:column headerText="Balance">
+                                            <h:outputText value="#{SavingAccount.balance}" />
+                                        </p:column>
+
+                                        <p:column headerText="Type">
+                                            <h:outputText value="#{SavingAccount.savingAccountType.accountType}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </div>
+
+
+
+
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container10 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

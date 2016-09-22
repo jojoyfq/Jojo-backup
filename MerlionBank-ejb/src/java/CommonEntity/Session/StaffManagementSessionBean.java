@@ -397,9 +397,17 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         Query queryPermission2 = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
         queryPermission2.setParameter("id", truePermissionId);
         Permission truePermission = (Permission) queryPermission2.getSingleResult();
-
-        int flag=(truePermission.getId()).intValue()/2;
-        currentPermissions.set(flag,truePermission);
+        
+        
+        for (int i=0;i<currentPermissions.size();i++){
+            if (currentPermissions.get(i).getModuleName().equals(falsePermission.getModuleName())){
+                //System.out.println("Inside setFalsePermission");
+        currentPermissions.set(i,truePermission);
+        //System.out.println("false permission"+falsePermission.isValidity());
+        //System.out.println("current permission"+currentPermissions.get(i).isValidity());
+         
+        }
+        }
         staffRole.setPermissions(currentPermissions);
         em.persist(staffRole);
         em.flush();
@@ -429,6 +437,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 //modifyRole - delete Permission
     @Override
     public boolean deletePermission(Long staffId, Long staffRoleId, Long permissionId) {
+        
+        System.out.println("Inside delete Permission");
         Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         queryStaff.setParameter("id", staffId);
         Staff staff = (Staff) queryStaff.getSingleResult();
@@ -441,11 +451,13 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         Query queryPermission = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
         queryPermission.setParameter("id", permissionId);
         Permission truePermission = (Permission) queryPermission.getSingleResult();
+        System.out.println("true Permission Name"+truePermission.getModuleName());
 
         Long falsePermissionId=(Long)permissionId+1;
         Query queryPermission2 = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
         queryPermission2.setParameter("id", falsePermissionId);
         Permission falsePermission = (Permission) queryPermission2.getSingleResult();
+        System.out.println("false Permission Name"+falsePermission.getModuleName());
 
 //        List<Permission> temp = new ArrayList<Permission>();
 //        for (int i = 0; i < currentPermissions.size(); i++) {
@@ -453,11 +465,25 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 //                temp.add(currentPermissions.get(i));
 //            }
 //        }
+<<<<<<< HEAD
         
         
         int flag=0;
         
         currentPermissions.set(flag,falsePermission);
+=======
+       
+        for (int i=0;i<currentPermissions.size();i++){
+            if (currentPermissions.get(i).getModuleName().equals(truePermission.getModuleName())){
+                //System.out.println("Inside setFalsePermission");
+        currentPermissions.set(i,falsePermission);
+        //System.out.println("false permission"+falsePermission.isValidity());
+        //System.out.println("current permission"+currentPermissions.get(i).isValidity());
+         
+        }
+        }
+    
+>>>>>>> refs/remotes/origin/master
         staffRole.setPermissions(currentPermissions);
         em.persist(staffRole);
         em.flush();
