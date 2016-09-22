@@ -98,4 +98,6 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
 
     public Long lockAccount(Long staffId);
     
+    public StaffRole getRoleByRoleName(String roleName);
+    
 }
