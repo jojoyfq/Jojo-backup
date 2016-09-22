@@ -54,6 +54,16 @@ public class FixedDepositStaffManagedBean implements Serializable {
     private Long accountNumber;
     private List<FixedDepositAccount> fixedDepositAccounts;
     private List<FixedDepositRate> fixedDepositRates;
+    private FixedDepositRate fixedRateSelected;
+    private Double newInterestRate;
+    
+    public List<FixedDepositRate> getFixedDepositRates() {
+        return fixedDepositRates;
+    }
+
+    public void setFixedDepositRates(List<FixedDepositRate> fixedDepositRates) {
+        this.fixedDepositRates = fixedDepositRates;
+    }
     private List<FixedDepositAccount> withdrawableFixedDeposit;
     private FixedDepositAccount selectedFixedDeposit;
     private String withdrawType;
@@ -63,8 +73,10 @@ public class FixedDepositStaffManagedBean implements Serializable {
 
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
+
     @Inject
     private staffLogInManagedBean staffLogInManagedBean;
+
     /**
      * Creates a new instance of FixedDepositStaffManagedBean
      */
@@ -72,6 +84,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
     public void init() {
             System.out.print("inside the init method");
             //serviceCustomerManagedBean.init();
+
             customerId = serviceCustomerManagedBean.getCustomer().getId();
             withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId);
             customer = serviceCustomerManagedBean.getCustomer();
@@ -79,10 +92,8 @@ public class FixedDepositStaffManagedBean implements Serializable {
             System.out.print(customerId);
             fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
 
-           // staff = staffLogInManagedBean.getStaff();
-        
     }
-    
+
     public FixedDepositStaffManagedBean() {
     }
 
@@ -164,6 +175,24 @@ public class FixedDepositStaffManagedBean implements Serializable {
         RequestContext.getCurrentInstance().showMessageInDialog(message);    
         }
       
+    }
+    
+
+
+    public FixedDepositRate getFixedRateSelected() {
+        return fixedRateSelected;
+    }
+
+    public void setFixedRateSelected(FixedDepositRate fixedRateSelected) {
+        this.fixedRateSelected = fixedRateSelected;
+    }
+
+    public Double getNewInterestRate() {
+        return newInterestRate;
+    }
+
+    public void setNewInterestRate(Double newInterestRate) {
+        this.newInterestRate = newInterestRate;
     }
     
     private void updateList(Long customerId){
@@ -304,5 +333,4 @@ public class FixedDepositStaffManagedBean implements Serializable {
         public customerId() {
         }
     }
-
 }

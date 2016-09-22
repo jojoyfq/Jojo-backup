@@ -12,24 +12,20 @@
 
     <h:body>
         <h:form>
-            <p:dataTable id="singleDT" var="FixedDepositRate" value="#{fixedDepositStaffManagedBean.}" selectionMode="single" selection="#{dtSelectionView.selectedCar}" rowKey="#{car.id}">
+            <p:dataTable id="FixedDepositRate" var="FixedDepositRate" value="#{fixedDepositNonTellerManagedBean.fixedDepositRates}" selectionMode="single" selection="#{fixedDepositNonTellerManagedBean.fixedRateSelected}" rowKey="#{FixedDepositRate.duration}">
         <f:facet name="header">
-            Single with Row Click
+            Interest Rate of Fixed Deposit
         </f:facet>
         <p:column headerText="duration">
-            <h:outputText value="#{FixedDepositRate.}" />
+            <h:outputText value="#{FixedDepositRate.duration}" />
         </p:column>
-        <p:column headerText="Year">
-            <h:outputText value="#{car.year}" />
-        </p:column>
-        <p:column headerText="Brand">
-            <h:outputText value="#{car.brand}" />
-        </p:column>
-        <p:column headerText="Color">
-            <h:outputText value="#{car.color}" />
+        <p:column headerText="Interest Rate">
+            <h:outputText value="#{FixedDepositRate.interestRate}" />
         </p:column>
         <f:facet name="footer">
-            <p:commandButton process="singleDT" update=":form:carDetail" icon="ui-icon-search" value="View" oncomplete="PF('carDialog').show()" />
+             <p:outputLabel value="Enter new interest:" />
+             <p:inputText id="newInterest" value ="#{fixedDepositNonTellerManagedBean.newInterestRate}" />
+                          <p:commandButton actionListener="#{fixedDepositNonTellerManagedBean.changeInterestRate(event)}" value="Submit"/>
         </f:facet>
     </p:dataTable>
         </h:form>

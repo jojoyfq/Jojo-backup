@@ -75,8 +75,7 @@ public interface FixedDepositAccountSessionBeanLocal {
 
     public BigDecimal calculateInterestNormal(Long accountNum);
 
-
-    //public List<FixedDepositRate> getFixedDepositRate();
+    public List<FixedDepositRate> getFixedDepositRate();
 
     public List<FixedDepositAccount> getWithdrawableAccount(Long customerId);
 
@@ -85,6 +84,9 @@ public interface FixedDepositAccountSessionBeanLocal {
     public List<BigDecimal> earlyWithdrawCounter(Long fixedAccountNum);
 
     public Long createFixedDepositCounter(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration);
+
+
+    public void changeFixedInterestRate(Integer duration, Double newInterestRate);  
 
     public void logStaffAction(String description, Long customerId, Staff staff);
     
