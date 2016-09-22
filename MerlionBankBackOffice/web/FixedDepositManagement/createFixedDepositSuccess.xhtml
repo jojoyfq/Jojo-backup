@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Open a Fixed Deposit Account </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <div class="Container10"></div>
+                            <div class="Container80">
+                                <h:panelGrid columns="2" id="createFixedDepositSuccess" cellpadding="5"> 
+
+                                    <h:outputLabel class="FontItalic Red TexAlCenter" value="A Fixed Deposit is successfully created for customer" />
+                                    <h:outputLabel />
+
+                                    <h:outputLabel />
+                                    <h:outputLabel />
+                                    <h:outputLabel for="customerIc" value="Customer IC:" />
+                                    <p:outputLabel id="customerIc" value="#{fixedDepositStaffManagedBean.customer.ic}" />
+                                    
+                                    <h:outputLabel for="accountNumber" value="Account Number:" />
+                                    <p:outputLabel id="accountNumber" value="#{fixedDepositStaffManagedBean.accountNumber}"  />          
+
+                                    <h:outputLabel for="amount" value="Amount:" />
+                                    <p:outputLabel id="amount" value="#{fixedDepositStaffManagedBean.amountString}"  />
+
+                                    <h:outputLabel for="startDate" value="Start Date:" />
+                                    <p:outputLabel id="startDate" value="#{fixedDepositStaffManagedBean.startDateString}" />
+
+                                    <h:outputLabel for="endDate" value="End Date:" />
+                                    <p:outputLabel id="endDate" value="#{fixedDepositStaffManagedBean.endDateString}" />
+
+                                </h:panelGrid>
+                            </div>
+                            <div class="Container10"></div>
+
+                            <div class="EmptyBox20"></div>
+                            <div class="Container30"></div>
+                            <div class="Container40">
+                                <p:commandButton actionListener="#{fixedDepositStaffManagedBean.goToHomePage(event)}" value="Back" />
+                            </div>
+                            <div class="Container30"></div>
+                        </h:form>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition> 

@@ -6,16 +6,22 @@
 package FixedDeposit;
 
 import CommonEntity.Customer;
+import DepositEntity.FixedDepositAccount;
+import DepositEntity.FixedDepositRate;
+import DepositEntity.Session.FixedDepositAccountSessionBean;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import TellerManagedBean.ServiceCustomerManagedBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.Dependent;
@@ -26,14 +32,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
-
 /**
  *
  * @author ruijia
  */
 @Named(value = "fixedDepositStaffManagedBean")
 @SessionScoped
-public class FixedDepositStaffManagedBean implements Serializable{
+public class FixedDepositStaffManagedBean implements Serializable {
 
     @EJB
     FixedDepositAccountSessionBeanLocal fda;
@@ -47,6 +52,13 @@ public class FixedDepositStaffManagedBean implements Serializable{
     private String startDateString;
     private String endDateString;
     private Long accountNumber;
+    private List<FixedDepositAccount> fixedDepositAccounts;
+    private List<FixedDepositRate> fixedDepositRates;
+    private List<FixedDepositAccount> withdrawableFixedDeposit;
+    private FixedDepositAccount selectedFixedDeposit;
+    private String withdrawType;
+    private BigDecimal interest;
+    private BigDecimal total;
 
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
@@ -54,7 +66,21 @@ public class FixedDepositStaffManagedBean implements Serializable{
     /**
      * Creates a new instance of FixedDepositStaffManagedBean
      */
-
+    @PostConstruct
+    public void init() {
+            System.out.print("inside the init method");
+            //serviceCustomerManagedBean.init();
+            customerId = serviceCustomerManagedBean.getCustomer().getId();
+            withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId);
+            customer = serviceCustomerManagedBean.getCustomer();
+            System.out.print("************************");
+            System.out.print(customerId);
+            fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
+            //fixedDepositRates = fdasb.getFixedDepositRate();
+            //System.out.println(fixedDepositRates);
+        
+    }
+    
     public FixedDepositStaffManagedBean() {
     }
 
@@ -86,16 +112,94 @@ public class FixedDepositStaffManagedBean implements Serializable{
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             endDateString = df.format(endDate);
             startDateString = df.format(startDate);
-            accountNumber = fda.createFixedAccount(customerId, amountBD, startDate, endDate, duration);
-            fda.getAccount(accountNumber).setStatus("active");
+            accountNumber = fda.createFixedDepositCounter(customerId, amountBD, startDate, endDate, duration);
+            this.updateList(customerId);
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-            ec.redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositAccountSuccess.xhtml");
-
+            ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDepositSuccess.xhtml");
+             
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please enter amount");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
+    }
+    
+    public void goToHomePage(ActionEvent event)throws IOException{
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDeposit.xhtml");
+    }
+    
+    public void withdraw(ActionEvent event)throws IOException{
+        if(selectedFixedDeposit != null){
+      DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+      String todayDate = df.format(Calendar.getInstance().getTime());
+      String selectedEndDateStr = df.format(selectedFixedDeposit.getEndDate());
+      if(todayDate.equals(selectedEndDateStr)){
+          withdrawType = "Normal Withdraw";      
+          List<BigDecimal> amountsToDisplay = fda.normalWithdrawCounter(selectedFixedDeposit.getAccountNumber());
+          amountBD = amountsToDisplay.get(0);
+          interest = amountsToDisplay.get(1).setScale(4, RoundingMode.HALF_UP);
+          total = amountsToDisplay.get(2).setScale(4, RoundingMode.HALF_UP);
+      }else{
+          withdrawType = "Premature Withdraw";
+          List<BigDecimal> amountsToDisplay  = fda.earlyWithdrawCounter(selectedFixedDeposit.getAccountNumber());
+          amountBD = amountsToDisplay.get(0);
+          interest = amountsToDisplay.get(1).setScale(4, RoundingMode.HALF_UP);
+          total = amountsToDisplay.get(2).setScale(4, RoundingMode.HALF_UP);
+      }
+      this.updateList(customerId);
+      ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/withdrawFixedDepositSuccess.xhtml");
+        }
+        else{
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please choose account");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);    
+        }
+      
+    }
+    
+    private void updateList(Long customerId){
+       withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId); 
+       fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
+    }
 
+    public BigDecimal getInterest() {
+        return interest;
+    }
+
+    public void setInterest(BigDecimal interest) {
+        this.interest = interest;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public List<FixedDepositAccount> getWithdrawableFixedDeposit() {
+        return withdrawableFixedDeposit;
+    }
+
+    public void setWithdrawableFixedDeposit(List<FixedDepositAccount> withdrawableFixedDeposit) {
+        this.withdrawableFixedDeposit = withdrawableFixedDeposit;
+    }
+
+    public FixedDepositAccount getSelectedFixedDeposit() {
+        return selectedFixedDeposit;
+    }
+
+    public void setSelectedFixedDeposit(FixedDepositAccount selectedFixedDeposit) {
+        this.selectedFixedDeposit = selectedFixedDeposit;
+    }
+
+    public String getWithdrawType() {
+        return withdrawType;
+    }
+
+    public void setWithdrawType(String withdrawType) {
+        this.withdrawType = withdrawType;
     }
 
     public Long getAccountNumber() {
@@ -176,6 +280,20 @@ public class FixedDepositStaffManagedBean implements Serializable{
 
     public void setEndDateString(String endDateString) {
         this.endDateString = endDateString;
+    }
+
+    public List<FixedDepositAccount> getFixedDepositAccounts() {
+        return fixedDepositAccounts;
+    }
+
+    public void setFixedDepositAccounts(List<FixedDepositAccount> fixedDepositAccounts) {
+        this.fixedDepositAccounts = fixedDepositAccounts;
+    }
+
+    private static class customerId {
+
+        public customerId() {
+        }
     }
 
 }
