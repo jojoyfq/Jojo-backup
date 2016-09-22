@@ -48,12 +48,7 @@ and open the template in the editor.
                                                     <h:outputLabel for="roleName" value="Role Name:" />
                                                     <p:inputText id="roleName" value="#{staffManagementManagedBean.roleName}" label="roleName" required="true" requiredMessage="Please input the role name"/>
                                                     <p:message for="roleName" display="icon"/>
-                                                    <h:outputLabel for="roleName" value="Role Name:" />
-                                                    <p:selectOneMenu id="roleName" value="#{staffManagementManagedBean.allRoles}">
-
-                                                        <f:selectItem itemLabel="Select Roles" itemValue="" noSelectionOption="true" />
-                                                        <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
-                                                    </p:selectOneMenu>
+                                                    
 
                                                 </h:panelGrid>
 
