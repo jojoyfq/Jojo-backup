@@ -689,4 +689,24 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         System.out.println(content);
         sendEmail.run(email, subject, content);
     }
+
+////    @Override
+//    public List<FixedDepositRate> getFixedDepositRate() {
+//        Double fixedDepositRate;
+//        List<String> fixedDepositRateString = new ArrayList<String>();
+////         Query q = em.createNamedQuery("SELECT a FROM FixedDepositRate a");
+////         List<FixedDepositRate> fixedDepositRates = q.getResultList();
+////         
+////         if(fixedDepositRates.isEmpty()){
+////            System.out.print("The accountType Table is Empty");
+////    }else {
+////             System.out.println(fixedDepositRates.size());
+////             for(int i = 0; i < fixedDepositRates.size(); i ++){
+////                 fixedDepositRate = fixedDepositRates.get(i).getInterestRate();
+////                 System.out.print(fixedDepositRates.get(i).getInterestRate());
+////                 fixedDepositRateString.add(fixedDepositRate.toString());
+////             }
+////         }
+//         return fixedDeositRateString;
+////    }
 }

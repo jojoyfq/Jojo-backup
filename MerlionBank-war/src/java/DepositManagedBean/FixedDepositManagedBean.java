@@ -55,7 +55,7 @@ public class FixedDepositManagedBean implements Serializable {
     private String duration;
     private Date endDate;
     private Double interestRate;
-    private Long customerId = 2L;
+    private Long customerId = 206L;
     private Boolean response;
 
     private Long accountNumber;
