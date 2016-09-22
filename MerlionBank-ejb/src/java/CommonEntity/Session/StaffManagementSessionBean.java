@@ -1041,6 +1041,15 @@ public Staff viewStaff(Long staffID)throws UserNotExistException{
         em.flush();
         return staff.getId();
     }
+    
+    @Override
+    public StaffRole getRoleByRoleName(String roleName){
+        Query q = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :roleName");
+        q.setParameter("roleName", roleName);
+        List<StaffRole> roleList = q.getResultList();
+        StaffRole role = roleList.get(0);
+        return role;
+    }
 
 
 
