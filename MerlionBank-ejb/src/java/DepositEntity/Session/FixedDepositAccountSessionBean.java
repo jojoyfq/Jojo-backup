@@ -7,6 +7,8 @@ package DepositEntity.Session;
 
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
+import CommonEntity.Staff;
+import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.FixedDepositRate;
 import DepositEntity.SavingAccount;
@@ -116,11 +118,6 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         em.persist(customer);
         em.flush();
 
-        //log an action
-        String description = "Create a new Fixed deposit account " + accountNum;
-        this.logAction(description, customerId);
-        em.persist(customer);
-        em.flush();
         System.out.print("Demi" + account.getStartDate());
         System.out.println("Fixed Deposit account created successfullly");
         //for testting
@@ -232,9 +229,6 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             fixedDepositAccount.setBalance(amount);
             System.out.print("transfer to fixed done");
             //      em.persist(customer);
-            String description = "Transfer from saving account " + savingAccountNum + " to fixed deposit " + fixedDepositAccountNum;
-            this.logAction(description, customerId);
-            em.flush();
             //create a transaction record for saving account
             String description1 = "Transfer to fixed deposit " + fixedDepositAccountNum;
             Date currentTime = Calendar.getInstance().getTime();
@@ -262,7 +256,22 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         } else {
             customer.getCustomerActions().add(action);
         }
-        em.persist(customer);
+        em.flush();
+    }
+    
+    @Override
+    public void logStaffAction(String description, Long customerId, Staff staff){
+        List<StaffAction> actions = new ArrayList<>();
+        StaffAction action = new StaffAction(Calendar.getInstance().getTime(),description,customerId,staff);
+        em.persist(action);
+        System.out.print(action.getDescription());
+        if(staff.getStaffActions() == null){
+            actions.add(action);
+            staff.setStaffActions(actions);
+            em.persist(actions);
+        }else{
+            staff.getStaffActions().add(action);
+        }
         em.flush();
     }
 

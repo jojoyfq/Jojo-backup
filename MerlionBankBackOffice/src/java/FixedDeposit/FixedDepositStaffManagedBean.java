@@ -6,10 +6,11 @@
 package FixedDeposit;
 
 import CommonEntity.Customer;
+import CommonEntity.Staff;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.FixedDepositRate;
-import DepositEntity.Session.FixedDepositAccountSessionBean;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
+import StaffManagement.staffLogInManagedBean;
 import TellerManagedBean.ServiceCustomerManagedBean;
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,7 +25,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
@@ -59,10 +59,12 @@ public class FixedDepositStaffManagedBean implements Serializable {
     private String withdrawType;
     private BigDecimal interest;
     private BigDecimal total;
+    private Staff staff;
 
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
-
+    @Inject
+    private staffLogInManagedBean staffLogInManagedBean;
     /**
      * Creates a new instance of FixedDepositStaffManagedBean
      */
@@ -76,8 +78,8 @@ public class FixedDepositStaffManagedBean implements Serializable {
             System.out.print("************************");
             System.out.print(customerId);
             fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
-            //fixedDepositRates = fdasb.getFixedDepositRate();
-            //System.out.println(fixedDepositRates);
+
+           // staff = staffLogInManagedBean.getStaff();
         
     }
     
@@ -114,6 +116,9 @@ public class FixedDepositStaffManagedBean implements Serializable {
             startDateString = df.format(startDate);
             accountNumber = fda.createFixedDepositCounter(customerId, amountBD, startDate, endDate, duration);
             this.updateList(customerId);
+            System.out.print("halallala"+fda.getAccount(accountNumber).getAmount());
+//            String description = "Staff " +staff.getStaffIc()+" create fixed deposit "+accountNumber+" for customer "+customerId;
+           // fda.logStaffAction(description, customerId, staff);
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDepositSuccess.xhtml");
              
@@ -139,12 +144,16 @@ public class FixedDepositStaffManagedBean implements Serializable {
           amountBD = amountsToDisplay.get(0);
           interest = amountsToDisplay.get(1).setScale(4, RoundingMode.HALF_UP);
           total = amountsToDisplay.get(2).setScale(4, RoundingMode.HALF_UP);
+          String description = "Staff "+staff.getStaffIc()+" perform normal withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customerId;
+        //  fda.logStaffAction(description, customerId, staff);
       }else{
           withdrawType = "Premature Withdraw";
           List<BigDecimal> amountsToDisplay  = fda.earlyWithdrawCounter(selectedFixedDeposit.getAccountNumber());
           amountBD = amountsToDisplay.get(0);
           interest = amountsToDisplay.get(1).setScale(4, RoundingMode.HALF_UP);
           total = amountsToDisplay.get(2).setScale(4, RoundingMode.HALF_UP);
+          String description = "Staff "+staff.getStaffIc()+" perform prematur withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customerId;
+        //  fda.logStaffAction(description, customerId, staff);
       }
       this.updateList(customerId);
       ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
