@@ -72,5 +72,13 @@ public interface FixedDepositAccountSessionBeanLocal {
     public void normalWithdrawTakeEffect(Long fixedAccountNum, Long savingAccountNum);
 
     public BigDecimal calculateInterestNormal(Long accountNum);
+
+    public List<FixedDepositAccount> getWithdrawableAccount(Long customerId);
+
+    public List<BigDecimal> normalWithdrawCounter(Long fixedAccountNum);
+
+    public List<BigDecimal> earlyWithdrawCounter(Long fixedAccountNum);
+
+    public Long createFixedDepositCounter(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration);
     
 }

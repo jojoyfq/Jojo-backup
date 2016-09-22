@@ -560,7 +560,7 @@ public class FixedDepositManagedBean implements Serializable {
     public List<Long> getRenewable() {
         return renewable;
     }
-
+//
     public void setRenewable(List<Long> renewable) {
         this.renewable = renewable;
     }
