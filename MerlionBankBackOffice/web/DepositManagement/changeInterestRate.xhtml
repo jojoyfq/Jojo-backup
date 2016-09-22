@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Change Saving Account Interest Rate </div>
+                    <div class="Separator"></div>
+
+
+                    <div class="Container100">
+                        <h:form id="form">
+
+                            <p:panel style="margin-bottom:10px;" id="panel">
+
+                                <p:messages id="msgs" />
+                                <h:panelGrid columns="3" cellpadding="5">
+
+                                    <h:outputLabel for="ir1" value="Interest Rate 1:" /> 
+                                    <p:inputText id="ir1" value="#{savingAccountManagedBean.interestRate1}" >
+                                        <f:convertNumber pattern="0.0000"/>
+                                    </p:inputText>
+                                    <p:message for="ir1" display="icon" />
+                                    
+                                    <h:outputLabel for="ir2" value="Interest Rate 2:" /> 
+                                    <p:inputText id="ir2" value="#{savingAccountManagedBean.interestRate2}" >
+                                    <f:convertNumber pattern="0.0000"/>
+                                    </p:inputText>
+                                    <p:message for="ir2" display="icon" />
+                                    
+                                    <h:outputLabel for="ir3" value="Interest Rate 3:" /> 
+                                    <p:inputText id="ir3" value="#{savingAccountManagedBean.interestRate3}" >
+                                    <f:convertNumber pattern="0.0000"/>
+                                    </p:inputText>
+                                    <p:message for="ir3" display="icon" />
+
+                                    <p:commandButton update="panel"  icon="ui-icon-script" actionListener="#{savingAccountManagedBean.setInterestRate}" value="Submit" />
+                                </h:panelGrid>
+                            </p:panel>
+
+                        </h:form>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

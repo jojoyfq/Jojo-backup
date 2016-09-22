@@ -1,9 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
@@ -11,42 +5,90 @@ and open the template in the editor.
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
 
-    <f:view>
-        <h:head>
-            <title>Account Activation</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        </h:head>
-        <h:body>
-            <div>Account Activation</div>
-            <h:form>
-                <p:panel id="panel" header="Activate Account">
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Account Activation</title>
+        <ui:insert name="head" />
+    </h:head>
 
-                    <p:messages id="msgs" />
+    <h:body>
+        <h:form>
+            <div class="Wid100 MarAuto">
+                <div class="Wid80 MarAuto WidAutoOnMobile">
+                    <div style="margin-top:10rem;"></div>
 
-                    <h:panelGrid columns="3" cellpadding="5">
-                        <p:outputLabel for="ic" value="IC: " />
-                        <p:inputText id="ic" value="#{accountActivationManagedBean.customerIc}" required="true" label="ic" requiredMessage="Please enter your IC!"/>
-                        <p:message for="ic" display="icon" />
+                    <div class="Wid60 MarAuto WidAutoOnMobile">
+                        <div class="Container100">
+                            <div class="Card ui-fluid">
+                                <div class="CardBigTopic TexAlCenter Purple">Account Activation</div>
+                                <div class="SeparatorFull"></div>
+
+
+                                <div class="Container100 ui-fluid">
+
+                                    <div class="Card">
+                                        <div class="Container10"></div>
+                                        <div class="Container80">
+
+
+                                            <p:panel id="panel">
+
+                                                <p:messages id="msgs" />
+
+                                                <h:panelGrid columns="3" cellpadding="5">
+                                                    <p:outputLabel for="ic" value="IC: " />
+                                                    <p:inputText id="ic" value="#{accountActivationManagedBean.customerIc}" required="true" label="ic" requiredMessage="Please enter your IC!"/>
+                                                    <p:message for="ic" display="icon" />
 
 
 
-                        <p:outputLabel for="name" value="Name: " />
-                        <p:inputText id="name" value="#{accountActivationManagedBean.customerName}"  required="true" label="name" requiredMessage="Please fill in your Name!" />
-                        <p:message for="name" display="icon"/>
+                                                    <p:outputLabel for="name" value="Name: " />
+                                                    <p:inputText id="name" value="#{accountActivationManagedBean.customerName}"  required="true" label="name" requiredMessage="Please fill in your Name!" />
+                                                    <p:message for="name" display="icon"/>
 
-                        <p:outputLabel for="dateOfBirth" value="Date Of Birth: " />
-                        <p:calendar id="dateOfBirth" value="#{accountActivationManagedBean.dateOfBirth}" showOn="button" required="true" requiredMessage="Please choose your date of birth!"/>
-                        <p:message for="dateOfBirth" display="icon"/>
+                                                    <p:outputLabel for="dateOfBirth" value="Date Of Birth: " />
+                                                    <p:calendar id="dateOfBirth" value="#{accountActivationManagedBean.dateOfBirth}" showOn="button" required="true" requiredMessage="Please choose your date of birth!"/>
+                                                    <p:message for="dateOfBirth" display="icon"/>
 
-                        <p:outputLabel for="phoneNumber" value="Phone Number: " />
-                        <p:inputText id="phoneNumber" value="#{accountActivationManagedBean.phoneNumber}"  required="true" label = "phoneNumber" requiredMessage="Please fill in your phone number!" />
-                        <p:message for="phoneNumber" display="icon"/>
-                        
-                    </h:panelGrid>
+                                                    <p:outputLabel for="phoneNumber" value="Phone Number: " />
+                                                    <p:inputText id="phoneNumber" value="#{accountActivationManagedBean.phoneNumber}"  required="true" label = "phoneNumber" requiredMessage="Please fill in your phone number!" />
+                                                    <p:message for="phoneNumber" display="icon"/>
 
-                    <p:commandButton value="Save" update="panel" actionListener="#{accountActivationManagedBean.activateAccount}" icon="ui-icon-check" />
-                </p:panel>
-            </h:form>
-        </h:body>
-    </f:view>
+                                                </h:panelGrid>
+
+
+                                            </p:panel>
+                                        </div>
+                                        <div class="Container10"></div>
+
+                                        <div class="EmptyBox20"></div>
+                                        <div class="Container30"></div>
+                                        <div class="Container40">
+                                            <p:commandButton value="Save" update="panel" actionListener="#{accountActivationManagedBean.activateAccount}" icon="ui-icon-check" />
+                                        </div>
+                                        <div class="Container30"></div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+        </h:form>
+    </h:body>
+
 </html>

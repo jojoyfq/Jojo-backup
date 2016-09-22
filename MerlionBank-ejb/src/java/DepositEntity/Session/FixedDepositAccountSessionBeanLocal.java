@@ -5,6 +5,7 @@
  */
 package DepositEntity.Session;
 
+import CommonEntity.Staff;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.FixedDepositRate;
 import java.math.BigDecimal;
@@ -84,5 +85,10 @@ public interface FixedDepositAccountSessionBeanLocal {
 
     public Long createFixedDepositCounter(Long customerId, BigDecimal amount, Date dateOfStart, Date dateOfEnd, String duration);
 
+<<<<<<< HEAD
     public void changeFixedInterestRate(Integer duration, Double newInterestRate);  
+=======
+    public void logStaffAction(String description, Long customerId, Staff staff);
+    
+>>>>>>> fixed-staff
 }

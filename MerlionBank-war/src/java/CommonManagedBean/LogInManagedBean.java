@@ -104,7 +104,7 @@ public class LogInManagedBean implements Serializable {
 //            accountTypes.add("Credit Account");
 //            accountTypes.add("Loan Account");
 //            accountTypes.add("Wealth Managment Account");
-            this.viewOneCustomer();
+      //      selectedCustomer = this.viewOneCustomer();
             System.out.println("Go into init");
             //    System.out.println("Account Type chosen is " + accountType);
         } catch (Exception ex) {
@@ -162,7 +162,6 @@ public class LogInManagedBean implements Serializable {
 //    }
 
     
-public void modifyUserProfile(){}
    
 
     public void customerLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
@@ -219,23 +218,25 @@ public void modifyUserProfile(){}
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public void viewOneCustomer() throws IOException, ListEmptyException{
-        //this.ic = selectedCustomer.getIc();
+    public Customer viewOneCustomer() throws IOException, ListEmptyException{
+      
+    try{    
+        System.out.println("*******customer ic: "+ic);
         selectedCustomer = amsbl.diaplayCustomer(ic);
         System.out.println("Username is " + selectedCustomer);
 
-        // this.ic = selectedCustomer.getIc();
-        this.customerName = selectedCustomer.getName();
-        this.customerGender = selectedCustomer.getGender();
-        this.customerDateOfBirth = selectedCustomer.getDateOfBirth();
+        ic = selectedCustomer.getIc();
+        customerName = selectedCustomer.getName();
+       customerGender = selectedCustomer.getGender();
+        customerDateOfBirth = selectedCustomer.getDateOfBirth();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-        this.birthdate = sdf.format(customerDateOfBirth);
-        this.birthdate = customerDateOfBirth.toString();
-        this.customerEmail = selectedCustomer.getEmail();
-        this.customerAddress = selectedCustomer.getAddress();
-        this.customerPhoneNumber = selectedCustomer.getPhoneNumber();
-        this.customerOccupation = selectedCustomer.getOccupation();
-        this.customerFamilyInfo = selectedCustomer.getFamilyInfo();
+       birthdate = sdf.format(customerDateOfBirth);
+       birthdate = customerDateOfBirth.toString();
+       customerEmail = selectedCustomer.getEmail();
+        customerAddress = selectedCustomer.getAddress();
+        customerPhoneNumber = selectedCustomer.getPhoneNumber();
+        customerOccupation = selectedCustomer.getOccupation();
+        customerFamilyInfo = selectedCustomer.getFamilyInfo();
     //    this.customerFinancialGoal = selectedCustomer.getFinancialGoal();
         System.out.println(customerName);
         System.out.println(customerGender);
@@ -247,20 +248,28 @@ public void modifyUserProfile(){}
      //   System.out.println(customerFinancialGoal);
         System.out.println(selectedCustomer.getId());
         System.out.println(selectedCustomer.getIc());
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ModifyUserProfile.xhtml");
+    }catch(ListEmptyException ex){
+    
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", ex.getMessage());
 
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+    }
         // FacesContext.getCurrentInstance().getExternalContext().redirect("/MerLION-war/GRNSWeb/admin/updateUser.xhtml");
+    return selectedCustomer;
     }
 
     public void modifyProfile(ActionEvent event) throws UserExistException {
         try {
-            if (FacesContext.getCurrentInstance().getResponseComplete()) {
-                System.out.println("lala");
-                return;
-            }
+//            if (FacesContext.getCurrentInstance().getResponseComplete()) {
+//                System.out.println("lala");
+//                return;
+//            }
 
             System.out.println("Message from managed Bean: IC is: " + ic);
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null
-                    && customerOccupation != null && customerFamilyInfo != null && customerFinancialGoal != null) {
+                    && customerOccupation != null && customerFamilyInfo != null ) {
                 amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
 
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Profile edited successfully!");
@@ -282,6 +291,27 @@ public void modifyUserProfile(){}
 
         }
     }
+
+     public void logout() throws IOException {
+        System.out.println("Inside logout");
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        System.out.println("testtest");
+        String serverName = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
+        String serverPort = "8080";
+        FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+    }
+
+
+    
+    public void goToActivateAccountPage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CustomerManagement/CustomerAccountActivation.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to ActivateAccount page fails");
+        }
+    }
+
 
     public String getBirthdate() {
         return birthdate;
