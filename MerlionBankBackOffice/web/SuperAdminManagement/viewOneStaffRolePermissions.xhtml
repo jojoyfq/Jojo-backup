@@ -13,7 +13,7 @@
 
         <!-- Left Column -->
         <div class="Container5 NoPadding Responsive100">
-
+ 
         </div>
 
         <!-- Center Column -->
@@ -48,7 +48,8 @@
                                                     <h:outputText value="#{permission.validity}" />
                                                 </p:column>
                                                 <p:column headerText="Edit Permission" style="width: 80px;">
-                                                <p:selectBooleanButton id="result" value="#{roleManagementManagedBean.newValidility}" onLabel="True" offLabel="False" style="width:60px" />
+                                                   
+                                                    <p:selectBooleanCheckbox value="#{roleManagementManagedBean.newValidility}" />
                                                 </p:column>
 
                                                 <p:column headerText="Submit" style="width: 60px;">

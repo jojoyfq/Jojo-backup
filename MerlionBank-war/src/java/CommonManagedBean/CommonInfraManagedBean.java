@@ -45,7 +45,6 @@ public class CommonInfraManagedBean implements Serializable {
     private String customerEmail;
     private String customerPhoneNumber;
 
-
     private String customerOccupation;
     private String customerFamilyInfo;
     private String customerFinancialAsset;
@@ -60,7 +59,6 @@ public class CommonInfraManagedBean implements Serializable {
     private Date dateOfEnd;
     private String duration;
     private Long depositAccountNumber;
-    
 
     public Long getDepositAccountNumber() {
         return depositAccountNumber;
@@ -71,12 +69,10 @@ public class CommonInfraManagedBean implements Serializable {
         this.depositAccountNumber = depositAccountNumber;
     }
 
-
     //  private final static Logger LOGGER = Logger.getLogger(CommonInfraManagedBean.class.getName());
     /**
      * Creates a new instance of CommonInfraManaged
      */
-
     //     try {
     //         MyLogger.setup();
     //     } catch (IOException e) {
@@ -103,7 +99,6 @@ public class CommonInfraManagedBean implements Serializable {
                 return;
             }
 
-
             try {
                 System.out.println("ahdhdhdhdaad ");
 
@@ -111,7 +106,6 @@ public class CommonInfraManagedBean implements Serializable {
                 //savingAccountType = (SavingAccountType) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("savingAccountType");
                 //  savingAccountID = savingAccountType.getId();
                 //          }catch()
-
 //            ic = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("IC");
 //            customerName = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerName"); 
 //            customerGender = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerGender");
@@ -123,20 +117,19 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFamilyInfo = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFamilyInfo");
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
-
                 //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
-                amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
-
+                 amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
 
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
-                                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
 
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());
@@ -152,18 +145,17 @@ public class CommonInfraManagedBean implements Serializable {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
 
-
     }
 
     public void createFixedDepositAccount(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
-            if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null ) {
+            if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null) {
 
                 customer = amsbl.createFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
               //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
-              //  amsbl.createFixedAccount(customer, amount, duration);
-           
+                //  amsbl.createFixedAccount(customer, amount, duration);
+
             } else {
                 System.out.println("Message from managed bean: please do not leave blanks!");
             }
@@ -175,8 +167,8 @@ public class CommonInfraManagedBean implements Serializable {
 
     public void configureFixedDeposit(ActionEvent event) throws EmailNotSendException {
         try {
-            System.out.println("*******Customer IC "+customer.getIc());
-            
+            System.out.println("*******Customer IC " + customer.getIc());
+
             Long check = amsbl.createFixedAccount(customer, amount, duration);
             if (customer.getId().equals(check)) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your Account created Successfully!");

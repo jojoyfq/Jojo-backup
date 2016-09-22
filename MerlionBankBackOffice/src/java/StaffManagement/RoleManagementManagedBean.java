@@ -45,10 +45,11 @@ public class RoleManagementManagedBean implements Serializable {
     private List<StaffRole> staffRoles;
     private StaffRole role;
     private boolean newValidility;
- private boolean oldValidility;
- private String  moduleName;
- private Permission selectedPermission;
- private Long roleId;
+    private boolean oldValidility;
+    private String moduleName;
+    private Permission selectedPermission;
+    private Long roleId;
+    private String newValidilityStr;
 
     public Long getRoleId() {
         return roleId;
@@ -81,7 +82,7 @@ public class RoleManagementManagedBean implements Serializable {
     public void setOldValidility(boolean oldValidility) {
         this.oldValidility = oldValidility;
     }
- 
+
     public boolean isNewValidility() {
         return newValidility;
     }
@@ -179,46 +180,43 @@ public class RoleManagementManagedBean implements Serializable {
 
     public void editPermission(StaffRole role) throws IOException {
         // permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
-        
-         permissions = role.getPermissions();
-         roleId = role.getId();
+
+        permissions = role.getPermissions();
+        roleId = role.getId();
         System.out.println("**********size of permission is " + permissions.size());
 
         for (int i = 0; i < permissions.size(); i++) {
             System.out.println("" + permissions.get(i).getModuleName());
         }
-        System.out.println("***** permission size "+permissions.size() );
+        System.out.println("***** permission size " + permissions.size());
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/viewOneStaffRolePermissions.xhtml");
 
     }
 
     public void editPermissionNext(ActionEvent event) {
-       // permission = (Permission) event.getComponent().getAttributes().get("selectedPermission");
-       permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
-       moduleName = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getModuleName();
-       oldValidility = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).isValidity();
-        
+        // permission = (Permission) event.getComponent().getAttributes().get("selectedPermission");
+        permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
+        moduleName = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getModuleName();
+        oldValidility = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).isValidity();
+        newValidilityStr = Boolean.toString(newValidility);
 //        permissionId = ((Permission) event.getObject()).getId();
 //        moduleName = ((Permission) event.getObject()).getModuleName();
 //       oldValidility= ((Permission) event.getObject()).isValidity();
-               
-       System.out.println("******Old validility: "+oldValidility);
-              System.out.println("******New validility: "+newValidility);
-              System.out.println("***************Role Id is "+roleId);
-                System.out.println("***************Permission Id is "+permissionId);
+        System.out.println("******Old validility: " + oldValidility);
+        System.out.println("******New validility: " + newValidilityStr);
+        System.out.println("***************Role Id is " + roleId);
+        System.out.println("***************Permission Id is " + permissionId);
 
-       if( oldValidility != newValidility){
-           if(oldValidility = true){
-            boolean msg =   smsbl.deletePermission(adminId, roleId, permissionId);
-            System.out.println("***********message from delete permission"+msg);
-           }else{
-               smsbl.addPermission(adminId, roleId, permissionId);
-           }
-       }else{
-           System.out.println("No permission has been changed!");
-       }
+        if (oldValidility != newValidility) {
+            if (oldValidility = true) {
+                boolean msg = smsbl.deletePermission(adminId, roleId, permissionId);
+                System.out.println("***********message from delete permission" + msg);
+            } else {
+                smsbl.addPermission(adminId, roleId, permissionId);
+            }
+        } else {
+            System.out.println("No permission has been changed!");
+        }
     }
-
-   
 
 }
