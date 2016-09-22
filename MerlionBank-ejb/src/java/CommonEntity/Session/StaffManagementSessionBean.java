@@ -465,14 +465,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 //                temp.add(currentPermissions.get(i));
 //            }
 //        }
-<<<<<<< HEAD
-        
-        
-        int flag=0;
-        
-        currentPermissions.set(flag,falsePermission);
-=======
-       
+
         for (int i=0;i<currentPermissions.size();i++){
             if (currentPermissions.get(i).getModuleName().equals(truePermission.getModuleName())){
                 //System.out.println("Inside setFalsePermission");
@@ -483,7 +476,6 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         }
         }
     
->>>>>>> refs/remotes/origin/master
         staffRole.setPermissions(currentPermissions);
         em.persist(staffRole);
         em.flush();
