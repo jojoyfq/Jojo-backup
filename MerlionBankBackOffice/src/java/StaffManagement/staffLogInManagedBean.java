@@ -46,6 +46,14 @@ public class staffLogInManagedBean implements Serializable {
 
     private String staffIc;
 
+    public int getLogInAttempts() {
+        return logInAttempts;
+    }
+
+    public void setLogInAttempts(int logInAttempts) {
+        this.logInAttempts = logInAttempts;
+    }
+
     public String getStaffIc() {
         return staffIc;
     }
