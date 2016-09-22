@@ -599,7 +599,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     @Override
-    public Long assignStaffRole(Long staffId, Long newStaffId, String staffRoleName) throws StaffRoleExistException {
+    public StaffRole assignStaffRole(Long staffId, Long newStaffId, String staffRoleName) throws StaffRoleExistException {
 
         Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         queryStaff.setParameter("id", newStaffId);
@@ -629,7 +629,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
         recordStaffAction(staffId, "Assign Staff Roles" + newStaff.getStaffIc(), null);
 
-        return newStaffId;
+        return staffRole;
 
     }
 
@@ -812,6 +812,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         StaffRole staffRole = (StaffRole) q.getSingleResult();
 
         List<Staff> currentList = staffRole.getStaffList();
+        System.out.println("current no of staff in this role: "+currentList.size());
         List<Staff> newList = new ArrayList<Staff>();
 
         for (int i = 0; i < currentList.size(); i++) {
@@ -819,6 +820,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
                 newList.add(currentList.get(i));
             }
         }
+        
+        System.out.println("Now no of staff in this role: "+newList.size());
         staffRole.setStaffList(newList);
         em.persist(staffRole);
         em.flush();
@@ -827,7 +830,9 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     @Override
-    public boolean staffAddRole(Long staffId, String roleName) throws StaffAlreadyHasRoleException{
+    public StaffRole staffAddRole(Long staffId, String roleName) throws StaffAlreadyHasRoleException{
+        System.out.println("Inside session bean: staffId: "+staffId);
+        
         Query q = em.createQuery("Select a FROM StaffRole a WHERE a.roleName=:roleName");
         q.setParameter("roleName", roleName);
         StaffRole staffRole = (StaffRole) q.getSingleResult();
@@ -837,6 +842,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         Staff staff = (Staff) query.getSingleResult(); 
 
         List<StaffRole> currentRoleList = staff.getStaffRoles();
+        System.out.println("Inside session bean: no of roles: "+currentRoleList.size());
         
         for (int i=0;i<currentRoleList.size();i++){
             if (currentRoleList.get(i).getRoleName().equals(roleName))
@@ -853,7 +859,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         em.persist(staffRole);
         em.flush();
 
-        return true;
+        return staffRole;
 
     }
 
@@ -881,7 +887,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
 
     @Override
-    public boolean staffDeleteRole(Long staffId, String roleName) {
+    public List<StaffRole> staffDeleteRole(Long staffId, String roleName) throws UnexpectedErrorException {
+        System.out.println("seleted roleName:"+roleName);
         Query q = em.createQuery("Select a FROM StaffRole a WHERE a.roleName=:roleName");
         q.setParameter("roleName", roleName);
         StaffRole staffRole = (StaffRole) q.getSingleResult();
@@ -891,19 +898,29 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         Staff staff = (Staff) query.getSingleResult();
 
         List<StaffRole> staffRoles = staff.getStaffRoles();
+        System.out.println("Current no of roles"+staffRoles.size());
+        
         List<StaffRole> newList = new ArrayList<StaffRole>();
 
         for (int i = 0; i < staffRoles.size(); i++) {
             if (!staffRoles.get(i).equals(staffRole)) {
-                newList.add(staffRole);
+                newList.add(staffRoles.get(i));
             }
         }
+        
+        System.out.println("remaining roleName:"+newList.get(0).getRoleName());
+        
+        System.out.println("Now no of roles"+newList.size());
+        
         staff.setStaffRoles(newList);
         em.persist(staff);
         em.flush();
 
-        deleteStaffFromRole(staff, staffRole.getId());
-        return true;
+        if (deleteStaffFromRole(staff, staffRole.getId())){
+            System.out.println("Delete pass");
+        return staff.getStaffRoles();
+        }else 
+            throw new UnexpectedErrorException("Staff Delete role unsuccessfully");
     }
 
 
@@ -995,8 +1012,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         }
 
         Query m = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :staffRoleName");
-        q.setParameter("staffRoleName", staffRoleName);
-        List<StaffRole> temp1 = new ArrayList(q.getResultList());
+        m.setParameter("staffRoleName", staffRoleName);
+        List<StaffRole> temp1 = new ArrayList(m.getResultList());
         if (temp1.isEmpty()) {
             System.out.println("StaffRole does not exist!");
             throw new UserNotExistException("StaffRole does not exist, please try again");
@@ -1021,6 +1038,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 @Override
 public Staff viewStaff(Long staffID)throws UserNotExistException{
+    System.out.println("staffId: "+staffID);
      Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         q.setParameter("id", staffID);
         List<Staff> temp = new ArrayList(q.getResultList());

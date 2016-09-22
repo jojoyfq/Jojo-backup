@@ -12,6 +12,7 @@ import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
+import Exception.UnexpectedErrorException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import java.io.IOException;
@@ -78,6 +79,15 @@ public class StaffMessageManagedBean implements Serializable {
     private int customerUnreadMsg;
     private String staffReplyContent;
     private MessageEntity msgAddToCustomer;
+    private Long selectedCustomerId;
+
+    public Long getSelectedCustomerId() {
+        return selectedCustomerId;
+    }
+
+    public void setSelectedCustomerId(Long selectedCustomerId) {
+        this.selectedCustomerId = selectedCustomerId;
+    }
 
     public MessageEntity getMsgAddToCustomer() {
         return msgAddToCustomer;
@@ -91,7 +101,7 @@ public class StaffMessageManagedBean implements Serializable {
 //        return messages;
 //    }
     @PostConstruct
-    public void init() {
+    public void init()  {
 
         System.err.println("************ ic: " + logInManagedBean.getIc());
 
@@ -112,16 +122,17 @@ public class StaffMessageManagedBean implements Serializable {
         //       customerMessages = imsbl.StaffViewAllMessage(staffId);
 //        System.out.println("message size is: "+messages.size());
         customerUnreadMsg = imsbl.countStaffNewMessage(staffId);
-
+        customerMessages = this.staffViewAllMessages();
     }
 
-    public void staffViewAllMessages(ActionEvent event) throws IOException, ListEmptyException {
-        try {
+    public List<CustomerMessage> staffViewAllMessages()  {
+      //  try {
             customerMessages = imsbl.StaffViewAllMessage(staffId);
-        } catch (ListEmptyException ex) {
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        }
+//        } catch (ListEmptyException ex) {
+//            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+//        }
+        return customerMessages;
     }
 
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
@@ -165,6 +176,8 @@ public class StaffMessageManagedBean implements Serializable {
     public CustomerMessage staffReadMessage(ActionEvent event) throws IOException {
 
         customerMessage = (CustomerMessage) event.getComponent().getAttributes().get("selectedMessage");
+        
+        System.out.println("********customer message content is "+customerMessage.getContent());
         System.err.println("********** message.getId(): " + customerMessage.getId());
 
         customerMessage = imsbl.readCustomerMessage(customerMessage.getId());
@@ -179,12 +192,18 @@ public class StaffMessageManagedBean implements Serializable {
 
     public void staffReplyMessage(ActionEvent event) throws EmailNotSendException {
         try {
+          selectedCustomerId=  customerMessage.getCustomer().getId();
             //customerMessage = (CustomerMessage) event.getComponent().getAttributes().get("selectedMessage");
             System.err.println("********** customer message.getId(): " + customerMessage.getId());
-            msgAddToCustomer = imsbl.sendMessage(customerId, staffId, customerMessage.getSubject(), staffReplyContent);
+            System.err.println("********** customer Id: " + selectedCustomerId);
+            System.err.println("********** customer message subject: " + customerMessage.getSubject());
+            
+                        System.err.println("********** staff reply content: " + staffReplyContent);
+
+            msgAddToCustomer = imsbl.sendMessage(selectedCustomerId, staffId, customerMessage.getSubject(), staffReplyContent);
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your reply has been successfully sent!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-            messageManagedBean.getMessages().add(msgAddToCustomer);
+         //   messageManagedBean.getMessages().add(msgAddToCustomer);
         } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -202,18 +221,16 @@ public class StaffMessageManagedBean implements Serializable {
         //   replyTitle = "RE: " + msg.getTitle();
     }
 
-    public void staffDeleteMessage(Long messageId) throws ListEmptyException {
+    public void staffDeleteMessage(Long messageId) throws UnexpectedErrorException {
 
         try {
-            boolean checkDelete = imsbl.deleteCustomerMessage(messageId);
-            if (checkDelete == false) {
-                System.out.println("Message deleted unsuccessfully!!!!");
-            }
-            customerMessages = imsbl.StaffViewAllMessage(staffId);
+            customerMessages = imsbl.deleteCustomerMessage(messageId, staffId);
+           
+         //   customerMessages = imsbl.StaffViewAllMessage(staffId);
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message deleted successfully");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
-        } catch (ListEmptyException ex) {
+        } catch (UnexpectedErrorException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }

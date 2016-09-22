@@ -9,7 +9,9 @@ import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.StaffRole;
 import StaffManagement.staffLogInManagedBean;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -39,13 +41,24 @@ public class RolePermissionManagedBean implements Serializable{
     public RolePermissionManagedBean() {
         
     }
+//    @PostConstruct
+//    public void init(){
+//    role = new StaffRole();
+//    
+//    permissionList = new ArrayList<>();
+//    
+//    //permissionList = this.getPermissions();
+//    }
     
     public List<Boolean> getPermissions(){
         
         roleName = staffLogInManagedBean1.getRoleName();
+        System.out.println("Role name is: "+roleName);
         role = smsbl.getRoleByRoleName(roleName);
+        System.out.println("permission size: "+role.getPermissions().size());
         for(int i=0;i<role.getPermissions().size();i++){
             permissionList.add(role.getPermissions().get(i).isValidity());
+            System.out.println("boolean value " + i +" is " + permissionList.get(i));
         }
         return permissionList;      
     }

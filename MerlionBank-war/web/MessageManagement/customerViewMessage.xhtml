@@ -25,15 +25,15 @@ and open the template in the editor.
 
                     <h:panelGrid columns="4" cellpadding="5">
                         <p:notificationBar position="top" effect="slide" styleClass="top" widgetVar="bar">
-                        <h:outputText value="Number of Unread Message:  #{messageManagedBean.customerUnreadMsg}" style="font-size:18px;" />
+                            <h:outputText value="Number of Unread Message:  #{messageManagedBean.customerUnreadMsg}" style="font-size:18px;" />
                         </p:notificationBar>
                         <p:outputLabel value="Show my unread message " />
                         <p:commandButton value="Show" onclick="PF('bar').show()" type="button" icon="ui-icon-arrow-1-s"/>
                         <p:commandButton value="Hide" onclick="PF('bar').hide()" type="button" icon="ui-icon-arrow-1-n"/>
-                       
+
                         <p:separator />
 
-                        
+
                         <p:dataTable var="messageEntity" value="#{messageManagedBean.messages}">
 
                             <p:column headerText="MessageID" style="width: 80px;">
@@ -66,6 +66,8 @@ and open the template in the editor.
                                 </center>
                             </p:column>
                         </p:dataTable>
+                        <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/></div>
+
 
                     </h:panelGrid>
                     <p:dialog header="Reply" widgetVar="replyDialog" showEffect="fade" hideEffect="fade" resizable="true" >

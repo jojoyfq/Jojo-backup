@@ -176,18 +176,20 @@ public class staffLogInManagedBean implements Serializable {
     public void init() {
         staff = new Staff();
         roleNames = new ArrayList<>();
-
+        for (int i = 0; i < smsbl.viewRoles().size(); i++) {
+            roleNames.add(smsbl.viewRoles().get(i).getRoleName());
+        }
     }
 
-    public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
+    public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException ,IOException{
         try {
-            if (staffIc != null && password != null && staffRole != null) {
+            if (staffIc != null && password != null && roleName != null) {
                 staffId = smsbl.checkLogin(staffIc, password, roleName);
                 staff = smsbl.viewStaff(staffId);
 
-                for (int i = 0; i < staff.getStaffRoles().size(); i++) {
-                    roleNames.add(staff.getStaffRoles().get(i).getRoleName());
-                }
+//                for (int i = 0; i < staff.getStaffRoles().size(); i++) {
+//                    roleNames.add(staff.getStaffRoles().get(i).getRoleName());
+//                }
                 if (staffId.toString().equals("1")) {
                     System.out.println("Password does not match");
                     logInAttempts++;
@@ -211,7 +213,7 @@ public class staffLogInManagedBean implements Serializable {
 
                     //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
                 }
-
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             } else {
