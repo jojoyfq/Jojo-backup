@@ -6,6 +6,7 @@
 package DepositEntity.Session;
 
 import DepositEntity.FixedDepositAccount;
+import DepositEntity.FixedDepositRate;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -72,5 +73,6 @@ public interface FixedDepositAccountSessionBeanLocal {
     public void normalWithdrawTakeEffect(Long fixedAccountNum, Long savingAccountNum);
 
     public BigDecimal calculateInterestNormal(Long accountNum);
-    
+
+    //public List<FixedDepositRate> getFixedDepositRate();
 }

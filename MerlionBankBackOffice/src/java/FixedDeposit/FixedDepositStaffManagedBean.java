@@ -7,6 +7,7 @@ package FixedDeposit;
 
 import CommonEntity.Customer;
 import DepositEntity.FixedDepositAccount;
+import DepositEntity.FixedDepositRate;
 import DepositEntity.Session.FixedDepositAccountSessionBean;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import TellerManagedBean.ServiceCustomerManagedBean;
@@ -30,7 +31,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
-
+import DepositEntity.FixedDepositRate;
 /**
  *
  * @author ruijia
@@ -52,7 +53,8 @@ public class FixedDepositStaffManagedBean implements Serializable {
     private String endDateString;
     private Long accountNumber;
     private List<FixedDepositAccount> fixedDepositAccounts;
-
+    private List<FixedDepositRate> fixedDepositRates;
+    
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
     
@@ -70,6 +72,9 @@ public class FixedDepositStaffManagedBean implements Serializable {
             System.out.print("************************");
             System.out.print(customerId);
             fixedDepositAccounts = fdasb.getFixedDepositAccounts(customerId);
+            fixedDepositRates = fdasb.getFixedDepositRate();
+            System.out.println(fixedDepositRates);
+            
         } catch (Exception e) {
             System.out.print("Init encounter error");
         }
