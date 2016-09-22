@@ -23,4 +23,5 @@ public interface TransferSessionBeanLocal {
      public List getPayeeList(Long customerID);
      public String searchPayeeName (Long payeeAccount);
      public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
+     public void deletePayee(Long customerID, Long accountNum);
 }
