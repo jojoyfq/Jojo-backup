@@ -6,6 +6,7 @@
 package DepositManagedBean;
 
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
@@ -16,6 +17,7 @@ import Exception.UserHasPendingTransactionException;
 import Exception.UserNotEnoughBalanceException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.RoundingMode;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -24,6 +26,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -38,7 +41,11 @@ public class SavingAccountManagedBean implements Serializable {
     SavingAccountSessionBeanLocal sasb;
     @EJB
     AccountManagementSessionBeanLocal amsb;
-    private Long customerID = Long.parseLong("2");
+    @Inject
+    LogInManagedBean logInManagedBean;
+    @Inject
+    TransferManagedBean transferManagedBean;
+    private Long customerID;
     private List<SavingAccount> savingAccounts;
     private String savingAccountName;
     private List<String> savingAccountTypeList;
@@ -53,8 +60,11 @@ public class SavingAccountManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         try {
+            this.setCustomerID(logInManagedBean.getCustomerId());
             this.getSavingAccountType();
             savingAccounts = sasb.getSavingAccount(customerID);
+            System.out.print(savingAccounts.get(0).getAvailableBalance().setScale(2, RoundingMode.HALF_UP));
+            
             this.getSavingAccountNumbers();
             this.getInactiveSavingAccountNumbers();
         } catch (Exception e) {
@@ -64,6 +74,56 @@ public class SavingAccountManagedBean implements Serializable {
 
     public SavingAccountManagedBean() {
     }
+    
+    public void dashboardCloseAccount(ActionEvent event){
+        try{
+            this.getSavingAccountNumbers();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/closeSavingAccount_selectAccounts.xhtml");
+        }catch(Exception e){
+            System.out.print("Dashboard Close Account Encounter Error!");
+        }
+    }
+    
+    public void dashboardTransactionRecord(ActionEvent event){
+        try{
+            this.getSavingAccountNumbers();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/viewTransactionRecords_selectAccounts.xhtml");
+        }catch(Exception e){
+            System.out.print("Dashboard View Transaction History Encounter Error!");
+        }
+    }
+    
+    public void dashboardDisplaySavingAccount(ActionEvent event){
+        try{
+            savingAccounts = sasb.getSavingAccount(customerID);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/displaySavingAccountDetail.xhtml");
+        }catch(Exception e){
+            System.out.print("Dashboard View Saving Account Encounter Error!");
+        }
+    }
+    
+    public void dashboardActivateAccount(ActionEvent event){
+        try{
+            this.getInactiveSavingAccountNumbers();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/activateSavingAccount_selectAccounts.xhtml");
+        }catch(Exception e){
+            System.out.print("Dashboard Activate Saving Account Encounter Error!");
+        }
+    }
+    
+   public void dashboardCreateAccount(ActionEvent event){
+        try{
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/createSavingAccountEC.xhtml");
+        }catch(Exception e){
+            System.out.print("Dashboard Create Saving Account Encounter Error!");
+        }
+    } 
+    
 
     public void createSavingAccountExistingCustomer(ActionEvent event) throws UserAlreadyHasSavingAccountException, EmailNotSendException, IOException, UserHasNoSavingAccountException {
         try {
@@ -74,6 +134,11 @@ public class SavingAccountManagedBean implements Serializable {
             getSavingAccountNumbers();
             savingAccounts = sasb.getSavingAccount(customerID);
 
+            //Log the customer action into database
+            String description = "Create " + savingAccountName + " saving account ";
+            sasb.logAction(description, customerID);
+
+            //Redirect to successful page
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/createSavingAccountECsuccess.xhtml");
 
@@ -121,6 +186,11 @@ public class SavingAccountManagedBean implements Serializable {
         try {
             if (savingAccountSelected != null) {
                 this.getTransactionRecords();
+
+                //Log the customer action into database
+                String description = "View Transaction Records";
+                sasb.logAction(description, customerID);
+
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/DepositManagement/viewTransactionRecords.xhtml");
             } else {
@@ -153,6 +223,12 @@ public class SavingAccountManagedBean implements Serializable {
                 sasb.checkInactiveSavingAccount(inactiveSavingAccountSelected);
                 this.getSavingAccountNumbers();
                 savingAccounts = sasb.getSavingAccount(customerID);
+
+                String description = "Activate " + inactiveSavingAccountSelected + " saving account ";
+                sasb.logAction(description, customerID);
+                
+                transferManagedBean.init();
+
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/DepositManagement/activateSavingAccountSuccess.xhtml");
             } else {
@@ -179,6 +255,10 @@ public class SavingAccountManagedBean implements Serializable {
         try {
             sasb.checkPendingTransaction(savingAccountSelected);
             this.getSavingAccountNumbers();
+
+            String description = "Close " + savingAccountSelected + " saving account ";
+            sasb.logAction(description, customerID);
+            
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/closeSavingAccountSuccess.xhtml");
         } catch (UserHasPendingTransactionException ex) {

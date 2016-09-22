@@ -36,4 +36,5 @@ public interface SavingAccountSessionBeanLocal {
     public List<Long> getNotTerminatedAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
     public Double getInterestRate(String accountType, String interestName);
     public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3);
+    public void logAction(String description, Long customerId);
 }
