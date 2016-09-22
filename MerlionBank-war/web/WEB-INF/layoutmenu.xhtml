@@ -17,11 +17,11 @@
                 <p:submenu id="deposit_management" label="Deposit Management">
        
                      <p:submenu id="saving_account" label="Saving Account" icon="icon-plus">
-                        <p:menuitem id="create_saving_account" value="Apply for Saving Account" outcome="/DepositManagement/createSavingAccountEC"/>
-                        <p:menuitem id="activate_saving_account" value="Activate Saving Account" outcome="/DepositManagement/activateSavingAccount_selectAccounts"/> 
-                        <p:menuitem id="view_details" value="My Accounts" outcome="/DepositManagement/displaySavingAccountDetail"/> 
-                        <p:menuitem id="view_transactionRecord" value="View Transaction History" outcome="/DepositManagement/viewTransactionRecords_selectAccounts"/>
-                        <p:menuitem id="close_saving_account" value="Close Saving Account" outcome="/DepositManagement/closeSavingAccount_selectAccounts"/> 
+                        <p:menuitem id="create_saving_account" value="Apply for Saving Account" actionListener="#{savingAccountManagedBean.dashboardCreateAccount}"/>
+                        <p:menuitem id="activate_saving_account" value="Activate Saving Account" actionListener="#{savingAccountManagedBean.dashboardActivateAccount}"/> 
+                        <p:menuitem id="view_details" value="My Accounts" actionListener="#{savingAccountManagedBean.dashboardDisplaySavingAccount}"/> 
+                        <p:menuitem id="view_transactionRecord" value="View Transaction History" actionListener="#{savingAccountManagedBean.dashboardTransactionRecord}"/> 
+                        <p:menuitem id="close_saving_account" value="Close Saving Account" actionListener="#{savingAccountManagedBean.dashboardCloseAccount}"/> 
                     </p:submenu>
 
                     <p:submenu id="fixed_deposit_account" label="Fixed Deposit Account" icon="icon-plus">
@@ -44,8 +44,8 @@
                 
                 <p:submenu id="pa_hierarchy" label="Bill and Payment">
 
-                    <p:submenu id="pa_sm2" label="Transfer" icon="icon-plus">
-                        <p:menuitem id="pa_lnk21" value="To Merlion Account" outcome="/TransferManagement/selectSavingAccount" />                   
+                    <p:submenu id="transfer" label="Transfer" icon="icon-plus">
+                        <p:menuitem id="intraTransfer" value="To Merlion Account" actionListener="#{transferManagedBean.dashboardIntraTransfer}" />                   
                     </p:submenu>
                 </p:submenu>
 

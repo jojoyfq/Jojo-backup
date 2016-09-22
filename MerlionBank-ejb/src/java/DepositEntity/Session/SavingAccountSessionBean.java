@@ -6,6 +6,7 @@
 package DepositEntity.Session;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import DepositEntity.TransactionRecord;
@@ -36,6 +37,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
 
     @PersistenceContext
     private EntityManager em;
+    private Customer customer;
 
     @Override
     public List<SavingAccount> getSavingAccount(Long customerID) throws UserHasNoSavingAccountException {
@@ -339,6 +341,32 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         TransactionRecord transactionRecord = new TransactionRecord("CD",depositAmount,"settled", "Cash Deposit",currentTimestamp,null,accountNum);
         em.persist(transactionRecord);
         em.flush();
+    }
+    
+    @Override
+    public void logAction(String description, Long customerId) {
+        List<CustomerAction> actions = new ArrayList<>();
+        customer = em.find(Customer.class, customerId);
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), description, customer);
+        em.persist(action);
+        System.out.print(action.getDescription());
+        if (customer.getCustomerActions() == null) {
+            actions.add(action);
+            customer.setCustomerActions(actions);
+            em.persist(actions);
+        } else {
+            customer.getCustomerActions().add(action);
+        }
+        em.persist(customer);
+        em.flush();
+    }
+    
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
 }
