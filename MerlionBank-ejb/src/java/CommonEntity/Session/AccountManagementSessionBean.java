@@ -122,7 +122,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("In Creating saving account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
         em.persist(onlineAccount);
-        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified");
+        BigDecimal intraTransferLimit = new BigDecimal(1000);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified",intraTransferLimit);
         em.persist(customer);
         System.out.println("Create Customer successfully");
         
@@ -720,7 +721,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("In Creating  account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
         em.persist(onlineAccount);
-        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified");
+        BigDecimal intraTransferLimit = new BigDecimal(1000);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified",intraTransferLimit);
         em.persist(customer);
         em.flush();
         System.out.println("Create Customer successfully");
@@ -832,7 +834,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("In Creating  account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "active", salt, enterPassword);
         em.persist(onlineAccount);
-        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active");
+        BigDecimal intraTransferLimit = new BigDecimal(1000);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active",intraTransferLimit);
         em.persist(customer);
         em.flush();
         System.out.println("Create Customer successfully");
@@ -881,7 +884,8 @@ return customer;
         System.out.println("In Creating saving account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "active", salt, password);
         em.persist(onlineAccount);
-        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active");
+        BigDecimal intraTransferLimit = new BigDecimal(1000);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active",intraTransferLimit);
         em.persist(customer);
         System.out.println("Create Customer successfully");
 
