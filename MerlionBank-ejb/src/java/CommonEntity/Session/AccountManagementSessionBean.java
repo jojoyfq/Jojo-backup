@@ -78,6 +78,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     private EntityManager em;
     @EJB
     FixedDepositAccountSessionBeanLocal fdasbl;
+    @EJB
+    StaffManagementSessionBeanLocal smsbl;
 //    private GoogleMail gm;
 
     @Override
@@ -722,6 +724,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.persist(customer);
         em.flush();
         System.out.println("Create Customer successfully");
+        
+        
         return customer;
     }
 
@@ -775,6 +779,14 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
         }
+        
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Successful Login", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
         return customer.getId();
     }
     

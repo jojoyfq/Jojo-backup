@@ -465,14 +465,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 //                temp.add(currentPermissions.get(i));
 //            }
 //        }
-<<<<<<< HEAD
-        
-        
-        int flag=0;
-        
-        currentPermissions.set(flag,falsePermission);
-=======
-       
+
         for (int i=0;i<currentPermissions.size();i++){
             if (currentPermissions.get(i).getModuleName().equals(truePermission.getModuleName())){
                 //System.out.println("Inside setFalsePermission");
@@ -483,7 +476,6 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         }
         }
     
->>>>>>> refs/remotes/origin/master
         staffRole.setPermissions(currentPermissions);
         em.persist(staffRole);
         em.flush();
@@ -564,7 +556,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
     }
 
-    private void recordStaffAction(Long staffId, String actionDescription, Long customerId) {
+    @Override
+    public void recordStaffAction(Long staffId, String actionDescription, Long customerId) {
 
         Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         queryStaff.setParameter("id", staffId);
@@ -976,12 +969,14 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
             em.flush();
             staff.setStatus("active");
             em.flush();
+            recordStaffAction(staff.getId(), "reset password", null);
             return true;
         } else if (!newPassword.equals(confirmPassword)) {
             throw new PasswordNotMatchException("Password not match");
         } else {
             throw new UnexpectedErrorException("Invalid account detailes");
         }
+        
     }
 
     //log in
