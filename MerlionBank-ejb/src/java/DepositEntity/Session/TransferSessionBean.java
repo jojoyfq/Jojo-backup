@@ -47,6 +47,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
 
     @Override
     public void intraOneTimeTransferCheck(Long customerID,Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException {
+
         BigDecimal giverBalance;
         BigDecimal recipientBalance;
         BigDecimal updatedGiverBalance;
@@ -124,6 +125,22 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     }
 
     @Override
+    public void deletePayee(Long customerID, Long accountNum) {
+        Customer customer = em.find(Customer.class,customerID);
+        List<Payee> currentList = customer.getPayees();
+        List<Payee> newList = new ArrayList<Payee>();
+
+        for (int i = 0; i < currentList.size(); i++) {
+            if (!currentList.get(i).getSavingAccount().getAccountNumber().equals(accountNum)) {
+                newList.add(currentList.get(i));
+            }
+        }
+
+        customer.setPayees(newList);
+        em.flush();
+    }
+
+    @Override
     public List getPayeeList(Long customerID) {
         List payeeAccountList = new ArrayList();
         Query m = em.createQuery("SELECT b FROM Customer b WHERE b.id = :customerID");
@@ -192,7 +209,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             for (int i = 0; i < record.size(); i++) {
                 if (record.get(i).equals("settled")) {
                     list.get(count).add(0, record.get(i).getTransactionTime());
-                    list.get(count).add(1, "TF");
+                    list.get(count).add(1, record.get(i).getCode());
                     list.get(count).add(2, record.get(i).getDescription());
                     list.get(count).add(3, null);
                     list.get(count).add(4, record.get(i).getAmount());
@@ -205,7 +222,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             for (int i = 0; i < record.size(); i++) {
                 if (record.get(i).equals("settled")) {
                     list.get(count).add(0, record.get(i).getTransactionTime());
-                    list.get(count).add(1, "TF");
+                    list.get(count).add(1, record.get(i).getCode());
                     list.get(count).add(2, record.get(i).getDescription());
                     list.get(count).add(3, record.get(i).getAmount());
                     list.get(count).add(4, null);

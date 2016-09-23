@@ -144,7 +144,7 @@ public class StaffSelfManagementManagedBean implements Serializable {
                 smsbl.updateAccountStatus(staffId);
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has been updated successfully!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/stafChangePassword.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffChangePassword.xhtml");
 
             } else {
                 System.out.println("Please do not leave blanks!");

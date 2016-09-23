@@ -81,7 +81,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 //    private GoogleMail gm;
 
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName) throws UserExistException, EmailNotSendException {
+    public Customer createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName) throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -160,7 +160,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.persist(customer);
         em.flush();
 
-        
+        return customer;
 
     }
 

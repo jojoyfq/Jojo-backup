@@ -51,6 +51,9 @@ public class TransferManagedBean implements Serializable {
     private Long customerID;
     private List payeeList;
     private Long payeeTransferAccount;
+    private Long payeeDelete;
+
+    
 
     @PostConstruct
     public void init() {
@@ -85,6 +88,7 @@ public class TransferManagedBean implements Serializable {
         }
     }
 
+
     public void goToOneTimeTransferPage(ActionEvent event) {
         try {
             FacesContext.getCurrentInstance().getExternalContext()
@@ -96,13 +100,19 @@ public class TransferManagedBean implements Serializable {
 
     public void goToTransferByPayee(ActionEvent event) {
         try {
-            payeeName = tfsb.searchPayeeName(payeeTransferAccount);
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/TransferManagement/transferByPayee.xhtml");
+            if(payeeTransferAccount != null) {
+                payeeName = tfsb.searchPayeeName(payeeTransferAccount);
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/TransferManagement/transferByPayee.xhtml");
+            }else{
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Payee from the Payee List!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);    
+                 }
         } catch (Exception e) {
-            System.out.print("Redirect to transferByPayee page fails");
+            System.out.print("Redirect to transfer By Payee page fails");
         }
     }
+
 
     public void changeTransferLimit(ActionEvent event) {
         try {
@@ -119,6 +129,17 @@ public class TransferManagedBean implements Serializable {
             }
         } catch (Exception e) {
             System.out.print("Change Transfer Limit encounter Error!");
+        }
+    }
+
+    
+    public void goToDeletePayeePage(ActionEvent event) {
+        try{
+            this.getPayeeListfromDatabase();
+             FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/TransferManagement/deletePayee.xhtml");
+        }catch(Exception e){
+            System.out.print("Redirect to delete Payee page fails");
         }
     }
 
@@ -175,6 +196,18 @@ public class TransferManagedBean implements Serializable {
         }
     }
 
+    
+    public void deletePayee(ActionEvent event) throws IOException {
+        if(payeeDelete != null){
+            tfsb.deletePayee(customerID, payeeDelete);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/deletePayeeSuccess.xhtml");
+        }else{
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Payee to Delete!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+    }
+
     public List getPayeeListfromDatabase() {
         payeeList = tfsb.getPayeeList(customerID);
         System.out.print(payeeList);
@@ -205,6 +238,7 @@ public class TransferManagedBean implements Serializable {
 
     public void goToTransferByPayeeListPage(ActionEvent event) {
         try {
+            this.getPayeeListfromDatabase();
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/TransferManagement/transferByPayeeList.xhtml");
         } catch (Exception e) {
@@ -348,5 +382,13 @@ public class TransferManagedBean implements Serializable {
 
     public void setTransferLimitBD(BigDecimal transferLimitBD) {
         this.transferLimitBD = transferLimitBD;
+    }
+
+    public Long getPayeeDelete() {
+        return payeeDelete;
+    }
+
+    public void setPayeeDelete(Long payeeDelete) {
+        this.payeeDelete = payeeDelete;
     }
 }

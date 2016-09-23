@@ -19,6 +19,7 @@ import javax.ejb.Local;
 @Local
 public interface TransferSessionBeanLocal {
 
+
     public void intraOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException;
 
     public void addPayee(Long payeeAccount, String payeeName, Long customerID) throws PayeeNotFoundException;
@@ -32,4 +33,7 @@ public interface TransferSessionBeanLocal {
     public void changeTransferLimit(Long customerID, BigDecimal transferLimit);
 
     public boolean checkTransferLimit(Long customerID, Long savingAccountNum, BigDecimal transferAmount);
+
+    public void deletePayee(Long customerID, Long accountNum);
+
 }
