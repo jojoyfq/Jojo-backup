@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Change Transfer Limit </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <p:panel id="panel">
+                                <p:messages id="msgs" />
+                            <div class="Card">
+                                <div class="Container10"></div>
+                                <div class="Container80">
+                                    <h:panelGrid columns="2" id="chanageTransferLimit" cellpadding="5"> 
+                                        
+                                        <h:outputLabel for="transferAmount" value="Enter Your Transfer Limit: $" />
+                                        <p:inputText id="transferAmount" value="#{transferManagedBean.transferLimitString}" required="true" requiredMessage="Please Enter Your Transfer Limit!" />
+
+                                    </h:panelGrid>
+                                </div>
+                                <div class="Container10"></div>
+
+                                <div class="EmptyBox20"></div>
+                                <div class="Container30"></div>
+                                <div class="Container40">
+                                    <p:commandButton update="panel" actionListener="#{transferManagedBean.changeTransferLimit}" value="Submit" />
+                                </div>
+                                <div class="Container30"></div>
+                            </div>
+                            </p:panel>
+                        </h:form>
+                    </div>
+
+                </div>
+            </div> 
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>
