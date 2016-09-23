@@ -25,10 +25,13 @@
 
                     <div class="Container100 ui-fluid">
                         <h:form>
+                            <p:panel id="panel">
+                                <p:messages id="msgs" />
                             <div class="Card">
                                 <div class="Container10"></div>
                                 <div class="Container80">
                                     <h:panelGrid columns="2" id="transferOneTime" cellpadding="5"> 
+                                        
 
                                         <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
                                         <p:inputMask id="recipientAccount"  maxlength="9" mask="9?99999999" value="#{transferManagedBean.recipientAccountNumString}" required="true" requiredMessage="Recipient Account Number is required."/>
@@ -46,10 +49,11 @@
                                 <div class="EmptyBox20"></div>
                                 <div class="Container30"></div>
                                 <div class="Container40">
-                                    <p:commandButton actionListener="#{transferManagedBean.oneTimeTransfer}" value="Submit" />
+                                    <p:commandButton update="panel" actionListener="#{transferManagedBean.oneTimeTransfer}" value="Submit" />
                                 </div>
                                 <div class="Container30"></div>
                             </div>
+                            </p:panel>
                         </h:form>
                     </div>
 

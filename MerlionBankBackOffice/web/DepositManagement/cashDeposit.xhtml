@@ -1,30 +1,58 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
-    <h:head>
-        <title>Cash Deposit</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </h:head>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-    <h:body>
-        <h:form>
-            <p:panel id="panel" header="Cash Deposit">
-                <p:messages id="msgs" />
-                <p:selectOneMenu id="savingAccountList" value="#{savingAccountManagedBean.notTerminAccountSelected}">
-                    <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
-                    <f:selectItems value="#{savingAccountManagedBean.notTerminAccountNumList}" />
-                </p:selectOneMenu>  
+    <ui:define name="head">
 
-                <h:outputLabel for="DepositAmount" value="Deposit Amount $" />
-                <p:inputText id="DepositAmount" value="#{savingAccountManagedBean.depositAmountString}" required="true" requiredMessage="Deposit Amount is required." />
+    </ui:define>
 
-                <p:commandButton update="panel" value="Submit" 
-                                 actionListener="#{savingAccountManagedBean.cashDeposit}"/>       
-            </p:panel>
-        </h:form>
-    </h:body>
-</html>
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Change Saving Account Interest Rate </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100">
+                        <h:form>
+                            <p:panel id="panel" header="Cash Deposit">
+                                <p:messages id="msgs" />
+                                
+                                <div class="Container70 Responsive50">
+                                <p:selectOneMenu id="savingAccountList" value="#{savingAccountManagedBean.notTerminAccountSelected}">
+                                    <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{savingAccountManagedBean.notTerminAccountNumList}" />
+                                </p:selectOneMenu>  
+                                
+                                <h:outputLabel for="DepositAmount" value="Deposit Amount $" />
+                                <p:inputText id="DepositAmount" value="#{savingAccountManagedBean.depositAmountString}" required="true" requiredMessage="Deposit Amount is required." />
+                                </div>
+                                
+                                <div class="Container30 Responsive50">
+                                <p:commandButton update="panel" value="Submit" 
+                                                 actionListener="#{savingAccountManagedBean.cashDeposit}"/>    
+                                </div>
+                            </p:panel>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>
