@@ -100,5 +100,7 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
     public Long lockAccount(Long staffId);
     
     public StaffRole getRoleByRoleName(String roleName);
+
+    public StaffRole viewRole(Long roleId);
     
 }

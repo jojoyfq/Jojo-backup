@@ -55,7 +55,7 @@ public class FixedDepositManagedBean implements Serializable {
     private String duration;
     private Date endDate;
     private Double interestRate;
-    private Long customerId = 206L;
+    private Long customerId;
     private Boolean response;
 
     private Long accountNumber;
@@ -104,34 +104,45 @@ public class FixedDepositManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         savingAccountManagedBean.init();
-        fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
-        fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
-        withdrawable = fda.getWithdrawable(customerId);
-        renewable = fda.getRenewable(customerId);
-    }
+        customerId = logInManagedBean.getCustomerId();
+//        fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
+//        fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
+//        withdrawable = fda.getWithdrawable(customerId);
+//        renewable = fda.getRenewable(customerId);
+   }
     
     public void dashboardTransferToFixed(ActionEvent event) throws IOException{
+        customerId = logInManagedBean.getCustomerId();
         fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
         FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/transferToFixedSeparate.xhtml");
+                    .redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSeparate.xhtml");
     }
     
     public void dashboardRenewFixed(ActionEvent event) throws IOException{
+//        customerId = logInManagedBean.getCustomerId();
         renewable = fda.getRenewable(customerId);
         FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/renewFixedDeposit.xhtml");
+                    .redirect("/MerlionBank-war/FixedDepositManagement/renewFixedDeposit.xhtml");
     }
     
     public void dashboardWithdraw(ActionEvent event) throws IOException{
+        customerId = logInManagedBean.getCustomerId();
         withdrawable = fda.getWithdrawable(customerId);
         FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/withdrawFixedDeposit.xhtml");
+                    .redirect("/MerlionBank-war/FixedDepositManagement/withdrawFixedDeposit.xhtml");
     }
     
     public void dashboardViewFixed(ActionEvent event) throws IOException{
+       customerId = logInManagedBean.getCustomerId();
        fixedDepositAccounts = fda.getFixedDepositAccounts(customerId); 
         FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/displayFixedDepositDetails.xhtml");
+                    .redirect("/MerlionBank-war/FixedDepositManagement/displayFixedDepositDetails.xhtml");
+    }
+    public void dashboardCreateFixed(ActionEvent event) throws IOException{
+        customerId = logInManagedBean.getCustomerId();
+        FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositAccount.xhtml");
+        
     }
     
     public void createFixedDepositAccount(ActionEvent event) throws IOException {

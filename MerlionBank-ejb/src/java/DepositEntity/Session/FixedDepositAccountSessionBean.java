@@ -107,7 +107,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 
         List<FixedDepositAccount> fixedAccounts = new ArrayList<FixedDepositAccount>();
         //customer may alr have fixed acct
-        if (customer.getFixedDepositeAccounts() == null) {
+        if (customer.getFixedDepositeAccounts()== null) {
             fixedAccounts.add(account);
             customer.setFixedDepositeAccounts(fixedAccounts);
             em.persist(fixedAccounts);
@@ -280,10 +280,12 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     public List<FixedDepositAccount> getFixedDepositAccounts(Long customerId) {
         customer = em.find(Customer.class, customerId);
         List<FixedDepositAccount> fixedDeposits = new ArrayList<>();
+        if(customer.getFixedDepositeAccounts()!= null){
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             if (!customer.getFixedDepositeAccounts().get(i).getStatus().equals("terminated")) {
                 fixedDeposits.add(customer.getFixedDepositeAccounts().get(i));
             }
+        }
         }
         return fixedDeposits;
     }
@@ -292,12 +294,13 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     public List<Long> getNoMoneyFixedDeposit(Long customerId) {
         customer = em.find(Customer.class, customerId);
         List<Long> fixedDepositsAcctNum = new ArrayList<>();
+        if(customer.getFixedDepositeAccounts()!= null){
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
             if (account.getStatus().equals("inactive")) {
                 fixedDepositsAcctNum.add(account.getAccountNumber());
             }
-        }
+        }}
         return fixedDepositsAcctNum;
     }
 
@@ -482,13 +485,14 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     public List<Long> getWithdrawable(Long customerId) {
         customer = em.find(Customer.class, customerId);
         List<Long> fixedDepositsAcctNum = new ArrayList<>();
+        if(customer.getFixedDepositeAccounts()!= null){
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
             //active and renew and normal withdraw accounts can be withdraw
             if (account.getStatus().equalsIgnoreCase("active") || account.getStatus().equalsIgnoreCase("renew") || account.getStatus().contains(",")) {
                 fixedDepositsAcctNum.add(account.getAccountNumber());
             }
-        }
+        }}
         return fixedDepositsAcctNum;
     }
 
@@ -496,13 +500,14 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     public List<FixedDepositAccount> getWithdrawableAccount(Long customerId) {
         customer = em.find(Customer.class, customerId);
         List<FixedDepositAccount> withdrawable = new ArrayList<>();
+        if(customer.getFixedDepositeAccounts()!= null){
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
             //active and renew and normal withdraw accounts can be withdraw
             if (account.getStatus().equalsIgnoreCase("active") || account.getStatus().equalsIgnoreCase("renew") || account.getStatus().contains(",")) {
                 withdrawable.add(account);
             }
-        }
+        }}
         return withdrawable;
     }
 
@@ -510,13 +515,14 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     public List<Long> getRenewable(Long customerId) {
         customer = em.find(Customer.class, customerId);
         List<Long> fixedDepositsAcctNum = new ArrayList<>();
+        if(customer.getFixedDepositeAccounts()!= null){
         for (int i = 0; i < customer.getFixedDepositeAccounts().size(); i++) {
             account = customer.getFixedDepositeAccounts().get(i);
             //active and normal withdraw accts can be renewed
             if (account.getStatus().equalsIgnoreCase("active") || account.getStatus().contains(",")) {
                 fixedDepositsAcctNum.add(account.getAccountNumber());
             }
-        }
+        }}
         return fixedDepositsAcctNum;
     }
 
