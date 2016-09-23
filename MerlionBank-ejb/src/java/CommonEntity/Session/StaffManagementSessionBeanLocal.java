@@ -101,4 +101,5 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
     
     public StaffRole getRoleByRoleName(String roleName);
     
+    public void recordStaffAction(Long staffId, String actionDescription, Long customerId);
 }

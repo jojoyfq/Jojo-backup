@@ -152,7 +152,7 @@ public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID,
         }
         else if (result.equals("reject")){
             customer.setStatus("terminated");
-            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Reject saving account"+fixedDepositAccount.getAccountNumber(),customerID, staff);
+            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Reject fixed deposit account"+fixedDepositAccount.getAccountNumber(),customerID, staff);
             em.persist(action);
             List<StaffAction> staffActions=staff.getStaffActions();
             staffActions.add(action);
