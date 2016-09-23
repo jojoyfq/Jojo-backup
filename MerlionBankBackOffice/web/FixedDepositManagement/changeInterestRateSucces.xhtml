@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+       xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+       xmlns:ui="http://java.sun.com/jsf/facelets"
+       xmlns:p="http://primefaces.org/ui">
+    
+    <h:head>
+        <title>Change Fixed Deposit Interest Rate Success</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <body>
+        <h:form>
+            <h:panelGrid columns="2" id="FixedDepositRateChangedSuccess" cellpadding="5"> 
+                
+                <h:outputLabel value="Fixed deposit interest rate changed successfully." />
+                <h:outputLabel />
+                
+                <h:outputLabel for="duration" value="Fixed deposit account duration:" />
+                <p:outputLabel id="duration" value="#{fixedDepositNonTellerManagedBean.fixedRateSelected.duration}"  />          
+                
+                <h:outputLabel for="newInterestRate" value="New Interest Rate:" />
+                    <p:outputLabel id="newinterestRate" value="#{fixedDepositNonTellerManagedBean.newInterestRate}"  > 
+                    <f:convertNumber pattern="0.0000"/>
+                </p:outputLabel>
+                
+                <h:outputLabel for="InterestRate" value="Old Interest Rate:" />        
+                <p:outputLabel id="newInterestRate" value="#{fixedDepositNonTellerManagedBean.oldInterestRate}"  > 
+                   
+                    <f:convertNumber pattern="0.0000"/>
+                </p:outputLabel>
+              
+            </h:panelGrid>
+               
+            <p:commandButton actionListener="#{fixedDepositNonTellerManagedBean.goToHomePage}" value="Return to Homepage" />
+        </h:form>
+    </body>
+</html>
+
+
+
+

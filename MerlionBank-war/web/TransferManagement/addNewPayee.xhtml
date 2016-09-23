@@ -25,30 +25,33 @@
 
                     <div class="Container100 ui-fluid">
                         <h:form>
-                            <div class="Card">
-                                <div class="Container10"></div>
-                                <div class="Container80">
-                                    <h:panelGrid columns="3" id="addNewPayee" cellpadding="5"> 
+                            <p:panel id="panel">
+                                <p:messages id="msgs" />
+                                <div class="Card">
+                                    <div class="Container10"></div>
+                                    <div class="Container80">
+                                        <h:panelGrid columns="3" id="addNewPayee" cellpadding="5"> 
 
-                                        <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
-                                        <p:inputText id="recipientAccount" value="#{transferManagedBean.payeeAccountString}" label="recipientAccount" required="true" requiredMessage="Recipient Account Number is required." />
-                                        <h:message for="recipientAccount"  />
+                                            <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
+                                            <p:inputText id="recipientAccount" value="#{transferManagedBean.payeeAccountString}" label="recipientAccount" required="true" requiredMessage="Recipient Account Number is required." />
+                                            <h:message for="recipientAccount"  />
 
-                                        <h:outputLabel for="recipientName" value="Recipient Name:" />
-                                        <p:inputText id="recipientName" value="#{transferManagedBean.payeeName}" required="true" requiredMessage="Recipient Name is required." />
-                                        <h:message for="recipientName"  />
+                                            <h:outputLabel for="recipientName" value="Recipient Name:" />
+                                            <p:inputText id="recipientName" value="#{transferManagedBean.payeeName}" required="true" requiredMessage="Recipient Name is required." />
+                                            <h:message for="recipientName"  />
 
-                                    </h:panelGrid>
+                                        </h:panelGrid>
+                                    </div>
+                                    <div class="Container10"></div>
+
+                                    <div class="EmptyBox20"></div>
+                                    <div class="Container30"></div>
+                                    <div class="Container40">
+                                        <p:commandButton update="panel" value="Next" id="addNewPayeeNext" actionListener="#{transferManagedBean.addPayee}"/>
+                                    </div>
+                                    <div class="Container30"></div>
                                 </div>
-                                <div class="Container10"></div>
-
-                                <div class="EmptyBox20"></div>
-                                <div class="Container30"></div>
-                                <div class="Container40">
-                                    <p:commandButton value="Next" id="addNewPayeeNext" actionListener="#{transferManagedBean.addPayee}"/>
-                                </div>
-                                <div class="Container30"></div>
-                            </div>
+                            </p:panel>
                         </h:form>
                     </div>
 

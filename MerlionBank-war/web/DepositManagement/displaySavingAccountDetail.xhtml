@@ -32,11 +32,15 @@
                                         </p:column>
 
                                         <p:column headerText="Available Balance">
-                                            <h:outputText value="#{SavingAccount.availableBalance}" />
+                                            <h:outputText value="SGD #{SavingAccount.availableBalance}" >
+                                             <f:convertNumber type="currency" />
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Balance">
-                                            <h:outputText value="#{SavingAccount.balance}" />
+                                            <h:outputText value="SGD #{SavingAccount.balance}" >
+                                            <f:convertNumber  type="currency" />
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Type">
