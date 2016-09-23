@@ -109,7 +109,31 @@ public class FixedDepositManagedBean implements Serializable {
         withdrawable = fda.getWithdrawable(customerId);
         renewable = fda.getRenewable(customerId);
     }
-
+    
+    public void dashboardTransferToFixed(ActionEvent event) throws IOException{
+        fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
+        FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/transferToFixedSeparate.xhtml");
+    }
+    
+    public void dashboardRenewFixed(ActionEvent event) throws IOException{
+        renewable = fda.getRenewable(customerId);
+        FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/renewFixedDeposit.xhtml");
+    }
+    
+    public void dashboardWithdraw(ActionEvent event) throws IOException{
+        withdrawable = fda.getWithdrawable(customerId);
+        FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/withdrawFixedDeposit.xhtml");
+    }
+    
+    public void dashboardViewFixed(ActionEvent event) throws IOException{
+       fixedDepositAccounts = fda.getFixedDepositAccounts(customerId); 
+        FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/DepositManagement/displayFixedDepositDetails.xhtml");
+    }
+    
     public void createFixedDepositAccount(ActionEvent event) throws IOException {
         if (amountString != null) {
             amountBD = new BigDecimal(amountString);
