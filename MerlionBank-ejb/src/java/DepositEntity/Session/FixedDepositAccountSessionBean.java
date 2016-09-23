@@ -662,6 +662,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                     BigDecimal newBalance = fixedDepositAccounts.get(i).getBalance().add(interestEnd);
                     fixedDepositAccounts.get(i).setBalance(newBalance);
                     System.out.print("new balance is **************" + newBalance);
+                    System.out.print("balance in renewed account account"+fixedDepositAccounts.get(i).getBalance());
                     em.flush();
                     System.out.print("balance set");
                     fixedDepositAccounts.get(i).setStartDate(startNewTemp.toDate()); //set new start and end date
