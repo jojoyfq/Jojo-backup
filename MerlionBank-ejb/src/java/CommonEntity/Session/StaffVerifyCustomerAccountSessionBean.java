@@ -152,7 +152,7 @@ public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID,
         }
         else if (result.equals("reject")){
             customer.setStatus("terminated");
-            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Reject saving account"+fixedDepositAccount.getAccountNumber(),customerID, staff);
+            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Reject fixed deposit account"+fixedDepositAccount.getAccountNumber(),customerID, staff);
             em.persist(action);
             List<StaffAction> staffActions=staff.getStaffActions();
             staffActions.add(action);
@@ -179,7 +179,7 @@ public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID,
                 + "<h1>Welcome to Merlion Bank.</h1>"
                 + "<h2 align=\"center\">Saving Account Number: " + accountNumber
                 + "<br />Temporary Password: " + password + "<br />Please activate your account through activation link on the Login page " + "</h2><br />" 
-                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum"+minAmount+" to your account in order to activate your saving account. Thank you.</p>"
+                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum SGD$ "+minAmount+" to your account in order to activate your saving account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
