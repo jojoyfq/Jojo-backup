@@ -47,7 +47,7 @@ public class LogInManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
 
     private Customer customer;
-    private String ic = "S4444";
+    private String ic;
     private String customerName;
     private String customerGender;
     private Date customerDateOfBirth;
@@ -227,8 +227,9 @@ public class LogInManagedBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public Customer viewOneCustomer() throws IOException, ListEmptyException{
-      
+    public Customer viewOneCustomer(ActionEvent event) throws IOException, ListEmptyException{
+       //      FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ModifyUserProfile.xhtml");
+ 
     try{    
         System.out.println("*******customer ic: "+ic);
         selectedCustomer = amsbl.diaplayCustomer(ic);
@@ -269,12 +270,14 @@ public class LogInManagedBean implements Serializable {
     return selectedCustomer;
     }
 
-    public void modifyProfile(ActionEvent event) throws UserExistException {
+    public void modifyProfile(ActionEvent event) throws UserExistException, IOException {
         try {
 //            if (FacesContext.getCurrentInstance().getResponseComplete()) {
 //                System.out.println("lala");
 //                return;
 //            }
+          
+   //     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ModifyUserProfile.xhtml");
 
             System.out.println("Message from managed Bean: IC is: " + ic);
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null
