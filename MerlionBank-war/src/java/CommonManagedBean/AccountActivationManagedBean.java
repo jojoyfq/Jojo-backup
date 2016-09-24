@@ -19,6 +19,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
@@ -67,6 +68,12 @@ public class AccountActivationManagedBean implements Serializable {
     public AccountActivationManagedBean() {
     }
 
+    public void goToLogInPage(ActionEvent event) throws IOException {
+        System.out.println("Go into GoToLogInHome");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+
+    }
+
     public void activateAccount(ActionEvent event) throws UserNotExistException, UserAlreadyActivatedException, IOException {
 //        this.customerIc = customerIc;
 //        this.customerName = customerName;
@@ -77,20 +84,21 @@ public class AccountActivationManagedBean implements Serializable {
                 // System.out.println("GAO MEI REN:" + msg);
 
                 System.out.println("lala");
-                
-                    String msg2 = amsbl.verifyAccountBalance(customerIc);
-                    if (msg2.equals("invalid amount")) {
-                        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have not reached the minimum top up amount!!");
-                        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                    }
+
+                String msg2 = amsbl.verifyAccountBalance(customerIc);
+                System.out.print("verifyAccountBalance status is" + msg2);
+
+                if (msg2.equals("invalid amount")) {
+                    System.out.print("inside the if statement!.......");
+                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have not reached the minimum top up amount!!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                } else {
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
 
+                }
 
-              
-                    
-                
             } else {
                 System.out.println("Please dont leave blanks!");
             }
@@ -103,7 +111,7 @@ public class AccountActivationManagedBean implements Serializable {
         }
     }
 
-    public void resetInitialPassword(ActionEvent event) throws PasswordTooSimpleException {
+    public String resetInitialPassword() throws PasswordTooSimpleException {
         try {
             if (customerIc != null && initialPassword != null && newPassword != null && confirmedPassword != null) {
                 String msg = msg = amsbl.updatePassword(customerIc, initialPassword, newPassword, confirmedPassword);
@@ -111,9 +119,13 @@ public class AccountActivationManagedBean implements Serializable {
                 System.out.println(msg);
 
                 if (msg.equals(customerIc)) {
-                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has been successfully changed!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-
+//                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has been successfully changed!");
+//                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                    FacesContext facesContext = FacesContext.getCurrentInstance();
+                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your password has been successfully changed!"));
+                    Flash flash = facesContext.getExternalContext().getFlash();
+                    flash.setKeepMessages(true);
+                    flash.setRedirect(true);
                     boolean msg2 = amsbl.updateAccountStatus(msg);
                     if (msg2 == true) {
                         System.out.println("Status has been updated!");
@@ -121,13 +133,14 @@ public class AccountActivationManagedBean implements Serializable {
                         System.out.println("Status has NOT been updated!");
 
                     }
-                }else if(msg.equals("Does not match with new password")){
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password does not match with new password!");
+                } else if (msg.equals("Does not match with new password")) {
+                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password does not match with new password!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                
+
                 } else {
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has not been  changed!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
                     System.out.println("password has not been changed!");
                 }
             } else {
@@ -137,6 +150,7 @@ public class AccountActivationManagedBean implements Serializable {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
+        return "LogInHome";
 
     }
 

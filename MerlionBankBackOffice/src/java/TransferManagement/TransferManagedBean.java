@@ -75,7 +75,7 @@ public class TransferManagedBean implements Serializable {
             recipientAccountNumLong = Long.parseLong(recipientAccountNumString);  
             System.out.print(amountBD);
             System.out.print(recipientAccountNumLong);
-            tfsb.intraOneTimeTransferCheck(giverAccountNumLong,recipientAccountNumLong,amountBD);
+            tfsb.intraOneTimeTransferCheck(giverAccountNumLong,giverAccountNumLong,recipientAccountNumLong,amountBD);
 
             FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/TransferManagement/intraTransferSuccess.xhtml");

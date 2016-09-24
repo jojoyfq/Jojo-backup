@@ -14,6 +14,7 @@ import Exception.EmailNotSendException;
 import Exception.RoleAlreadyExistedException;
 import Exception.StaffAlreadyHasRoleException;
 import Exception.StaffRoleExistException;
+import Exception.UnexpectedErrorException;
 import Exception.UserExistException;
 import Exception.UserNotExistException;
 import java.io.IOException;
@@ -383,7 +384,7 @@ public class StaffManagementManagedBean implements Serializable {
     public void adminAssignStaffRole(ActionEvent event) throws StaffRoleExistException {
         try {
             System.out.println("***********Message from managed bean is staffId is: " + staffId + " newStaffId is " + staff.getId() + " roleName is " + selectedRoleName);
-            smsbl.assignStaffRole(staffId, staff.getId(), selectedRoleName);
+            roles.add(smsbl.assignStaffRole(staffId, staff.getId(), selectedRoleName));
             System.out.println("Assigned Role Successfully!!");
         } catch (StaffRoleExistException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -474,34 +475,35 @@ public class StaffManagementManagedBean implements Serializable {
         //      smsbl.staffDeleteRole(bankStaffId, roleName);
     }
 
-    public void editRoleDelete(ActionEvent event) throws IOException {
-        roleId = ((StaffRole) event.getComponent().getAttributes().get("selectedRole")).getId();
+    public void editRoleDelete(ActionEvent event) throws IOException, UnexpectedErrorException {
+     try{
+         roleId = ((StaffRole) event.getComponent().getAttributes().get("selectedRole")).getId();
+     
         roleName = ((StaffRole) event.getComponent().getAttributes().get("selectedRole")).getRoleName();
         System.out.println("***** Selected Staff ID is " + roleName);
 
-        boolean msg = smsbl.staffDeleteRole(staffId, roleName);
-        System.out.println("**************Message after pressing delete role: " + msg);
-        if (msg = false) {
+       roles = smsbl.staffDeleteRole(editedStaffId, roleName);
+        //roles = staff.getStaffRoles();
+       // System.out.println("**************Message after pressing delete role: " + msg);
+        
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Deleted Unsuccessfully");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        } else {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
-
-        }
+      }catch( UnexpectedErrorException ex) {
+      FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+      } 
 
     }
 
     public void addOneRoleForStaff(ActionEvent event) throws IOException,StaffAlreadyHasRoleException {
         try{
-        boolean msg = smsbl.staffAddRole(staffId, selectedRoleNameToAdd);
-        if (msg = false) {
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Added Unsuccessfully");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        } else {
+        roles.add(smsbl.staffAddRole(editedStaffId, selectedRoleNameToAdd));
+        
+      
             System.out.println("***************Added one role successfully!");
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/editRoleForOneStaff.xhtml");
 
-        }
+        
         }catch (StaffAlreadyHasRoleException ex){
              FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
