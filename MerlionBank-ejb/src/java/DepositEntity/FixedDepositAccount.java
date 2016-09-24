@@ -8,6 +8,7 @@ package DepositEntity;
 import CommonEntity.Customer;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -47,7 +48,7 @@ public class FixedDepositAccount implements Serializable {
     }
 
     public BigDecimal getBalance() {
-        return balance;
+        return balance.setScale(2, RoundingMode.HALF_UP);
     }
 
     public void setBalance(BigDecimal balance) {
@@ -123,7 +124,7 @@ public class FixedDepositAccount implements Serializable {
      * @return the amount
      */
     public BigDecimal getAmount() {
-        return amount;
+        return amount.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**

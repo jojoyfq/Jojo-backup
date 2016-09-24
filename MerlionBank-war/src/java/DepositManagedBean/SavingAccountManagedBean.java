@@ -64,7 +64,7 @@ public class SavingAccountManagedBean implements Serializable {
             this.getSavingAccountType();
             savingAccounts = sasb.getSavingAccount(customerID);
             System.out.print(savingAccounts.get(0).getAvailableBalance().setScale(2, RoundingMode.HALF_UP));
-            
+
             this.getSavingAccountNumbers();
             this.getInactiveSavingAccountNumbers();
         } catch (Exception e) {
@@ -74,73 +74,77 @@ public class SavingAccountManagedBean implements Serializable {
 
     public SavingAccountManagedBean() {
     }
-    
-    public void dashboardCloseAccount(ActionEvent event){
-        try{
+
+    public void dashboardCloseAccount(ActionEvent event) {
+        try {
             this.getSavingAccountNumbers();
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/closeSavingAccount_selectAccounts.xhtml");
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.print("Dashboard Close Account Encounter Error!");
         }
     }
-    
-    public void dashboardTransactionRecord(ActionEvent event){
-        try{
+
+    public void dashboardTransactionRecord(ActionEvent event) {
+        try {
             this.getSavingAccountNumbers();
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/viewTransactionRecords_selectAccounts.xhtml");
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.print("Dashboard View Transaction History Encounter Error!");
         }
     }
-    
-    public void dashboardDisplaySavingAccount(ActionEvent event){
-        try{
+
+    public void dashboardDisplaySavingAccount(ActionEvent event) {
+        try {
             savingAccounts = sasb.getSavingAccount(customerID);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/displaySavingAccountDetail.xhtml");
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.print("Dashboard View Saving Account Encounter Error!");
         }
     }
-    
-    public void dashboardActivateAccount(ActionEvent event){
-        try{
+
+    public void dashboardActivateAccount(ActionEvent event) {
+        try {
             this.getInactiveSavingAccountNumbers();
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/activateSavingAccount_selectAccounts.xhtml");
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.print("Dashboard Activate Saving Account Encounter Error!");
         }
     }
-    
-   public void dashboardCreateAccount(ActionEvent event){
-        try{
+
+    public void dashboardCreateAccount(ActionEvent event) {
+        try {
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/createSavingAccountEC.xhtml");
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.print("Dashboard Create Saving Account Encounter Error!");
         }
-    } 
-    
+    }
 
     public void createSavingAccountExistingCustomer(ActionEvent event) throws UserAlreadyHasSavingAccountException, EmailNotSendException, IOException, UserHasNoSavingAccountException {
         try {
-            System.out.print(customerID);
-            System.out.print(savingAccountName);
-            amsb.createSavingAccountExistingCustomer(customerID, savingAccountName);
-            //get data from database and assign the new value to the variable after createSavingAccount success!
-            getSavingAccountNumbers();
-            savingAccounts = sasb.getSavingAccount(customerID);
+            if (savingAccountName != null) {
+                System.out.print(customerID);
+                System.out.print(savingAccountName);
+                amsb.createSavingAccountExistingCustomer(customerID, savingAccountName);
+                //get data from database and assign the new value to the variable after createSavingAccount success!
+                getSavingAccountNumbers();
+                savingAccounts = sasb.getSavingAccount(customerID);
 
-            //Log the customer action into database
-            String description = "Create " + savingAccountName + " saving account ";
-            sasb.logAction(description, customerID);
+                //Log the customer action into database
+                String description = "Create " + savingAccountName + " saving account ";
+                sasb.logAction(description, customerID);
 
-            //Redirect to successful page
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/DepositManagement/createSavingAccountECsuccess.xhtml");
+                //Redirect to successful page
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/DepositManagement/createSavingAccountECsuccess.xhtml");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a saving account type!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
 
         } catch (UserAlreadyHasSavingAccountException ex) {
             System.out.println(ex.getMessage());
@@ -226,7 +230,7 @@ public class SavingAccountManagedBean implements Serializable {
 
                 String description = "Activate " + inactiveSavingAccountSelected + " saving account ";
                 sasb.logAction(description, customerID);
-                
+
                 transferManagedBean.init();
 
                 FacesContext.getCurrentInstance().getExternalContext()
@@ -258,7 +262,7 @@ public class SavingAccountManagedBean implements Serializable {
 
             String description = "Close " + savingAccountSelected + " saving account ";
             sasb.logAction(description, customerID);
-            
+
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/DepositManagement/closeSavingAccountSuccess.xhtml");
         } catch (UserHasPendingTransactionException ex) {

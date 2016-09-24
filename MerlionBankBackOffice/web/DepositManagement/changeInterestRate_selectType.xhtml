@@ -20,7 +20,9 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Select Saving Account </div>
+
+
+                    <div class="CardBigTopic"> Select Saving Account Type </div>
                     <div class="Separator"></div>
 
 
@@ -29,8 +31,9 @@
                             <p:panel id="panel" header="Select Saving Account Type">
                                 <p:messages id="msgs" />
 
+                                <h:panelGrid columns="2" id="changeIR_selectType" cellpadding="5"> 
                                 <div class="Container70 Responsive50">
-                                    <p:selectOneMenu id="savingAccountType" value="#{savingAccountManagedBean.savingAccountName}">
+                                    <p:selectOneMenu id="savingAccountType" value="#{savingAccountManagedBean.changeIRsavingAccountType}">
                                         <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
                                         <f:selectItems value="#{savingAccountManagedBean.savingAccountTypeList}" />                
                                     </p:selectOneMenu>
@@ -38,7 +41,7 @@
                                 <div class="Container30 Responsive50">
                                     <p:commandButton  actionListener="#{savingAccountManagedBean.changeInterestRate}" value="Submit" /> 
                                 </div>
-
+                                </h:panelGrid>
                             </p:panel>
                         </h:form>
                     </div>

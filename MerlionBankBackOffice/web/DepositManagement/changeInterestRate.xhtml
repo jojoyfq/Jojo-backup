@@ -34,19 +34,22 @@
 
                                     <h:outputLabel for="ir1" value="Interest Rate 1:" /> 
                                     <p:inputText id="ir1" value="#{savingAccountManagedBean.interestRate1}" >
+                                        <p:keyFilter regEx="/[\d\-\.]/"/> 
                                         <f:convertNumber pattern="0.0000"/>
-                                    </p:inputText>
+                                        </p:inputText>
                                     <p:message for="ir1" display="icon" />
                                     
                                     <h:outputLabel for="ir2" value="Interest Rate 2:" /> 
                                     <p:inputText id="ir2" value="#{savingAccountManagedBean.interestRate2}" >
-                                    <f:convertNumber pattern="0.0000"/>
+                                        <p:keyFilter regEx="/[\d\-\.]/"/> 
+                                        <f:convertNumber pattern="0.0000"/>
                                     </p:inputText>
                                     <p:message for="ir2" display="icon" />
                                     
                                     <h:outputLabel for="ir3" value="Interest Rate 3:" /> 
                                     <p:inputText id="ir3" value="#{savingAccountManagedBean.interestRate3}" >
-                                    <f:convertNumber pattern="0.0000"/>
+                                        <p:keyFilter regEx="/[\d\-\.]/"/> 
+                                        <f:convertNumber pattern="0.0000"/>
                                     </p:inputText>
                                     <p:message for="ir3" display="icon" />
 

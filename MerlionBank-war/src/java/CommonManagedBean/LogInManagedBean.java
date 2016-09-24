@@ -33,6 +33,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.Flash;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -116,6 +117,11 @@ public class LogInManagedBean implements Serializable {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
 
     }
+    
+    public void goToStaffLogInPage(ActionEvent event )throws IOException{
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
+
+    }
 
 //   private void warnMsg(String message) {
 //        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, message, "");
@@ -188,7 +194,7 @@ public class LogInManagedBean implements Serializable {
                         message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your account has been locked out.");
 
                         RequestContext.getCurrentInstance().showMessageInDialog(message);
-                        //  System.out.println(amsbl.lockAccount(customerId));
+                        System.out.println(amsbl.lockAccount(customerId));
                     }
                 } else {
                     selectedCustomer = amsbl.diaplayCustomerId(customerId);
@@ -196,7 +202,7 @@ public class LogInManagedBean implements Serializable {
                     System.out.println("Log In Successful!");
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("name", selectedCustomer.getName());
-
+                    
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/dashboard.xhtml");
                 }
             } else {
@@ -265,7 +271,9 @@ public class LogInManagedBean implements Serializable {
     return selectedCustomer;
     }
 
-    public void modifyProfile(ActionEvent event) throws UserExistException, IOException {
+
+    public String modifyProfile(ActionEvent event) throws UserExistException {
+
         try {
 //            if (FacesContext.getCurrentInstance().getResponseComplete()) {
 //                System.out.println("lala");
@@ -279,9 +287,14 @@ public class LogInManagedBean implements Serializable {
                     && customerOccupation != null && customerFamilyInfo != null ) {
                 amsbl.updateProfile(ic, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, customerFinancialGoal);
 
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Profile edited successfully!");
-
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Profile edited successfully!");
+//
+//                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                   FacesContext facesContext = FacesContext.getCurrentInstance();
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Profile edited successfully!"));
+                Flash flash = facesContext.getExternalContext().getFlash();
+                flash.setKeepMessages(true);
+                flash.setRedirect(true);
 
             } else {
                 System.out.println("Please fill in correct information!");
@@ -297,6 +310,7 @@ public class LogInManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         }
+        return"dashboard";
     }
 
      public void logout() throws IOException {
