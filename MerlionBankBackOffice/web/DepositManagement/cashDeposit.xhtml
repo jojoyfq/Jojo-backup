@@ -35,7 +35,9 @@
                                 </p:selectOneMenu>  
                                 
                                 <h:outputLabel for="DepositAmount" value="Deposit Amount $" />
-                                <p:inputText id="DepositAmount" value="#{savingAccountManagedBean.depositAmountString}" required="true" requiredMessage="Deposit Amount is required." />
+                                <p:inputText id="DepositAmount" value="#{savingAccountManagedBean.depositAmountString}" required="true" requiredMessage="Deposit Amount is required." >
+                                <p:keyFilter regEx="/[\d\-\.]/"/>
+                                </p:inputText>
                                 </div>
                                 
                                 <div class="Container30 Responsive50">

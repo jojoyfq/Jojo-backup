@@ -32,7 +32,9 @@
                                     <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
 
                                         <h:outputLabel for="amount" value="Amount(S$):" />
-                                        <p:inputText id="amount" value="#{fixedDepositStaffManagedBean.amountString}" label="amount" required="true" />
+                                        <p:inputText id="amount" value="#{fixedDepositStaffManagedBean.amountString}" label="amount" required="true" >
+                                        <p:keyFilter regEx="/[\d\-\.]/"/>
+                                        </p:inputText>
 
 
 

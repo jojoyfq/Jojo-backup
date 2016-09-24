@@ -30,10 +30,12 @@
                                  <div class="Container10"></div>
                                  <div class="Container80">
                                      <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
- 
+  
+                                         
                                          <h:outputLabel for="amount" value="Amount(S$):" />
-                                         <p:inputText id="amount" value="#{fixedDepositManagedBean.amountString}" label="amount" required="true" />
- 
+                                         <p:inputText id="amount" value="#{fixedDepositManagedBean.amountString}" label="amount" required="true" >
+                                         <p:keyFilter regEx="/[\d\-\.]/"/>
+                                         </p:inputText>
  
  
                                          <h:outputLabel for="term" value="Deposit Term(Months):" />

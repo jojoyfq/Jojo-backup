@@ -35,8 +35,10 @@
                                 </p:selectOneMenu>  
                                
                                 <h:outputLabel for="WithdrawAmount" value="Withdraw Amount $" />
-                                <p:inputText id="WithdrawAmount" value="#{savingAccountManagedBean.withdrawAmountString}" required="true" requiredMessage="Withdraw Amount is required." />
-                                 </div>
+                                <p:inputText id="WithdrawAmount" value="#{savingAccountManagedBean.withdrawAmountString}" required="true" requiredMessage="Withdraw Amount is required." >
+                                <p:keyFilter regEx="/[\d\-\.]/"/>
+                                </p:inputText> 
+                                </div>
                                 
                                 <div class="Container30 Responsive50">
                                 <p:commandButton update="panel" value="Submit" id="goToCashWithdraw"
