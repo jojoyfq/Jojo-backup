@@ -17,23 +17,25 @@
         </div>
 
         <!-- Center Column -->
-        
         <div class="Container50 NoPadding Responsive50">
-            <div class="EmptyBox20"></div>
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Serve Customer </div>
+                    <div class="CardBigTopic"> Change Transfer Limit </div>
                     <div class="Separator"></div>
 
                     <div class="Container100 ui-fluid">
                         <h:form>
+                            <p:panel id="panel">
+                                <p:messages id="msgs" />
                             <div class="Card">
                                 <div class="Container10"></div>
                                 <div class="Container80">
-                                    <h:panelGrid columns="2" id="serviceCustomerPanel" cellpadding="5"> 
-
-                                        <h:outputLabel for="customerIc" value="Enter customer IC : " />
-                                        <p:inputText id="customerIc" value="#{serviceCustomerManagedBean.customerIc}" label="customerIc" required="true" />
+                                    <h:panelGrid columns="2" id="chanageTransferLimit" cellpadding="5"> 
+                                        <h:outputLabel for="transferLimitOld" value="Your Current Transfer Limit: $" />
+                                        <h:outputLabel id="transferLimitOld" value="#{transferManagedBean.transferLimitDatabase}" />
+                                        
+                                        <h:outputLabel for="transferLimitNew" value="Enter Your New Transfer Limit: $" />
+                                        <p:inputText id="transferAmount" value="#{transferManagedBean.transferLimitString}" required="true" requiredMessage="Please Enter Your Transfer Limit!" />
 
                                     </h:panelGrid>
                                 </div>
@@ -42,29 +44,21 @@
                                 <div class="EmptyBox20"></div>
                                 <div class="Container30"></div>
                                 <div class="Container40">
-                                    <p:commandButton value="Submit" id="serviceCustomerButton"
-                                                     actionListener="#{serviceCustomerManagedBean.selectCustomer}" />
+                                    <p:commandButton update="panel" actionListener="#{transferManagedBean.changeTransferLimit}" value="Submit" />
                                 </div>
                                 <div class="Container30"></div>
                             </div>
+                            </p:panel>
                         </h:form>
                     </div>
 
-
-
-
-
-
                 </div>
             </div> 
-
-
 
         </div>
 
         <!-- Right Column -->
         <div class="Container25 NoPadding Responsive50">
-
 
         </div>
 

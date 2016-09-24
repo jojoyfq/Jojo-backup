@@ -59,8 +59,16 @@ public class Customer implements Serializable {
     private String financialGoal;
     private String riskRating;
     private String status;
+    private BigDecimal intraTransferLimit;
 
-    
+    public BigDecimal getIntraTransferLimit() {
+        return intraTransferLimit;
+    }
+
+    public void setIntraTransferLimit(BigDecimal intraTransferLimit) {
+        this.intraTransferLimit = intraTransferLimit;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -92,11 +100,10 @@ public class Customer implements Serializable {
   
     @OneToOne(cascade={CascadeType.ALL}) 
    private OnlineAccount onlineAccount;//same as ic
-    
+
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<SavingAccount> savingAccounts;
     
-
     @OneToMany(cascade={CascadeType.PERSIST})
     private List<Payee> payees =new ArrayList<Payee>();
     
@@ -176,7 +183,7 @@ public class Customer implements Serializable {
     };
     
 
-    public Customer(String IC, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String riskRating, OnlineAccount onlineAccount,String status) {
+    public Customer(String IC, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String riskRating, OnlineAccount onlineAccount,String status,BigDecimal intraTransferLimit) {
         this.ic = IC;
         this.name = name;
         this.gender = gender;
@@ -190,6 +197,7 @@ public class Customer implements Serializable {
         this.riskRating = riskRating;
         this.onlineAccount = onlineAccount;
         this.status=status;
+        this.intraTransferLimit = intraTransferLimit;
     }
 
     public String getIc() {
@@ -392,15 +400,8 @@ public class Customer implements Serializable {
     public void setOnlineAccount(OnlineAccount onlineAccount) {
         this.onlineAccount = onlineAccount;
     }
+    
 
-    /**
-     * @return the savingAccount
-     */
-   
-
-    /**
-     * @return the fixedDepositeAccount
-     */
    
     
 }

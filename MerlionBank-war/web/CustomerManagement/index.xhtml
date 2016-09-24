@@ -20,7 +20,7 @@
     <h:body>
         <style type="text/css">
             body {
-                background-image: url('.../resources/atlas-layout/images/singapore_merlionbg.jpg') ;
+                background-image: url('/MerlionBank-war/resources/atlas-layout/images/singapore_merlionbg.jpg') ;
                 background-repeat: no-repeat;
                 background-size: 100%;
             }
@@ -32,26 +32,32 @@
                 <div style="margin-top:10rem;"></div>
                 <h:graphicImage name="images/the-merlion.svg" library="atlas-layout" style="height:45px;"/>
                 <span class="White Fs20 FontDosisRegular"><br/>Welcome to Merlion Bank</span>
-                <div class="EmptyBox30"></div>
+                <div class="EmptyBox20"></div>
                 <div class="Wid60 MarAuto WidAutoOnMobile">
                     <div class="Container100">
                         <div class="Card ui-fluid">
                             <div class="Container100">
-                               
 
-                                <h:form>
-                                    <div class="Container100"><p:commandLink id="customerLogIn" value="Customer, please click here!" type="submit" actionListener="#{logInManagedBean.goToLogInPage}"/></div>
-                                </h:form>
+                                <div class="Container100" style="font-size: 110%">
+                                    <h:form>
+                                        <h:outputLabel class="Leaden" value="Customer   " />                               
+                                        <p:commandLink id="customerLogIn" value="   Log In" type="submit" actionListener="#{logInManagedBean.goToLogInPage}"/>
+                                    </h:form>
+                                </div>
 
-                               
 
                             </div>
                             <div class="EmptyBox20"></div>
-                            <div class="SeparatorFull"></div>
+                            <div class="Separator"></div>
                             <div class="EmptyBox20"></div>
 
 
-                           
+                            <div class="Container100" style="font-size: 110%">
+                                <h:form>
+                                    <h:outputLabel class="Leaden" value="Staff   " />                                   
+                                    <p:commandLink id="StaffLogIn" value="   Log In" type="submit" actionListener="#{logInManagedBean.goToStaffLogInPage}"/>
+                                </h:form>
+                            </div>
 
 
                         </div>

@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import Exception.UserHasNoSavingAccountException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -42,10 +43,11 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     private BigDecimal transferAmount;
     private Long payeeAccount;
     private String payeeName;
-    private Long customerID;
+
 
     @Override
-    public void intraOneTimeTransferCheck(Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException {
+    public void intraOneTimeTransferCheck(Long customerID,Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException {
+
         BigDecimal giverBalance;
         BigDecimal recipientBalance;
         BigDecimal updatedGiverBalance;
@@ -57,8 +59,12 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         SavingAccount giverSavingAccount = giverSavingAccounts.get(0);
         giverBalance = giverSavingAccount.getAvailableBalance();
 
+        //check whether customer has exceed the transfer limit amount
+        if(!this.checkTransferLimit(customerID, giverBankAccountNum, transferAmount)){
+            throw new TransferException("Saving account " + giverBankAccountNum + " Has Exceed the daily Transfer Limit");
+        }
         //if balance<transferAmount, the transfer is not allowed, return false
-        if (giverBalance.compareTo(transferAmount) == -1) {
+        else if (giverBalance.compareTo(transferAmount) == -1) {
             throw new TransferException("Saving account " + giverBankAccountNum + " does not have enough fund!");
         } else {
 
@@ -91,6 +97,12 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             }
         }
 
+    }
+    
+    @Override
+    public BigDecimal getTransferLimit(Long customerID){
+        Customer customer = em.find(Customer.class,customerID);
+       return customer.getIntraTransferLimit();
     }
 
     @Override
@@ -228,6 +240,50 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         return list;
     }
 
+    @Override
+    public void changeTransferLimit(Long customerID, BigDecimal transferLimit) {
+        System.out.print(customerID);
+        Customer customer1 = em.find(Customer.class, customerID);
+        System.out.print(customer1.getName());
+        customer1.setIntraTransferLimit(transferLimit);
+        em.flush();
+    }
+
+    @Override
+    public boolean checkTransferLimit(Long customerID, Long savingAccountNum, BigDecimal transferAmount) {
+        String description = "iBanking Transfer";
+        BigDecimal accumulatedAmount = new BigDecimal(0);
+        BigDecimal totalAmount = new BigDecimal(0);
+
+        Customer customer = em.find(Customer.class, customerID);
+        BigDecimal intraLimit = customer.getIntraTransferLimit();
+
+        Date currentTime = Calendar.getInstance().getTime(); //get current time
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String todayString = dateFormat.format(currentTimestamp);
+
+        Query m = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum and a.description = :description");
+        m.setParameter("giverAccountNum", savingAccountNum);
+        m.setParameter("description", description);
+        List<TransactionRecord> record1 = m.getResultList();
+
+        if (record1.isEmpty()) {
+            totalAmount = accumulatedAmount.add(transferAmount);
+            return totalAmount.compareTo(intraLimit) != 1;
+        } else {
+            for (int i = 0; i < record1.size(); i++) {
+                if (dateFormat.format(record1.get(i).getTransactionTime()).equals(todayString)) {
+                    accumulatedAmount = accumulatedAmount.add(record1.get(i).getAmount());
+                }
+            }
+            totalAmount = accumulatedAmount.add(transferAmount);
+            return totalAmount.compareTo(intraLimit) != 1;
+        }
+
+    }
+
     public SavingAccount getGiverBankAccount() {
         return giverBankAccount;
     }
@@ -308,12 +364,5 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         this.payeeName = payeeName;
     }
 
-    public Long getCustomerID() {
-        return customerID;
-    }
-
-    public void setCustomerID(Long customerID) {
-        this.customerID = customerID;
-    }
 
 }

@@ -45,7 +45,8 @@
                 <p:submenu id="pa_hierarchy" label="Bill and Payment">
 
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus">
-                        <p:menuitem id="intraTransfer" value="To Merlion Account" actionListener="#{transferManagedBean.dashboardIntraTransfer}" />                   
+                        <p:menuitem id="intraTransfer" value="To Merlion Account" actionListener="#{transferManagedBean.dashboardIntraTransfer}" /> 
+                        <p:menuitem id="changeLimit" value="Change Transfer Limit" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />           
                     </p:submenu>
                 </p:submenu>
 

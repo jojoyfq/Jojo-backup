@@ -64,7 +64,7 @@ public class ServiceCustomerManagedBean implements Serializable {
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer selected");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
         FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/FixedDepositManagement/displayFixedDepositAccountDetail.xhtml");
+                    .redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
             }else{
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer not found. Please enter correct IC.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -82,6 +82,15 @@ public class ServiceCustomerManagedBean implements Serializable {
 
     public void init() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void goToServiceCustomerPage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/TellerManagement/ServiceCustomer.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to ServiceCustomer page fails");
+        }
     }
 
     

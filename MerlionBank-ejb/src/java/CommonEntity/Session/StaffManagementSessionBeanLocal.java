@@ -88,7 +88,7 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
 //forget password/unlock account- 1st step verify account details, 2nd update new password and status
     public Staff forgetPasswordVerifyDetail(String ic, String fullName, String email) throws UserNotExistException, UserNotActivatedException;
 
-    public boolean updateForgetPassword(Staff staff, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException;
+    public boolean updateForgetPassword(Long staffId, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException;
 
     //log in
     public Long checkLogin(String ic, String password, String staffRoleName) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException;
@@ -100,7 +100,8 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
     public Long lockAccount(Long staffId);
     
     public StaffRole getRoleByRoleName(String roleName);
+    
+    public void recordStaffAction(Long staffId, String actionDescription, Long customerId);
 
     public StaffRole viewRole(Long roleId);
-    
 }

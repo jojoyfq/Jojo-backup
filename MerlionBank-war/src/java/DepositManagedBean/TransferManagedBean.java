@@ -40,6 +40,8 @@ public class TransferManagedBean implements Serializable {
     private String recipientName;
     private String amountString;
     private BigDecimal amountBD;
+    private String transferLimitString;
+    private BigDecimal transferLimitBD;
     private Long recipientAccountNumLong;
     private String recipientAccountNumString;
     private Long giverAccountNumLong;
@@ -50,6 +52,9 @@ public class TransferManagedBean implements Serializable {
     private List payeeList;
     private Long payeeTransferAccount;
     private Long payeeDelete;
+    private BigDecimal transferLimitDatabase;
+
+   
 
     
 
@@ -76,6 +81,17 @@ public class TransferManagedBean implements Serializable {
             System.out.print("Dashboard Transfer Encounter Error!");
         }
     }
+    
+    public void dashboardChangeTransferLimit(ActionEvent event) {
+        try {
+            this.getTransferLimit();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/changeTransferLimit.xhtml");
+        } catch (Exception e) {
+            System.out.print("Dashboard Change Transfer Limit Encounter Error!");
+        }
+    }
+
 
     public void goToOneTimeTransferPage(ActionEvent event) {
         try {
@@ -100,6 +116,26 @@ public class TransferManagedBean implements Serializable {
             System.out.print("Redirect to transfer By Payee page fails");
         }
     }
+
+
+    public void changeTransferLimit(ActionEvent event) {
+        try {
+            this.init();
+            if (transferLimitString != null) {
+                transferLimitBD = new BigDecimal(transferLimitString);
+                tfsb.changeTransferLimit(customerID, transferLimitBD);
+                
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/TransferManagement/changeTransferLimitSuccess.xhtml");
+            } else {
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Enter your transfer limit amount!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
+        } catch (Exception e) {
+            System.out.print("Change Transfer Limit encounter Error!");
+        }
+    }
+
     
     public void goToDeletePayeePage(ActionEvent event) {
         try{
@@ -115,7 +151,7 @@ public class TransferManagedBean implements Serializable {
         try {
             if (payeeTransferAccount != null) {
                 amountBD = new BigDecimal(amountString);
-                tfsb.intraOneTimeTransferCheck(giverAccountNumLong, payeeTransferAccount, amountBD);
+                tfsb.intraOneTimeTransferCheck(customerID,giverAccountNumLong, payeeTransferAccount, amountBD);
 
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/TransferManagement/transferSuccess.xhtml");
@@ -136,7 +172,7 @@ public class TransferManagedBean implements Serializable {
             recipientAccountNumLong = Long.parseLong(recipientAccountNumString);
             System.out.print(amountBD);
             System.out.print(recipientAccountNumLong);
-            tfsb.intraOneTimeTransferCheck(giverAccountNumLong, recipientAccountNumLong, amountBD);
+            tfsb.intraOneTimeTransferCheck(customerID, giverAccountNumLong, recipientAccountNumLong, amountBD);
 
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/TransferManagement/transferSuccess.xhtml");
@@ -163,6 +199,7 @@ public class TransferManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
+
     
     public void deletePayee(ActionEvent event) throws IOException {
         if(payeeDelete != null){
@@ -172,6 +209,14 @@ public class TransferManagedBean implements Serializable {
         }else{
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Payee to Delete!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+    }
+    
+    public void getTransferLimit(){
+        try{
+            transferLimitDatabase = tfsb.getTransferLimit(customerID);
+        }catch(Exception e){
+            System.out.print("Get Intra-Transfer Limit encounter Error!");
         }
     }
 
@@ -334,12 +379,36 @@ public class TransferManagedBean implements Serializable {
     public void setSavingAccountList(List savingAccountList) {
         this.savingAccountList = savingAccountList;
     }
-    
+
+    public String getTransferLimitString() {
+        return transferLimitString;
+    }
+
+    public void setTransferLimitString(String transferLimitString) {
+        this.transferLimitString = transferLimitString;
+    }
+
+    public BigDecimal getTransferLimitBD() {
+        return transferLimitBD;
+    }
+
+    public void setTransferLimitBD(BigDecimal transferLimitBD) {
+        this.transferLimitBD = transferLimitBD;
+    }
+
     public Long getPayeeDelete() {
         return payeeDelete;
     }
 
     public void setPayeeDelete(Long payeeDelete) {
         this.payeeDelete = payeeDelete;
+    }
+    
+     public BigDecimal getTransferLimitDatabase() {
+        return transferLimitDatabase;
+    }
+
+    public void setTransferLimitDatabase(BigDecimal transferLimitDatabase) {
+        this.transferLimitDatabase = transferLimitDatabase;
     }
 }
