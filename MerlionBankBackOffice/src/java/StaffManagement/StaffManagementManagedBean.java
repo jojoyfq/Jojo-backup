@@ -413,11 +413,12 @@ public class StaffManagementManagedBean implements Serializable {
     }
 
     public void adminDeleteStaff(Long bankStaffID) throws UserNotExistException {
-        try {
+    //    try {
             boolean check = smsbl.deleteStaff(bankStaffID, staffId);
+            staffs = smsbl.displayListOfStaff();
             if (check = true) {
                 System.out.println("**********Message from managed bean: Staff is successfully deleted");
-                staff = smsbl.viewStaff(bankStaffID);
+               // staff = smsbl.viewStaff(bankStaffID);
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Staff Deleted Successfully!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
@@ -425,10 +426,10 @@ public class StaffManagementManagedBean implements Serializable {
                 System.out.println("**********Message from managed bean: Staff is unsuccessfully deleted");
 
             }
-        } catch (UserNotExistException ex) {
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        }
+//        } catch (UserNotExistException ex) {
+//            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+//        }
     }
 
     public void onRowEdit(RowEditEvent event) {
@@ -439,7 +440,7 @@ public class StaffManagementManagedBean implements Serializable {
         bankStaffId = ((Staff) event.getObject()).getId();
         staffIc = ((Staff) event.getObject()).getStaffIc();
         staffName = ((Staff) event.getObject()).getStaffName();
-        staffEmail = ((Staff) event.getObject()).getStaffName();
+        staffEmail = ((Staff) event.getObject()).getStaffEmail();
         mobileNumber = ((Staff) event.getObject()).getMobileNumber();
 
         System.out.println("************Message from managed bean staffid is ; " + bankStaffId);
@@ -467,7 +468,8 @@ public class StaffManagementManagedBean implements Serializable {
     }
 
     public void editRole(Staff staff) throws IOException {
-        roles = staff.getStaffRoles();
+        
+        roles = smsbl.viewOneStaffRole(staff);
         editedStaffId = staff.getId();
 
         System.out.println("***** Selected Staff ID is " + editedStaffId);
@@ -485,10 +487,11 @@ public class StaffManagementManagedBean implements Serializable {
         System.out.println("***** Selected Staff ID is " + roleName);
 
        roles = smsbl.staffDeleteRole(editedStaffId, roleName);
+       System.out.println("***********************After delete, no of roles: "+roles.size());
         //roles = staff.getStaffRoles();
        // System.out.println("**************Message after pressing delete role: " + msg);
         
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Deleted Unsuccessfully");
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Deleted successfully");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
       }catch( UnexpectedErrorException ex) {
       FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
