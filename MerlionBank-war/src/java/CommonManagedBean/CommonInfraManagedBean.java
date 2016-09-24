@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 package CommonManagedBean;
-
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import CommonEntity.Session.StaffVerifyCustomerAccountSessionBeanLocal;
 import DepositEntity.SavingAccountType;
 import Exception.EmailNotSendException;
 import Exception.UserExistException;
@@ -23,6 +23,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -35,7 +36,10 @@ public class CommonInfraManagedBean implements Serializable {
 
     @EJB
     AccountManagementSessionBeanLocal amsbl;
-
+    
+ @EJB
+    StaffVerifyCustomerAccountSessionBeanLocal svcasbl;
+            
     private Customer customer;
     private String ic;
     private String customerName;
@@ -118,7 +122,8 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
                 //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
-                 amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);//throws UserExistException;
+         svcasbl.viewPendingVerificationList().add( amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType));//throws UserExistException;
+
 
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
@@ -151,7 +156,9 @@ public class CommonInfraManagedBean implements Serializable {
         try {
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null) {
 
+                
                 customer = amsbl.createFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
+               svcasbl.viewPendingVerificationList().add(customer);
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
               //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
                 //  amsbl.createFixedAccount(customer, amount, duration);

@@ -78,10 +78,12 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     private EntityManager em;
     @EJB
     FixedDepositAccountSessionBeanLocal fdasbl;
+    @EJB
+    StaffManagementSessionBeanLocal smsbl;
 //    private GoogleMail gm;
 
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName) throws UserExistException, EmailNotSendException {
+    public Customer createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName) throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -120,7 +122,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("In Creating saving account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
         em.persist(onlineAccount);
-        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified");
+        BigDecimal intraTransferLimit = new BigDecimal(1000);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified",intraTransferLimit);
         em.persist(customer);
         System.out.println("Create Customer successfully");
         
@@ -159,7 +162,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.persist(customer);
         em.flush();
 
-        
+        return customer;
 
     }
 
@@ -718,10 +721,13 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("In Creating  account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "inactive", salt, password);
         em.persist(onlineAccount);
-        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified");
+        BigDecimal intraTransferLimit = new BigDecimal(1000);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "unverified",intraTransferLimit);
         em.persist(customer);
         em.flush();
         System.out.println("Create Customer successfully");
+        
+        
         return customer;
     }
 
@@ -775,6 +781,14 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
         }
+        
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Successful Login", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
         return customer.getId();
     }
     
@@ -820,7 +834,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("In Creating  account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "active", salt, enterPassword);
         em.persist(onlineAccount);
-        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active");
+        BigDecimal intraTransferLimit = new BigDecimal(1000);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active",intraTransferLimit);
         em.persist(customer);
         em.flush();
         System.out.println("Create Customer successfully");
@@ -829,7 +844,7 @@ return customer;
     
     //Teller Create saving Account 
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException {
+    public void tellerCreateSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");
@@ -869,7 +884,8 @@ return customer;
         System.out.println("In Creating saving account");
         OnlineAccount onlineAccount = new OnlineAccount(ic, "active", salt, password);
         em.persist(onlineAccount);
-        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active");
+        BigDecimal intraTransferLimit = new BigDecimal(1000);
+        Customer customer = new Customer(ic, name, gender, dateOfBirth, address, email, phoneNumber, occupation, familyInfo, null, "0.0000", onlineAccount, "active",intraTransferLimit);
         em.persist(customer);
         System.out.println("Create Customer successfully");
 

@@ -31,39 +31,42 @@
 
 
 
-                                         <p:dataTable  var="permission" value="#{roleManagementManagedBean.permissions}">
+                                    <p:dataTable  var="permission" value="#{roleManagementManagedBean.permissionDataTableRows}" rowIndexVar="index">
 
-                                                <p:column headerText="Permission ID" style="width: 80px;">
+                                        <p:column headerText="Permission ID" style="width: 80px;">
 
-                                                    <h:outputText value="#{permission.id}" />
-                                                </p:column>
+                                            <h:outputText value="#{permission.permission.id}" />
+                                        </p:column>
 
-                                                <p:column headerText="Associated Role Name" style="width: 80px;">
+                                        <p:column headerText="Associated Role Name" style="width: 80px;">
 
-                                                    <h:outputText value="#{permission.moduleName}" />
-                                                </p:column>
+                                            <h:outputText value="#{permission.permission.moduleName}" />
+                                        </p:column>
 
-                                                <p:column headerText="Validility" style="width: 80px;">
+                                        <p:column headerText="Validility" style="width: 80px;">
 
-                                                    <h:outputText value="#{permission.validity}" />
-                                                </p:column>
-                                                <p:column headerText="Edit Permission" style="width: 80px;">
-                                                   
-                                                    <p:selectBooleanCheckbox value="#{roleManagementManagedBean.newValidility}" />
-                                                </p:column>
 
-                                                <p:column headerText="Submit" style="width: 60px;">
-                                                    <center>
-                                                        <p:commandButton icon="ui-icon-mail-open"  actionListener="#{roleManagementManagedBean.editPermissionNext}" update=":form:panel" ajax="true" type="submit" >
-                                                           <f:attribute name="selectedPermission" value="#{permission}"  />
-                                                        </p:commandButton>
-                                                    </center>
-                                                </p:column>
-                                            </p:dataTable>
+                                            <h:outputText value="#{permission.permission.validity}" />
+                                        </p:column>
+                                        <p:column headerText="Edit Permission" style="width: 80px;">
+                                            <p:selectBooleanButton id="result" value="#{permission.validity}" onLabel="Yes" offLabel="No" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px">
+                                                
+                                            </p:selectBooleanButton>
+                                        </p:column>
+  
+
+                                        <p:column headerText="Submit" style="width: 60px;">
+                                            <center>
+                                                <p:commandButton icon="ui-icon-mail-open"  actionListener="#{roleManagementManagedBean.editPermissionNext}" update=":form:panel" ajax="true" type="submit" >
+                                                    <f:attribute name="selectedPermission" value="#{permission}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+                                    </p:dataTable>
 
                                 </h:panelGrid>
 
-                                
+
 
                             </p:panel>
                         </h:form>

@@ -136,6 +136,7 @@ public class MessageManagedBean implements Serializable {
         customerId = logInManagedBean.getCustomerId();
         customerIc = logInManagedBean.getIc();
        customerName = logInManagedBean.getCustomerName();
+     //  customerUnreadMsg = this.customerUnreadMsg;
 
         System.out.println("Logged in customer IC is : " + customerId);
         //       messages = imsbl.viewAllMessage(customerId);
