@@ -39,9 +39,9 @@ public class StaffVerifyCustomerAccountSessionBean implements StaffVerifyCustome
 //system retrieve list of pending verification customers
 @Override
 public List<Customer> viewPendingVerificationList()/*throws ListEmptyException*/{
-   Query q = em.createQuery("SELECT a FROM Customer a WHERE a.status = :status");
-        q.setParameter("status", "unverified");
-        List<Customer> temp = new ArrayList(q.getResultList()); 
+       Query q = em.createQuery("SELECT a FROM Customer a WHERE a.status = :status");
+            q.setParameter("status", "unverified");
+            List<Customer> temp = new ArrayList(q.getResultList()); 
       //  if (temp.size()==0)
           //  throw new ListEmptyException("There are pending verifications!");
         return temp;
@@ -179,7 +179,7 @@ public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID,
                 + "<h1>Welcome to Merlion Bank.</h1>"
                 + "<h2 align=\"center\">Saving Account Number: " + accountNumber
                 + "<br />Temporary Password: " + password + "<br />Please activate your account through activation link on the Login page " + "</h2><br />" 
-                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum"+minAmount+" to your account in order to activate your saving account. Thank you.</p>"
+                + "<p style=\"color: #ff0000;\">Please noted that that you are required to transfer minimum SGD$ "+minAmount+" to your account in order to activate your saving account. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);

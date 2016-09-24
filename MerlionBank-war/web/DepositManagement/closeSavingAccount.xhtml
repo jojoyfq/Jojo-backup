@@ -25,6 +25,7 @@
                         <h:form>
                             <p:panel id="closeAccount" header="You have chosen to close the following saving account">
 
+                                <div class="Container100 ui-fluid">
                                 <h:panelGrid columns="3" cellpadding="5">
                                     <p:dataTable var="SavingAccountForClose" value="#{savingAccountManagedBean.savingAccountForCloseAccount}">
                                         <p:column headerText="Account Number">
@@ -41,10 +42,23 @@
 
                                     </p:dataTable>
                                 </h:panelGrid>
-                                <p:commandButton value="Back" id="backToSelectSavingAccount"
-                                                 action="closeSavingAccount_selectAccounts.xhtml"/> 
-                                <p:commandButton value="Confirm Close Account" id="checkPendingTransaction"
-                                                 actionListener="#{savingAccountManagedBean.checkPendingTransaction}"/>       
+                                </div>
+                                
+                                <div class="Container100 ui-fluid">
+                                    <div class="Container20 Responsive50"></div>
+                                    <div class="Container30 Responsive50">
+                                        <p:commandButton value="Back" id="backToSelectSavingAccount"
+                                                         action="closeSavingAccount_selectAccounts.xhtml"/> 
+                                    </div>
+
+                                    <div class="Container30 Responsive50">
+                                        <p:commandButton value="Confirm Close Account" id="checkPendingTransaction"
+                                                         actionListener="#{savingAccountManagedBean.checkPendingTransaction}"/>  
+                                    </div>
+                                    <div class="Container20 Responsive50"></div>
+                                </div>
+
+                                <div class="EmptyBox20"></div>     
                             </p:panel>
                         </h:form>
                     </div>

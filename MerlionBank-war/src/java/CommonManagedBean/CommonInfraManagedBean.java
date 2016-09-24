@@ -134,13 +134,11 @@ public class CommonInfraManagedBean implements Serializable {
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
 
-
                 FacesContext facesContext = FacesContext.getCurrentInstance();
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Account created Successfully"));
                 Flash flash = facesContext.getExternalContext().getFlash();
                 flash.setKeepMessages(true);
                 flash.setRedirect(true);
-
 
 //                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 //

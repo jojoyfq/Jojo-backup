@@ -31,8 +31,10 @@
                                 <div class="Container10"></div>
                                 <div class="Container80">
                                     <h:panelGrid columns="2" id="chanageTransferLimit" cellpadding="5"> 
+                                        <h:outputLabel for="transferLimitOld" value="Your Current Transfer Limit: $" />
+                                        <h:outputLabel id="transferLimitOld" value="#{transferManagedBean.transferLimitDatabase}" />
                                         
-                                        <h:outputLabel for="transferAmount" value="Enter Your Transfer Limit: $" />
+                                        <h:outputLabel for="transferLimitNew" value="Enter Your New Transfer Limit: $" />
                                         <p:inputText id="transferAmount" value="#{transferManagedBean.transferLimitString}" required="true" requiredMessage="Please Enter Your Transfer Limit!" />
 
                                     </h:panelGrid>
