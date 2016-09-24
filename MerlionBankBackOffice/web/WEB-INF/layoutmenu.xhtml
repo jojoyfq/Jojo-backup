@@ -13,7 +13,6 @@
 
                 <p:menuitem id="pa_dashboards" value="Home" outcome="/StaffDashboard" />
 
-
                 <p:submenu id="staff_management" label="Staff Management" rendered="#{rolePermissionManagedBean.permissionList.get(1)}">
                     <p:menuitem id="create_staff" value="Create Staff" outcome="/SuperAdminManagement/createStaff"/>
                     <p:menuitem id="create_staff_role" value="Create Staff Role" outcome="/SuperAdminManagement/createStaffRole"/>
@@ -22,27 +21,32 @@
                 </p:submenu>
 
                 <p:submenu id="customer_management" label="Customer Management">
-
-                </p:submenu>
-                
-                <p:submenu id="deposit_management" label="Deposit Management">
-                    <p:submenu id="saving_account" label="Saving Account" icon="icon-plus">
-                        <p:menuitem id="create_saving_account" value="Create Saving Account" outcome="/DepositManagement/createSavingAccountEC"/>
-                        <p:menuitem id="cash_deposit" value="Cash Deposit" outcome="/DepositManagement/cashDeposit"/> 
-                        <p:menuitem id="cash_withdraw" value="Cash Withdraw" outcome="/DepositManagement/cashWithdraw"/>
-                        <p:menuitem id="change_ir" value="Change Interest Rate" outcome="/DepositManagement/changeInterestRate_selectType"/>
-                        <p:menuitem id="view_detail" value="View Saving Account" outcome="/DepositManagement/displaySavingAccountDetail"/> 
-                        <p:menuitem id="view_transactionRecord" value="View Transaction History" outcome="/DepositManagement/viewTransactionRecords_selectAccounts"/>
-                        <p:menuitem id="close_saving_account" value="Close Saving Account" outcome="/DepositManagement/closeSavingAccount_selectAccounts"/> 
+                    <p:submenu id="saving_accountNC" label="Create Saving Account For New Customer" icon="icon-plus">
+                        <p:menuitem id="create_saving_accountNC" value="Create Saving Account For New Customer" outcome="/CustomerManagement/createSavingAccountNC"/>
                     </p:submenu>
                 </p:submenu>
-                
+
+                <p:submenu id="deposit_management" label="Deposit Management">
+                    <p:submenu id="saving_account" label="Saving Account For Existing Customer" icon="icon-plus">
+                        <p:menuitem id="create_saving_accountEC" value="Create Saving Account For Existing Customer" actionListener="#{savingAccountManagedBean.dashboardToCreateSavingAccountEC}"/>
+                        <p:menuitem id="cash_deposit" value="Cash Deposit" actionListener="#{savingAccountManagedBean.dashboardToCashDeposit}"/> 
+                        <p:menuitem id="cash_withdraw" value="Cash Withdraw" actionListener="#{savingAccountManagedBean.dashboardToCashWithdraw}"/>
+                        <p:menuitem id="view_detail" value="View Saving Account" actionListener="#{savingAccountManagedBean.dashboardToViewAccounts}"/> 
+                        <p:menuitem id="view_transactionRecord" value="View Transaction History" actionListener="#{savingAccountManagedBean.dashboardToViewTransactions}"/>
+                        <p:menuitem id="close_saving_account" value="Close Saving Account" actionListener="#{savingAccountManagedBean.dashboardToCloseSavingAccount}"/> 
+                    </p:submenu>
+
+                    <p:submenu id="Non-TellerStaff" label="Saving Account For Non-Teller Staff" icon="icon-plus">
+                        <p:menuitem id="saving_account_change_ir" value="Change Interest Rate" actionListener="#{savingAccountManagedBean.dashboardToChangeInterestRate}" icon="icon-plus" />
+                    </p:submenu>
+                </p:submenu>
+
                 <p:submenu id="card_management" label="Card Management">
-                
+
                 </p:submenu>
 
                 <p:menuitem id="loan_management" value="Loan Management" />
-                
+
                 <p:submenu id="bill_and_transfer" label="Bill and Transfer">
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus">
                         <p:menuitem id="intraTransfer" value="Transfer to other Merlion Bank Account" outcome="/TransferManagement/intraTransfer"/>
@@ -51,10 +55,10 @@
 
                 <p:submenu id="wealth_management" label="Wealth Management">
                 </p:submenu>
-                
+
                 <p:submenu id="portfolio_management" label="Portfolio Management">
                 </p:submenu>
-                
+
                 <p:submenu id="customer_analytics" label="Customer Analytics">
                 </p:submenu>
 

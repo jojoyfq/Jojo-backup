@@ -52,6 +52,9 @@ public class TransferManagedBean implements Serializable {
     private List payeeList;
     private Long payeeTransferAccount;
     private Long payeeDelete;
+    private BigDecimal transferLimitDatabase;
+
+   
 
     
 
@@ -81,6 +84,7 @@ public class TransferManagedBean implements Serializable {
     
     public void dashboardChangeTransferLimit(ActionEvent event) {
         try {
+            this.getTransferLimit();
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/TransferManagement/changeTransferLimit.xhtml");
         } catch (Exception e) {
@@ -205,6 +209,14 @@ public class TransferManagedBean implements Serializable {
         }else{
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Payee to Delete!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+    }
+    
+    public void getTransferLimit(){
+        try{
+            transferLimitDatabase = tfsb.getTransferLimit(customerID);
+        }catch(Exception e){
+            System.out.print("Get Intra-Transfer Limit encounter Error!");
         }
     }
 
@@ -390,5 +402,13 @@ public class TransferManagedBean implements Serializable {
 
     public void setPayeeDelete(Long payeeDelete) {
         this.payeeDelete = payeeDelete;
+    }
+    
+     public BigDecimal getTransferLimitDatabase() {
+        return transferLimitDatabase;
+    }
+
+    public void setTransferLimitDatabase(BigDecimal transferLimitDatabase) {
+        this.transferLimitDatabase = transferLimitDatabase;
     }
 }
