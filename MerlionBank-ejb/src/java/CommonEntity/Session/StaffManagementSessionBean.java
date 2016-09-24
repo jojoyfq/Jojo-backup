@@ -1076,6 +1076,13 @@ public Staff viewStaff(Long staffID)throws UserNotExistException{
         StaffRole role = roleList.get(0);
         return role;
     }
+    
+     @Override
+   public StaffRole viewRole(Long roleId)
+     {
+         StaffRole staffRole = em.find(StaffRole.class, roleId);
+         return staffRole;
+     }
 
 
 
