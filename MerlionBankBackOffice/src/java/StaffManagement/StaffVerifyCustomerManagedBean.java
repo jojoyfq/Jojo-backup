@@ -108,7 +108,6 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
             } else if (!customer.getFixedDepositeAccounts().isEmpty()) {
-                System.out.println("*******go in to fixed account verification");
                  if(result.equals("true")){
                     result = "approve";
                 }else{

@@ -466,7 +466,6 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 //            }
 //        }
 
-
         for (int i=0;i<currentPermissions.size();i++){
             if (currentPermissions.get(i).getModuleName().equals(truePermission.getModuleName())){
                 //System.out.println("Inside setFalsePermission");
