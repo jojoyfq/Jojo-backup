@@ -127,7 +127,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
             startDateString = df.format(startDate);
             accountNumber = fda.createFixedDepositCounter(customerId, amountBD, startDate, endDate, duration);
             this.updateList(customerId);
-//            String description = "Staff " +staff.getStaffIc()+" create fixed deposit "+accountNumber+" for customer "+customerId;
+            //String description = "Staff " +staff.getStaffIc()+" create fixed deposit "+accountNumber+" for customer "+customerId;
            // fda.logStaffAction(description, customerId, staff);
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDepositSuccess.xhtml");

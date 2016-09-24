@@ -48,6 +48,9 @@ public class RoleManagementManagedBean implements Serializable {
     private Permission selectedPermission;
     private Long roleId;
 
+    private String newValidilityStr;
+
+
     private List<PermissionDataTableRow> permissionDataTableRows;
     
     
@@ -186,11 +189,13 @@ public class RoleManagementManagedBean implements Serializable {
         // permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
 
         permissions = role.getPermissions();
+
         
         setPermissionDataTableRows(new ArrayList<>());
         
         for(Permission p:permissions)
             getPermissionDataTableRows().add(new PermissionDataTableRow(p));
+
         roleId = role.getId();
         System.out.println("**********size of permission is " + permissions.size());
 
@@ -204,6 +209,12 @@ public class RoleManagementManagedBean implements Serializable {
 
     public void editPermissionNext(ActionEvent event) {
         // permission = (Permission) event.getComponent().getAttributes().get("selectedPermission");
+
+//        permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
+//        moduleName = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getModuleName();
+//        oldValidility = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).isValidity();
+//        newValidilityStr = Boolean.toString(newValidility);
+
         
         PermissionDataTableRow permissionDataTableRow = ((PermissionDataTableRow) event.getComponent().getAttributes().get("selectedPermission"));
         
@@ -212,15 +223,27 @@ public class RoleManagementManagedBean implements Serializable {
         oldValidility = permissionDataTableRow.getPermission().isValidity();
         newValidility = permissionDataTableRow.getValidity();
 
+
 //        permissionId = ((Permission) event.getObject()).getId();
 //        moduleName = ((Permission) event.getObject()).getModuleName();
 //       oldValidility= ((Permission) event.getObject()).isValidity();
         System.out.println("******Old validility: " + oldValidility);
+
+        System.out.println("******New validility: " + newValidilityStr);
+
         System.out.println("******New validility: " + newValidility);
+
         System.out.println("***************Role Id is " + roleId);
         System.out.println("***************Permission Id is " + permissionId);
 
         if (oldValidility != newValidility) {
+            if (oldValidility = true) {
+                boolean msg = smsbl.deletePermission(adminId, roleId, permissionId);
+                System.out.println("***********message from delete permission" + msg);
+            } else {
+                smsbl.addPermission(adminId, roleId, permissionId);
+            }
+
             if (newValidility == false) {
                 boolean msg = smsbl.deletePermission(adminId, roleId, permissionId);
                 System.out.println("***********message from delete permission" + msg);
@@ -236,6 +259,7 @@ public class RoleManagementManagedBean implements Serializable {
             for(Permission p:permissions)
                 getPermissionDataTableRows().add(new PermissionDataTableRow(p));
             
+
         } else {
             System.out.println("No permission has been changed!");
         }
@@ -248,5 +272,6 @@ public class RoleManagementManagedBean implements Serializable {
     public void setPermissionDataTableRows(List<PermissionDataTableRow> permissionDataTableRows) {
         this.permissionDataTableRows = permissionDataTableRows;
     }
+
 
 }
