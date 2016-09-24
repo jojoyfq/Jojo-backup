@@ -34,6 +34,7 @@ import javax.faces.event.ActionEvent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.Flash;
+import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -114,7 +115,7 @@ public class LogInManagedBean implements Serializable {
 
     }
     public void goToLogInPage(ActionEvent event )throws IOException{
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
 
     }
     
@@ -200,6 +201,7 @@ public class LogInManagedBean implements Serializable {
                     selectedCustomer = amsbl.diaplayCustomerId(customerId);
                     logInAttempts = 0;
                     System.out.println("Log In Successful!");
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("name", selectedCustomer.getName());
                     
@@ -315,11 +317,12 @@ public class LogInManagedBean implements Serializable {
 
      public void logout() throws IOException {
         System.out.println("Inside logout");
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+//        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();        
         System.out.println("testtest");
         String serverName = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
         String serverPort = "8080";
-        FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBank-war/LogInHome.xhtml");
     }
 
 
