@@ -253,13 +253,11 @@ public class StaffManagementManagedBean implements Serializable {
 //        }
 //        return oneStaffRoleNames;
 //    }
-    public void adminCreateStaffRole(ActionEvent event) throws RoleAlreadyExistedException, IOException {
+    public void adminCreateStaffRole(ActionEvent event) throws RoleAlreadyExistedException {
         try {
             if (roleName != null && staffId != null) {
                 staffRole = smsbl.createRole(staffId, roleName);
                 allRoles.add(staffRole.getRoleName());
-                
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/adminGrantRole.xhtml");
 
             } else {
                 System.out.println("Please do not leave blanks!");

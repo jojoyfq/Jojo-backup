@@ -44,7 +44,7 @@ public class ResetPasswordManagedBean implements Serializable {
     /**
      * Creates a new instance of ResetPasswordManagedBean
      */
-    private String customerIc ;
+    private String customerIc;
     private String customerName;
     private Date dateOfBirth;
     private String customerEmail;
@@ -62,7 +62,6 @@ public class ResetPasswordManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         customer = new Customer();
-        customerIc  = logInManagedBean.getIc();
     }
 
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException, TwilioRestException {
@@ -108,8 +107,6 @@ public class ResetPasswordManagedBean implements Serializable {
 
     public void resetForgetPassword(ActionEvent event) throws PasswordTooSimpleException,IOException {
         try {
-           // customerIc = logInManagedBean.getIc();
-            System.out.println("************customer Ic is "+customerIc);
             String errorMsg = amsbl.updateForgetPassword(customerIc, password, confirmPassword);
             System.out.println("after entring the confirmed password: " + errorMsg);
             amsbl.updateAccountStatus(customerIc);
@@ -119,7 +116,7 @@ public class ResetPasswordManagedBean implements Serializable {
             } else if (errorMsg.equals(customerIc)) {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully changed your password!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
 
             }
         } catch (PasswordTooSimpleException ex) {

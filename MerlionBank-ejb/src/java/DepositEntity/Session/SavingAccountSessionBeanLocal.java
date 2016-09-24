@@ -5,7 +5,6 @@
  */
 package DepositEntity.Session;
 
-import CommonEntity.Staff;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import DepositEntity.TransactionRecord;
@@ -38,5 +37,4 @@ public interface SavingAccountSessionBeanLocal {
     public Double getInterestRate(String accountType, String interestName);
     public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3);
     public void logAction(String description, Long customerId);
-    public void logStaffAction(String description, Long customerId, Staff staff);
 }

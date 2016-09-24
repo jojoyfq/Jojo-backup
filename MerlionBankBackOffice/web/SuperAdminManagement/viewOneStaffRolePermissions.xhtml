@@ -13,7 +13,7 @@
 
         <!-- Left Column -->
         <div class="Container5 NoPadding Responsive100">
- 
+
         </div>
 
         <!-- Center Column -->
@@ -31,29 +31,27 @@
 
 
 
-                                    <p:dataTable  var="permission" value="#{roleManagementManagedBean.permissionDataTableRows}" rowIndexVar="index">
+                                    <p:dataTable  var="permission" value="#{roleManagementManagedBean.permissions}">
 
                                         <p:column headerText="Permission ID" style="width: 80px;">
 
-                                            <h:outputText value="#{permission.permission.id}" />
+                                            <h:outputText value="#{permission.id}" />
                                         </p:column>
 
                                         <p:column headerText="Associated Role Name" style="width: 80px;">
 
-                                            <h:outputText value="#{permission.permission.moduleName}" />
+                                            <h:outputText value="#{permission.moduleName}" />
                                         </p:column>
 
                                         <p:column headerText="Validility" style="width: 80px;">
 
-
-                                            <h:outputText value="#{permission.permission.validity}" />
+                                            <h:outputText value="#{permission.validity}" />
                                         </p:column>
                                         <p:column headerText="Edit Permission" style="width: 80px;">
-                                            <p:selectBooleanButton id="result" value="#{permission.validity}" onLabel="Yes" offLabel="No" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px">
+                                            <p:selectBooleanButton id="result" value="#{roleManagementManagedBean.newValidility}" onLabel="Yes" offLabel="No" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px">
                                                 
                                             </p:selectBooleanButton>
                                         </p:column>
-  
 
                                         <p:column headerText="Submit" style="width: 60px;">
                                             <center>

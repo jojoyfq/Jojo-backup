@@ -17,7 +17,7 @@ import javax.persistence.ManyToOne;
 
 /**
  *
- * @author bella
+ * @author ruijia
  */
 /*@Entity
 public class CounterServiceRecord implements Serializable {

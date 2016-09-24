@@ -7,8 +7,6 @@ package DepositEntity.Session;
 
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
-import CommonEntity.Staff;
-import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import DepositEntity.TransactionRecord;
@@ -360,22 +358,6 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             customer.getCustomerActions().add(action);
         }
         em.persist(customer);
-        em.flush();
-    }
-    
-    @Override
-    public void logStaffAction(String description, Long customerId, Staff staff) {
-        List<StaffAction> actions = new ArrayList<>();
-        StaffAction action = new StaffAction(Calendar.getInstance().getTime(), description, customerId, staff);
-        em.persist(action);
-        System.out.print(action.getDescription());
-        if (staff.getStaffActions() == null) {
-            actions.add(action);
-            staff.setStaffActions(actions);
-            em.persist(actions);
-        } else {
-            staff.getStaffActions().add(action);
-        }
         em.flush();
     }
     

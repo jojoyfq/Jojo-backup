@@ -55,7 +55,7 @@ public class FixedDepositManagedBean implements Serializable {
     private String duration;
     private Date endDate;
     private Double interestRate;
-    private Long customerId;
+    private Long customerId = 206L;
     private Boolean response;
 
     private Long accountNumber;
@@ -104,47 +104,12 @@ public class FixedDepositManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         savingAccountManagedBean.init();
-        customerId = logInManagedBean.getCustomerId();
-//        fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
-//        fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
-//        withdrawable = fda.getWithdrawable(customerId);
-//        renewable = fda.getRenewable(customerId);
-   }
-    
-    public void dashboardTransferToFixed(ActionEvent event) throws IOException{
-        customerId = logInManagedBean.getCustomerId();
+        fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
         fixedDepositNoMoney = fda.getNoMoneyFixedDeposit(customerId);
-        FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/FixedDepositManagement/transferToFixedSeparate.xhtml");
-    }
-    
-    public void dashboardRenewFixed(ActionEvent event) throws IOException{
-       customerId = logInManagedBean.getCustomerId();
-        renewable = fda.getRenewable(customerId);
-        FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/FixedDepositManagement/renewFixedDeposit.xhtml");
-    }
-    
-    public void dashboardWithdraw(ActionEvent event) throws IOException{
-        customerId = logInManagedBean.getCustomerId();
         withdrawable = fda.getWithdrawable(customerId);
-        FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/FixedDepositManagement/withdrawFixedDeposit.xhtml");
+        renewable = fda.getRenewable(customerId);
     }
-    
-    public void dashboardViewFixed(ActionEvent event) throws IOException{
-       customerId = logInManagedBean.getCustomerId();
-       fixedDepositAccounts = fda.getFixedDepositAccounts(customerId); 
-        FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/FixedDepositManagement/displayFixedDepositDetails.xhtml");
-    }
-    public void dashboardCreateFixed(ActionEvent event) throws IOException{
-        customerId = logInManagedBean.getCustomerId();
-        FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/FixedDepositManagement/createFixedDepositAccount.xhtml");
-        
-    }
-    
+
     public void createFixedDepositAccount(ActionEvent event) throws IOException {
         if (amountString != null) {
             amountBD = new BigDecimal(amountString);
@@ -254,7 +219,7 @@ public class FixedDepositManagedBean implements Serializable {
         if (savingAcctSelected != null && fixedDepositSelected != null && withdrawTime != null) {
             if (withdrawTime.equalsIgnoreCase("withdraw now")) {
                 amountBD = fda.getBalance(fixedDepositSelected);
-                interest = fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected).setScale(2, RoundingMode.HALF_UP);
+                interest = fda.earlyWithdraw(fixedDepositSelected, savingAcctSelected).setScale(4, RoundingMode.HALF_UP);
 
                 this.updateList(customerId);
                 ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
@@ -264,7 +229,7 @@ public class FixedDepositManagedBean implements Serializable {
                 fda.logAction(description, customerId);
             } else {
                 amountBD = fda.getBalance(fixedDepositSelected);
-                interest = fda.calculateInterestNormal(fixedDepositSelected).setScale(2, RoundingMode.HALF_UP);
+                interest = fda.calculateInterestNormal(fixedDepositSelected).setScale(4, RoundingMode.HALF_UP);
                 endDateString = fda.formatDate(fixedDepositSelected).get(1);
                 fda.normalWithdrawMark(fixedDepositSelected, savingAcctSelected);
                 this.updateList(customerId);

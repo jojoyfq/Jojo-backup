@@ -46,11 +46,7 @@ import javax.persistence.Query;
 /**
  *
  * @author a0113893
- *
- * 
- /
  */
-
 @Stateless
 public class StaffManagementSessionBean implements StaffManagementSessionBeanLocal {
 
@@ -469,7 +465,6 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 //                temp.add(currentPermissions.get(i));
 //            }
 //        }
-
 
         for (int i=0;i<currentPermissions.size();i++){
             if (currentPermissions.get(i).getModuleName().equals(truePermission.getModuleName())){
@@ -963,8 +958,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     @Override
-    public boolean updateForgetPassword(Long staffId, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException {
-Staff staff=em.find(Staff.class,staffId);
+    public boolean updateForgetPassword(Staff staff, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException {
+
         if (newPassword.equals(confirmPassword)) {
             if (!checkPasswordComplexity(newPassword)) {
                 throw new PasswordTooSimpleException("password is too simple");
@@ -974,7 +969,6 @@ Staff staff=em.find(Staff.class,staffId);
             em.flush();
             staff.setStatus("active");
             em.flush();
-            em.persist(staff);
             recordStaffAction(staff.getId(), "reset password", null);
             return true;
         } else if (!newPassword.equals(confirmPassword)) {
@@ -1077,13 +1071,6 @@ public Staff viewStaff(Long staffID)throws UserNotExistException{
         StaffRole role = roleList.get(0);
         return role;
     }
-    
-     @Override
-   public StaffRole viewRole(Long roleId)
-     {
-         StaffRole staffRole = em.find(StaffRole.class, roleId);
-         return staffRole;
-     }
 
 
 

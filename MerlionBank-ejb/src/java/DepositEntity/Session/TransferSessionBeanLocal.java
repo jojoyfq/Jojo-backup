@@ -35,7 +35,5 @@ public interface TransferSessionBeanLocal {
     public boolean checkTransferLimit(Long customerID, Long savingAccountNum, BigDecimal transferAmount);
 
     public void deletePayee(Long customerID, Long accountNum);
-    
-    public BigDecimal getTransferLimit(Long customerID);
 
 }

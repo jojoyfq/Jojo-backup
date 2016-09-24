@@ -26,9 +26,7 @@
         </p:column>
         <f:facet name="footer">
              <p:outputLabel value="Enter new interest:" />
-             <p:inputText id="newInterest" value ="#{fixedDepositNonTellerManagedBean.newInterestRate}" >
-             <p:keyFilter regEx="/[\d\-\.]/"/>
-             </p:inputText>
+             <p:inputText id="newInterest" value ="#{fixedDepositNonTellerManagedBean.newInterestRate}" />
                           <p:commandButton actionListener="#{fixedDepositNonTellerManagedBean.changeInterestRate(event)}" value="Submit"/>
         </f:facet>
     </p:dataTable>

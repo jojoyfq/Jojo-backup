@@ -37,9 +37,8 @@ and open the template in the editor.
                                 <div class="Container100 ui-fluid">
                                     <div class="Card">
                                         <h:form>
-                                            <p:growl life="2000"/>                                         
                                             <p:panel id="panel" header="Activate Account">
-                                             
+                                                <p:messages id="msgs" />
 
                                                 <h:panelGrid columns="3" id="createSavingAccount" cellpadding="5">                   
                                                     <h:outputLabel for="ic" value="IC:" />
@@ -98,15 +97,15 @@ and open the template in the editor.
 
 
                                             </p:panel>
-
+                                            
                                             <div class="EmptyBox20"></div>
                                             <div class="Container30"></div>
                                             <div class="Container40">
-                                                <p:commandButton  action="#{commonInfraManagedBean.setAllVariables}" value="Submit" rendered="true" />
+                                                <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" />
                                             </div>
                                             <div class="Container30"></div>
 
-
+                                            
 
 
                                         </h:form>                                        

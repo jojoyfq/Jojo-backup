@@ -71,7 +71,7 @@
                                     <p:inputText id = "familyInfo" value="#{logInManagedBean.customerFamilyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
                                     <p:message for="familyInfo" display="icon" />
 
-                                    <p:commandButton   icon="ui-icon-script" action="#{logInManagedBean.modifyProfile}" value="Submit" rendered="true" />
+                                    <p:commandButton update="panel"  icon="ui-icon-script" actionListener="#{logInManagedBean.modifyProfile}" value="Submit" />
                                 </h:panelGrid>
                             </p:panel>
 

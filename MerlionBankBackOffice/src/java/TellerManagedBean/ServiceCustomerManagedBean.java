@@ -60,9 +60,11 @@ public class ServiceCustomerManagedBean implements Serializable {
         this.customer = (Customer) scsb.selectCustomer(customerIc);
         System.out.print(customerIc);
         System.out.print("customer set!");
+       // redirect to homepage
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer selected");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
         FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/TellerManagement/serviceCustomerSuccess.xhtml");
-
+                    .redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
             }else{
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer not found. Please enter correct IC.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -81,7 +83,6 @@ public class ServiceCustomerManagedBean implements Serializable {
     public void init() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
     
     public void goToServiceCustomerPage(ActionEvent event) {
         try {
@@ -91,7 +92,6 @@ public class ServiceCustomerManagedBean implements Serializable {
             System.out.print("Redirect to ServiceCustomer page fails");
         }
     }
-
 
     
 }

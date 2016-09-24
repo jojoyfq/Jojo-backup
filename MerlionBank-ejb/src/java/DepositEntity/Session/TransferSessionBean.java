@@ -48,28 +48,23 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     @Override
     public void intraOneTimeTransferCheck(Long customerID,Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException {
 
-        BigDecimal giverAvailableBalance;
         BigDecimal giverBalance;
-        BigDecimal recipientAvailableBalance;
         BigDecimal recipientBalance;
-        BigDecimal updatedGiverAvailableBalance;
         BigDecimal updatedGiverBalance;
-        BigDecimal updatedRecipientAvailableBalance;
         BigDecimal updatedRecipientBalance;
 
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :giverBankAccountNum");
         q.setParameter("giverBankAccountNum", giverBankAccountNum);
         List<SavingAccount> giverSavingAccounts = q.getResultList();
         SavingAccount giverSavingAccount = giverSavingAccounts.get(0);
-        giverAvailableBalance = giverSavingAccount.getAvailableBalance();
-        giverBalance = giverSavingAccount.getBalance();
+        giverBalance = giverSavingAccount.getAvailableBalance();
 
         //check whether customer has exceed the transfer limit amount
         if(!this.checkTransferLimit(customerID, giverBankAccountNum, transferAmount)){
             throw new TransferException("Saving account " + giverBankAccountNum + " Has Exceed the daily Transfer Limit");
         }
         //if balance<transferAmount, the transfer is not allowed, return false
-        else if (giverAvailableBalance.compareTo(transferAmount) == -1) {
+        else if (giverBalance.compareTo(transferAmount) == -1) {
             throw new TransferException("Saving account " + giverBankAccountNum + " does not have enough fund!");
         } else {
 
@@ -83,21 +78,13 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             } else {
 
                 SavingAccount recipientSavingAccount = recipientSavingAccounts.get(0);
-                recipientAvailableBalance = recipientSavingAccount.getAvailableBalance();
-                recipientBalance = recipientSavingAccount.getBalance();
+                recipientBalance = recipientSavingAccount.getAvailableBalance();
                 //update the available balance of giver BankAccount (-)
-                updatedGiverAvailableBalance = giverAvailableBalance.subtract(transferAmount);
-                giverSavingAccount.setAvailableBalance(updatedGiverAvailableBalance);
-                //update the balance of giver BankAccount (-)
                 updatedGiverBalance = giverBalance.subtract(transferAmount);
-                giverSavingAccount.setBalance(updatedGiverBalance);
+                giverSavingAccount.setAvailableBalance(updatedGiverBalance);
                 //update the available balance of recipient BankAccount (+)
-                updatedRecipientAvailableBalance = recipientAvailableBalance.add(transferAmount);
-                recipientSavingAccount.setAvailableBalance(updatedRecipientAvailableBalance);
-                //update the balance of recipient BankAccount (+)
                 updatedRecipientBalance = recipientBalance.add(transferAmount);
-                recipientSavingAccount.setBalance(updatedRecipientBalance);
-                em.flush();
+                recipientSavingAccount.setAvailableBalance(updatedRecipientBalance);
 
                 Date currentTime = Calendar.getInstance().getTime();
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
@@ -110,12 +97,6 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             }
         }
 
-    }
-    
-    @Override
-    public BigDecimal getTransferLimit(Long customerID){
-        Customer customer = em.find(Customer.class,customerID);
-       return customer.getIntraTransferLimit();
     }
 
     @Override
