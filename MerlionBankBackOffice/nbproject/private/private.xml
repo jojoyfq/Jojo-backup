@@ -2,6 +2,9 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
+        <group/>
+=======
         <group>
 <<<<<<< HEAD
             <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/web/StaffVerifyCustomer/staffVerifyCustomerAccount.xhtml</file>
@@ -18,5 +21,6 @@
 >>>>>>> origin/master
 >>>>>>> refs/remotes/origin/master
         </group>
+>>>>>>> master
     </open-files>
 </project-private>
