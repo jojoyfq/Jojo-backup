@@ -119,7 +119,7 @@ public class FixedDepositManagedBean implements Serializable {
     }
     
     public void dashboardRenewFixed(ActionEvent event) throws IOException{
-//        customerId = logInManagedBean.getCustomerId();
+       customerId = logInManagedBean.getCustomerId();
         renewable = fda.getRenewable(customerId);
         FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/FixedDepositManagement/renewFixedDeposit.xhtml");
