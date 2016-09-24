@@ -40,6 +40,8 @@
                                 <h:form id= "form" >
                                     <div class="CardBigTopic TexAlCenter Purple">Login</div>
                                     <div class="Container100">
+                                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                                        
                                         <p:inputText id="ic" value="#{staffLogInManagedBean.staffIc}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
                                         <p:message for="ic" display="icon" />
                                     </div>
@@ -81,7 +83,7 @@
                             <div class="EmptyBox20"></div>
 
 
-                            <div class="Container100"><p:button value="Activate Account" styleClass="GrayButton" /></div>
+                            <div class="Container100"><p:button value="Activate Account" styleClass="GrayButton" outcome="staffAccountActivationVerifyDetails"/></div>
 
 
                         </div>
