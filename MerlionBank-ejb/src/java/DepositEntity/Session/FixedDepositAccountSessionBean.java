@@ -120,6 +120,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 
         System.out.print("Demi" + account.getStartDate());
         System.out.println("Fixed Deposit account created successfullly");
+        System.out.println("customer has fixed account number"+customer.getFixedDepositeAccounts().get(0).getAccountNumber());
         //for testting
 
         return accountNum;

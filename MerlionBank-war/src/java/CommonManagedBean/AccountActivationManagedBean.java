@@ -77,7 +77,7 @@ public class AccountActivationManagedBean implements Serializable {
                 // System.out.println("GAO MEI REN:" + msg);
 
                 System.out.println("lala");
-
+if(!customer.getSavingAccounts().isEmpty()){
                 String msg2 = amsbl.verifyAccountBalance(customerIc);
                 System.out.print("verifyAccountBalance status is" + msg2);
 
@@ -89,8 +89,11 @@ public class AccountActivationManagedBean implements Serializable {
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
-
                 }
+                }else{
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
+
+}
 
             } else {
                 System.out.println("Please dont leave blanks!");
