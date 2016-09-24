@@ -42,7 +42,7 @@ public interface StaffManagementSessionBeanLocal {
 
 // Display system roles
     public List<StaffRole> viewRoles();
-
+    
 //System administrator delete system roles
     public boolean deleteRole(Long staffRoleId, Long staffId) throws RoleHasStaffException;
 
@@ -100,7 +100,8 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
     public Long lockAccount(Long staffId);
     
     public StaffRole getRoleByRoleName(String roleName);
-
-    public StaffRole viewRole(Long roleId);
     
+    public void recordStaffAction(Long staffId, String actionDescription, Long customerId);
+    
+    public StaffRole viewRole(Long roleId);
 }
