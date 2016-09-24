@@ -25,7 +25,12 @@ and open the template in the editor.
 
                     <h:panelGrid columns="7" cellpadding="5">
 
-                        <p:dataTable var="pendingCustomer" value="#{staffVerifyCustomerManagedBean.pendingCustomers}">
+                        <p:dataTable id="radioDT" var="pendingCustomer" value="#{staffVerifyCustomerManagedBean.pendingCustomers}" selectionMode="single" selection="#{staffVerifyCustomerManagedBean.selectedCustomer}" rowKey="#{pendingCustomer.id}">
+                            <f:facet name="header">
+                                RadioButton
+                            </f:facet>
+                            <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                            <!--                            <p:ajax event="rowSelect" listener="{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" update=":form" />-->
 
                             <p:column headerText="Customer ID" style="width: 80px;">
                                 <h:outputText value="#{pendingCustomer.id}" />
@@ -34,11 +39,11 @@ and open the template in the editor.
                             <p:column headerText="Customer Name" style="width: 80px;">
                                 <h:outputText value="#{pendingCustomer.name}" />
                             </p:column>
-                            
+
                             <p:column headerText="Customer IC" style="width: 80px;">
                                 <h:outputText value="#{pendingCustomer.ic}" />
                             </p:column>
-                            
+
                             <p:column headerText="Customer Gender" style="width: 80px;">
                                 <h:outputText value="#{pendingCustomer.gender}" />
                             </p:column>
@@ -46,25 +51,18 @@ and open the template in the editor.
                             <p:column headerText="Customer Date Of Birth" style="width: 80px;">
                                 <h:outputText value="#{pendingCustomer.dateOfBirth}" />
                             </p:column>
-                            
-                         
+                            <f:facet name="footer">
+                                <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" oncomplete="PF('carDialog').show()" />
+                                <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}" oncomplete="PF('carDialog').show()" />
 
-                            <p:column headerText="Verify OR Not" style="width: 80px;">
-                                <p:selectBooleanButton id="result" value="#{staffVerifyCustomerManagedBean.check}" onLabel="Yes" offLabel="No" style="width:60px" />
-                            </p:column>
+                            </f:facet>
 
-                            <p:column headerText="Submit" style="width: 60px;">
-                                <center>
-                                    <p:commandButton icon="ui-icon-mail-open" oncomplete="PF('msgDialog').show()" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" update=":form:panel" ajax="true" type="submit" >
-                                        <f:attribute name="selectedCustomer" value="#{pendingCustomer}"  />
-                                    </p:commandButton>
-                                </center>
-                            </p:column>
-                            
+
+
                         </p:dataTable>
 
                     </h:panelGrid>
-             </p:panel>
+                </p:panel>
             </h:form>
         </h:body>
     </f:view>

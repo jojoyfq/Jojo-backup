@@ -39,9 +39,9 @@ public class StaffVerifyCustomerAccountSessionBean implements StaffVerifyCustome
 //system retrieve list of pending verification customers
 @Override
 public List<Customer> viewPendingVerificationList()/*throws ListEmptyException*/{
-   Query q = em.createQuery("SELECT a FROM Customer a WHERE a.status = :status");
-        q.setParameter("status", "unverified");
-        List<Customer> temp = new ArrayList(q.getResultList()); 
+       Query q = em.createQuery("SELECT a FROM Customer a WHERE a.status = :status");
+            q.setParameter("status", "unverified");
+            List<Customer> temp = new ArrayList(q.getResultList()); 
       //  if (temp.size()==0)
           //  throw new ListEmptyException("There are pending verifications!");
         return temp;
