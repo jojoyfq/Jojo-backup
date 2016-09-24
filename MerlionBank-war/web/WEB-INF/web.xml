@@ -27,7 +27,7 @@
         </session-timeout>     
     </session-config>
     <welcome-file-list>
-        <welcome-file>CustomerManagement/index.xhtml</welcome-file>
+        <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
     
     <security-constraint>
@@ -35,8 +35,13 @@
         <web-resource-collection>
             <web-resource-name>Default Secure Pages</web-resource-name>
             <description>Default Secure Pages</description>
-            <url-pattern>/CustomerManagement/LogInHome.xhtml</url-pattern>
+            <url-pattern>/LogInHome.xhtml</url-pattern>
         </web-resource-collection>
+<!--        <web-resource-collection>
+            <web-resource-name>Default Secure Pages</web-resource-name>
+            <description>Default Secure Pages</description>
+            <url-pattern>/index.xhtml</url-pattern>
+        </web-resource-collection>-->
         <user-data-constraint>
             <description/>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>

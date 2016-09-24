@@ -1,43 +1,91 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-<f:view>
+
     <h:head>
-        <title>Create Fixed Deposit Account</title>
-        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"/>-->
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Account Activation</title>
+        <ui:insert name="head" />
     </h:head>
-    
+
     <h:body>
         <h:form>
-            <p:panel id ="panel" header="Open a Fixed Deposit Account">
-                <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+            <div class="Wid100 MarAuto">
+                <div class="Wid80 MarAuto WidAutoOnMobile">
+                    <div style="margin-top:10rem;"></div>
 
-                    <h:outputLabel for="amount" value="Amount(S$):" />
-                    <p:inputText id="amount" value="#{commonInfraManagedBean.amount}" label="amount" required="true" requiredMessage="Please enter your amount!" />
-                    <p:message for="amount" display="icon"/>
-                    <h:outputLabel />
+                    <div class="Wid60 MarAuto WidAutoOnMobile">
+                        <div class="Container100">
+                            <div class="Card ui-fluid">
+                                <div class="CardBigTopic TexAlCenter Purple">Open a Fixed Deposit Account</div>
+                                <div class="SeparatorFull"></div>
 
 
-                    <h:outputLabel for="term" value="Deposit Term(Months):" />
-                    <h:selectOneMenu id="duration" value="#{commonInfraManagedBean.duration}" label="duration" required="true" requiredMessage="Please choose the duration!">
-                        <f:selectItem itemValue="3" itemLabel="3"/>
-                        <f:selectItem itemValue="6" itemLabel="6"/>
-                        <f:selectItem itemValue="12" itemLabel="12"/>
-                        <f:selectItem itemValue="24" itemLabel="24"/>    
-                    </h:selectOneMenu> 
-                <p:message for="duration" display="icon"/>
-                </h:panelGrid>
-                
+                                <div class="Container100 ui-fluid">
 
-                <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.configureFixedDeposit}" value="Submit" />
+                                    <div class="Card TexAlCenter">
+                                        <div class="Container10"></div>
+                                        <div class="Container80">
 
-                 
-            </p:panel>
-            <h4> Note:The start of the deposit term will be 7 days after account opening.</h4>
+
+                                            <p:panel id ="panel">
+                                                <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+
+                                                    <h:outputLabel for="amount" value="Amount(S$):" />
+                                                    <p:inputText id="amount" value="#{commonInfraManagedBean.amount}" label="amount" required="true" requiredMessage="Please enter your amount!" />
+                                                    <p:message for="amount" display="icon"/>
+                                                    <h:outputLabel />
+
+
+                                                    <h:outputLabel for="term" value="Deposit Term(Months):" />
+                                                    <p:selectOneMenu id="duration" value="#{commonInfraManagedBean.duration}" label="duration" required="true" requiredMessage="Please choose the duration!">
+                                                        <f:selectItem itemValue="3" itemLabel="3"/>
+                                                        <f:selectItem itemValue="6" itemLabel="6"/>
+                                                        <f:selectItem itemValue="12" itemLabel="12"/>
+                                                        <f:selectItem itemValue="24" itemLabel="24"/>    
+                                                    </p:selectOneMenu> 
+
+                                                    <p:message for="duration" display="icon"/>
+                                                </h:panelGrid>
+
+                                            </p:panel>
+                                        </div>
+                                        <div class="Container10"></div>
+
+                                        <div class="EmptyBox20"></div>
+                                        <div class="Container30"></div>
+                                        <div class="Container40">
+                                            <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.configureFixedDeposit}" value="Submit" />
+                                        </div>
+                                        <div class="Container30"></div>
+                                        <div class="EmptyBox20"></div>
+                                        <h:outputLabel class="Red" for="note" value="Note: The start of the deposit term will be 7 days after account opening." />
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
         </h:form>
     </h:body>
-    </f:view>
+
 </html>

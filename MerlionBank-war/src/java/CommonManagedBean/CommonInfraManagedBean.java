@@ -140,7 +140,7 @@ public class CommonInfraManagedBean implements Serializable {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
-                                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+                                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
 
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());
