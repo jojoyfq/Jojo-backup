@@ -959,8 +959,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     @Override
-    public boolean updateForgetPassword(Staff staff, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException {
-
+    public boolean updateForgetPassword(Long staffId, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException {
+Staff staff=em.find(Staff.class,staffId);
         if (newPassword.equals(confirmPassword)) {
             if (!checkPasswordComplexity(newPassword)) {
                 throw new PasswordTooSimpleException("password is too simple");
@@ -970,6 +970,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
             em.flush();
             staff.setStatus("active");
             em.flush();
+            em.persist(staff);
             recordStaffAction(staff.getId(), "reset password", null);
             return true;
         } else if (!newPassword.equals(confirmPassword)) {
