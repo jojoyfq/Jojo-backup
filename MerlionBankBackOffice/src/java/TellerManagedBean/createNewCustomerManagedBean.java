@@ -8,6 +8,7 @@ package TellerManagedBean;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonEntity.Staff;
+import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.UserExistException;
 import StaffManagement.staffLogInManagedBean;
@@ -50,12 +51,16 @@ public class createNewCustomerManagedBean implements Serializable {
     private String customerFinancialGoal;
     private Staff staff;
     private String password;
+    private Long customerId;
 
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
 
     @Inject
     private staffLogInManagedBean staffLogInManagedBean;
+    
+    @EJB
+    private FixedDepositAccountSessionBeanLocal fda;
 
     /**
      * Creates a new instance of createNewCustomerManagedBean
@@ -65,7 +70,7 @@ public class createNewCustomerManagedBean implements Serializable {
 
     @PostConstruct
     public void init(){
-    staff = staffLogInManagedBean.getStaff();
+    //staff = staffLogInManagedBean.getStaff();
     }
     
     public createNewCustomerManagedBean() {
@@ -80,12 +85,13 @@ public class createNewCustomerManagedBean implements Serializable {
             }
             try {
                 System.out.println("ahdhdhdhdaad ");
-                amsb.tellerCreateFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, password);
+                customer = amsb.tellerCreateFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, password);
+                serviceCustomerManagedBean.setCustomer(customer);
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer created Successfully");
 
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
-
+               
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -100,7 +106,8 @@ public class createNewCustomerManagedBean implements Serializable {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
         //log a staff action
-        
+//        String description = "Staff "+staff.getStaffIc()+" registered new customer "+customer.getIc();
+//        fda.logStaffAction(description, customer.getId(),staff);
     }
 
     public String getPassword() {
@@ -165,6 +172,14 @@ public class createNewCustomerManagedBean implements Serializable {
 
     public void setCustomerAddress(String customerAddress) {
         this.customerAddress = customerAddress;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public String getCustomerEmail() {
