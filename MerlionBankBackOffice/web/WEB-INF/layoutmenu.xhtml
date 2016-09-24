@@ -27,17 +27,14 @@
                 </p:submenu>
 
                 <p:submenu id="deposit_management" label="Deposit Management">
-                    <p:submenu id="saving_account" label="Saving Account For Existing Customer" icon="icon-plus">
+                    <p:submenu id="saving_account" label="Saving Account" icon="icon-plus">
                         <p:menuitem id="create_saving_accountEC" value="Create Saving Account For Existing Customer" actionListener="#{savingAccountManagedBean.dashboardToCreateSavingAccountEC}"/>
                         <p:menuitem id="cash_deposit" value="Cash Deposit" actionListener="#{savingAccountManagedBean.dashboardToCashDeposit}"/> 
                         <p:menuitem id="cash_withdraw" value="Cash Withdraw" actionListener="#{savingAccountManagedBean.dashboardToCashWithdraw}"/>
                         <p:menuitem id="view_detail" value="View Saving Account" actionListener="#{savingAccountManagedBean.dashboardToViewAccounts}"/> 
                         <p:menuitem id="view_transactionRecord" value="View Transaction History" actionListener="#{savingAccountManagedBean.dashboardToViewTransactions}"/>
                         <p:menuitem id="close_saving_account" value="Close Saving Account" actionListener="#{savingAccountManagedBean.dashboardToCloseSavingAccount}"/> 
-                    </p:submenu>
-
-                    <p:submenu id="Non-TellerStaff" label="Saving Account For Non-Teller Staff" icon="icon-plus">
-                        <p:menuitem id="saving_account_change_ir" value="Change Interest Rate" actionListener="#{savingAccountManagedBean.dashboardToChangeInterestRate}" icon="icon-plus" />
+                        <p:menuitem id="saving_account_change_ir" value="Change Interest Rate" actionListener="#{savingAccountManagedBean.dashboardToChangeInterestRate}"/>
                     </p:submenu>
                     
                     <p:submenu id="fixed_deposit_account" label="Fixed Deposit Account" icon="icon-plus">

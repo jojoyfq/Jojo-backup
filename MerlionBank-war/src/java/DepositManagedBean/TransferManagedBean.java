@@ -240,7 +240,7 @@ public class TransferManagedBean implements Serializable {
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/TransferManagement/intraTransfer.xhtml");
             } else {
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have no saving account!");
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a saving account!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }
         } catch (Exception e) {

@@ -7,6 +7,7 @@ package DepositManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import CommonEntity.Staff;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
@@ -16,6 +17,7 @@ import Exception.UserExistException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserHasPendingTransactionException;
 import Exception.UserNotEnoughBalanceException;
+import StaffManagement.staffLogInManagedBean;
 import TellerManagedBean.ServiceCustomerManagedBean;
 import java.io.IOException;
 import java.io.Serializable;
@@ -46,8 +48,12 @@ public class SavingAccountManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsb;
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
+    @Inject
+    private staffLogInManagedBean staffLogInManagedBean;
+
     private Long customerID;
     private List<SavingAccount> savingAccounts;
+    private String changeIRsavingAccountType;
     private String savingAccountName;
     private List<String> savingAccountTypeList;
     private boolean createSavingAccountStatus;
@@ -64,12 +70,15 @@ public class SavingAccountManagedBean implements Serializable {
     private Double interestRate1;
     private Double interestRate2;
     private Double interestRate3;
+    private Staff staff;
 
+   
     @PostConstruct
     public void init() {
         try {
             System.out.print("inside the init() method");
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+            staff = staffLogInManagedBean.getStaff(); //Get staff who is login
+            setCustomerID(serviceCustomerManagedBean.getCustomer().getId()); // Get the customerID 
             System.out.print("customer is" + customerID);
             this.getSavingAccountType();
             savingAccounts = sasb.getSavingAccount(customerID);
@@ -149,8 +158,8 @@ public class SavingAccountManagedBean implements Serializable {
             System.out.print("Dashboard to Close Saving Account Encounter error!");
         }
     }
-    
-    public void dashboardToChangeInterestRate(ActionEvent event){
+
+    public void dashboardToChangeInterestRate(ActionEvent event) {
         try {
             this.getSavingAccountType();
             FacesContext.getCurrentInstance().getExternalContext()
@@ -160,6 +169,7 @@ public class SavingAccountManagedBean implements Serializable {
         }
     }
 
+    //******************************Main Functions*************************************************************
     public void createSavingAccountExistingCustomer(ActionEvent event) throws UserAlreadyHasSavingAccountException, EmailNotSendException, IOException, UserHasNoSavingAccountException {
         try {
             System.out.print(customerID);
@@ -170,6 +180,9 @@ public class SavingAccountManagedBean implements Serializable {
             this.getNotTerminatedAccountNumbers();
             savingAccounts = sasb.getSavingAccount(customerID);
 
+            //Log Staff Action into database
+//            String description = "Staff " +staff.getStaffIc()+" create "+savingAccountName+" saving account for customer "+customerID;
+//            sasb.logStaffAction(description, customerID, staff);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBankBackOffice/DepositManagement/createSavingAccountECsuccess.xhtml");
 
@@ -181,9 +194,9 @@ public class SavingAccountManagedBean implements Serializable {
     }
 
     public void getInterestRate() {
-        interestRate1 = sasb.getInterestRate(savingAccountName, "InterestRate1");
-        interestRate2 = sasb.getInterestRate(savingAccountName, "InterestRate2");
-        interestRate3 = sasb.getInterestRate(savingAccountName, "InterestRate3");
+        interestRate1 = sasb.getInterestRate(changeIRsavingAccountType, "InterestRate1");
+        interestRate2 = sasb.getInterestRate(changeIRsavingAccountType, "InterestRate2");
+        interestRate3 = sasb.getInterestRate(changeIRsavingAccountType, "InterestRate3");
     }
 
     public void getSavingAccountNumbers() throws UserHasNoSavingAccountException {
@@ -221,6 +234,9 @@ public class SavingAccountManagedBean implements Serializable {
             if (savingAccountSelected != null) {
                 withdrawAmount = new BigDecimal(withdrawAmountString);
                 sasb.cashWithdraw(savingAccountSelected, withdrawAmount);
+
+//                String description = "Staff " +staff.getStaffIc()+" perform cash withdraw from "+savingAccountSelected+" saving account for customer "+customerID;
+//                sasb.logStaffAction(description, customerID, staff);
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/DepositManagement/cashWithdrawSuccess.xhtml");
             } else {
@@ -238,6 +254,10 @@ public class SavingAccountManagedBean implements Serializable {
             if (notTerminAccountSelected != null) {
                 depositAmount = new BigDecimal(depositAmountString);
                 sasb.cashDeposit(notTerminAccountSelected, depositAmount);
+
+//                String description = "Staff " + staff.getStaffIc() + " perform cash deposit from " + notTerminAccountSelected + " saving account for customer " + customerID;
+//                sasb.logStaffAction(description, customerID, staff);
+                
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/DepositManagement/cashDepositSuccess.xhtml");
             } else {
@@ -252,7 +272,7 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void changeInterestRate(ActionEvent event) {
         try {
-            if (savingAccountName != null) {
+            if (changeIRsavingAccountType != null) {
                 this.getInterestRate();
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/DepositManagement/changeInterestRate.xhtml");
@@ -267,7 +287,10 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void setInterestRate(ActionEvent event) {
         try {
-            sasb.setInterestRate(savingAccountName, interestRate1, interestRate2, interestRate3);
+            sasb.setInterestRate(changeIRsavingAccountType, interestRate1, interestRate2, interestRate3);
+            
+//          String description = "Staff " + staff.getStaffIc() + " perform change saving account interest rate";
+//          sasb.logStaffAction(description, null, staff);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBankBackOffice/DepositManagement/changeInterestRateSuccess.xhtml");
         } catch (Exception e) {
@@ -280,6 +303,9 @@ public class SavingAccountManagedBean implements Serializable {
             if (savingAccountSelected != null) {
                 System.out.print("inside the goToTransaction Record method!");
                 this.getTransactionRecords();
+                
+//              String description = "Staff " + staff.getStaffIc() + " perform change saving account interest rate";
+//              sasb.logStaffAction(description, null, staff);
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/DepositManagement/viewTransactionRecords.xhtml");
             } else {
@@ -319,6 +345,9 @@ public class SavingAccountManagedBean implements Serializable {
         try {
             sasb.checkPendingTransaction(savingAccountSelected);
             this.getSavingAccountNumbers();
+            
+//          String description = "Staff " + staff.getStaffIc() + " perform close saving account "+savingAccountSelected+"for customer"+customerID;
+//          sasb.logStaffAction(description, customerID, staff);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBankBackOffice/DepositManagement/closeSavingAccountSuccess.xhtml");
         } catch (UserHasPendingTransactionException ex) {
@@ -471,4 +500,21 @@ public class SavingAccountManagedBean implements Serializable {
     public void setInterestRate3(Double interestRate3) {
         this.interestRate3 = interestRate3;
     }
+    
+     public String getChangeIRsavingAccountType() {
+        return changeIRsavingAccountType;
+    }
+
+    public void setChangeIRsavingAccountType(String changeIRsavingAccountType) {
+        this.changeIRsavingAccountType = changeIRsavingAccountType;
+    }
+    
+     public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
 }
