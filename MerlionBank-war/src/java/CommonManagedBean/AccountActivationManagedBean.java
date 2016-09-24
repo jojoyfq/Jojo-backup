@@ -70,7 +70,7 @@ public class AccountActivationManagedBean implements Serializable {
 
     public void goToLogInPage(ActionEvent event) throws IOException {
         System.out.println("Go into GoToLogInHome");
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
 
     }
 
