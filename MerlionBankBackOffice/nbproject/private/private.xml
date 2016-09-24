@@ -5,6 +5,9 @@
         <group>
 <<<<<<< HEAD
             <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/web/StaffVerifyCustomer/staffVerifyCustomerAccount.xhtml</file>
+=======
+<<<<<<< HEAD
+            <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/web/StaffVerifyCustomer/staffVerifyCustomerAccount.xhtml</file>
             <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/src/java/StaffManagement/StaffVerifyCustomerManagedBean.java</file>
             <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/src/java/StaffManagement/RoleManagementManagedBean.java</file>
             <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/web/SuperAdminManagement/viewOneStaffRolePermissions.xhtml</file>
@@ -13,6 +16,7 @@
             <file>file:/Users/shuyunhuang/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/web/FixedDepositManagement/displayFixedDepositAccountDetail.xhtml</file>
 
 >>>>>>> origin/master
+>>>>>>> refs/remotes/origin/master
         </group>
     </open-files>
 </project-private>

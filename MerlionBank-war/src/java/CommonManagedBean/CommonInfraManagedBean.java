@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package CommonManagedBean;
+
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonEntity.Session.StaffVerifyCustomerAccountSessionBeanLocal;
@@ -22,6 +23,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
@@ -36,10 +38,10 @@ public class CommonInfraManagedBean implements Serializable {
 
     @EJB
     AccountManagementSessionBeanLocal amsbl;
-    
- @EJB
+
+    @EJB
     StaffVerifyCustomerAccountSessionBeanLocal svcasbl;
-            
+
     private Customer customer;
     private String ic;
     private String customerName;
@@ -95,13 +97,15 @@ public class CommonInfraManagedBean implements Serializable {
         savingAccountTypes.add("MerLion Everyday Saving Account");
     }
 
-    public void setAllVariables(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
+    public String setAllVariables() throws UserExistException, EmailNotSendException, IOException {
 
         if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null && savingAccountType != null) {
-            if (FacesContext.getCurrentInstance().getResponseComplete()) {
-                System.out.println("lala");
-                return;
-            }
+
+//            if (FacesContext.getCurrentInstance().getResponseComplete()) {
+//                System.out.println("lala");
+//                return;
+//            }
+
 
             try {
                 System.out.println("ahdhdhdhdaad ");
@@ -122,20 +126,24 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
                 //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
-         svcasbl.viewPendingVerificationList().add( amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType));//throws UserExistException;
-
+                svcasbl.viewPendingVerificationList().add(amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType));//throws UserExistException;
 
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
 
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Account created Successfully"));
+                Flash flash = facesContext.getExternalContext().getFlash();
+                flash.setKeepMessages(true);
+                flash.setRedirect(true);
 
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
-
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
+//
+//                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                //   FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -150,17 +158,20 @@ public class CommonInfraManagedBean implements Serializable {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
 
+        return "LogInHome";
+
     }
 
     public void createFixedDepositAccount(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null) {
 
-                
                 customer = amsbl.createFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
-               svcasbl.viewPendingVerificationList().add(customer);
+                svcasbl.viewPendingVerificationList().add(customer);
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
-              //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
+
+                //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
+
                 //  amsbl.createFixedAccount(customer, amount, duration);
 
             } else {
@@ -170,22 +181,29 @@ public class CommonInfraManagedBean implements Serializable {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
+         
     }
 
-    public void configureFixedDeposit(ActionEvent event) throws EmailNotSendException {
+    public String configureFixedDeposit() throws EmailNotSendException {
         try {
             System.out.println("*******Customer IC " + customer.getIc());
 
             Long check = amsbl.createFixedAccount(customer, amount, duration);
             if (customer.getId().equals(check)) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your Account created Successfully!");
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
+//                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your Account created Successfully!");
+//                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Account created Successfully"));
+                Flash flash = facesContext.getExternalContext().getFlash();
+                flash.setKeepMessages(true);
+                flash.setRedirect(true);
             }
         } catch (EmailNotSendException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         }
+         return "LogInHome";
 
     }
 
