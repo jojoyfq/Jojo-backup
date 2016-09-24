@@ -26,25 +26,45 @@ and open the template in the editor.
                     <h:panelGrid columns="4" cellpadding="5">
 
 
-                        <p:dataTable var="staffEntity" value="#{staffManagementManagedBean.staffs}">
+                        <p:dataTable var="staffEntity" value="#{staffManagementManagedBean.staffs}" editable="true">
+                            <f:facet name="header">
+                                Row Editing
+                            </f:facet>
+                            <p:ajax event="rowEdit" listener="#{staffManagementManagedBean.onRowEdit}" update=":form:msgs" />
+
 
                             <p:column headerText="Staff ID" style="width: 80px;">
-                                
+
                                 <h:outputText value="#{staffEntity.id}" />
                             </p:column>
 
                             <p:column headerText="Staff Name">
-                                <h:outputText value="#{staffEntity.staffName}" />
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{staffEntity.staffName}" /></f:facet>
+                                    <f:facet name="input"><p:inputText id="staffName" value="#{staffEntity.staffName}" style="width:100%" required="true" requiredMessage="Please enter the staff name!"/></f:facet>
+                                    <p:message for="staffName" display="icon"/>
+                                </p:cellEditor>
+                               
                             </p:column>
                             <p:column headerText="Staff IC">
-                                <h:outputText value="#{staffEntity.staffIc}" />
-                            </p:column>
-                            
-                            <p:column headerText="Staff Email">
-                                <h:outputText value="#{staffEntity.staffEmail}" />
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{staffEntity.staffIc}" /></f:facet>
+                                    <f:facet name="input"><p:inputText id="staffIc" value="#{staffEntity.staffIc}" style="width:100%" required="true" requiredMessage="Please enter the IC!"/></f:facet>
+                                    <p:message for="staffIc" display="icon"/>
+                                </p:cellEditor>
+                               
                             </p:column>
 
-                            
+                            <p:column headerText="Staff Email">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{staffEntity.staffEmail}" /></f:facet>
+                                    <f:facet name="input"><p:inputText id="staffEmail" value="#{staffEntity.staffEmail}" style="width:100%" required="true" requiredMessage="Please enter the email!"/></f:facet>
+                                    <p:message for="staffEmail" display="icon"/>
+                                </p:cellEditor>
+                               
+                            </p:column>
+
+
                             <p:column headerText="Staff Mobile Number">
                                 <p:cellEditor>
                                     <f:facet name="output"><h:outputText value="#{staffEntity.mobileNumber}" /></f:facet>
@@ -52,13 +72,11 @@ and open the template in the editor.
                                     <p:message for="mobileNumber" display="icon"/>
                                 </p:cellEditor>
                             </p:column>
-                            
+
                             <p:column headerText="Staff Status">
-                                <p:cellEditor>
-                                    <f:facet name="output"><h:outputText value="#{staffEntity.status}" /></f:facet>
-                                    <f:facet name="input"><p:inputText id="status" value="#{staffEntity.status}" style="width:100%" required="true" requiredMessage="Please enter the mobile number!"/></f:facet>
-                                    <p:message for="status" display="icon"/>
-                                </p:cellEditor>
+                    
+                                  <h:outputText value="#{staffEntity.status}" />
+                                   
                             </p:column>
 
 
@@ -69,21 +87,15 @@ and open the template in the editor.
                                                                  return false;"/>
                                 </center>
                             </p:column>
-                            <p:column headerText="Reply" style="width: 80px;" >
+                           
+
+                            <p:column headerText="Edit Roles" style="width: 80px;" >
                                 <center>
-                                    <p:commandButton icon="ui-icon-pencil" oncomplete="PF('replyDialog').show()" actionListener="#{messageManagedBean.customerReadMessage}" update=":form:panel :form:dialogMessage" ajax="true" type="submit" >
-                                        <f:attribute name="selectedStaff" value="#{staffEntity}"  />
-                                    </p:commandButton>      
+                                    <p:commandButton icon="ui-icon-pencil" actionListener="#{staffManagementManagedBean.editRole(staffEntity)}" update=":form:panel:dialogMessage" ajax="false" type="submit" >
+                                        <f:attribute name="selectedRoleName" value="#{staffManagementManagedBean.roleNameToDelete}"  />
+                                    </p:commandButton>
                                 </center>
                             </p:column>
-
-                              <p:column headerText="Edit Roles" style="width: 80px;" >
-                                    <center>
-                                        <p:commandButton icon="ui-icon-pencil" actionListener="#{staffManagementManagedBean.editRole(staffEntity)}" update=":form:panel:dialogMessage" ajax="false" type="submit" >
-                                        <f:attribute name="selectedRoleName" value="#{staffManagementManagedBean.roleNameToDelete}"  />
-                                        </p:commandButton>
-                                    </center>
-                                </p:column>
                             <p:column style="width:32px">
                                 <p:rowEditor />
                             </p:column>
@@ -99,7 +111,7 @@ and open the template in the editor.
 
                                     <h:outputText value="#{roles}"/>
                                 </p:column>
-                              
+
                             </p:dataTable>
 
                         </p:outputPanel>
