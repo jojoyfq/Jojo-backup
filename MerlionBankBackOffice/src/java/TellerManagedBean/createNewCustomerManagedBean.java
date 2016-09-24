@@ -87,10 +87,8 @@ public class createNewCustomerManagedBean implements Serializable {
                 System.out.println("ahdhdhdhdaad ");
                 customer = amsb.tellerCreateFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, password);
                 serviceCustomerManagedBean.setCustomer(customer);
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer created Successfully");
-
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
+                
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CustomerManagement/createNewCustomerSuccess.xhtml");
                
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());

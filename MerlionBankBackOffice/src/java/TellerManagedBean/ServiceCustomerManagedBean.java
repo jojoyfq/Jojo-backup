@@ -64,7 +64,7 @@ public class ServiceCustomerManagedBean implements Serializable {
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer selected");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
         FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
+                    .redirect("/MerlionBankBackOffice/TellerManagement/serviceCustomerSuccess.xhtml");
             }else{
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer not found. Please enter correct IC.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
