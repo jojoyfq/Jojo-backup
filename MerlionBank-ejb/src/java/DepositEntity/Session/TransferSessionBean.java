@@ -98,6 +98,12 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         }
 
     }
+    
+    @Override
+    public BigDecimal getTransferLimit(Long customerID){
+        Customer customer = em.find(Customer.class,customerID);
+       return customer.getIntraTransferLimit();
+    }
 
     @Override
     public void addPayee(Long payeeAccount, String payeeName, Long customerID) throws PayeeNotFoundException {

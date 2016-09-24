@@ -100,10 +100,12 @@ public class CommonInfraManagedBean implements Serializable {
     public String setAllVariables() throws UserExistException, EmailNotSendException, IOException {
 
         if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null && savingAccountType != null) {
+
 //            if (FacesContext.getCurrentInstance().getResponseComplete()) {
 //                System.out.println("lala");
 //                return;
 //            }
+
 
             try {
                 System.out.println("ahdhdhdhdaad ");
@@ -131,6 +133,7 @@ public class CommonInfraManagedBean implements Serializable {
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+
                 FacesContext facesContext = FacesContext.getCurrentInstance();
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Account created Successfully"));
                 Flash flash = facesContext.getExternalContext().getFlash();
@@ -154,7 +157,9 @@ public class CommonInfraManagedBean implements Serializable {
         } else {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
+
         return "LogInHome";
+
     }
 
     public void createFixedDepositAccount(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
@@ -164,7 +169,9 @@ public class CommonInfraManagedBean implements Serializable {
                 customer = amsbl.createFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
                 svcasbl.viewPendingVerificationList().add(customer);
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
+
                 //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
+
                 //  amsbl.createFixedAccount(customer, amount, duration);
 
             } else {

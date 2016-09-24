@@ -48,7 +48,7 @@ public class LogInManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
 
     private Customer customer;
-    private String ic = "S4444";
+    private String ic;
     private String customerName;
     private String customerGender;
     private Date customerDateOfBirth;
@@ -115,6 +115,11 @@ public class LogInManagedBean implements Serializable {
     }
     public void goToLogInPage(ActionEvent event )throws IOException{
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/LogInHome.xhtml");
+
+    }
+    
+    public void goToStaffLogInPage(ActionEvent event )throws IOException{
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
 
     }
 
@@ -223,8 +228,9 @@ public class LogInManagedBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public Customer viewOneCustomer() throws IOException, ListEmptyException{
-      
+    public Customer viewOneCustomer(ActionEvent event) throws IOException, ListEmptyException{
+       //      FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ModifyUserProfile.xhtml");
+ 
     try{    
         System.out.println("*******customer ic: "+ic);
         selectedCustomer = amsbl.diaplayCustomer(ic);
@@ -265,12 +271,16 @@ public class LogInManagedBean implements Serializable {
     return selectedCustomer;
     }
 
+
     public String modifyProfile(ActionEvent event) throws UserExistException {
+
         try {
 //            if (FacesContext.getCurrentInstance().getResponseComplete()) {
 //                System.out.println("lala");
 //                return;
 //            }
+          
+   //     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ModifyUserProfile.xhtml");
 
             System.out.println("Message from managed Bean: IC is: " + ic);
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null

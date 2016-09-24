@@ -24,6 +24,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
 import org.primefaces.context.RequestContext;
 
@@ -238,19 +239,22 @@ public class staffLogInManagedBean implements Serializable {
         }
     }
 
-    public void staffUpdatePassword(ActionEvent event) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException {
+    public String staffUpdatePassword() throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException {
         try {
-            if (staffId != null && oldPassword != null && newPassword != null && confirmPassword != null) {
-                smsbl.updateForgetPassword(staff, newPassword, confirmPassword);
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Passwrod was updated successfully!");
-                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-
+            if (staffId != null && newPassword != null && confirmPassword != null) {
+                smsbl.updateForgetPassword(staffId, newPassword, confirmPassword);
+               FacesContext facesContext = FacesContext.getCurrentInstance();
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your password has been successfully changed! Please log in again!"));
+                Flash flash = facesContext.getExternalContext().getFlash();
+                flash.setKeepMessages(true);
+                flash.setRedirect(true);
             }
         } catch (PasswordTooSimpleException | PasswordNotMatchException | UnexpectedErrorException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
         }
+        return "staffLogInHome";
     }
 
 }
