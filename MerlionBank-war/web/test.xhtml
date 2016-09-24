@@ -25,36 +25,42 @@
                     <div class="Wid60 MarAuto WidAutoOnMobile">
                         <div class="Container100">
                             <div class="Card ui-fluid">
-                                <div class="CardBigTopic TexAlCenter Purple">Open a Fixed Deposit Account</div>
+                                <div class="CardBigTopic TexAlCenter Purple">Account Activation</div>
                                 <div class="SeparatorFull"></div>
 
 
                                 <div class="Container100 ui-fluid">
 
-                                    <div class="Card TexAlCenter">
+                                    <div class="Card">
                                         <div class="Container10"></div>
                                         <div class="Container80">
 
 
-                                            <p:panel id ="panel">
-                                                <h:panelGrid columns="2" id="createFixedDepositAccount" cellpadding="5"> 
+                                            <p:panel id="panel">
 
-                                                    <h:outputLabel for="amount" value="Amount(S$):" />
-                                                    <p:inputText id="amount" value="#{commonInfraManagedBean.amount}" label="amount" required="true" requiredMessage="Please enter your amount!" />
-                                                    <p:message for="amount" display="icon"/>
-                                                    <h:outputLabel />
+                                                <p:messages id="msgs" />
+
+                                                <h:panelGrid columns="3" cellpadding="5">
+                                                    <p:outputLabel for="ic" value="IC: " />
+                                                    <p:inputText id="ic" value="#{accountActivationManagedBean.customerIc}" required="true" label="ic" requiredMessage="Please enter your IC!"/>
+                                                    <p:message for="ic" display="icon" />
 
 
-                                                    <h:outputLabel for="term" value="Deposit Term(Months):" />
-                                                    <p:selectOneMenu id="duration" value="#{commonInfraManagedBean.duration}" label="duration" required="true" requiredMessage="Please choose the duration!">
-                                                        <f:selectItem itemValue="3" itemLabel="3"/>
-                                                        <f:selectItem itemValue="6" itemLabel="6"/>
-                                                        <f:selectItem itemValue="12" itemLabel="12"/>
-                                                        <f:selectItem itemValue="24" itemLabel="24"/>    
-                                                    </p:selectOneMenu> 
 
-                                                    <p:message for="duration" display="icon"/>
+                                                    <p:outputLabel for="name" value="Name: " />
+                                                    <p:inputText id="name" value="#{accountActivationManagedBean.customerName}"  required="true" label="name" requiredMessage="Please fill in your Name!" />
+                                                    <p:message for="name" display="icon"/>
+
+                                                    <p:outputLabel for="dateOfBirth" value="Date Of Birth: " />
+                                                    <p:calendar id="dateOfBirth" value="#{accountActivationManagedBean.dateOfBirth}" showOn="button" required="true" requiredMessage="Please choose your date of birth!"/>
+                                                    <p:message for="dateOfBirth" display="icon"/>
+
+                                                    <p:outputLabel for="phoneNumber" value="Phone Number: " />
+                                                    <p:inputText id="phoneNumber" value="#{accountActivationManagedBean.phoneNumber}"  required="true" label = "phoneNumber" requiredMessage="Please fill in your phone number!" />
+                                                    <p:message for="phoneNumber" display="icon"/>
+
                                                 </h:panelGrid>
+
 
                                             </p:panel>
                                         </div>
@@ -63,12 +69,9 @@
                                         <div class="EmptyBox20"></div>
                                         <div class="Container30"></div>
                                         <div class="Container40">
-                                            <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.configureFixedDeposit}" value="Submit" />
+                                            <p:commandButton value="Save" update="panel" actionListener="#{accountActivationManagedBean.activateAccount}" icon="ui-icon-check" />
                                         </div>
                                         <div class="Container30"></div>
-                                        <div class="EmptyBox20"></div>
-                                        <h:outputLabel class="Red" for="note" value="Note: The start of the deposit term will be 7 days after account opening." />
-
                                     </div>
                                 </div>
 
