@@ -46,7 +46,11 @@ import javax.persistence.Query;
 /**
  *
  * @author a0113893
+ *
+ * 
+ /
  */
+
 @Stateless
 public class StaffManagementSessionBean implements StaffManagementSessionBeanLocal {
 
@@ -465,6 +469,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 //                temp.add(currentPermissions.get(i));
 //            }
 //        }
+
 
         for (int i=0;i<currentPermissions.size();i++){
             if (currentPermissions.get(i).getModuleName().equals(truePermission.getModuleName())){
@@ -1076,3 +1081,4 @@ public Staff viewStaff(Long staffID)throws UserNotExistException{
 
 
 }
+	
