@@ -224,6 +224,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             //update the balance of the saving account (-)
             updateSavingAccountBalance = accountBalance.subtract(amount);
             savingAccounts.setAvailableBalance(updateSavingAccountBalance);
+            savingAccounts.setBalance(updateSavingAccountBalance);  //update the balance
 
             //update the balance of the fixed deposit account (+)         
             fixedDepositAccount.setBalance(amount);
@@ -372,6 +373,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         BigDecimal newBalance = savingAccount.getAvailableBalance().add(interest);
         newBalance = newBalance.add(account.getBalance());
         savingAccount.setAvailableBalance(newBalance);
+        savingAccount.setBalance(newBalance); 
         System.out.print(savingAccount.getAvailableBalance().toString());
         //close fixed deposit
         account.setBalance(BigDecimal.valueOf(0));
@@ -423,7 +425,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         BigDecimal newBalance = savingAccount.getAvailableBalance().add(interest);
         newBalance = newBalance.add(account.getBalance());
         savingAccount.setAvailableBalance(newBalance);
+        savingAccount.setBalance(newBalance);
         System.out.print(savingAccount.getAvailableBalance().toString());
+        System.out.print(savingAccount.getBalance().toString());
         //close fixed deposit
         account.setBalance(BigDecimal.valueOf(0));
         System.out.print("set balance to 0");
