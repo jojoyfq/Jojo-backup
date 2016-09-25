@@ -31,6 +31,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TransferEvent;
@@ -46,7 +47,8 @@ public class StaffManagementManagedBean implements Serializable {
 
     @EJB
     StaffManagementSessionBeanLocal smsbl;
-
+    @Inject
+    staffLogInManagedBean slimb;
     /**
      * Creates a new instance of StaffManagementManagedBean
      */
@@ -65,7 +67,23 @@ public class StaffManagementManagedBean implements Serializable {
     public void setStaffs(List<Staff> staffs) {
         this.staffs = staffs;
     }
-    private StaffRole staffRole;
+    private List<StaffRole> staffRoles;
+
+    public staffLogInManagedBean getSlimb() {
+        return slimb;
+    }
+
+    public void setSlimb(staffLogInManagedBean slimb) {
+        this.slimb = slimb;
+    }
+
+    public List<StaffRole> getStaffRoles() {
+        return staffRoles;
+    }
+
+    public void setStaffRoles(List<StaffRole> staffRoles) {
+        this.staffRoles = staffRoles;
+    }
     private Permission permission;
     private Long bankStaffId;
 
@@ -213,7 +231,7 @@ public class StaffManagementManagedBean implements Serializable {
         staff = new Staff();
         staffs = new ArrayList<>();
         staffs = this.adminDisplayStaffs();
-        staffRole = new StaffRole();
+        staffRoles = new ArrayList<StaffRole>();
         permission = new Permission();
         availablePermissions = new ArrayList<>();
         //      availablePermissions = smsbl.viewRoles();
@@ -256,9 +274,14 @@ public class StaffManagementManagedBean implements Serializable {
     public void adminCreateStaffRole(ActionEvent event) throws RoleAlreadyExistedException, IOException {
         try {
             if (roleName != null && staffId != null) {
-                staffRole = smsbl.createRole(staffId, roleName);
-                allRoles.add(staffRole.getRoleName());
+                staffRoles = smsbl.createRole(staffId, roleName);
+              //  allRoles.add(staffRoles.getRoleName());
+                List temp = new ArrayList<>();
+                for(int i=0;i<staffRoles.size();i++){
+               temp.add(staffRoles.get(i).getRoleName());
                 
+                }
+                slimb.setRoleNames(temp);
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/adminGrantRole.xhtml");
 
             } else {
@@ -540,13 +563,7 @@ public class StaffManagementManagedBean implements Serializable {
         this.staff = staff;
     }
 
-    public StaffRole getStaffRole() {
-        return staffRole;
-    }
-
-    public void setStaffRole(StaffRole staffRole) {
-        this.staffRole = staffRole;
-    }
+    
 
     public Permission getPermission() {
         return permission;

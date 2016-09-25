@@ -61,7 +61,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     private EntityManager em;
 
     @Override
-    public StaffRole createRole(Long staffId, String roleName) throws RoleAlreadyExistedException {
+    public List<StaffRole> createRole(Long staffId, String roleName) throws RoleAlreadyExistedException {
 
         Query q = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :roleName");
         q.setParameter("roleName", roleName);
@@ -72,7 +72,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         }
         List<Staff> staffList = new ArrayList<Staff>();
         List<Permission> permissions = new ArrayList<Permission>();
-        StaffRole staffRole = new StaffRole(roleName, staffList, permissions);
+        StaffRole staffRole = new StaffRole(roleName, staffList, permissions,"active");
         em.persist(staffRole);
         em.flush();
 
@@ -87,8 +87,12 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         staff.setStaffActions(staffActions);
         em.persist(staff);
         em.flush();
+        
+         Query query = em.createQuery("SELECT a FROM StaffRole a WHERE a.status = :status");
+        query.setParameter("status", "active");
+        List<StaffRole> temp2 = new ArrayList(query.getResultList());
 
-        return staffRole;
+        return temp2;
 
     }
 
@@ -318,10 +322,11 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
     @Override
     public List<StaffRole> viewRoles() {
-        Query query = em.createQuery("SELECT a FROM StaffRole a");
-
-        List<StaffRole> roleList = new ArrayList(query.getResultList());
-        return roleList;
+        em.flush();
+       Query query = em.createQuery("SELECT a FROM StaffRole a WHERE a.status = :status");
+        query.setParameter("status", "active");
+        List<StaffRole> temp = new ArrayList(query.getResultList());
+        return temp;
     }
 
     @Override
@@ -334,23 +339,14 @@ System.out.println("get staff role id+ "+staffRole.getRoleName());
             throw new RoleHasStaffException("This role has existing staff");
         }
 
-        Query mapping = em.createQuery("SELECT a FROM staffrole_permission a WHERE a.staffRoles_ID = :staffRoleId");
-        mapping.setParameter("staffRoleId", staffRoleId);
-        List temp = new ArrayList(mapping.getResultList());
-        
-        for (int i=0;i<temp.size();i++){
-            em.remove(temp.get(i));
-        }
-        
-        em.remove(staffRole);
-        em.flush();
-        System.out.println("remove staffRole");
+        staffRole.setStatus("deleted");
+        System.out.println("removed staffRole");
 
         Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         queryStaff.setParameter("id", staffId);
         Staff staff = (Staff) queryStaff.getSingleResult();
 
-        StaffAction action = new StaffAction(Calendar.getInstance().getTime(), "Create new role", null, staff);
+        StaffAction action = new StaffAction(Calendar.getInstance().getTime(), "Dalete role", null, staff);
         em.persist(action);
         List<StaffAction> staffActions = staff.getStaffActions();
         staffActions.add(action);
@@ -358,11 +354,16 @@ System.out.println("get staff role id+ "+staffRole.getRoleName());
         em.persist(staff);
         em.flush();
         
-        Query query = em.createQuery("SELECT a FROM StaffRole a");
-        List<StaffRole> currentStaffRoles = new ArrayList(query.getResultList());
-        System.out.println("Current staffRole size: "+currentStaffRoles.size());
+        Query query = em.createQuery("SELECT a FROM StaffRole a WHERE a.status = :status");
+        query.setParameter("status", "active");
+        List<StaffRole> temp = new ArrayList(query.getResultList());
+       
+        
+//        Query query = em.createQuery("SELECT a FROM StaffRole a");
+//        List<StaffRole> currentStaffRoles = new ArrayList(query.getResultList());
+//        System.out.println("Current staffRole size: "+currentStaffRoles.size());
 
-        return currentStaffRoles;
+        return temp;
 
     }
 

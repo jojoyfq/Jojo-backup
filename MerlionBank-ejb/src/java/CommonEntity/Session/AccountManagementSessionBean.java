@@ -782,13 +782,12 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new EmailNotSendException("Error sending email.");
         }
         
-        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Successful Login", customer);
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create new Fixed Deposit Account", customer);
         em.persist(action);
         List<CustomerAction> customerActions = customer.getCustomerActions();
         customerActions.add(action);
         customer.setCustomerActions(customerActions);
-        em.persist(customer);
-        em.flush();
+        
         return customer.getId();
     }
     

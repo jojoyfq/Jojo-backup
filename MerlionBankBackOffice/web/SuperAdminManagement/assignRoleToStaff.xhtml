@@ -49,7 +49,7 @@ and open the template in the editor.
                                                     <p:selectOneMenu id="roles" value="#{staffManagementManagedBean.selectedRoleName}" required="true" requiredMessage="Please choose one role!">
 
                                                         <f:selectItem itemLabel="Select the role for staff" itemValue="" noSelectionOption="true" />
-                                                        <f:selectItems value="#{staffManagementManagedBean.allRoles}" />                
+                                                        <f:selectItems value="#{staffLogInManagedBean.roleNames}" />                
                                                     </p:selectOneMenu>
                                                     <p:message for="roles" display="icon"/>
 
