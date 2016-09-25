@@ -131,11 +131,12 @@ public class StaffMessageManagedBean implements Serializable {
         //       customerMessages = imsbl.StaffViewAllMessage(staffId);
 //        System.out.println("message size is: "+messages.size());
         customerUnreadMsg = imsbl.countStaffNewMessage(staffId);
-        customerMessages = this.staffViewAllMessages();
+       // customerMessages = this.staffViewAllMessages();
     }
 
-    public List<CustomerMessage> staffViewAllMessages() {
+    public void staffViewAllMessages(ActionEvent event) {
         //  try {
+       // customerMessages = this.staffViewAllMessages();
         
         staffId = slimb.getStaffId();
         System.out.println("*******Staff now is "+staffId);
@@ -144,7 +145,7 @@ public class StaffMessageManagedBean implements Serializable {
 //            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
 //            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 //        }
-        return customerMessages;
+     //   return customerMessages;
     }
 
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
