@@ -477,7 +477,12 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.persist(customer);
         customer.getOnlineAccount().setAccountStatus("active");
         em.flush();
+        if (!customer.getSavingAccounts().isEmpty()){
         customer.getSavingAccounts().get(0).setStatus("active");
+        }
+        else if(!customer.getFixedDepositeAccounts().isEmpty()){
+        customer.getFixedDepositeAccounts().get(0).setStatus("active");
+        }
         em.flush();
 
         CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Activate Account", customer);
