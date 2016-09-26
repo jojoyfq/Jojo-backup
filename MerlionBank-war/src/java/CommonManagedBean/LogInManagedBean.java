@@ -120,7 +120,7 @@ public class LogInManagedBean implements Serializable {
     }
     
     public void goToStaffLogInPage(ActionEvent event )throws IOException{
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInHome.xhtml");
 
     }
 

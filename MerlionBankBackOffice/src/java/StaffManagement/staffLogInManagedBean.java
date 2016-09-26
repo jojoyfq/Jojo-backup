@@ -178,18 +178,19 @@ public class staffLogInManagedBean implements Serializable {
     public void init() {
         staff = new Staff();
         roleNames = new ArrayList<>();
-        System.out.println("***********Role size is "+smsbl.viewRoles().size());
+        System.out.println("***********Role size is " + smsbl.viewRoles().size());
         for (int i = 0; i < smsbl.viewRoles().size(); i++) {
             roleNames.add(smsbl.viewRoles().get(i).getRoleName());
         }
     }
+
     public void goToLogInPage(ActionEvent event) throws IOException {
         System.out.println("Go into GoToStaffLogInHome");
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInHome.xhtml");
 
     }
-    
-    public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException ,IOException{
+
+    public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
         try {
             if (staffIc != null && password != null && roleName != null) {
                 staffId = smsbl.checkLogin(staffIc, password, roleName);
@@ -223,6 +224,7 @@ public class staffLogInManagedBean implements Serializable {
                 }
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             } else {
                 System.out.println("Please do not leave blanks!");
@@ -246,32 +248,52 @@ public class staffLogInManagedBean implements Serializable {
         }
     }
 
-    public String staffUpdatePassword() throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException {
+    public void staffUpdatePassword(ActionEvent event) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException, IOException {
         try {
             if (staffId != null && newPassword != null && confirmPassword != null) {
                 smsbl.updateForgetPassword(staffId, newPassword, confirmPassword);
-               FacesContext facesContext = FacesContext.getCurrentInstance();
-            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your password has been successfully changed! Please log in again!"));
-                Flash flash = facesContext.getExternalContext().getFlash();
-                flash.setKeepMessages(true);
-                flash.setRedirect(true);
+//               FacesContext facesContext = FacesContext.getCurrentInstance();
+//            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your password has been successfully changed! Please log in again!"));
+//                Flash flash = facesContext.getExternalContext().getFlash();
+//                flash.setKeepMessages(true);
+//                flash.setRedirect(true);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInHome.xhtml");
+
             }
         } catch (PasswordTooSimpleException | PasswordNotMatchException | UnexpectedErrorException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
         }
-        return "staffLogInHome";
+//        return "staffLogInHome";
     }
-    
-     public void logout() throws IOException {
+
+    public void logout() throws IOException {
         System.out.println("Inside logout");
-        ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+        ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
 //        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();        
         System.out.println("testtest");
         String serverName = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
         String serverPort = "8080";
-        FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBankBackOffice/staffLogInHome.xhtml");
+    }
+
+    public void goToActivation(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/StaffSelfManagement/staffAccountActivationVerifyDetails.xhtml");
+        } catch (Exception e) {
+            System.out.print("go to activation page fails");
+        }
+    }
+
+    public void goToResetPasswordVerifyDetails(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/StaffSelfManagement/resetPasswordVerifyDetails.xhtml");
+        } catch (Exception e) {
+            System.out.print("go to ResetPasswordVerifyDetails page fails");
+        }
     }
 
 }
