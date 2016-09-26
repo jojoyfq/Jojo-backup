@@ -26,11 +26,13 @@
 
                     <div class="Container80 NoPadding Responsive50 ui-fluid">
                         <h:form>
-                            <p:panel id="panel" header="Transfer Funds to Another Merlion Bank Account">
-                                <p:messages id="msgs" />
+                            <div class="Container100">
+                                <p:panel id="panel">
+                                    <p:messages id="msgs" />
 
-                                <h:panelGrid columns="2" id="intraTransfer" cellpadding="5"> 
-                                    <div class="Container70 Responsive50">
+                                    <h:panelGrid columns="2" id="intraTransfer" cellpadding="5"> 
+
+                                        <h:outputLabel for="yourAccount" value="Select Your Account:" />
                                         <p:selectOneMenu id="savingAccountList" value="#{transferManagedBean.giverAccountNumLong}">
                                             <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
                                             <f:selectItems value="#{transferManagedBean.savingAccountList}" />
@@ -44,15 +46,19 @@
 
                                         <h:outputLabel for="transferAmount" value="Amount: $" />
                                         <p:inputText id="transferAmount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." />
-                                    </div>
 
-                                    <div class="Container30 Responsive50">
-                                        <p:commandButton update="panel" value="Submit" id="oneTimeTransfer"
-                                                         actionListener="#{transferManagedBean.oneTimeTransfer}"/>   
-                                    </div>
-                                </h:panelGrid>
+                                    </h:panelGrid>
 
-                            </p:panel>
+                                </p:panel>
+                            </div>
+                            <div class="Container30"></div>
+                            <div class="Container40">
+                                <p:commandButton update="panel" value="Submit" id="oneTimeTransfer"
+                                                 actionListener="#{transferManagedBean.oneTimeTransfer}"/>   
+                            </div>
+                            <div class="Container30"></div>
+
+
                         </h:form>
                     </div>
 
