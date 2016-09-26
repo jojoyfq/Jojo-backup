@@ -46,7 +46,11 @@ import javax.persistence.Query;
 /**
  *
  * @author a0113893
+ *
+ * 
+ /
  */
+
 @Stateless
 public class StaffManagementSessionBean implements StaffManagementSessionBeanLocal {
 
@@ -1092,6 +1096,13 @@ public Staff viewStaff(Long staffID)throws UserNotExistException{
         StaffRole role = roleList.get(0);
         return role;
     }
+    
+     @Override
+   public StaffRole viewRole(Long roleId)
+     {
+         StaffRole staffRole = em.find(StaffRole.class, roleId);
+         return staffRole;
+     }
 
 @Override
 public List<StaffRole> viewOneStaffRole(Staff staff){

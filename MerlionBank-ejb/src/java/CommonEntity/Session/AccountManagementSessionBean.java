@@ -477,13 +477,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.persist(customer);
         customer.getOnlineAccount().setAccountStatus("active");
         em.flush();
-        if (!customer.getSavingAccounts().isEmpty()){
         customer.getSavingAccounts().get(0).setStatus("active");
-        }
-        else if (!customer.getFixedDepositeAccounts().isEmpty()){
-        customer.getFixedDepositeAccounts().get(0).setStatus("active");
-        }
-        
         em.flush();
 
         CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Activate Account", customer);
@@ -788,12 +782,13 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new EmailNotSendException("Error sending email.");
         }
         
-        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create new Fixed Deposit Account", customer);
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Successful Login", customer);
         em.persist(action);
         List<CustomerAction> customerActions = customer.getCustomerActions();
         customerActions.add(action);
         customer.setCustomerActions(customerActions);
-        
+        em.persist(customer);
+        em.flush();
         return customer.getId();
     }
     
@@ -849,7 +844,7 @@ return customer;
     
     //Teller Create saving Account 
     @Override
-    public void createSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException {
+    public void tellerCreateSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException {
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createAccount");

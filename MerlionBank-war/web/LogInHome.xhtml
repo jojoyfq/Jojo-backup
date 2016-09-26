@@ -20,7 +20,7 @@
     <h:body>
         <style type="text/css">
             body {
-                background-image: url('.../resources/atlas-layout/images/singapore_merlionbg.jpg') ;
+                background-image: url('/MerlionBank-war/resources/atlas-layout/images/singapore_merlionbg.jpg') ;
                 background-repeat: no-repeat;
                 background-size: 100%;
             }
@@ -40,6 +40,8 @@
                                 <h:form id= "form" >
                                     <div class="CardBigTopic TexAlCenter Purple">Login</div>
                                     <div class="Container100">
+                                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+
                                         <p:inputText id="ic" value="#{logInManagedBean.ic}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
                                         <p:message for="ic" display="icon" />
                                     </div>

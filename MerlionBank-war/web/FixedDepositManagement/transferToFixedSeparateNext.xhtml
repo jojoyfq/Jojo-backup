@@ -41,8 +41,10 @@
                                         <h:outputLabel value="#{fixedDepositManagedBean.amountLessBalance}" />
 
                                         <h:outputLabel for="amount" value="Amount to transfer(S$):" />
-                                        <p:inputText id="amountToTransfer" value="#{fixedDepositManagedBean.amountToTransferStr}" label="amount" required="true" />
-
+                                        <p:inputText id="amountToTransfer" value="#{fixedDepositManagedBean.amountToTransferStr}" label="amount" required="true" >
+                                        <p:keyFilter regEx="/[\d\-\.]/"/>
+                                        </p:inputText>
+                                        
                                         <h:outputLabel value="From your saving account"  />
                                         <h:outputLabel value="#{fixedDepositManagedBean.savingAcctSelected}" />
 
