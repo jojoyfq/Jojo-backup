@@ -24,8 +24,9 @@
                 <p:submenu id="customer_management" label="Customer Management">
                     <p:submenu id="saving_accountNC" label="Operational CRM" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(2)}">
                         <p:menuitem id="create_saving_accountNC" value="Create Saving Account For New Customer" outcome="/CustomerManagement/createSavingAccountNC"/>
+                        <p:menuitem id="staffVerifyCustomer" value="Staff Verify Pending Customer" outcome="/StaffVerifyCustomer/staffVerifyCustomerAccount"/>
                     </p:submenu>
-                        <p:menuitem id="staffVerifyCustomer" value="Staff Verify Pending Customer" outcome="/StaffVerifyCustomer/staffVerifyCustomerAccount"/>                    
+                                            
                 </p:submenu>
 
                 <p:submenu id="deposit_management" label="Deposit Management">
