@@ -38,6 +38,7 @@ public class BackOfficeSecurityFilter implements Filter{
 
             if ((!requestServletPath.equals("/staffLogInHome.xhtml")) && (!requestServletPath.equals("/StaffSelfManagement/staffAccountActivationVerifyDetails.xhtml"))
                     && (!requestServletPath.equals("/StaffSelfManagement/resetPassword.xhtml")) && (!requestServletPath.equals("/StaffSelfManagement/resetPasswordVerifyDetails.xhtml"))
+                    && (!requestServletPath.equals("/StaffSelfManagement/staffChangePassword.xhtml")) && (!requestServletPath.equals("/StaffDashboard.xhtml"))) {
                 System.out.println("Check Security Filter");
 
                 Boolean isLogin = (httpSession.getAttribute("isLogin") != null) ? ((Boolean) httpSession.getAttribute("isLogin")) : (false);
