@@ -195,6 +195,7 @@ public class staffLogInManagedBean implements Serializable {
             if (staffIc != null && password != null && roleName != null) {
                 staffId = smsbl.checkLogin(staffIc, password, roleName);
                 staff = smsbl.viewStaff(staffId);
+                name = staff.getStaffName();
 
 //                for (int i = 0; i < staff.getStaffRoles().size(); i++) {
 //                    roleNames.add(staff.getStaffRoles().get(i).getRoleName());
