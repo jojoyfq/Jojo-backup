@@ -9,6 +9,7 @@ import CommonEntity.Permission;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
+import Exception.RoleHasStaffException;
 import PermissionManagedBean.PermissionDataTableRow;
 import java.io.IOException;
 import java.io.Serializable;
@@ -18,8 +19,11 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -31,7 +35,8 @@ public class RoleManagementManagedBean implements Serializable {
 
     @EJB
     StaffManagementSessionBeanLocal smsbl;
-
+@Inject
+staffLogInManagedBean slimbl;
     /**
      * Creates a new instance of RoleManagementManagedBean
      */
@@ -161,6 +166,7 @@ public class RoleManagementManagedBean implements Serializable {
         staffRoles = this.displayAllRoles();
         role = new StaffRole();
         selectedPermission = new Permission();
+        
     }
 
     public List<StaffRole> displayAllRoles() {
@@ -168,6 +174,36 @@ public class RoleManagementManagedBean implements Serializable {
         staffRoles = smsbl.viewRoles();
         return staffRoles;
     }
+    
+    public void goToViewAllRolePage(ActionEvent event){
+        try{
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/viewAllRoles.xhtml");
+        }catch(Exception e){
+           System.out.print("Redirect to View One Role Page Error!");
+        }
+    }
+    
+    public void deleteRole(ActionEvent event) throws RoleHasStaffException, IOException {
+        try {
+             role = (StaffRole) event.getComponent().getAttributes().get("selectedRole");
+             staffRoleId = role.getId();
+ 
+             staffRoles = smsbl.deleteRole(staffRoleId, adminId);
+             
+             List <String>temp=new ArrayList<String>();
+             System.out.println("In session bean delete role!!!!!!"+staffRoles.size());
+             for(int i=0;i<staffRoles.size();i++){
+             temp.add(staffRoles.get(i).getRoleName());
+             }
+             slimbl.setRoleNames(temp);
+             //redirect to Success Page
+              FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuccessPage.xhtml");
+         } catch (RoleHasStaffException ex) {
+             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+ 
+         }
+     }
 
     public void displayOneRolePermissions(ActionEvent event) {
 
@@ -184,18 +220,15 @@ public class RoleManagementManagedBean implements Serializable {
         }
 //                return permissions;
     }
-
     public void editPermission(StaffRole role) throws IOException {
         // permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
 
         permissions = role.getPermissions();
-
         
         setPermissionDataTableRows(new ArrayList<>());
         
         for(Permission p:permissions)
             getPermissionDataTableRows().add(new PermissionDataTableRow(p));
-
         roleId = role.getId();
         System.out.println("**********size of permission is " + permissions.size());
 
@@ -207,15 +240,8 @@ public class RoleManagementManagedBean implements Serializable {
 
     }
 
-    public void editPermissionNext(ActionEvent event) {
-        // permission = (Permission) event.getComponent().getAttributes().get("selectedPermission");
-
-//        permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
-//        moduleName = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getModuleName();
-//        oldValidility = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).isValidity();
-//        newValidilityStr = Boolean.toString(newValidility);
-
-        
+    public void editPermissionNext(ActionEvent event)
+    {    
         PermissionDataTableRow permissionDataTableRow = ((PermissionDataTableRow) event.getComponent().getAttributes().get("selectedPermission"));
         
         permissionId = permissionDataTableRow.getPermission().getId();
@@ -223,45 +249,35 @@ public class RoleManagementManagedBean implements Serializable {
         oldValidility = permissionDataTableRow.getPermission().isValidity();
         newValidility = permissionDataTableRow.getValidity();
 
-
-//        permissionId = ((Permission) event.getObject()).getId();
-//        moduleName = ((Permission) event.getObject()).getModuleName();
-//       oldValidility= ((Permission) event.getObject()).isValidity();
-        System.out.println("******Old validility: " + oldValidility);
-
-        System.out.println("******New validility: " + newValidilityStr);
-
-        System.out.println("******New validility: " + newValidility);
-
-        System.out.println("***************Role Id is " + roleId);
-        System.out.println("***************Permission Id is " + permissionId);
-
-        if (oldValidility != newValidility) {
-            if (oldValidility = true) {
+        if (oldValidility != newValidility) 
+        {
+            if (newValidility == false) 
+            {
                 boolean msg = smsbl.deletePermission(adminId, roleId, permissionId);
-                System.out.println("***********message from delete permission" + msg);
-            } else {
-                smsbl.addPermission(adminId, roleId, permissionId);
-            }
-
-            if (newValidility == false) {
-                boolean msg = smsbl.deletePermission(adminId, roleId, permissionId);
-                System.out.println("***********message from delete permission" + msg);
-            } else {
+            } 
+            else 
+            {
                 smsbl.addPermission(adminId, roleId, permissionId);
             }
             
-            role = smsbl.viewRole(roleId);
-            permissions = role.getPermissions();
+            staffRoles = displayAllRoles();
             
+            for(StaffRole sr:staffRoles)
+            {
+                if(sr.getId().equals(roleId))
+                {
+                    role = sr;
+                    break;
+                }
+            }
+                        
+            permissions = role.getPermissions();            
             setPermissionDataTableRows(new ArrayList<>());
         
             for(Permission p:permissions)
+            {
                 getPermissionDataTableRows().add(new PermissionDataTableRow(p));
-            
-
-        } else {
-            System.out.println("No permission has been changed!");
+            }
         }
     }
 

@@ -6,7 +6,6 @@
 package jsf.filter;
 
 import java.io.IOException;
-import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -17,24 +16,18 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 /**
  *
  * @author liyanmeng
  */
-@WebFilter(filterName = "SecurityFilter", urlPatterns = {"/DepositManagement/*", "/FixedDepositManagement/*", "/MessageManagement/*", "/StaffMessageManagement/*", "/TransferManagement/*", "/CustomerManagement/*", "/dashboard.xhtml"})
-//@WebFilter(filterName = "SecurityFilter", urlPatterns = {"*.xhtml"})
-public class SecurityFilter implements Filter {
-
+@WebFilter(filterName = "BackOfficeSecurityFilter", urlPatterns = {"/CustomerManagement/*", "/DepositManagement/*", "/FixedDepositManagement/*", "/StaffSelfManagement/*", "/StaffVerifyCustomer/*", "/SuperAdminManagement/*", "/TellerManagement/*", "/TransferManagement/*", "/StaffDashboard.xhtml"})
+public class BackOfficeSecurityFilter implements Filter{
+    
     private FilterConfig filterConfig = null;
 
-    public SecurityFilter() {
+    public BackOfficeSecurityFilter() {
     }
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
-
+    
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final String REDIRECT = "?faces-redirect=true";
@@ -43,12 +36,9 @@ public class SecurityFilter implements Filter {
             HttpSession httpSession = httpServletRequest.getSession(true);
             String requestServletPath = httpServletRequest.getServletPath();
 
-            if ((!requestServletPath.equals("/LogInHome.xhtml")) && (!requestServletPath.equals("/index.xhtml"))
-                    && (!requestServletPath.equals("/CustomerManagement/DisplayAccountTypeChoice.xhtml")) && (!requestServletPath.equals("/CustomerManagement/createSavingAccount.xhtml"))
-                    && (!requestServletPath.equals("/CustomerManagement/ResetPasswordVerifyCustomerDetails.xhtml")) && (!requestServletPath.equals("/CustomerManagement/SubmitTwoFA.xhtml"))
-                    && (!requestServletPath.equals("/CustomerManagement/ResetPassword.xhtml")) && (!requestServletPath.equals("/CustomerManagement/createFixedDepositAccount.xhtml"))
-                    && (!requestServletPath.equals("/CustomerManagement/configureFixedDepositAccount.xhtml")) && (!requestServletPath.equals("/CustomerManagement/CustomerAccountActivation.xhtml"))
-                    && (!requestServletPath.equals("/CustomerManagement/ResetInitialPassword.xhtml")) && (!requestServletPath.equals("/customerSuccessPageWOLogIn.xhtml"))) {
+            if ((!requestServletPath.equals("/staffLogInHome.xhtml")) && (!requestServletPath.equals("/StaffSelfManagement/staffAccountActivationVerifyDetails.xhtml"))
+                    && (!requestServletPath.equals("/StaffSelfManagement/resetPassword.xhtml")) && (!requestServletPath.equals("/StaffSelfManagement/resetPasswordVerifyDetails.xhtml"))
+                    && (!requestServletPath.equals("/StaffSelfManagement/staffChangePassword.xhtml")) && (!requestServletPath.equals("/StaffDashboard.xhtml"))) {
                 System.out.println("Check Security Filter");
 
                 Boolean isLogin = (httpSession.getAttribute("isLogin") != null) ? ((Boolean) httpSession.getAttribute("isLogin")) : (false);
@@ -56,7 +46,7 @@ public class SecurityFilter implements Filter {
                 if (!isLogin) {
                     HttpServletResponse res = (HttpServletResponse) response;
                     String contextPath = httpServletRequest.getContextPath();
-                    res.sendRedirect(contextPath + "/LogInHome.xhtml" + REDIRECT);
+                    res.sendRedirect(contextPath + "/staffLogInHome.xhtml" + REDIRECT);
                 }
             }
 //            if(!requestServletPath.equals("/LogInHome.xhtml")){
@@ -66,9 +56,12 @@ public class SecurityFilter implements Filter {
             ex.printStackTrace();
         }
     }
-
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+    
     @Override
     public void destroy() {
     }
-
 }

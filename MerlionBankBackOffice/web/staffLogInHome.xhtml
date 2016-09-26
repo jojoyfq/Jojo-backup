@@ -20,7 +20,7 @@
     <h:body>
         <style type="text/css">
             body {
-                background-image: url('/MerlionBank-war/resources/atlas-layout/images/singapore_merlionbg.jpg') ;
+                background-image: url('/MerlionBankBackOffice/resources/atlas-layout/images/singapore_merlionbg.jpg') ;
                 background-repeat: no-repeat;
                 background-size: 100%;
             }
@@ -42,31 +42,39 @@
                                     <div class="Container100">
                                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
 
-                                        <p:inputText id="ic" value="#{logInManagedBean.ic}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
+                                        <p:inputText id="ic" value="#{staffLogInManagedBean.staffIc}" placeholder="IC*" required="true" label="ic" requiredMessage="Please enter your IC!"/>
                                         <p:message for="ic" display="icon" />
                                     </div>
+
                                     <div class="Container100">
 
-                                        <p:password id="password" value="#{logInManagedBean.customerPassword}"  placeholder="Password" required="true" requiredMessage="Please fill in your password!" />
+                                        <p:password id="password" value="#{staffLogInManagedBean.password}"  placeholder="Password" required="true" requiredMessage="Please fill in your password!" />
                                         <p:message for="password"/>
                                     </div>
 
+                                    <div class="Container100">
+
+
+                                        <p:selectOneMenu id="roleName" value="#{staffLogInManagedBean.roleName}" required="true" requiredMessage="Please choose one role!">
+
+                                            <f:selectItem itemLabel="Select the role you want to log in as" itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{staffLogInManagedBean.roleNames}" />   
+
+                                        </p:selectOneMenu>
+                                    </div>
+
 
 
                                     <div class="Container100">
-                                        <center><p:captcha label="Captcha" theme="dark" rendered="#{logInManagedBean.logInAttempts >= 3}" required="#{logInManagedBean.logInAttempts >= 3}"  /></center>
-                                        <p:commandButton update="form" id="login" value="Login Now" styleClass="White Fs16" icon="ui-icon-script" actionListener="#{logInManagedBean.customerLogIn}"/>
+                                        <center><p:captcha label="Captcha" theme="dark" rendered="#{staffLogInManagedBean.logInAttempts >= 3}" required="#{staffLogInManagedBean.logInAttempts >= 3}"  /></center>
+                                        <p:commandButton update="form" id="login" value="Login Now" styleClass="White Fs16" icon="ui-icon-script" actionListener="#{staffLogInManagedBean.staffLogIn}"/>
                                     </div>
 
 
                                 </h:form>
 
                                 <h:form>
-                                    <div class="Container100 TexAlRight"><p:commandLink id="registerNewUser" value="New User? Register Now!" type="submit" actionListener="#{registerManagedBean.goToSelectAccountTypePage}"/></div>
-                                </h:form>
-
-                                <h:form>
-                                    <div class="Container100 TexAlRight"><p:commandLink update ="form" value="Forgot Your Password or Username?" type="submit" actionListener="#{resetPasswordManagedBean.goToResetPasswordVerifyCustomerDetailsPage}"/></div>
+                                    <div class="Container100 TexAlRight"><p:commandLink update ="form" value="Forgot Your Password or Username?" type="submit" actionListener="#{staffLogInManagedBean.goToResetPasswordVerifyDetails}"/></div>
                                 </h:form>
 
                             </div>
@@ -75,15 +83,8 @@
                             <div class="EmptyBox20"></div>
 
                             <h:form>
-                                <div class="Container100"><p:commandButton value="Activate Account" styleClass="GrayButton" actionListener="#{logInManagedBean.goToActivateAccountPage}"/></div>
+                                <div class="Container100"><p:commandButton value="Activate Account" styleClass="GrayButton" actionListener="#{staffLogInManagedBean.goToActivation}"/></div>
                             </h:form>
-                            
-                            <div class="EmptyBox20"></div>
-                            
-                            <h:form>
-                                <div class="Container100"><p:commandButton value="Unlock Account" styleClass="GrayButton" actionListener="#{resetPasswordManagedBean.goToResetPasswordVerifyCustomerDetailsPage}"/></div>
-                            </h:form>
-                            
 
                         </div>
                     </div>

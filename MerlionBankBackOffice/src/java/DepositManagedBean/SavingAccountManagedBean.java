@@ -13,6 +13,7 @@ import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import Exception.EmailNotSendException;
 import Exception.UserAlreadyHasSavingAccountException;
+import Exception.UserCloseAccountException;
 import Exception.UserExistException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserHasPendingTransactionException;
@@ -341,7 +342,7 @@ public class SavingAccountManagedBean implements Serializable {
         }
     }
 
-    public void checkPendingTransaction(ActionEvent event) throws UserHasPendingTransactionException, IOException, UserHasNoSavingAccountException {
+    public void checkPendingTransaction(ActionEvent event) throws UserHasPendingTransactionException, IOException, UserHasNoSavingAccountException, UserCloseAccountException {
         try {
             sasb.checkPendingTransaction(savingAccountSelected);
             this.getSavingAccountNumbers();

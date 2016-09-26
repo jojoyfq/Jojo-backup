@@ -168,6 +168,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     @Override
     public void createSavingAccountExistingCustomer(Long customerID, String savingAccountName) throws UserAlreadyHasSavingAccountException, EmailNotSendException {
+        System.out.println(savingAccountName);
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createSavingAccount FOR Existing customer");
@@ -176,18 +177,34 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         q.setParameter("customerID", customerID);
         List<Customer> customers = new ArrayList(q.getResultList());
         Customer customer = customers.get(0);
+        
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
-        if (savingAccounts.size() == 3) {
-            System.out.print("You already have 3 saving accounts!");
-            throw new UserAlreadyHasSavingAccountException("User Already has 3 saving accounts, cannot create more!");
-
-        } else {
-            for (int i = 0; i < savingAccounts.size(); i++) {
-                if (savingAccounts.get(i).getSavingAccountType().getAccountType().equals(savingAccountName)) {
-                    System.out.print("User already has the same saving account.");
-                    throw new UserAlreadyHasSavingAccountException("User already has the same saving account.");
-                }
+        List<SavingAccount> temp = new ArrayList<SavingAccount>();
+        for (int i=0;i<savingAccounts.size();i++){
+            System.out.print("hehheheheh");
+            if (!savingAccounts.get(i).getStatus().equals("terminated"))
+                temp.add(savingAccounts.get(i));
+        }
+        
+        for (int i=0;i<temp.size();i++){
+            System.out.print("inside the for loop!");
+            if (temp.get(i).getSavingAccountType().getAccountType().equals(savingAccountName)){
+                System.out.print("inside the if statement!");
+             throw new UserAlreadyHasSavingAccountException("User Already has this type of saving account, cannot create more!");
             }
+        }
+        
+//        if (savingAccounts.size() == 3) {
+//            System.out.print("You already have 3 saving accounts!");
+//            throw new UserAlreadyHasSavingAccountException("User Already has 3 saving accounts, cannot create more!");
+//
+//        } else {
+//            for (int i = 0; i < savingAccounts.size(); i++) {
+//                if (savingAccounts.get(i).getSavingAccountType().getAccountType().equals(savingAccountName)) {
+//                    System.out.print("User already has the same saving account.");
+//                    throw new UserAlreadyHasSavingAccountException("User already has the same saving account.");
+//                }
+//            }
 
             //create saving account
             //long savingAccoutNumber = Math.round(Math.random() * 1000000000);
@@ -227,7 +244,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
                 throw new EmailNotSendException("Error sending email.");
             }
 
-        }
+        
 
     }
 
@@ -382,13 +399,16 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
         System.out.println(customer.getDateOfBirth());
         if (!fullName.equals(customer.getName())) {
+            System.out.println(fullName+"         "+customer.getName());
             throw new UserNotExistException("Username " + ic + "invaid account details");
             //return customer.getName();
 
         } else if (!dateOfBirth.equals(customer.getDateOfBirth())) {
+            System.out.println(dateOfBirth+"         "+customer.getDateOfBirth());
             throw new UserNotExistException("Username " + ic + "invaid account details");
             //return "date";
         } else if (!phoneNumber.equals(customer.getPhoneNumber())) {
+              System.out.println(phoneNumber+"         "+customer.getPhoneNumber());
             throw new UserNotExistException("Username " + ic + "invaid account details");
             //return customer.getPhoneNumber();
         } else {
@@ -477,7 +497,12 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         em.persist(customer);
         customer.getOnlineAccount().setAccountStatus("active");
         em.flush();
+        if (!customer.getSavingAccounts().isEmpty()){
         customer.getSavingAccounts().get(0).setStatus("active");
+        }
+        else if(!customer.getFixedDepositeAccounts().isEmpty()){
+        customer.getFixedDepositeAccounts().get(0).setStatus("active");
+        }
         em.flush();
 
         CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Activate Account", customer);
@@ -782,13 +807,12 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new EmailNotSendException("Error sending email.");
         }
         
-        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Successful Login", customer);
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create new Fixed Deposit Account", customer);
         em.persist(action);
         List<CustomerAction> customerActions = customer.getCustomerActions();
         customerActions.add(action);
         customer.setCustomerActions(customerActions);
-        em.persist(customer);
-        em.flush();
+        
         return customer.getId();
     }
     

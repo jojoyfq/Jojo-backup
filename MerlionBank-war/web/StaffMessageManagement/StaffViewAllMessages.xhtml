@@ -24,14 +24,7 @@ and open the template in the editor.
                     <p:messages id="msgs" />
 
                     <h:panelGrid columns="4" cellpadding="5">
-                        <p:notificationBar position="top" effect="slide" styleClass="top" widgetVar="bar">
-                        <h:outputText value="Number of Unread Message:  #{messageManagedBean.customerUnreadMsg}" style="font-size:18px;" />
-                        </p:notificationBar>
-                        <p:outputLabel value="Show my unread message " />
-                        <p:commandButton value="Show" onclick="PF('bar').show()" type="button" icon="ui-icon-arrow-1-s"/>
-                        <p:commandButton value="Hide" onclick="PF('bar').hide()" type="button" icon="ui-icon-arrow-1-n"/>
-                       
-                        <p:separator />
+                      
 
                         
                         <p:dataTable var="messageEntity" value="#{staffMessageManagedBean.customerMessages}">

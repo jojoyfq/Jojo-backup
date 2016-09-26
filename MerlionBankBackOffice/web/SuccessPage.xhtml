@@ -20,27 +20,22 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Select Your Saving Account to Transfer </div>
+                    <div class="CardBigTopic">Confirmation Page </div>
                     <div class="Separator"></div>
 
-
-                    <div class="Container80 NoPadding Responsive50 ui-fluid">
+                    <div class="Container100 ui-fluid">
                         <h:form>
-                         
-                                <div class="Container70 Responsive50">
-                                    <p:selectOneMenu id="savingAccountList" value="#{transferManagedBean.giverAccountNumLong}">
-                                        <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
-                                        <f:selectItems value="#{transferManagedBean.savingAccountList}" />
-                                    </p:selectOneMenu>  
+                            <div class="Card">
+                                <div class="Container10"></div>
+                                <div class="Container80 TexAlCenter">
+                                    Success!
                                 </div>
-                                <div class="Container30 Responsive50">
-                                    <p:commandButton value="Submit" id="gotointraTransfer"
-                                                     actionListener="#{transferManagedBean.goToIntraTransferPage}"/>   
-                                </div>
-                            
+                                <div class="Container10"></div>
+
+        
+                            </div>
                         </h:form>
                     </div>
-
 
                 </div>
             </div> 
@@ -49,7 +44,6 @@
 
         <!-- Right Column -->
         <div class="Container25 NoPadding Responsive50">
-
 
         </div>
 

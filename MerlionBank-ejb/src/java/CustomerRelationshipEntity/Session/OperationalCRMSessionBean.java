@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
@@ -25,21 +26,27 @@ import javax.persistence.Query;
  */
 @Stateless
 public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal {
+    @PersistenceContext
  private EntityManager em;
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
     @Override
     public Customer searchCustomer(String ic) throws UserNotExistException{
+        System.out.println("Inside CRM session bean, IC is: "+ic);
+        
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
+  
         if (temp.isEmpty()) {
             System.out.println("Username " + ic + " does not exist!");
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");
         }
         
             int size=temp.size();
+            
+             System.out.println("Inside CRM session bean, size is: "+size);
             Customer customer=temp.get(size-1);
             if (customer.getStatus().equals("terminated")){
                  System.out.println("Username " + ic + " does not exist!");
@@ -53,6 +60,7 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
     
     @Override
     public void updateProfile(Long staffID, Long customerID, String ic, String name, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal){
+        System.out.println("Inside update profile session bean");
         Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
@@ -60,6 +68,9 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
         q.setParameter("id", customerID);
         Customer customer = (Customer)q.getSingleResult();
+        
+        System.out.println("customer name: "+customer.getName());
+         System.out.println("customer noe name: "+name);
         customer.setIc(ic);
         customer.setName(name);
         customer.setDateOfBirth(dateOfBirth);
@@ -80,5 +91,7 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
             staff.setStaffActions(staffActions);
             em.persist(staff);
             em.flush();
+            
+      System.out.println("End update profile session bean");      
     }
 }

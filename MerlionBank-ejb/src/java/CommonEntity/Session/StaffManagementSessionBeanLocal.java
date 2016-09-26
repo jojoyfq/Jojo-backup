@@ -31,7 +31,7 @@ import javax.ejb.Local;
 public interface StaffManagementSessionBeanLocal {
 
     // create role without assigning permissions
-    public StaffRole createRole(Long staffId, String roleName) throws RoleAlreadyExistedException;
+    public List<StaffRole> createRole(Long staffId, String roleName) throws RoleAlreadyExistedException;
 
 // System administrators grant permissions for different roles
     public boolean grantRole(Long staffId, String roleName, boolean systemUserWorkspace, boolean systemUserAccount, boolean operationalCRM,
@@ -106,4 +106,6 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
     public StaffRole viewRole(Long roleId);
     
     public List<StaffRole> viewOneStaffRole(Staff staff);
+    
+    public List<Permission> sortPermissions(StaffRole staffRole);
 }

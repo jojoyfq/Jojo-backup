@@ -16,11 +16,12 @@
                 <div class="Container100">
                     <div class="Card ui-fluid">
                         <h:form>
-                            <span class="Blue Fs20 FontDosisSemiBold">Welcome, Yanmeng </span><br/>
+                            <span class="Blue Fs20 FontDosisSemiBold">Welcome, #{staffLogInManagedBean.name} </span><br/>
 
                             <div class="EmptyBox30"></div>
+
                             <div class="Container100 Responsive50"><p:button value="Reset Password" styleClass="White Fs16" outcome="StaffSelfManagement/resetPasswordVerifyDetails"/></div>
-                            <div class="Container100 Responsive50"><p:button value="Log Out" styleClass="White Fs16"/></div>
+                            <div class="Container100 Responsive50"><p:commandButton value="Log Out" styleClass="White Fs16" actionListener="#{staffLogInManagedBean.logout}"/></div>
                         </h:form>
                     </div>
                 </div>

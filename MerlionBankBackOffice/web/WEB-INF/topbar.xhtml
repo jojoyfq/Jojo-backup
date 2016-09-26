@@ -19,7 +19,11 @@
 
             <ul id="topbar-menu">
                            
-                <li><a href="#"><i class="icon-message"></i><span class="tb-menu-text"> Message </span><span class="bubble animated rubberBand">5</span></a></li>
+                <li>
+                    <h:form>
+                        <a jsf:id="link1" jsf:actionListener="#{staffMessageManagedBean.staffViewAllMessages}" ><i class="icon-message"></i><span class="tb-menu-text"> Message </span><span class="bubble animated rubberBand">  #{staffMessageManagedBean.countStaffUnreadEmail()}</span></a>
+                    </h:form>
+                </li>
                 <li><a href="#"><i class="icon-bell"></i><span class="tb-menu-text"> Notifications </span><span class="bubble animated rubberBand">13</span></a></li>
 
             </ul>

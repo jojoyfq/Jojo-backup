@@ -4,48 +4,29 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
-
     <ui:define name="head">
-
     </ui:define>
-
     <ui:define name="content">
-
         <!-- Left Column -->
         <div class="Container5 NoPadding Responsive100">
- 
         </div>
-
         <!-- Center Column -->
         <div class="Container90 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-
                     <div class="Container100 ui-fluid">
                         <h:form id="form">
                             <p:panel id="panel" header="Permission Management System" >
-
                                 <p:messages id="msgs" />
-
                                 <h:panelGrid columns="4" cellpadding="5">
-
-
-
                                     <p:dataTable  var="permission" value="#{roleManagementManagedBean.permissionDataTableRows}" rowIndexVar="index">
-
                                         <p:column headerText="Permission ID" style="width: 80px;">
-
                                             <h:outputText value="#{permission.permission.id}" />
                                         </p:column>
-
                                         <p:column headerText="Associated Role Name" style="width: 80px;">
-
                                             <h:outputText value="#{permission.permission.moduleName}" />
                                         </p:column>
-
                                         <p:column headerText="Validility" style="width: 80px;">
-
-
                                             <h:outputText value="#{permission.permission.validity}" />
                                         </p:column>
                                         <p:column headerText="Edit Permission" style="width: 80px;">
@@ -53,8 +34,6 @@
                                                 
                                             </p:selectBooleanButton>
                                         </p:column>
-  
-
                                         <p:column headerText="Submit" style="width: 60px;">
                                             <center>
                                                 <p:commandButton icon="ui-icon-mail-open"  actionListener="#{roleManagementManagedBean.editPermissionNext}" update=":form:panel" ajax="true" type="submit" >
@@ -63,33 +42,27 @@
                                             </center>
                                         </p:column>
                                     </p:dataTable>
-
                                 </h:panelGrid>
-
-
-
                             </p:panel>
                         </h:form>
+                        
+                        <h:form>
+                                <div class="Container10"></div>
+                                <div class="Container80"></div>
+                                <div class="Container10"></div>
+                                
+                                <div class="Container30"></div>
+                                <div class="Container40">
+                                    <p:commandButton value="Back" actionListener="#{roleManagementManagedBean.goToViewAllRolePage}" />
+                                </div>
+                                <div class="Container30"></div>
+                            </h:form>
                     </div>
-
-
-
-
-
-
                 </div>
             </div> 
-
-
-
         </div>
-
         <!-- Right Column -->
         <div class="Container5 NoPadding Responsive50">
-
-
         </div>
-
     </ui:define>
-
 </ui:composition>

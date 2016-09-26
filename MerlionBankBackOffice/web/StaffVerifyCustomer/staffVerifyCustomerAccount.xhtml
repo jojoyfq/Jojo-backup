@@ -1,69 +1,79 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-    <f:view>
-        <h:head>
-            <title>Customer Account Application Management System</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        </h:head>
-        <h:body>
+    <ui:define name="head">
 
-            <h:form id="form">
-                <p:panel id="panel" header="Pending Customers" >
+    </ui:define>
 
-                    <p:messages id="msgs" />
+    <ui:define name="content">
 
-                    <h:panelGrid columns="7" cellpadding="5">
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
 
-                        <p:dataTable id="radioDT" var="pendingCustomer" value="#{staffVerifyCustomerManagedBean.pendingCustomers}" selectionMode="single" selection="#{staffVerifyCustomerManagedBean.selectedCustomer}" rowKey="#{pendingCustomer.id}">
-                            <f:facet name="header">
-                                RadioButton
-                            </f:facet>
-                            <p:column selectionMode="single" style="width:16px;text-align:center"/>
-                            <!--                            <p:ajax event="rowSelect" listener="{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" update=":form" />-->
+        </div>
 
-                            <p:column headerText="Customer ID" style="width: 80px;">
-                                <h:outputText value="#{pendingCustomer.id}" />
-                            </p:column>
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
 
-                            <p:column headerText="Customer Name" style="width: 80px;">
-                                <h:outputText value="#{pendingCustomer.name}" />
-                            </p:column>
+                    <div class="Container100 ui-fluid">
 
-                            <p:column headerText="Customer IC" style="width: 80px;">
-                                <h:outputText value="#{pendingCustomer.ic}" />
-                            </p:column>
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
 
-                            <p:column headerText="Customer Gender" style="width: 80px;">
-                                <h:outputText value="#{pendingCustomer.gender}" />
-                            </p:column>
+                                <p:dataTable id="radioDT" var="pendingCustomer" value="#{staffVerifyCustomerManagedBean.pendingCustomers}" selectionMode="single" selection="#{staffVerifyCustomerManagedBean.selectedCustomer}" rowKey="#{pendingCustomer.id}">
+                                    <f:facet name="header">
+                                        Pending Customer
+                                    </f:facet>
+                                    <p:column selectionMode="single"/>
+                                    <!--                            <p:ajax event="rowSelect" listener="{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" update=":form" />-->
 
-                            <p:column headerText="Customer Date Of Birth" style="width: 80px;">
-                                <h:outputText value="#{pendingCustomer.dateOfBirth}" />
-                            </p:column>
-                            <f:facet name="footer">
-                                <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" oncomplete="PF('carDialog').show()" />
-                                <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}" oncomplete="PF('carDialog').show()" />
+                                    <p:column headerText="Customer ID" >
+                                        <h:outputText value="#{pendingCustomer.id}" />
+                                    </p:column>
 
-                            </f:facet>
+                                    <p:column headerText="Customer Name" >
+                                        <h:outputText value="#{pendingCustomer.name}" />
+                                    </p:column>
+
+                                    <p:column headerText="Customer IC" >
+                                        <h:outputText value="#{pendingCustomer.ic}" />
+                                    </p:column>
+
+                                    <p:column headerText="Customer Gender" >
+                                        <h:outputText value="#{pendingCustomer.gender}" />
+                                    </p:column>
+
+                                    <p:column headerText="Customer Date Of Birth" >
+                                        <h:outputText value="#{pendingCustomer.dateOfBirth}" />
+                                    </p:column>
+
+                                    <f:facet name="footer">
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" oncomplete="PF('carDialog').show()" />
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}" oncomplete="PF('carDialog').show()" />
+                                    </f:facet>
+                                </p:dataTable>
+
+                            </h:panelGrid>
 
 
 
-                        </p:dataTable>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
 
-                    </h:panelGrid>
-                </p:panel>
-            </h:form>
-        </h:body>
-    </f:view>
-</html>
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

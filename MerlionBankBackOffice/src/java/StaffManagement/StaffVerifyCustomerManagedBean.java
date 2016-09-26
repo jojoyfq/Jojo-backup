@@ -103,6 +103,7 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
          //   customer = ((Customer) event.getObject());
             // customer = (Customer) event.getComponent().getAttributes().get("selectedCustomer");
         //    customerId = ((Customer) event.getObject()).getId();
+            if(selectedCustomer != null){
             customerId = selectedCustomer.getId();
             System.err.println("********** customer.getId(): " + selectedCustomer.getId());
             //  result = Boolean.toString(check);
@@ -133,9 +134,13 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
                 svcasbl.verifyFixedDepositAccountCustomer(staffId, customerId, result, fixedDepositId);
                         pendingCustomers = svcasbl.viewPendingVerificationList();
 
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Cusotmer" + customerId + " has been+ " + result);
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerId + " has been+ " + result);
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
+            }
+            }else{
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }
 
         } catch (EmailNotSendException ex) {
@@ -149,6 +154,7 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
          //   customer = ((Customer) event.getObject());
             // customer = (Customer) event.getComponent().getAttributes().get("selectedCustomer");
         //    customerId = ((Customer) event.getObject()).getId();
+            if(selectedCustomer != null){
             customerId = selectedCustomer.getId();
             System.err.println("********** customer.getId(): " + selectedCustomer.getId());
             //  result = Boolean.toString(check);
@@ -180,9 +186,13 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
                 svcasbl.verifyFixedDepositAccountCustomer(staffId, customerId, result, fixedDepositId);
                         pendingCustomers = svcasbl.viewPendingVerificationList();
 
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Cusotmer" + customerId + " has been+ " + result);
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerId + " has been+ " + result);
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
+            }
+            }else{
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }
 
         } catch (EmailNotSendException ex) {

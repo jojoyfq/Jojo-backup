@@ -13,6 +13,7 @@
 
                 <p:menuitem id="pa_dashboards" value="Home" outcome="/StaffDashboard" />
 
+                
                 <p:submenu id="staff_management" label="Staff Management" rendered="#{rolePermissionManagedBean.permissionList.get(1)}">
                     <p:menuitem id="create_staff" value="Create Staff" outcome="/SuperAdminManagement/createStaff"/>
                     <p:menuitem id="create_staff_role" value="Create Staff Role" outcome="/SuperAdminManagement/createStaffRole"/>
@@ -21,28 +22,33 @@
                 </p:submenu>
 
                 <p:submenu id="customer_management" label="Customer Management">
-                    <p:submenu id="saving_accountNC" label="Create Saving Account For New Customer" icon="icon-plus">
+                    <p:submenu id="saving_accountNC" label="Operational CRM" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(2)}">
                         <p:menuitem id="create_saving_accountNC" value="Create Saving Account For New Customer" outcome="/CustomerManagement/createSavingAccountNC"/>
+                        <p:menuitem id="staffVerifyCustomer" value="Staff Verify Pending Customer" outcome="/StaffVerifyCustomer/staffVerifyCustomerAccount"/>
                     </p:submenu>
+                                            
                 </p:submenu>
 
                 <p:submenu id="deposit_management" label="Deposit Management">
-                    <p:submenu id="saving_account" label="Saving Account" icon="icon-plus">
-                        <p:menuitem id="create_saving_accountEC" value="Create Saving Account For Existing Customer" actionListener="#{savingAccountManagedBean.dashboardToCreateSavingAccountEC}"/>
-                        <p:menuitem id="cash_deposit" value="Cash Deposit" actionListener="#{savingAccountManagedBean.dashboardToCashDeposit}"/> 
-                        <p:menuitem id="cash_withdraw" value="Cash Withdraw" actionListener="#{savingAccountManagedBean.dashboardToCashWithdraw}"/>
+                    <p:submenu id="saving_account" label="Saving Account" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(5)}">
+                        <p:menuitem id="create_saving_accountEC" value="Create Saving Account For Existing Customer" actionListener="#{savingAccountManagedBean.dashboardToCreateSavingAccountEC}"/>                       
                         <p:menuitem id="view_detail" value="View Saving Account" actionListener="#{savingAccountManagedBean.dashboardToViewAccounts}"/> 
                         <p:menuitem id="view_transactionRecord" value="View Transaction History" actionListener="#{savingAccountManagedBean.dashboardToViewTransactions}"/>
                         <p:menuitem id="close_saving_account" value="Close Saving Account" actionListener="#{savingAccountManagedBean.dashboardToCloseSavingAccount}"/> 
                         <p:menuitem id="saving_account_change_ir" value="Change Interest Rate" actionListener="#{savingAccountManagedBean.dashboardToChangeInterestRate}"/>
                     </p:submenu>
                     
-                    <p:submenu id="fixed_deposit_account" label="Fixed Deposit Account" icon="icon-plus">
+                    <p:submenu id="fixed_deposit_account" label="Fixed Deposit Account" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(4)}">
                         <p:menuitem id="create_fixed_deposit_account" value="Create Fixed Deposit Account" outcome="/FixedDepositManagement/createFixedDeposit"/>
                         <p:menuitem id="view_fixed_deposit_account" value="View Account Details" outcome="/FixedDepositManagement/displayFixedDepositAccountDetail"/>
                         <p:menuitem id="withdraw_fixed_deposit_account" value="Withdraw Fixed Deposit" outcome="/FixedDepositManagement/withdrawFixedDeposit"/>
                         <p:menuitem id="change_fixed_interest_rate" value="Change Interest Rate" outcome="/FixedDepositManagement/changeFixedDepositInterestRate"/>
-                    </p:submenu>               
+                    </p:submenu>  
+                    
+                    <p:submenu id="counter_cash" label="Counter Cash" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(6)}">
+                        <p:menuitem id="cash_deposit" value="Cash Deposit" actionListener="#{savingAccountManagedBean.dashboardToCashDeposit}"/> 
+                        <p:menuitem id="cash_withdraw" value="Cash Withdraw" actionListener="#{savingAccountManagedBean.dashboardToCashWithdraw}"/>   
+                    </p:submenu>
                 </p:submenu>
 
                 <p:submenu id="card_management" label="Card Management">
@@ -52,7 +58,7 @@
                 <p:menuitem id="loan_management" value="Loan Management" />
 
                 <p:submenu id="bill_and_transfer" label="Bill and Transfer">
-                    <p:submenu id="transfer" label="Transfer" icon="icon-plus">
+                    <p:submenu id="transfer" label="Transfer" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(12)}">
                         <p:menuitem id="intraTransfer" value="Transfer to other Merlion Bank Account" outcome="/TransferManagement/intraTransfer"/>
                     </p:submenu>
                 </p:submenu>

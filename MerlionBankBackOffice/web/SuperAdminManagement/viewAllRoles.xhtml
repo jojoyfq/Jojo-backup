@@ -4,39 +4,25 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
-
     <ui:define name="head">
-
     </ui:define>
-
     <ui:define name="content">
-
         <!-- Left Column -->
         <div class="Container5 NoPadding Responsive100">
-
         </div>
-
         <!-- Center Column -->
         <div class="Container90 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-
                     <div class="Container100 ui-fluid">
                         <h:form id="form">
                             <p:panel id="panel" header="Role Management System" >
-
                                 <p:messages id="msgs" />
-
                                 <h:panelGrid columns="4" cellpadding="5">
-
-
-
                                     <p:dataTable var="roleEntity" value="#{roleManagementManagedBean.staffRoles}">
-
                                         <p:column headerText="Role ID" style="width: 80px;">
                                             <h:outputText value="#{roleEntity.id}" />
                                         </p:column>
-
                                         <p:column headerText="Role Name">
                                             <h:outputText value="#{roleEntity.roleName}" />
                                         </p:column>
@@ -47,7 +33,6 @@
                                                 </p:commandButton>      
                                             </center>
                                         </p:column>
-
                                         <p:column headerText="Edit Permissions" style="width: 80px;" >
                                             <center>
                                                 <p:commandButton icon="ui-icon-check" oncomplete="PF('replyDialog').show()" actionListener="#{roleManagementManagedBean.editPermission(roleEntity)}" update=":form:panel form:dialogMessage" ajax="true" type="submit" >
@@ -55,7 +40,6 @@
                                                 </p:commandButton>      
                                             </center>
                                         </p:column>
-                                        
                                         <p:column headerText="Delete" style="width: 60px;">
                                             <center>
                                                 <p:commandButton icon="ui-icon-mail-trash"  actionListener="#{roleManagementManagedBean.deleteRole}" update=":form:panel" ajax="true" type="submit" >
@@ -63,61 +47,35 @@
                                                 </p:commandButton>
                                             </center>
                                         </p:column>
-
                                     </p:dataTable>
-
                                 </h:panelGrid>
-
                                 <p:dialog id="dialogMessage"  appendTo="@(body)" header="Message Info" widgetVar="replyDialog" showEffect="fade" hideEffect="fade" resizable="true">
                                     <p:outputPanel id="msgDetail" style="text-align:center;">
                                         <p:panelGrid  columns="5"  >
-
                                             <p:dataTable  var="permission" value="#{roleManagementManagedBean.permissions}">
-
                                                 <p:column headerText="Permission ID" style="width: 80px;">
-
                                                     <h:outputText value="#{permission.id}" />
                                                 </p:column>
-
                                                 <p:column headerText="Associated Role Name" style="width: 80px;">
-
                                                     <h:outputText value="#{permission.moduleName}" />
                                                 </p:column>
-
                                                 <p:column headerText="Validility" style="width: 80px;">
-
                                                     <h:outputText value="#{permission.validity}" />
                                                 </p:column>
                                                 
-                                               
                                             </p:dataTable>
                                         
                                         </p:panelGrid>
                                     </p:outputPanel>
                                 </p:dialog>
-
                             </p:panel>
                         </h:form>
                     </div>
-
-
-
-
-
-
                 </div>
             </div> 
-
-
-
         </div>
-
         <!-- Right Column -->
         <div class="Container5 NoPadding Responsive50">
-
-
         </div>
-
     </ui:define>
-
 </ui:composition>

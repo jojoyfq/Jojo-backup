@@ -89,6 +89,8 @@ public class SimulationManagedBean implements Serializable {
             }
             else{
             System.out.println("**************Transferred successfully!");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Transfer Successful!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
         } catch (AccountNotExistedException ex) {
 
@@ -105,6 +107,8 @@ public void transerToSaving(ActionEvent event) throws AccountNotExistedException
 
             }
             else{
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Transfer successful!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
             System.out.println("**************Transferred successfully!");
             }
         } catch (AccountNotExistedException ex) {

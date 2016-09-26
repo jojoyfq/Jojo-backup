@@ -20,7 +20,7 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Update Your Information </div>
+                    <div class="CardBigTopic"> Update Customer Information </div>
                     <div class="Separator"></div>
 
 
@@ -33,45 +33,45 @@
                                 <h:panelGrid columns="3" cellpadding="5">
 
                                     <h:outputLabel for="ic" value="IC:" /> 
-                                    <h:outputLabel for="ic" value="#{logInManagedBean.ic}" /> 
-                                    <h:outputLabel/>
+                                    <p:inputText id="ic" value="#{serviceCustomerManagedBean.customerIc}"  required="true" requiredMessage="Please fill in IC!" />
+                                    <p:message for="ic" display="icon" />
 
 
                                     <h:outputLabel for="name" value="Name:" /> 
-                                    <h:outputLabel value="#{logInManagedBean.customerName}" />
-                                    <h:outputLabel/>
-                                    
+                                    <p:inputText id="name" value="#{serviceCustomerManagedBean.customerName}"  required="true" requiredMessage="Please fill in Name!" />
+                                    <p:message for="name" display="icon" />
+
                                     <h:outputLabel for="gender" value="Gender:" /> 
-                                    <h:outputLabel value=" #{logInManagedBean.customerGender}" /> 
+                                    <h:outputLabel value=" #{serviceCustomerManagedBean.gender}" /> 
                                     <h:outputLabel/>
-                                    
+
                                     <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
-                                    <h:outputLabel value="#{logInManagedBean.birthdate}" />
-                                    <h:outputLabel/>
-                                    
+                                    <p:calendar id="customerDateOfBirth" value="#{serviceCustomerManagedBean.birthDate}" showOn="button" required="true"  requiredMessage="Please input birthday"/>
+                                    <p:message for="customerDateOfBirth" display="icon" />
+
                                     <h:outputLabel for="email" value="Email:" /> 
-                                    <p:inputText id="email" value="#{logInManagedBean.customerEmail}"  required="true" requiredMessage="Please fill in your email!" />
+                                    <p:inputText id="email" value="#{serviceCustomerManagedBean.email}"  required="true" requiredMessage="Please fill in your email!" />
                                     <p:message for="email" display="icon" />
 
 
 
                                     <h:outputLabel for="phoneNumber" value="Phone Number:" /> 
-                                    <p:inputText id="phoneNumber" value="#{logInManagedBean.customerPhoneNumber}"   required="true" requiredMessage="Please fill in your phone number!"/>
+                                    <p:inputText id="phoneNumber" value="#{serviceCustomerManagedBean.phoneNumber}"   required="true" requiredMessage="Please fill in your phone number!"/>
                                     <p:message for="phoneNumber" display="icon" />
 
                                     <h:outputLabel for="address" value="Address is:" /> 
-                                    <p:inputText id="address" value="#{logInManagedBean.customerAddress}" label="customerAddress" required="true" requiredMessage="Please fill in your address!"/>
+                                    <p:inputText id="address" value="#{serviceCustomerManagedBean.address}" label="customerAddress" required="true" requiredMessage="Please fill in your address!"/>
                                     <p:message for="address" display="icon" />
 
                                     <h:outputLabel for="occupation" value="Occupation:" /> 
-                                    <p:inputText id="occupation" value="#{logInManagedBean.customerOccupation}" label="occupation" required="true" requiredMessage="Please fill in your occupation!"/>
+                                    <p:inputText id="occupation" value="#{serviceCustomerManagedBean.occupation}" label="occupation" required="true" requiredMessage="Please fill in your occupation!"/>
                                     <p:message for="occupation" display="icon"  />
 
                                     <h:outputLabel for="familyInfo" value="Family Information:" /> 
-                                    <p:inputText id = "familyInfo" value="#{logInManagedBean.customerFamilyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
+                                    <p:inputText id = "familyInfo" value="#{serviceCustomerManagedBean.familyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
                                     <p:message for="familyInfo" display="icon" />
 
-                                    <p:commandButton  update ="panel" icon="ui-icon-script" actionListener="#{logInManagedBean.modifyProfile}" value="Submit" rendered="true" />
+                                    <p:commandButton   icon="ui-icon-script" actionListener="#{serviceCustomerManagedBean.staffUpdateCustomerProfile}" value="Submit" rendered="true" />
                                 </h:panelGrid>
                             </p:panel>
 
