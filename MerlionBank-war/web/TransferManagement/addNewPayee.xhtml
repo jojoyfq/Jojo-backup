@@ -20,7 +20,7 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Add New Recipient </div>
+                    <div class="CardBigTopic"> Add New Payee </div>
                     <div class="Separator"></div>
 
                     <div class="Container100 ui-fluid">
@@ -32,11 +32,11 @@
                                     <div class="Container80">
                                         <h:panelGrid columns="3" id="addNewPayee" cellpadding="5"> 
 
-                                            <h:outputLabel for="recipientAccount" value="Recipient Account Number:" />
+                                            <h:outputLabel for="recipientAccount" value="Payee Account Number:" />
                                             <p:inputText id="recipientAccount" value="#{transferManagedBean.payeeAccountString}" label="recipientAccount" required="true" requiredMessage="Recipient Account Number is required." />
                                             <h:message for="recipientAccount"  />
 
-                                            <h:outputLabel for="recipientName" value="Recipient Name:" />
+                                            <h:outputLabel for="recipientName" value="Payee Name:" />
                                             <p:inputText id="recipientName" value="#{transferManagedBean.payeeName}" required="true" requiredMessage="Recipient Name is required." />
                                             <h:message for="recipientName"  />
 

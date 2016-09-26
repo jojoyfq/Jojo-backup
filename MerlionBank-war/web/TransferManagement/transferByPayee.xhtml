@@ -40,7 +40,10 @@
                                         <h:outputLabel id="payee_Name" value="#{transferManagedBean.payeeName}" />
 
                                         <h:outputLabel for="transferAmount" value="Amount: $" />
-                                        <p:inputText id="transfer_Amount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." />
+                                        <p:inputText id="transfer_Amount" value="#{transferManagedBean.amountString}" required="true" requiredMessage="Transfer Amount is required." >
+                                            <p:keyFilter regEx="/[\d\-\.]/"/> 
+                                        <f:convertNumber pattern="0.0000"/>
+                                        </p:inputText>
 
                                     </h:panelGrid>
                                 </div>
