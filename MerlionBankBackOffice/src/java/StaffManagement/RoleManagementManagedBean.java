@@ -209,18 +209,15 @@ staffLogInManagedBean slimbl;
         }
 //                return permissions;
     }
-
     public void editPermission(StaffRole role) throws IOException {
         // permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
 
         permissions = role.getPermissions();
-
         
         setPermissionDataTableRows(new ArrayList<>());
         
         for(Permission p:permissions)
             getPermissionDataTableRows().add(new PermissionDataTableRow(p));
-
         roleId = role.getId();
         System.out.println("**********size of permission is " + permissions.size());
 
@@ -232,15 +229,8 @@ staffLogInManagedBean slimbl;
 
     }
 
-    public void editPermissionNext(ActionEvent event) {
-        // permission = (Permission) event.getComponent().getAttributes().get("selectedPermission");
-
-//        permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
-//        moduleName = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getModuleName();
-//        oldValidility = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).isValidity();
-//        newValidilityStr = Boolean.toString(newValidility);
-
-        
+    public void editPermissionNext(ActionEvent event)
+    {    
         PermissionDataTableRow permissionDataTableRow = ((PermissionDataTableRow) event.getComponent().getAttributes().get("selectedPermission"));
         
         permissionId = permissionDataTableRow.getPermission().getId();
@@ -248,45 +238,35 @@ staffLogInManagedBean slimbl;
         oldValidility = permissionDataTableRow.getPermission().isValidity();
         newValidility = permissionDataTableRow.getValidity();
 
-
-//        permissionId = ((Permission) event.getObject()).getId();
-//        moduleName = ((Permission) event.getObject()).getModuleName();
-//       oldValidility= ((Permission) event.getObject()).isValidity();
-        System.out.println("******Old validility: " + oldValidility);
-
-        System.out.println("******New validility: " + newValidilityStr);
-
-        System.out.println("******New validility: " + newValidility);
-
-        System.out.println("***************Role Id is " + roleId);
-        System.out.println("***************Permission Id is " + permissionId);
-
-        if (oldValidility != newValidility) {
-            if (oldValidility = true) {
+        if (oldValidility != newValidility) 
+        {
+            if (newValidility == false) 
+            {
                 boolean msg = smsbl.deletePermission(adminId, roleId, permissionId);
-                System.out.println("***********message from delete permission" + msg);
-            } else {
-                smsbl.addPermission(adminId, roleId, permissionId);
-            }
-
-            if (newValidility == false) {
-                boolean msg = smsbl.deletePermission(adminId, roleId, permissionId);
-                System.out.println("***********message from delete permission" + msg);
-            } else {
+            } 
+            else 
+            {
                 smsbl.addPermission(adminId, roleId, permissionId);
             }
             
-            role = smsbl.viewRole(roleId);
-            permissions = role.getPermissions();
+            staffRoles = displayAllRoles();
             
+            for(StaffRole sr:staffRoles)
+            {
+                if(sr.getId().equals(roleId))
+                {
+                    role = sr;
+                    break;
+                }
+            }
+                        
+            permissions = role.getPermissions();            
             setPermissionDataTableRows(new ArrayList<>());
         
             for(Permission p:permissions)
+            {
                 getPermissionDataTableRows().add(new PermissionDataTableRow(p));
-            
-
-        } else {
-            System.out.println("No permission has been changed!");
+            }
         }
     }
 
