@@ -31,7 +31,9 @@ and open the template in the editor.
                             </p:column>
 
                             <p:column headerText="Date">
-                                <h:outputText value="#{action.actionDate}" />
+                                <h:outputText value="#{action.actionDate}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
                             </p:column>
                             
                             <p:column headerText="Description">

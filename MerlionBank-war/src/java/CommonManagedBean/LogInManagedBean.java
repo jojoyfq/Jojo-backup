@@ -34,6 +34,7 @@ import javax.faces.event.ActionEvent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.Flash;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -70,7 +71,10 @@ public class LogInManagedBean implements Serializable {
     private List data = new ArrayList();
     private List accountTypes;
     private Long customerId;
-
+    
+    @Inject
+    private CustomerViewActionManagedBean customerViewActionManagedBean;
+    
     public LogInManagedBean() {
         logInAttempts = 0;
     }
@@ -125,8 +129,10 @@ public class LogInManagedBean implements Serializable {
 
     }
     
-    public void viewCustomerActionLog(ActionEvent event) throws IOException{
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CustomerManagement/viewActionLog.xhtml"); 
+    public void viewCustomerActionLog(ActionEvent event) throws IOException, ListEmptyException{
+      customerViewActionManagedBean.viewLoggingAction(event);
+
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/viewActionLog.xhtml"); 
     }
 
 //   private void warnMsg(String message) {
