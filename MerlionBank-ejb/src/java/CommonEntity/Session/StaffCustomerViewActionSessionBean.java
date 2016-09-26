@@ -39,8 +39,9 @@ return actions;
 
 @Override
 public List<StaffAction>viewStaffAction(Long staffId) throws ListEmptyException{
-    Staff staff=em.find(Staff.class,staffId);
-List<StaffAction> actions=staff.getStaffActions();
+    
+Staff staff=em.find(Staff.class,staffId);
+List<StaffAction> actions= staff.getStaffActions();
 
 if (actions.isEmpty())
     throw new ListEmptyException("Customer has no action record");
@@ -48,4 +49,5 @@ if (actions.isEmpty())
 return actions;
 
 }
+
 }

@@ -8,6 +8,7 @@ package StaffManagement;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
+import Exception.ListEmptyException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UnexpectedErrorException;
@@ -26,6 +27,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -98,6 +100,9 @@ public class staffLogInManagedBean implements Serializable {
     private List roleNames;
     private String roleName;
 
+    @Inject
+    StaffLoggingActionManagedBean staffLoggingActionManagedBean;
+    
     public String getRoleName() {
         return roleName;
     }
@@ -188,6 +193,11 @@ public class staffLogInManagedBean implements Serializable {
         System.out.println("Go into GoToStaffLogInHome");
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInHome.xhtml");
 
+    }
+    
+    public void viewStaffAction(ActionEvent event) throws IOException, ListEmptyException{
+         staffLoggingActionManagedBean.viewLoggingAction(event);
+         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/viewActionLog.xhtml");
     }
 
     public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
