@@ -106,4 +106,6 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
     public StaffRole viewRole(Long roleId);
     
     public List<StaffRole> viewOneStaffRole(Staff staff);
+    
+    public List<Permission> sortPermissions(StaffRole staffRole);
 }
