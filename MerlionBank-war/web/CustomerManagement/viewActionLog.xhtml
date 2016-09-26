@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <f:view>
+        <h:head>
+            <title>Action Log Management System</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        </h:head>
+        <h:body>
+
+            <h:form id="form">
+                <p:panel id="panel" header="Message Management System" >
+
+                    <p:messages id="msgs" />
+
+                    <h:panelGrid columns="4" cellpadding="5">
+                        <p:dataTable var="action" value="#{customerViewActionManagedBean.actions}">
+
+                            <p:column headerText="Action ID" style="width: 80px;">
+                                <h:outputText value="#{action.id}" />
+                            </p:column>
+
+                            <p:column headerText="Date">
+                                <h:outputText value="#{action.actionDate}" />
+                            </p:column>
+                            
+                            <p:column headerText="Description">
+                                <h:outputText value="#{action.description}" />
+                            </p:column>
+                            
+                           
+
+
+                        </p:dataTable>
+                        <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/></div>
+
+
+                    </h:panelGrid>
+                   
+                </p:panel>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

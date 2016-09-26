@@ -26,6 +26,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -182,7 +183,12 @@ public class staffLogInManagedBean implements Serializable {
             roleNames.add(smsbl.viewRoles().get(i).getRoleName());
         }
     }
+    public void goToLogInPage(ActionEvent event) throws IOException {
+        System.out.println("Go into GoToStaffLogInHome");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
 
+    }
+    
     public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException ,IOException{
         try {
             if (staffIc != null && password != null && roleName != null) {
@@ -256,6 +262,16 @@ public class staffLogInManagedBean implements Serializable {
 
         }
         return "staffLogInHome";
+    }
+    
+     public void logout() throws IOException {
+        System.out.println("Inside logout");
+        ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+//        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();        
+        System.out.println("testtest");
+        String serverName = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
+        String serverPort = "8080";
+        FacesContext.getCurrentInstance().getExternalContext().redirect("http://" + serverName + ":" + serverPort + "/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
     }
 
 }

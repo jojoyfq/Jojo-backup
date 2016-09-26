@@ -176,18 +176,30 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         q.setParameter("customerID", customerID);
         List<Customer> customers = new ArrayList(q.getResultList());
         Customer customer = customers.get(0);
+        
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
-        if (savingAccounts.size() == 3) {
-            System.out.print("You already have 3 saving accounts!");
-            throw new UserAlreadyHasSavingAccountException("User Already has 3 saving accounts, cannot create more!");
-
-        } else {
-            for (int i = 0; i < savingAccounts.size(); i++) {
-                if (savingAccounts.get(i).getSavingAccountType().getAccountType().equals(savingAccountName)) {
-                    System.out.print("User already has the same saving account.");
-                    throw new UserAlreadyHasSavingAccountException("User already has the same saving account.");
-                }
-            }
+        List<SavingAccount> temp = new ArrayList<SavingAccount>();
+        for (int i=0;i<savingAccounts.size();i++){
+            if (!savingAccounts.get(i).getStatus().equals("terminated"))
+                temp.add(savingAccounts.get(i));
+        }
+        
+        for (int i=0;i<temp.size();i++){
+            if (!temp.get(i).getSavingAccountType().getAccountType().equals(savingAccountName))
+             throw new UserAlreadyHasSavingAccountException("User Already has this type of saving account, cannot create more!");   
+        }
+        
+//        if (savingAccounts.size() == 3) {
+//            System.out.print("You already have 3 saving accounts!");
+//            throw new UserAlreadyHasSavingAccountException("User Already has 3 saving accounts, cannot create more!");
+//
+//        } else {
+//            for (int i = 0; i < savingAccounts.size(); i++) {
+//                if (savingAccounts.get(i).getSavingAccountType().getAccountType().equals(savingAccountName)) {
+//                    System.out.print("User already has the same saving account.");
+//                    throw new UserAlreadyHasSavingAccountException("User already has the same saving account.");
+//                }
+//            }
 
             //create saving account
             //long savingAccoutNumber = Math.round(Math.random() * 1000000000);
@@ -227,7 +239,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
                 throw new EmailNotSendException("Error sending email.");
             }
 
-        }
+        
 
     }
 
