@@ -1040,6 +1040,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
             em.flush();
             em.persist(staff);
             recordStaffAction(staff.getId(), "reset password", null);
+            System.out.println("Inside session bean: Reset password successfully!!!!");
             return true;
         } else if (!newPassword.equals(confirmPassword)) {
             throw new PasswordNotMatchException("Password not match");
@@ -1079,8 +1080,9 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         }
 
         if (!passwordHash(password + staff.getSalt()).equals(staff.getPassword())) {
+            Long i = Long.parseLong("1");
+            return i;
 
-            throw new PasswordNotMatchException("Invalid account details");
         }
 
         Query m = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :staffRoleName");
@@ -1123,12 +1125,14 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     }
 
     // invalid log in - acccount lock
-
     @Override
-    public Long lockAccount(Long staffId) {
-        Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
-        q.setParameter("id", staffId);
-        Staff staff = (Staff) q.getSingleResult();
+    public Long lockAccount(String ic) {
+         Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffIc = :ic");
+        q.setParameter("ic", ic);
+        List<Staff> temp = new ArrayList(q.getResultList());
+       
+        int size = temp.size();
+        Staff staff = temp.get(size - 1);
         staff.setStatus("locked");
         em.persist(staff);
         em.flush();

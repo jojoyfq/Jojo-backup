@@ -224,7 +224,7 @@ public class staffLogInManagedBean implements Serializable {
                         message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your account has been locked out.");
 
                         RequestContext.getCurrentInstance().showMessageInDialog(message);
-                        System.out.println(smsbl.lockAccount(staffId));
+                        System.out.println(smsbl.lockAccount(staffIc));
                     }
                 } else {
                     //  selectedCustomer = amsbl.diaplayCustomerId(customerId);
@@ -236,7 +236,7 @@ public class staffLogInManagedBean implements Serializable {
 
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
                 //    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
-                //    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
+                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
              //       RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                 }
 
@@ -253,6 +253,7 @@ public class staffLogInManagedBean implements Serializable {
         try {
             if (staffIc != null && name != null && email != null) {
                 staff = smsbl.forgetPasswordVerifyDetail(staffIc, name, email);
+                staffId = staff.getId();
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/resetPassword.xhtml");
 
             }
@@ -265,6 +266,7 @@ public class staffLogInManagedBean implements Serializable {
     public void staffUpdatePassword(ActionEvent event) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException, IOException {
         try {
             if (staffId != null && newPassword != null && confirmPassword != null) {
+                System.out.println("*F************Reset Password staff id is  "+staffId);
                 smsbl.updateForgetPassword(staffId, newPassword, confirmPassword);
 //               FacesContext facesContext = FacesContext.getCurrentInstance();
 //            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your password has been successfully changed! Please log in again!"));

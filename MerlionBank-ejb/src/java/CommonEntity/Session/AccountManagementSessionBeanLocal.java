@@ -62,7 +62,7 @@ public boolean updateAccountStatus(String ic);
 
 //Log in
      public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException;
- public Long lockAccount(Long customerId);
+ public Long lockAccount(String customerIc);
  public Customer diaplayCustomerId(Long id);
 
 //Create Fixed Deposit Account - 1st page - create online banking account
