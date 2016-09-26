@@ -22,6 +22,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -34,7 +35,8 @@ public class RoleManagementManagedBean implements Serializable {
 
     @EJB
     StaffManagementSessionBeanLocal smsbl;
-
+@Inject
+staffLogInManagedBean slimbl;
     /**
      * Creates a new instance of RoleManagementManagedBean
      */
@@ -171,6 +173,26 @@ public class RoleManagementManagedBean implements Serializable {
         staffRoles = smsbl.viewRoles();
         return staffRoles;
     }
+    
+    public void deleteRole(ActionEvent event) throws RoleHasStaffException {
+        try {
+             role = (StaffRole) event.getComponent().getAttributes().get("selectedRole");
+             staffRoleId = role.getId();
+ 
+             staffRoles = smsbl.deleteRole(staffRoleId, adminId);
+             
+             List <String>temp=new ArrayList<String>();
+             System.out.println("In session bean delete role!!!!!!"+staffRoles.size());
+             for(int i=0;i<staffRoles.size();i++){
+             temp.add(staffRoles.get(i).getRoleName());
+             }
+             slimbl.setRoleNames(temp);
+         } catch (RoleHasStaffException ex) {
+             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+ 
+         }
+     }
 
     public void displayOneRolePermissions(ActionEvent event) {
 
@@ -187,20 +209,7 @@ public class RoleManagementManagedBean implements Serializable {
         }
 //                return permissions;
     }
-public void deleteRole(ActionEvent event)throws RoleHasStaffException{
-    try {
-        
-         role = (StaffRole) event.getComponent().getAttributes().get("selectedRole");
-         staffRoleId = role.getId();
-        System.out.println("********Selected Role is " + role.getRoleName() + " " + role.getId());
-        staffRoles = smsbl.deleteRole(staffRoleId, adminId);
-        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Deleted successfully");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-    }catch(RoleHasStaffException ex){
-          FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getLocalizedMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-    }
-}
+
     public void editPermission(StaffRole role) throws IOException {
         // permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
 
