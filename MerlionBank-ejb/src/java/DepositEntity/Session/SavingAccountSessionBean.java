@@ -311,6 +311,8 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         if (savingAccount.deductAmt(withdrawAmount)) {
             BigDecimal updatedBalance = savingAccount.getAvailableBalance().subtract(withdrawAmount);
             savingAccount.setAvailableBalance(updatedBalance);
+            BigDecimal updatedTotalBalance = savingAccount.getBalance().subtract(withdrawAmount);
+            savingAccount.setBalance(updatedTotalBalance);
             em.flush();
             System.out.print("cash withdraw successful");
             System.out.print(savingAccount.getAvailableBalance());
@@ -334,6 +336,8 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
 
         BigDecimal updatedBalance = savingAccount.getAvailableBalance().add(depositAmount);
         savingAccount.setAvailableBalance(updatedBalance);
+        BigDecimal updatedTotalBalance = savingAccount.getBalance().add(depositAmount);
+        savingAccount.setBalance(updatedTotalBalance);
         em.flush();
         System.out.print("cash deposit successful");
         System.out.print(savingAccount.getAvailableBalance());
