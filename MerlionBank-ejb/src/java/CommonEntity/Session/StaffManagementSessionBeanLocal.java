@@ -97,7 +97,7 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
 
     // invalid log in - acccount lock
 
-    public Long lockAccount(Long staffId);
+    public Long lockAccount(String staffIc);
     
     public StaffRole getRoleByRoleName(String roleName);
     
