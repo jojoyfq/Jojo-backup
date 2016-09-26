@@ -263,6 +263,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     @Override
     public void logStaffAction(String description, Long customerId, Long staffId) {
         List<StaffAction> actions = new ArrayList<>();
+        System.out.print(customerId);
+        System.out.print(staffId);
+        
         Staff staff = em.find(Staff.class, staffId);
         StaffAction action = new StaffAction(Calendar.getInstance().getTime(), description, customerId, staff);
         em.persist(action);

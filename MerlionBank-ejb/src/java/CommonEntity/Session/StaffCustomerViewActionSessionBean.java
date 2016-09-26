@@ -21,33 +21,39 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class StaffCustomerViewActionSessionBean implements StaffCustomerViewActionSessionBeanLocal {
-@PersistenceContext
+
+    @PersistenceContext
     private EntityManager em;
 
-@Override
-public List<CustomerAction>viewCustomerAction(Long customerId) throws ListEmptyException{
-    
-Customer customer=em.find(Customer.class,customerId);
-List<CustomerAction> actions=customer.getCustomerActions();
+    @Override
+    public List<CustomerAction> viewCustomerAction(Long customerId) throws ListEmptyException {
 
-if (actions.isEmpty())
-    throw new ListEmptyException("Customer has no action record");
+        Customer customer = em.find(Customer.class, customerId);
+        List<CustomerAction> actions = customer.getCustomerActions();
 
-return actions;
+        if (actions.isEmpty()) {
+            throw new ListEmptyException("Customer has no action record");
+        }
 
-}
+        return actions;
 
-@Override
-public List<StaffAction>viewStaffAction(Long staffId) throws ListEmptyException{
-    
-Staff staff=em.find(Staff.class,staffId);
-List<StaffAction> actions= staff.getStaffActions();
+    }
 
-if (actions.isEmpty())
-    throw new ListEmptyException("Customer has no action record");
+    @Override
+    public List<StaffAction> viewStaffAction(Long staffId) throws ListEmptyException {
 
-return actions;
+        Staff staff = em.find(Staff.class, staffId);
+        System.out.print(staff.getStaffEmail());
+        List<StaffAction> actions = staff.getStaffActions();
 
-}
+        if (actions.isEmpty()) {
+            System.out.print("Staff Action is Empty! ");
+            throw new ListEmptyException("Customer has no action record");
+        } else {
+
+            return actions;
+        }
+
+    }
 
 }
