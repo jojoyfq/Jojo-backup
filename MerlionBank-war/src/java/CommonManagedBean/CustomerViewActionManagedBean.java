@@ -88,6 +88,7 @@ public class CustomerViewActionManagedBean implements Serializable {
 
     public List<CustomerAction> viewLoggingAction(ActionEvent event) throws ListEmptyException {
         try {
+            customerId = limbl.getCustomerId();
             System.out.println("***********customer Id is "+customerId);
             actions = scvasbl.viewCustomerAction(customerId);
         } catch (ListEmptyException ex) {
