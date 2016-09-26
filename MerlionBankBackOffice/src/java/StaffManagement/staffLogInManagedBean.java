@@ -177,6 +177,7 @@ public class staffLogInManagedBean implements Serializable {
     public void init() {
         staff = new Staff();
         roleNames = new ArrayList<>();
+        System.out.println("***********Role size is "+smsbl.viewRoles().size());
         for (int i = 0; i < smsbl.viewRoles().size(); i++) {
             roleNames.add(smsbl.viewRoles().get(i).getRoleName());
         }

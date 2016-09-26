@@ -42,13 +42,13 @@ public class MessageManagedBean implements Serializable {
     //maintain the log in function from LogInManagedBean
     @Inject
     private LogInManagedBean logInManagedBean;
-    @Inject
-    private StaffMessageManagedBean staffMessageManagedBean;
+//    @Inject
+//    private StaffMessageManagedBean staffMessageManagedBean;
 //setter for LogInManagedBean
 
-    public void setStaffMessageManagedBean(StaffMessageManagedBean staffMessageManagedBean) {
-        this.staffMessageManagedBean = staffMessageManagedBean;
-    }
+//    public void setStaffMessageManagedBean(StaffMessageManagedBean staffMessageManagedBean) {
+//        this.staffMessageManagedBean = staffMessageManagedBean;
+//    }
 
     public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
         this.logInManagedBean = logInManagedBean;
@@ -198,7 +198,7 @@ public class MessageManagedBean implements Serializable {
             msgAddToStaff = imsbl.customerSendMessage(message.getSubject(), customerReplyContent, message.getStatus(), staffId, customerId);
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your reply has been successfully sent!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-            staffMessageManagedBean.getCustomerMessages().add(msgAddToStaff);
+            //staffMessageManagedBean.getCustomerMessages().add(msgAddToStaff);
 
         } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());

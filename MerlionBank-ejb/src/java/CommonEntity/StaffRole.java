@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,13 +32,15 @@ public class StaffRole implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String roleName;
+    private String status;
     
       
    @ManyToMany(cascade={CascadeType.ALL},mappedBy="staffRoles")
    private List<Staff> staffList;
    
+   
    @ManyToMany(cascade={CascadeType.ALL})
-   @JoinTable(name="StaffRole_Permission")
+     @JoinTable(name="StaffRole_Permission")
    private List<Permission> permissions;
 
    
@@ -52,10 +55,19 @@ public class StaffRole implements Serializable {
     public StaffRole() {
     }
 
-    public StaffRole(String roleName, List<Staff> staffList, List<Permission> permissions) {
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public StaffRole(String roleName, List<Staff> staffList, List<Permission> permissions,String status) {
         this.roleName = roleName;
         this.staffList = staffList;
         this.permissions = permissions;
+        this.status=status;
     }
    
     

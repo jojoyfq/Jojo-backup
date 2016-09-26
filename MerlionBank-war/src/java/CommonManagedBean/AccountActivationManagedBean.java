@@ -84,10 +84,12 @@ public class AccountActivationManagedBean implements Serializable {
                 // System.out.println("GAO MEI REN:" + msg);
 
                 System.out.println("lala");
+                
+                if(!customer.getSavingAccounts().isEmpty()){
 
                 String msg2 = amsbl.verifyAccountBalance(customerIc);
                 System.out.print("verifyAccountBalance status is" + msg2);
-
+                
                 if (msg2.equals("invalid amount")) {
                     System.out.print("inside the if statement!.......");
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have not reached the minimum top up amount!!");
@@ -96,6 +98,12 @@ public class AccountActivationManagedBean implements Serializable {
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
+
+                }
+                }else{
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
 
                 }
 

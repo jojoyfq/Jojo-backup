@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CommonManagedBean;
+package StaffManagement;
 
 import CommonEntity.Customer;
 import CommonEntity.CustomerMessage;
@@ -42,28 +42,37 @@ public class StaffMessageManagedBean implements Serializable {
     InboxManagementSessionBeanLocal imsbl;
 
     //maintain the log in function from LogInManagedBean
+    // @Inject
+    //  private LogInManagedBean logInManagedBean;
     @Inject
-    private LogInManagedBean logInManagedBean;
-    @Inject
-    private MessageManagedBean messageManagedBean;
+    private staffLogInManagedBean slimb;
+  //  @Inject
+    //  private MessageManagedBean messageManagedBean;
 //setter for LogInManagedBean
 
-    public void setMessageManagedBean(MessageManagedBean messageManagedBean) {
-        this.messageManagedBean = messageManagedBean;
+    public staffLogInManagedBean getSlimb() {
+        return slimb;
     }
 
+    public void setSlimb(staffLogInManagedBean slimb) {
+        this.slimb = slimb;
+    }
+
+//    public void setMessageManagedBean(MessageManagedBean messageManagedBean) {
+//        this.messageManagedBean = messageManagedBean;
+//    }
+//
     /**
      * Creates a new instance of StaffMessageManagedBean
      */
     public StaffMessageManagedBean() {
     }
 
-    public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
-        this.logInManagedBean = logInManagedBean;
-    }
-
+//    public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
+//        this.logInManagedBean = logInManagedBean;
+//    }
     private String customerIc;
-    private Long staffId=4L;
+    private Long staffId;
     private String messageSubject;
     private String content;
     private Customer customer;
@@ -101,10 +110,10 @@ public class StaffMessageManagedBean implements Serializable {
 //        return messages;
 //    }
     @PostConstruct
-    public void init()  {
+    public void init() {
 
-        System.err.println("************ ic: " + logInManagedBean.getIc());
-
+        System.err.println("************Logged in staff id is: " + slimb.getStaffId());
+        staffId = slimb.getStaffId();
         staff = new Staff();
         customer = new Customer();
         msgAddToCustomer = new MessageEntity();
@@ -122,23 +131,27 @@ public class StaffMessageManagedBean implements Serializable {
         //       customerMessages = imsbl.StaffViewAllMessage(staffId);
 //        System.out.println("message size is: "+messages.size());
         customerUnreadMsg = imsbl.countStaffNewMessage(staffId);
-        customerMessages = this.staffViewAllMessages();
+       // customerMessages = this.staffViewAllMessages();
     }
 
-    public List<CustomerMessage> staffViewAllMessages()  {
-      //  try {
-            customerMessages = imsbl.StaffViewAllMessage(staffId);
+    public void staffViewAllMessages(ActionEvent event) {
+        //  try {
+       // customerMessages = this.staffViewAllMessages();
+        
+        staffId = slimb.getStaffId();
+        System.out.println("*******Staff now is "+staffId);
+        customerMessages = imsbl.StaffViewAllMessage(staffId);
 //        } catch (ListEmptyException ex) {
 //            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
 //            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 //        }
-        return customerMessages;
+     //   return customerMessages;
     }
 
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
         if (customerIc != null) {
             try {
-                 customerId = imsbl.verifyCustomer(customerIc);
+                customerId = imsbl.verifyCustomer(customerIc);
 
                 System.out.println(customerId + "Customer verification is successful!");
 
@@ -176,8 +189,8 @@ public class StaffMessageManagedBean implements Serializable {
     public CustomerMessage staffReadMessage(ActionEvent event) throws IOException {
 
         customerMessage = (CustomerMessage) event.getComponent().getAttributes().get("selectedMessage");
-        
-        System.out.println("********customer message content is "+customerMessage.getContent());
+
+        System.out.println("********customer message content is " + customerMessage.getContent());
         System.err.println("********** message.getId(): " + customerMessage.getId());
 
         customerMessage = imsbl.readCustomerMessage(customerMessage.getId());
@@ -192,18 +205,18 @@ public class StaffMessageManagedBean implements Serializable {
 
     public void staffReplyMessage(ActionEvent event) throws EmailNotSendException {
         try {
-          selectedCustomerId=  customerMessage.getCustomer().getId();
+            selectedCustomerId = customerMessage.getCustomer().getId();
             //customerMessage = (CustomerMessage) event.getComponent().getAttributes().get("selectedMessage");
             System.err.println("********** customer message.getId(): " + customerMessage.getId());
             System.err.println("********** customer Id: " + selectedCustomerId);
             System.err.println("********** customer message subject: " + customerMessage.getSubject());
-            
-                        System.err.println("********** staff reply content: " + staffReplyContent);
+
+            System.err.println("********** staff reply content: " + staffReplyContent);
 
             msgAddToCustomer = imsbl.sendMessage(selectedCustomerId, staffId, customerMessage.getSubject(), staffReplyContent);
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your reply has been successfully sent!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-         //   messageManagedBean.getMessages().add(msgAddToCustomer);
+            //   messageManagedBean.getMessages().add(msgAddToCustomer);
         } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -225,8 +238,8 @@ public class StaffMessageManagedBean implements Serializable {
 
         try {
             customerMessages = imsbl.deleteCustomerMessage(messageId, staffId);
-           
-         //   customerMessages = imsbl.StaffViewAllMessage(staffId);
+
+            //   customerMessages = imsbl.StaffViewAllMessage(staffId);
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message deleted successfully");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
