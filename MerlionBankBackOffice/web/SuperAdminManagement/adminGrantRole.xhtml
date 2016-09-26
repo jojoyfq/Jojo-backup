@@ -1,53 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-    <f:view>
-        <h:head>
-            <title>Customer Account Application Management System</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        </h:head>
-        <h:body>
+    <ui:define name="head">
 
-            <h:form id="form">
-                <p:growl id="msg" showDetail="true" escape="false" />
+    </ui:define>
 
-                <h:outputLabel for="roleName" value="Role Name:" />
-                <p:selectOneMenu id="roleName" value="#{staffManagementManagedBean.selectedRoleNameForPermission}" required="true" requiredMessage="Please choose one role!">
+    <ui:define name="content">
 
-                    <f:selectItem itemLabel="Select Roles" itemValue="" noSelectionOption="true" />
-                    <f:selectItems value="#{staffLogInManagedBean.roleNames}" />   
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+        </div>
 
-                </p:selectOneMenu>
-
-                <p:message for="roleName" display="icon"/>
-                <p:separator/>
-                <h3 style="margin-top: 0">Grant Roles</h3>
-                <p:pickList id="pickList" value="#{staffManagementManagedBean.permissionNames}" var="permissionNames" itemLabel="#{permissionNames}" itemValue="#{permissionNames}" >
-                    <f:facet name="sourceCaption">Available</f:facet>
-                    <f:facet name="targetCaption">Starting</f:facet>
-                    <p:ajax event="transfer" listener="#{staffManagementManagedBean.onTransfer}" update="msg" />
-
-                    <p:column style="width:90%;">
-                        <h:outputText value="#{permissionNames}" />
-                    </p:column>
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Please Configure the Access Rights for Your Role</div>
+                    <div class="Separator"></div>
 
 
+                    <div class="Container100">
 
-                </p:pickList>
-                <p:commandButton id="citySubmit" value="Submit"  actionListener="#{staffManagementManagedBean.adminGrantPermissionToRole}"  style="margin-top:5px" >
-                </p:commandButton>   
+                        <h:form id="form">
+                            <p:growl id="msg" showDetail="true" escape="false" />
 
-            </h:form>
-        </h:body>
-    </f:view>
-</html>
+                            <h:outputLabel for="roleName" value="Role Name:" />
+                            <p:selectOneMenu id="roleName" value="#{staffManagementManagedBean.selectedRoleNameForPermission}" required="true" requiredMessage="Please choose one role!">
+
+                                <f:selectItem itemLabel="Select Roles" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{staffLogInManagedBean.roleNames}" />   
+
+                            </p:selectOneMenu>
+
+                            <p:message for="roleName" display="icon"/>
+                            <p:separator/>
+                            <h3 style="margin-top: 0">Grant Roles</h3>
+                            <p:pickList id="pickList" value="#{staffManagementManagedBean.permissionNames}" var="permissionNames" itemLabel="#{permissionNames}" itemValue="#{permissionNames}" >
+                                <f:facet name="sourceCaption">Available</f:facet>
+                                <f:facet name="targetCaption">Able to Use</f:facet>
+                                <p:ajax event="transfer" listener="#{staffManagementManagedBean.onTransfer}" update="msg" />
+
+                                <p:column style="width:90%;">
+                                    <h:outputText value="#{permissionNames}" />
+                                </p:column>
+
+
+
+                            </p:pickList>
+                            <p:commandButton id="citySubmit" value="Submit"  actionListener="#{staffManagementManagedBean.adminGrantPermissionToRole}"  style="margin-top:5px" >
+                            </p:commandButton>   
+
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

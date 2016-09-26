@@ -13,6 +13,7 @@ import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import DepositEntity.TransactionRecord;
 import DepositEntity.TransferRecord;
+import Exception.UserCloseAccountException;
 import Exception.UserHasNoInactiveSavingAccountException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserHasPendingTransactionException;
@@ -84,34 +85,34 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             return savingAccountString;
         }
     }
-    
+
     @Override
-    public Double getInterestRate(String accountType, String interestName){
+    public Double getInterestRate(String accountType, String interestName) {
         Query q = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
         q.setParameter("accountType", accountType);
         List<SavingAccountType> savingAccountTypes = q.getResultList();
         SavingAccountType temp = savingAccountTypes.get(0);
-        
-        if(interestName.equals("InterestRate1")){
+
+        if (interestName.equals("InterestRate1")) {
             return temp.getInterestRate1();
-        }else if(interestName.equals("InterestRate2")){
+        } else if (interestName.equals("InterestRate2")) {
             return temp.getInterestRate2();
-        }else{
+        } else {
             return temp.getInterestRate3();
         }
     }
-    
+
     @Override
-    public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3){
+    public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3) {
         Query q = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
         q.setParameter("accountType", accountType);
         List<SavingAccountType> savingAccountTypes = q.getResultList();
         SavingAccountType temp = savingAccountTypes.get(0);
-        
+
         temp.setInterestRate1(interest1);
         temp.setInterestRate2(interest2);
         temp.setInterestRate3(interest3);
-        
+
         em.flush();
     }
 
@@ -153,7 +154,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             return savingAccountNumbers;
         }
     }
-    
+
     @Override
     public List<Long> getNotTerminatedAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
         List<Long> savingAccountNumbers = new ArrayList();
@@ -257,31 +258,40 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     }
 
     @Override
-    public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException {
-        String status = "pending";
-        //check whether got pending transaction as giverAccount
-        Query q = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum AND a.status =:giverStatus");
-        q.setParameter("giverAccountNum", savingAccountNum);
-        q.setParameter("giverStatus", status);
-        List<TransactionRecord> record1 = q.getResultList();
-
-        //check whether got pending transaction as a recipientAccount
-        Query w = em.createQuery("SELECT b FROM TransactionRecord b WHERE b.recipientAccountNum = :recipientAccountNum AND b.status =:recipientStatus");
-        w.setParameter("recipientAccountNum", savingAccountNum);
-        w.setParameter("recipientStatus", status);
-        List<TransactionRecord> record2 = w.getResultList();
-
-        if (record1.isEmpty() && record2.isEmpty()) {
-            System.out.print("User has no pending transaction!");
-            Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
-            m.setParameter("savingAccountNum", savingAccountNum);
-            List<SavingAccount> records3 = m.getResultList();
-            SavingAccount record3 = records3.get(0);
-            record3.setStatus("terminated");
-
-            em.flush();
+    public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException, UserCloseAccountException {
+        Query t = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
+        t.setParameter("savingAccountNum", savingAccountNum);
+        List<SavingAccount> savingAccounts = t.getResultList();
+        SavingAccount savingAccount = savingAccounts.get(0);
+        if (!savingAccount.getAvailableBalance().equals(BigDecimal.valueOf(0))) {
+            throw new UserCloseAccountException("Please transfer the remaining amount to another account before close this account!");
         } else {
-            throw new UserHasPendingTransactionException("This Saving Account Has pending Transactions!");
+
+            String status = "pending";
+            //check whether got pending transaction as giverAccount
+            Query q = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum AND a.status =:giverStatus");
+            q.setParameter("giverAccountNum", savingAccountNum);
+            q.setParameter("giverStatus", status);
+            List<TransactionRecord> record1 = q.getResultList();
+
+            //check whether got pending transaction as a recipientAccount
+            Query w = em.createQuery("SELECT b FROM TransactionRecord b WHERE b.recipientAccountNum = :recipientAccountNum AND b.status =:recipientStatus");
+            w.setParameter("recipientAccountNum", savingAccountNum);
+            w.setParameter("recipientStatus", status);
+            List<TransactionRecord> record2 = w.getResultList();
+
+            if (record1.isEmpty() && record2.isEmpty()) {
+                System.out.print("User has no pending transaction!");
+                Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
+                m.setParameter("savingAccountNum", savingAccountNum);
+                List<SavingAccount> records3 = m.getResultList();
+                SavingAccount record3 = records3.get(0);
+                record3.setStatus("terminated");
+
+                em.flush();
+            } else {
+                throw new UserHasPendingTransactionException("This Saving Account Has pending Transactions!");
+            }
         }
     }
 
@@ -314,10 +324,10 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             em.flush();
             System.out.print("cash withdraw successful");
             System.out.print(savingAccount.getAvailableBalance());
-            
+
             Date currentTime = Calendar.getInstance().getTime();
             java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-            TransactionRecord transactionRecord = new TransactionRecord("CW",withdrawAmount,"settled", "Cash Withdraw",currentTimestamp,accountNum,null);
+            TransactionRecord transactionRecord = new TransactionRecord("CW", withdrawAmount, "settled", "Cash Withdraw", currentTimestamp, accountNum, null);
             em.persist(transactionRecord);
             em.flush();
         } else {
@@ -337,14 +347,14 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         em.flush();
         System.out.print("cash deposit successful");
         System.out.print(savingAccount.getAvailableBalance());
-        
+
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-        TransactionRecord transactionRecord = new TransactionRecord("CD",depositAmount,"settled", "Cash Deposit",currentTimestamp,null,accountNum);
+        TransactionRecord transactionRecord = new TransactionRecord("CD", depositAmount, "settled", "Cash Deposit", currentTimestamp, null, accountNum);
         em.persist(transactionRecord);
         em.flush();
     }
-    
+
     @Override
     public void logAction(String description, Long customerId) {
         List<CustomerAction> actions = new ArrayList<>();
@@ -362,7 +372,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         em.persist(customer);
         em.flush();
     }
-    
+
     @Override
     public void logStaffAction(String description, Long customerId, Staff staff) {
         List<StaffAction> actions = new ArrayList<>();
@@ -378,7 +388,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         }
         em.flush();
     }
-    
+
     public Customer getCustomer() {
         return customer;
     }

@@ -1104,8 +1104,7 @@ Staff staff=em.find(Staff.class,staffId);
 
         if (!passwordHash(password + staff.getSalt()).equals(staff.getPassword())) {
 
-            Long i = Long.parseLong("1");
-            return i;
+            throw new PasswordNotMatchException("Invalid account details");
         }
 
         Query m = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :staffRoleName");

@@ -174,7 +174,15 @@ staffLogInManagedBean slimbl;
         return staffRoles;
     }
     
-    public void deleteRole(ActionEvent event) throws RoleHasStaffException {
+    public void goToViewAllRolePage(ActionEvent event){
+        try{
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuperAdminManagement/viewAllRoles.xhtml");
+        }catch(Exception e){
+           System.out.print("Redirect to View One Role Page Error!");
+        }
+    }
+    
+    public void deleteRole(ActionEvent event) throws RoleHasStaffException, IOException {
         try {
              role = (StaffRole) event.getComponent().getAttributes().get("selectedRole");
              staffRoleId = role.getId();
@@ -187,6 +195,8 @@ staffLogInManagedBean slimbl;
              temp.add(staffRoles.get(i).getRoleName());
              }
              slimbl.setRoleNames(temp);
+             //redirect to Success Page
+              FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuccessPage.xhtml");
          } catch (RoleHasStaffException ex) {
              FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
              RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);

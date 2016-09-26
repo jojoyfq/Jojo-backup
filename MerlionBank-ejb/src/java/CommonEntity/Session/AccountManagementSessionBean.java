@@ -382,13 +382,16 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
         System.out.println(customer.getDateOfBirth());
         if (!fullName.equals(customer.getName())) {
+            System.out.println(fullName+"         "+customer.getName());
             throw new UserNotExistException("Username " + ic + "invaid account details");
             //return customer.getName();
 
         } else if (!dateOfBirth.equals(customer.getDateOfBirth())) {
+            System.out.println(dateOfBirth+"         "+customer.getDateOfBirth());
             throw new UserNotExistException("Username " + ic + "invaid account details");
             //return "date";
         } else if (!phoneNumber.equals(customer.getPhoneNumber())) {
+              System.out.println(phoneNumber+"         "+customer.getPhoneNumber());
             throw new UserNotExistException("Username " + ic + "invaid account details");
             //return customer.getPhoneNumber();
         } else {

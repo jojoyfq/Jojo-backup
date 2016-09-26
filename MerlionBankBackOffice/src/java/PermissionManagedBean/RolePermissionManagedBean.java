@@ -41,14 +41,14 @@ public class RolePermissionManagedBean implements Serializable{
     public RolePermissionManagedBean() {
         
     }
-//    @PostConstruct
-//    public void init(){
-//    role = new StaffRole();
-//    
-//    permissionList = new ArrayList<>();
-//    
-//    //permissionList = this.getPermissions();
-//    }
+    @PostConstruct
+    public void init(){
+    role = new StaffRole();
+    
+    permissionList = new ArrayList<>();
+    
+    permissionList = this.getPermissions();
+    }
     
     public List<Boolean> getPermissions(){
         
