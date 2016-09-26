@@ -130,7 +130,6 @@ public class StaffMessageManagedBean implements Serializable {
         System.out.println("Logged in Staff IC is : " + staffId);
         //       customerMessages = imsbl.StaffViewAllMessage(staffId);
 //        System.out.println("message size is: "+messages.size());
-        staffUnreadMsg = imsbl.countStaffNewMessage(staffId);
         System.out.println("*************Number of Unread Message is "+staffUnreadMsg);
        // customerMessages = this.staffViewAllMessages();
     }
