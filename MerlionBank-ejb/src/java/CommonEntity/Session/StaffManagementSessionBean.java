@@ -1182,5 +1182,57 @@ public List<StaffRole> viewOneStaffRole(Staff staff){
     return newStaff.getStaffRoles();
 }
 
+@Override
+public List<Permission> sortPermissions(StaffRole staffRole){
+    List<Permission> permissions=staffRole.getPermissions();
+    List<Permission> newPermissions=new ArrayList<Permission>(19);
+    
+    for (int i=0;i<permissions.size();i++){
+        Permission permission=permissions.get(i);
+        if (permission.getModuleName().equals("systemUserWorkspace"))
+            newPermissions.add(0,permission);
+        else if (permission.getModuleName().equals("systemUserAccount"))
+            newPermissions.add(1,permission);
+        else if (permission.getModuleName().equals("operationalCRM"))
+            newPermissions.add(2,permission);
+        else if (permission.getModuleName().equals("collaborativeCRM"))
+            newPermissions.add(3,permission);
+        else if (permission.getModuleName().equals("fixedDeposit"))
+            newPermissions.add(4,permission);
+          else if (permission.getModuleName().equals("savingAccount"))
+            newPermissions.add(5,permission);
+        else if (permission.getModuleName().equals("counterCash"))
+            newPermissions.add(6,permission);
+         else if (permission.getModuleName().equals("debitCard"))
+            newPermissions.add(7,permission);
+        else if (permission.getModuleName().equals("creditCard"))
+            newPermissions.add(8,permission);
+         else if (permission.getModuleName().equals("secureLoan"))
+            newPermissions.add(9,permission);
+        else if (permission.getModuleName().equals("unsecureLoan"))
+            newPermissions.add(10,permission);
+        else if (permission.getModuleName().equals("billModule"))
+            newPermissions.add(11,permission);
+        else if (permission.getModuleName().equals("transferModule"))
+            newPermissions.add(12,permission);
+        else if (permission.getModuleName().equals("customerPlan"))
+            newPermissions.add(13,permission);
+        else if (permission.getModuleName().equals("executedPlan"))
+            newPermissions.add(14,permission);
+        else if (permission.getModuleName().equals("finalcialInstrument"))
+            newPermissions.add(15,permission);
+        else if (permission.getModuleName().equals("customerPortfolio"))
+            newPermissions.add(16,permission);
+        else if (permission.getModuleName().equals("staffPerformance"))
+            newPermissions.add(17,permission);
+        else if (permission.getModuleName().equals("customerProductRecommendation"))
+            newPermissions.add(18,permission);
+        
+        
+    }
+    return newPermissions;
+    
+}
+
 
 }
