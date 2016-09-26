@@ -40,6 +40,8 @@ import java.util.Random;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -394,129 +396,195 @@ System.out.println("get staff role id+ "+staffRole.getRoleName());
         return permissionDisplay;
     }
 
-//modifyRole - add Permission
-    @Override
-    public boolean addPermission(Long staffId, Long staffRoleId, Long permissionId) {
-
-        Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
-        queryStaff.setParameter("id", staffId);
-        Staff staff = (Staff) queryStaff.getSingleResult();
-
-        Query queryRole = em.createQuery("SELECT c FROM StaffRole c WHERE c.id = :id");
-        queryRole.setParameter("id", staffRoleId);
-        StaffRole staffRole = (StaffRole) queryRole.getSingleResult();
-        List<Permission> currentPermissions = new ArrayList<Permission>(staffRole.getPermissions());
-
-        Query queryPermission = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
-        queryPermission.setParameter("id", permissionId);
-        Permission falsePermission = (Permission) queryPermission.getSingleResult();
-
-        Long truePermissionId=(Long)permissionId-1;        
-        Query queryPermission2 = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
-        queryPermission2.setParameter("id", truePermissionId);
-        Permission truePermission = (Permission) queryPermission2.getSingleResult();
-        
-        
-        for (int i=0;i<currentPermissions.size();i++){
-            if (currentPermissions.get(i).getModuleName().equals(falsePermission.getModuleName())){
-                //System.out.println("Inside setFalsePermission");
-        currentPermissions.set(i,truePermission);
-        //System.out.println("false permission"+falsePermission.isValidity());
-        //System.out.println("current permission"+currentPermissions.get(i).isValidity());
-         
-        }
-        }
-        staffRole.setPermissions(currentPermissions);
-        em.persist(staffRole);
-        em.flush();
-
-        List<StaffRole> trueStaffRoles = new ArrayList<StaffRole>(truePermission.getStaffRoles());
-        trueStaffRoles.add(staffRole);
-        truePermission.setStaffRoles(trueStaffRoles);
-        em.persist(truePermission);
-        em.flush();
-
-        List<StaffRole> falseStaffRoles = new ArrayList<StaffRole>(falsePermission.getStaffRoles());
-        List<StaffRole> updateStaffRoles = new ArrayList<StaffRole>();
-
-        for (int i = 0; i < falseStaffRoles.size(); i++) {
-            if (falseStaffRoles.get(i).getId() != staffRoleId) {
-                updateStaffRoles.add(falseStaffRoles.get(i));
-            }
-        }
-        falsePermission.setStaffRoles(updateStaffRoles);
-        em.persist(falsePermission);
-        em.flush();
-
-        return true;
-
-    }
-
-//modifyRole - delete Permission
-    @Override
-    public boolean deletePermission(Long staffId, Long staffRoleId, Long permissionId) {
-        
-        System.out.println("Inside delete Permission");
-        Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
-        queryStaff.setParameter("id", staffId);
-        Staff staff = (Staff) queryStaff.getSingleResult();
-
-        Query queryRole = em.createQuery("SELECT c FROM StaffRole c WHERE c.id = :id");
-        queryRole.setParameter("id", staffRoleId);
-        StaffRole staffRole = (StaffRole) queryRole.getSingleResult();
-        List<Permission> currentPermissions = new ArrayList<Permission>(staffRole.getPermissions());
-
-        Query queryPermission = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
-        queryPermission.setParameter("id", permissionId);
-        Permission truePermission = (Permission) queryPermission.getSingleResult();
-        System.out.println("true Permission Name"+truePermission.getModuleName());
-
-        Long falsePermissionId=(Long)permissionId+1;
-        Query queryPermission2 = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
-        queryPermission2.setParameter("id", falsePermissionId);
-        Permission falsePermission = (Permission) queryPermission2.getSingleResult();
-        System.out.println("false Permission Name"+falsePermission.getModuleName());
-
-//        List<Permission> temp = new ArrayList<Permission>();
-//        for (int i = 0; i < currentPermissions.size(); i++) {
-//            if (currentPermissions.get(0).getId() != permissionId) {
-//                temp.add(currentPermissions.get(i));
+////modifyRole - add Permission
+//    @Override
+//    public boolean addPermission(Long staffId, Long staffRoleId, Long permissionId) {
+//
+//        Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+//        queryStaff.setParameter("id", staffId);
+//        Staff staff = (Staff) queryStaff.getSingleResult();
+//
+//        Query queryRole = em.createQuery("SELECT c FROM StaffRole c WHERE c.id = :id");
+//        queryRole.setParameter("id", staffRoleId);
+//        StaffRole staffRole = (StaffRole) queryRole.getSingleResult();
+//        List<Permission> currentPermissions = new ArrayList<Permission>(staffRole.getPermissions());
+//
+//        Query queryPermission = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
+//        queryPermission.setParameter("id", permissionId);
+//        Permission falsePermission = (Permission) queryPermission.getSingleResult();
+//
+//        Long truePermissionId=(Long)permissionId-1;        
+//        Query queryPermission2 = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
+//        queryPermission2.setParameter("id", truePermissionId);
+//        Permission truePermission = (Permission) queryPermission2.getSingleResult();
+//        
+//        
+//        for (int i=0;i<currentPermissions.size();i++){
+//            if (currentPermissions.get(i).getModuleName().equals(falsePermission.getModuleName())){
+//                //System.out.println("Inside setFalsePermission");
+//        currentPermissions.set(i,truePermission);
+//        //System.out.println("false permission"+falsePermission.isValidity());
+//        //System.out.println("current permission"+currentPermissions.get(i).isValidity());
+//         
+//        }
+//        }
+//        staffRole.setPermissions(currentPermissions);
+//        em.persist(staffRole);
+//        em.flush();
+//
+//        List<StaffRole> true/StaffRoles = new ArrayList<StaffRole>(truePermission.get/StaffRoles());
+//        true/StaffRoles.add(staffRole);
+//        truePermission.set/StaffRoles(true/StaffRoles);
+//        em.persist(truePermission);
+//        em.flush();
+//
+//        List<StaffRole> false/StaffRoles = new ArrayList<StaffRole>(falsePermission.get/StaffRoles());
+//        List<StaffRole> update/StaffRoles = new ArrayList<StaffRole>();
+//
+//        for (int i = 0; i < false/StaffRoles.size(); i++) {
+//            if (false/StaffRoles.get(i).getId() != staffRoleId) {
+//                update/StaffRoles.add(false/StaffRoles.get(i));
 //            }
 //        }
+//        falsePermission.set/StaffRoles(update/StaffRoles);
+//        em.persist(falsePermission);
+//        em.flush();
+//
+//        return true;
+//
+//    }
+//
+////modifyRole - delete Permission
+//    @Override
+//    public boolean deletePermission(Long staffId, Long staffRoleId, Long permissionId) {
+//        
+//        System.out.println("Inside delete Permission");
+//        Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+//        queryStaff.setParameter("id", staffId);
+//        Staff staff = (Staff) queryStaff.getSingleResult();
+//
+//        Query queryRole = em.createQuery("SELECT c FROM StaffRole c WHERE c.id = :id");
+//        queryRole.setParameter("id", staffRoleId);
+//        StaffRole staffRole = (StaffRole) queryRole.getSingleResult();
+//        List<Permission> currentPermissions = new ArrayList<Permission>(staffRole.getPermissions());
+//
+//        Query queryPermission = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
+//        queryPermission.setParameter("id", permissionId);
+//        Permission truePermission = (Permission) queryPermission.getSingleResult();
+//        System.out.println("true Permission Name"+truePermission.getModuleName());
+//
+//        Long falsePermissionId=(Long)permissionId+1;
+//        Query queryPermission2 = em.createQuery("SELECT b FROM Permission b WHERE b.id = :id");
+//        queryPermission2.setParameter("id", falsePermissionId);
+//        Permission falsePermission = (Permission) queryPermission2.getSingleResult();
+//        System.out.println("false Permission Name"+falsePermission.getModuleName());
+//
+////        List<Permission> temp = new ArrayList<Permission>();
+////        for (int i = 0; i < currentPermissions.size(); i++) {
+////            if (currentPermissions.get(0).getId() != permissionId) {
+////                temp.add(currentPermissions.get(i));
+////            }
+////        }
+//
+//
+//        for (int i=0;i<currentPermissions.size();i++){
+//            if (currentPermissions.get(i).getModuleName().equals(truePermission.getModuleName())){
+//                //System.out.println("Inside setFalsePermission");
+//        currentPermissions.set(i,falsePermission);
+//        //System.out.println("false permission"+falsePermission.isValidity());
+//        //System.out.println("current permission"+currentPermissions.get(i).isValidity());
+//         
+//        }
+//        }
+//    
+//        staffRole.setPermissions(currentPermissions);
+//        em.persist(staffRole);
+//        em.flush();
+//
+//        List<StaffRole> update/StaffRoles = new ArrayList<StaffRole>(falsePermission.get/StaffRoles());
+//        update/StaffRoles.add(staffRole);
+//        falsePermission.set/StaffRoles(update/StaffRoles);
+//        em.persist(falsePermission);
+//        em.flush();
+//
+//        update/StaffRoles = truePermission.get/taffRoles();
+//        List<StaffRole> tempRole = new ArrayList<StaffRole>();
+//        for (int i = 0; i < update/StaffRoles.size(); i++) {
+//            if (update/StaffRoles.get(i).getId() != staffRoleId) {
+//                tempRole.add(update/StaffRoles.get(i));
+//            }
+//        }
+//        truePermission.set/StaffRoles(tempRole);
+//        em.persist(truePermission);
+//        em.flush();
+//
+//        return true;
+//    }
 
+    //modifyRole - add Permission
+    @Override
+    public boolean addPermission(Long staffId, Long staffRoleId, Long permissionId) 
+    {        
+        return updatePermission(staffRoleId, permissionId, true);
+    }
 
-        for (int i=0;i<currentPermissions.size();i++){
-            if (currentPermissions.get(i).getModuleName().equals(truePermission.getModuleName())){
-                //System.out.println("Inside setFalsePermission");
-        currentPermissions.set(i,falsePermission);
-        //System.out.println("false permission"+falsePermission.isValidity());
-        //System.out.println("current permission"+currentPermissions.get(i).isValidity());
-         
-        }
-        }
     
-        staffRole.setPermissions(currentPermissions);
-        em.persist(staffRole);
-        em.flush();
+    
+//modifyRole - delete Permission
+    @Override
+    public boolean deletePermission(Long staffId, Long staffRoleId, Long permissionId)
+    {
+        return updatePermission(staffRoleId, permissionId, false);
+    }
+    
+    
+    
+    private boolean updatePermission(Long staffRoleId, Long permissionId, Boolean validity)
+    {
+        StaffRole staffRole = em.find(StaffRole.class, staffRoleId);
+        
+        if(staffRole != null)
+        {
+            Permission selectedPermission = null;
 
-        List<StaffRole> updateStaffRoles = new ArrayList<StaffRole>(falsePermission.getStaffRoles());
-        updateStaffRoles.add(staffRole);
-        falsePermission.setStaffRoles(updateStaffRoles);
-        em.persist(falsePermission);
-        em.flush();
-
-        updateStaffRoles = truePermission.getStaffRoles();
-        List<StaffRole> tempRole = new ArrayList<StaffRole>();
-        for (int i = 0; i < updateStaffRoles.size(); i++) {
-            if (updateStaffRoles.get(i).getId() != staffRoleId) {
-                tempRole.add(updateStaffRoles.get(i));
+            for(Permission permission:staffRole.getPermissions())
+            {
+                if(permission.getId().equals(permissionId))
+                {
+                    selectedPermission = permission;
+                    break;
+                }
+            }
+            
+            if(selectedPermission != null)
+            {
+                staffRole.getPermissions().remove(selectedPermission);
+                selectedPermission.getStaffRoles().remove(staffRole);
+                
+                Query query = em.createQuery("SELECT p FROM Permission p WHERE p.moduleName = :inModuleName AND p.validity = :inValidity");
+                query.setParameter("inModuleName", selectedPermission.getModuleName());
+                query.setParameter("inValidity", validity);
+                
+                try
+                {
+                    Permission newPermission = (Permission)query.getSingleResult();
+                    staffRole.getPermissions().add(newPermission);
+                    newPermission.getStaffRoles().add(staffRole);
+                    
+                    return true;
+                }
+                catch(NoResultException ex)
+                {
+                    return false;
+                }
+                catch(NonUniqueResultException ex)
+                {
+                    return false;
+                }
             }
         }
-        truePermission.setStaffRoles(tempRole);
-        em.persist(truePermission);
-        em.flush();
-
-        return true;
+        
+        return false;
     }
 
 //Super Admin create staff accounts
