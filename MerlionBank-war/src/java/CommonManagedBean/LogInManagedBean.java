@@ -97,6 +97,7 @@ public class LogInManagedBean implements Serializable {
 //    public void setAccountType(String accountType) {
 //        this.accountType = accountType;
 //    }
+    
     @PostConstruct
     public void init() {
         selectedCustomer = new Customer();
@@ -122,6 +123,10 @@ public class LogInManagedBean implements Serializable {
     public void goToStaffLogInPage(ActionEvent event )throws IOException{
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInHome.xhtml");
 
+    }
+    
+    public void viewCustomerActionLog(ActionEvent event) throws IOException{
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CustomerManagement/viewActionLog.xhtml"); 
     }
 
 //   private void warnMsg(String message) {

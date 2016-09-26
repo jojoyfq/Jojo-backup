@@ -326,7 +326,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
     public List<StaffRole> viewRoles() {
         em.flush();
        Query query = em.createQuery("SELECT a FROM StaffRole a WHERE a.status = :status");
-        query.setParameter("status", "active");
+        query.setParameter("status","active");
         List<StaffRole> temp = new ArrayList(query.getResultList());
         return temp;
     }
