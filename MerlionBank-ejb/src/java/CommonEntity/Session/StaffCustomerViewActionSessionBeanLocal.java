@@ -18,7 +18,9 @@ import javax.ejb.Local;
 @Local
 public interface StaffCustomerViewActionSessionBeanLocal {
     public List<CustomerAction>viewCustomerAction(Long customerId) throws ListEmptyException;
-    public List<StaffAction>viewStaffAction(Long staffId) throws ListEmptyException;
+
+    public List<StaffAction> viewStaffAction(Long staffId) throws ListEmptyException;
+
     
     
 }

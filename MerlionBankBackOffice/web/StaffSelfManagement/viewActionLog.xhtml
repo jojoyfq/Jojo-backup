@@ -24,14 +24,16 @@ and open the template in the editor.
                     <p:messages id="msgs" />
 
                     <h:panelGrid columns="4" cellpadding="5">
-                        <p:dataTable var="action" value="#{staffLoggingActionManagedBean.viewLoggingAction}">
+                        <p:dataTable var="action" value="#{staffLoggingActionManagedBean.actions}">
 
                             <p:column headerText="Action ID" style="width: 80px;">
                                 <h:outputText value="#{action.id}" />
                             </p:column>
 
                             <p:column headerText="Date">
-                                <h:outputText value="#{action.actionDate}" />
+                                <h:outputText value="#{action.actionDate}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
                             </p:column>
                             
                             <p:column headerText="Description">
@@ -44,7 +46,7 @@ and open the template in the editor.
 
 
                         </p:dataTable>
-                        <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/></div>
+                        <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/StaffDashboard"/></div>
 
 
                     </h:panelGrid>
