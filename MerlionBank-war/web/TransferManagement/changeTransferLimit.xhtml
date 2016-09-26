@@ -35,7 +35,10 @@
                                         <h:outputLabel id="transferLimitOld" value="#{transferManagedBean.transferLimitDatabase}" />
                                         
                                         <h:outputLabel for="transferLimitNew" value="Enter Your New Transfer Limit: $" />
-                                        <p:inputText id="transferAmount" value="#{transferManagedBean.transferLimitString}" required="true" requiredMessage="Please Enter Your Transfer Limit!" />
+                                        <p:inputText id="transferAmount" value="#{transferManagedBean.transferLimitString}" required="true" requiredMessage="Please Enter Your Transfer Limit!" >
+                                            <p:keyFilter regEx="/[\d\-\.]/"/> 
+                                        <f:convertNumber pattern="0.0000"/>
+                                        </p:inputText>
 
                                     </h:panelGrid>
                                 </div>

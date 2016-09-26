@@ -10,40 +10,87 @@ and open the template in the editor.
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-
     <f:view>
         <h:head>
-            <title>Account Activation</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <f:facet name="first">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+            </f:facet>
+            <title>Reset Password</title>
         </h:head>
+
         <h:body>
-            <div>Account Activation</div>
-            <h:form>
-                <p:panel id="panel" header="Activate Account">
+            <h:form id="form">
+                <div class="Wid100 MarAuto">
+                    <div class="Wid80 MarAuto WidAutoOnMobile">
+                        <div style="margin-top:10rem;"></div>
 
-                    <p:messages id="msgs" />
-
-                    <h:panelGrid columns="3" cellpadding="5">
-                        <p:outputLabel for="ic" value="IC: " />
-                        <p:inputText id="ic" value="#{staffSelfManagementManagedBean.staffIc}" required="true" label="ic" requiredMessage="Please enter your IC!"/>
-                        <p:message for="ic" display="icon" />
-
+                        <div class="Wid60 MarAuto WidAutoOnMobile">
+                            <div class="Container100">
+                                <div class="Card ui-fluid">
+                                    <div class="CardBigTopic TexAlCenter Purple">Account Activation</div>
+                                    <div class="SeparatorFull"></div>
 
 
-                        <p:outputLabel for="name" value="Name: " />
-                        <p:inputText id="name" value="#{staffSelfManagementManagedBean.name}"  required="true" label="name" requiredMessage="Please fill in your Name!" />
-                        <p:message for="name" display="icon"/>
+                                    <div class="Container100 ui-fluid">
 
-                       
+                                        <div class="Card">   
+                                            <div class="Container10"></div>
+                                            <div class="Container80">
+                                                <p:panel id="panel">
 
-                        <p:outputLabel for="email" value="Email: " />
-                        <p:inputText id="email" value="#{staffSelfManagementManagedBean.email}"  required="true" label = "email" requiredMessage="Please fill in email!" />
-                        <p:message for="email" display="icon"/>
-                        
-                    </h:panelGrid>
+                                                    <p:messages id="msgs" />
 
-                    <p:commandButton value="Save" update="panel" actionListener="#{staffSelfManagementManagedBean.acctActivationVerifyDetails}" icon="ui-icon-check" />
-                </p:panel>
+                                                    <h:panelGrid columns="3" cellpadding="5">
+                                                        <p:outputLabel for="ic" value="IC: " />
+                                                        <p:inputText id="ic" value="#{staffSelfManagementManagedBean.staffIc}" required="true" label="ic" requiredMessage="Please enter your IC!"/>
+                                                        <p:message for="ic" display="icon" />
+
+
+
+                                                        <p:outputLabel for="name" value="Name: " />
+                                                        <p:inputText id="name" value="#{staffSelfManagementManagedBean.name}"  required="true" label="name" requiredMessage="Please fill in your Name!" />
+                                                        <p:message for="name" display="icon"/>
+
+
+
+                                                        <p:outputLabel for="email" value="Email: " />
+                                                        <p:inputText id="email" value="#{staffSelfManagementManagedBean.email}"  required="true" label = "email" requiredMessage="Please fill in email!" />
+                                                        <p:message for="email" display="icon"/>
+
+                                                    </h:panelGrid>
+
+
+                                                </p:panel>
+                                            </div>
+                                            <div class="Container10"></div>
+
+                                            <div class="EmptyBox20"></div>
+                                            <div class="Container30"></div>
+                                            <div class="Container40">
+                                                <p:commandButton value="Save" update="panel" actionListener="#{staffSelfManagementManagedBean.acctActivationVerifyDetails}" icon="ui-icon-check" />
+                                            </div>
+                                            <div class="Container30"></div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+                <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+                <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+                <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+                <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
             </h:form>
         </h:body>
     </f:view>

@@ -263,7 +263,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         t.setParameter("savingAccountNum", savingAccountNum);
         List<SavingAccount> savingAccounts = t.getResultList();
         SavingAccount savingAccount = savingAccounts.get(0);
-        if (!savingAccount.getAvailableBalance().equals(BigDecimal.valueOf(0))) {
+        if (savingAccount.getAvailableBalance().compareTo(BigDecimal.ZERO) != 0) {
             throw new UserCloseAccountException("Please transfer the remaining amount to another account before close this account!");
         } else {
 

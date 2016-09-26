@@ -54,21 +54,16 @@
                                         <h:outputText value="#{pendingCustomer.dateOfBirth}" />
                                     </p:column>
 
-
+                                    <f:facet name="footer">
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" oncomplete="PF('carDialog').show()" />
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}" oncomplete="PF('carDialog').show()" />
+                                    </f:facet>
                                 </p:dataTable>
 
                             </h:panelGrid>
-                
-                                <div class="Container20"></div>
-                                <div class="Container30">
-                                    <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" oncomplete="PF('carDialog').show()" />
-                                </div>
 
-                                <div class="Container30">
-                                    <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}" oncomplete="PF('carDialog').show()" />
-                                </div>
-                                <div class="Container20"></div>
-                       
+
+
                         </h:form>
                     </div>
                 </div>

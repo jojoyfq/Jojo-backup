@@ -168,6 +168,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     @Override
     public void createSavingAccountExistingCustomer(Long customerID, String savingAccountName) throws UserAlreadyHasSavingAccountException, EmailNotSendException {
+        System.out.println(savingAccountName);
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
         System.out.println("Inside createSavingAccount FOR Existing customer");
@@ -180,13 +181,17 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
         List<SavingAccount> temp = new ArrayList<SavingAccount>();
         for (int i=0;i<savingAccounts.size();i++){
+            System.out.print("hehheheheh");
             if (!savingAccounts.get(i).getStatus().equals("terminated"))
                 temp.add(savingAccounts.get(i));
         }
         
         for (int i=0;i<temp.size();i++){
-            if (!temp.get(i).getSavingAccountType().getAccountType().equals(savingAccountName))
-             throw new UserAlreadyHasSavingAccountException("User Already has this type of saving account, cannot create more!");   
+            System.out.print("inside the for loop!");
+            if (temp.get(i).getSavingAccountType().getAccountType().equals(savingAccountName)){
+                System.out.print("inside the if statement!");
+             throw new UserAlreadyHasSavingAccountException("User Already has this type of saving account, cannot create more!");
+            }
         }
         
 //        if (savingAccounts.size() == 3) {

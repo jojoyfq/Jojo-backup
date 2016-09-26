@@ -5,6 +5,7 @@
  */
 package PermissionManagedBean;
 
+import CommonEntity.Permission;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.StaffRole;
 import StaffManagement.staffLogInManagedBean;
@@ -27,6 +28,7 @@ public class RolePermissionManagedBean implements Serializable {
 
     @Inject
     staffLogInManagedBean staffLogInManagedBean1;
+    
     @EJB
     StaffManagementSessionBeanLocal smsbl;
 
@@ -44,8 +46,8 @@ public class RolePermissionManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         role = new StaffRole();
-        permissionList = new ArrayList<>();
-        permissionList = this.getPermissions();
+        permissionList = new ArrayList<Boolean>();
+       permissionList = this.getPermissions();
     }
 
 
@@ -55,9 +57,10 @@ public class RolePermissionManagedBean implements Serializable {
         roleName = staffLogInManagedBean1.getRoleName();
         System.out.println("Role name is: " + roleName);
         role = smsbl.getRoleByRoleName(roleName);
-        System.out.println("permission size: " + role.getPermissions().size());
-        for (int i = 0; i < role.getPermissions().size(); i++) {
-            permissionList.add(role.getPermissions().get(i).isValidity());
+        System.out.println("permission size: " + smsbl.sortPermissions(role).size());
+        List<Permission> temp=smsbl.sortPermissions(role);
+        for (int i = 0; i < temp.size(); i++) {
+            permissionList.add(temp.get(i).isValidity());
             System.out.println("boolean value " + i + " is " + permissionList.get(i));
         }
         return permissionList;
