@@ -119,7 +119,7 @@ public class ResetPasswordManagedBean implements Serializable {
             } else if (errorMsg.equals(customerIc)) {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully changed your password!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
 
             }
         } catch (PasswordTooSimpleException ex) {
