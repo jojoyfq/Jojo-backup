@@ -13,6 +13,7 @@
 
                 <p:menuitem id="pa_dashboards" value="Home" outcome="/StaffDashboard" />
 
+                
                 <p:submenu id="staff_management" label="Staff Management" rendered="#{rolePermissionManagedBean.permissionList.get(1)}">
                     <p:menuitem id="create_staff" value="Create Staff" outcome="/SuperAdminManagement/createStaff"/>
                     <p:menuitem id="create_staff_role" value="Create Staff Role" outcome="/SuperAdminManagement/createStaffRole"/>
@@ -24,6 +25,7 @@
                     <p:submenu id="saving_accountNC" label="Operational CRM" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(2)}">
                         <p:menuitem id="create_saving_accountNC" value="Create Saving Account For New Customer" outcome="/CustomerManagement/createSavingAccountNC"/>
                     </p:submenu>
+                        <p:menuitem id="staffVerifyCustomer" value="Staff Verify Pending Customer" outcome="/StaffVerifyCustomer/staffVerifyCustomerAccount"/>                    
                 </p:submenu>
 
                 <p:submenu id="deposit_management" label="Deposit Management">

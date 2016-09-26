@@ -85,7 +85,7 @@ public class StaffMessageManagedBean implements Serializable {
     private String status;
     private String customerReplyContent;
     private String customerReplyMsgStatus = "new";
-    private int customerUnreadMsg;
+    private int staffUnreadMsg;
     private String staffReplyContent;
     private MessageEntity msgAddToCustomer;
     private Long selectedCustomerId;
@@ -130,11 +130,20 @@ public class StaffMessageManagedBean implements Serializable {
         System.out.println("Logged in Staff IC is : " + staffId);
         //       customerMessages = imsbl.StaffViewAllMessage(staffId);
 //        System.out.println("message size is: "+messages.size());
-        customerUnreadMsg = imsbl.countStaffNewMessage(staffId);
+        staffUnreadMsg = imsbl.countStaffNewMessage(staffId);
+        System.out.println("*************Number of Unread Message is "+staffUnreadMsg);
        // customerMessages = this.staffViewAllMessages();
     }
+public void goIntoStaffVerifyCustomerBeforeSendingMsg(ActionEvent event){
+ try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/StaffSelfManagement/verifyCustomer.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to ActivateAccount page fails");
+        }
 
-    public void staffViewAllMessages(ActionEvent event) {
+}
+    public void staffViewAllMessages(ActionEvent event) throws IOException {
         //  try {
        // customerMessages = this.staffViewAllMessages();
         
@@ -146,6 +155,9 @@ public class StaffMessageManagedBean implements Serializable {
 //            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 //        }
      //   return customerMessages;
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/StaffViewAllMessages.xhtml");
+
+        
     }
 
     public void verifyCustomerDetails(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
@@ -155,7 +167,7 @@ public class StaffMessageManagedBean implements Serializable {
 
                 System.out.println(customerId + "Customer verification is successful!");
 
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffInputMessage.xhtml");
 
             } catch (UserNotExistException | UserNotActivatedException ex) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -247,6 +259,11 @@ public class StaffMessageManagedBean implements Serializable {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
+    }
+    public int countStaffUnreadEmail() {
+        staffUnreadMsg = imsbl.countStaffNewMessage(staffId);
+
+        return staffUnreadMsg;
     }
 
     public String getCustomerIc() {
@@ -345,12 +362,12 @@ public class StaffMessageManagedBean implements Serializable {
         this.staffReplyContent = staffReplyContent;
     }
 
-    public int getCustomerUnreadMsg() {
-        return customerUnreadMsg;
+    public int getStaffUnreadMsg() {
+        return staffUnreadMsg;
     }
 
-    public void setCustomerUnreadMsg(int customerUnreadMsg) {
-        this.customerUnreadMsg = customerUnreadMsg;
+    public void setStaffUnreadMsg(int customerUnreadMsg) {
+        this.staffUnreadMsg = customerUnreadMsg;
     }
 
     public String getCustomerReplyMsgStatus() {

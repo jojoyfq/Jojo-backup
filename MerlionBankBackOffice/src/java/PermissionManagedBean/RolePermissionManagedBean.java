@@ -48,7 +48,9 @@ public class RolePermissionManagedBean implements Serializable {
         permissionList = this.getPermissions();
     }
 
+
     public List<Boolean> getPermissions() {
+
 
         roleName = staffLogInManagedBean1.getRoleName();
         System.out.println("Role name is: " + roleName);
