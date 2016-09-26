@@ -236,7 +236,7 @@ public class staffLogInManagedBean implements Serializable {
 
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
                 //    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
-                //    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
              //       RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                 }
 

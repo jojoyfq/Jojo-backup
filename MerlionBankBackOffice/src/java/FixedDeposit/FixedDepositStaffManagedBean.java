@@ -86,7 +86,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
             System.out.print("inside the init method");
             //serviceCustomerManagedBean.init();
             staff = staffLogInManagedBean.getStaff();
-            staffId = staff.getId();
+            staffId = staffLogInManagedBean.getStaffId();
             customerId = serviceCustomerManagedBean.getCustomer().getId();
             withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId);
             customer = serviceCustomerManagedBean.getCustomer();
@@ -129,8 +129,8 @@ public class FixedDepositStaffManagedBean implements Serializable {
             startDateString = df.format(startDate);
             accountNumber = fda.createFixedDepositCounter(customerId, amountBD, startDate, endDate, duration);
             this.updateList(customerId);
-            String description = "Staff " +staff.getStaffIc()+" create fixed deposit "+accountNumber+" for customer "+customer.getIc();
-            staffId = staff.getId();
+            String description = "Staff " +staffLogInManagedBean.getStaffIc()+" create fixed deposit "+accountNumber+" for customer "+customer.getIc();
+            staffId = staffLogInManagedBean.getStaffId();
             fda.logStaffAction(description, customerId, staffId);
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDepositSuccess.xhtml");
@@ -157,7 +157,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
           amountBD = amountsToDisplay.get(0);
           interest = amountsToDisplay.get(1).setScale(4, RoundingMode.HALF_UP);
           total = amountsToDisplay.get(2).setScale(4, RoundingMode.HALF_UP);
-         String description = "Staff "+staff.getStaffIc()+" perform normal withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customer.getIc();
+         String description = "Staff "+staffLogInManagedBean.getStaffIc()+" perform normal withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customer.getIc();
           fda.logStaffAction(description, customerId, staffId);
       }else{
           withdrawType = "Premature Withdraw";
@@ -165,7 +165,7 @@ public class FixedDepositStaffManagedBean implements Serializable {
           amountBD = amountsToDisplay.get(0);
           interest = amountsToDisplay.get(1).setScale(4, RoundingMode.HALF_UP);
           total = amountsToDisplay.get(2).setScale(4, RoundingMode.HALF_UP);
-          String description = "Staff "+staff.getStaffIc()+" perform prematur withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customer.getIc();
+          String description = "Staff "+staffLogInManagedBean.getStaffIc()+" perform prematur withdraw of fixed deposit "+selectedFixedDeposit.getAccountNumber()+" for customer "+customer.getIc();
           fda.logStaffAction(description, customerId, staffId);
       }
       this.updateList(customerId);
