@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
@@ -25,21 +26,27 @@ import javax.persistence.Query;
  */
 @Stateless
 public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal {
+    @PersistenceContext
  private EntityManager em;
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     
     @Override
     public Customer searchCustomer(String ic) throws UserNotExistException{
+        System.out.println("Inside CRM session bean, IC is: "+ic);
+        
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
+  
         if (temp.isEmpty()) {
             System.out.println("Username " + ic + " does not exist!");
             throw new UserNotExistException("Username " + ic + " does not exist, please try again");
         }
         
             int size=temp.size();
+            
+             System.out.println("Inside CRM session bean, size is: "+size);
             Customer customer=temp.get(size-1);
             if (customer.getStatus().equals("terminated")){
                  System.out.println("Username " + ic + " does not exist!");

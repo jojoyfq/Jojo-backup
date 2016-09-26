@@ -158,7 +158,7 @@ public class CommonInfraManagedBean implements Serializable {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
 
-        return "LogInHome";
+        return "../LogInHome";
 
     }
 
