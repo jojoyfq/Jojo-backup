@@ -183,7 +183,12 @@ public class staffLogInManagedBean implements Serializable {
             roleNames.add(smsbl.viewRoles().get(i).getRoleName());
         }
     }
+    public void goToLogInPage(ActionEvent event) throws IOException {
+        System.out.println("Go into GoToStaffLogInHome");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
 
+    }
+    
     public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException ,IOException{
         try {
             if (staffIc != null && password != null && roleName != null) {

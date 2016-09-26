@@ -136,7 +136,8 @@ public class StaffSelfManagementManagedBean implements Serializable {
         }
 
     }
-    public String updatePassword() throws PasswordTooSimpleException, PasswordNotMatchException, UserNotExistException, IOException {
+
+    public void updatePassword(ActionEvent event) throws PasswordTooSimpleException, PasswordNotMatchException, UserNotExistException, IOException {
         try {
 
             System.out.println("***********Message from managed bean staff Id is " + staffId);
@@ -147,11 +148,13 @@ public class StaffSelfManagementManagedBean implements Serializable {
 //                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 //                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffChangePassword.xhtml");
 
-                FacesContext facesContext = FacesContext.getCurrentInstance();
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your Account has been activated!"));
-                Flash flash = facesContext.getExternalContext().getFlash();
-                flash.setKeepMessages(true);
-                flash.setRedirect(true);
+//                FacesContext facesContext = FacesContext.getCurrentInstance();
+//                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your Account has been activated!"));
+//                Flash flash = facesContext.getExternalContext().getFlash();
+//                flash.setKeepMessages(true);
+//                flash.setRedirect(true);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffSuccessPageWOLogIn.xhtml");
+
             } else {
                 System.out.println("Please do not leave blanks!");
             }
@@ -160,9 +163,7 @@ public class StaffSelfManagementManagedBean implements Serializable {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
-        return "staffLogInHome";
+        //   return "staffLogInHome";
     }
-
-   
 
 }
