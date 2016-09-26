@@ -49,6 +49,8 @@ public class StaffManagementManagedBean implements Serializable {
     StaffManagementSessionBeanLocal smsbl;
     @Inject
     staffLogInManagedBean slimb;
+    @Inject
+    RoleManagementManagedBean smmb;
     /**
      * Creates a new instance of StaffManagementManagedBean
      */
@@ -275,6 +277,8 @@ public class StaffManagementManagedBean implements Serializable {
         try {
             if (roleName != null && staffId != null) {
                 staffRoles = smsbl.createRole(staffId, roleName);
+                //update rolemanagement staffRoles 
+                smmb.setStaffRoles(staffRoles);
               //  allRoles.add(staffRoles.getRoleName());
                 List temp = new ArrayList<>();
                 for(int i=0;i<staffRoles.size();i++){

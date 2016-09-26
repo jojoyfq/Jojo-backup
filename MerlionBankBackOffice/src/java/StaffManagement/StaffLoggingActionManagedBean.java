@@ -46,17 +46,36 @@ public class StaffLoggingActionManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         staffId = limbl.getStaffId();
-        actions = new ArrayList<StaffAction>();
+        actions = new ArrayList<>();
     }
-
+    
     public List<StaffAction> viewLoggingAction(ActionEvent event) throws ListEmptyException {
         try {
+            staffId = limbl.getStaffId();
+            System.out.println("***********customer Id is "+staffId);
             actions = scvasbl.viewStaffAction(staffId);
         } catch (ListEmptyException ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", ex.getMessage());
 
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
         return actions;
     }
+    
+    public Long getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(Long staffId) {
+        this.staffId = staffId;
+    }
+
+    public List<StaffAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<StaffAction> actions) {
+        this.actions = actions;
+    }
+    
 }

@@ -8,6 +8,7 @@ package StaffManagement;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
+import Exception.ListEmptyException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UnexpectedErrorException;
@@ -26,6 +27,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -98,6 +100,9 @@ public class staffLogInManagedBean implements Serializable {
     private List roleNames;
     private String roleName;
 
+    @Inject
+    StaffLoggingActionManagedBean staffLoggingActionManagedBean;
+    
     public String getRoleName() {
         return roleName;
     }
@@ -178,10 +183,12 @@ public class staffLogInManagedBean implements Serializable {
     public void init() {
         staff = new Staff();
         roleNames = new ArrayList<>();
+
         System.out.println("***********Role size is " + smsbl.viewRoles().size());
         for (int i = 0; i < smsbl.viewRoles().size(); i++) {
             roleNames.add(smsbl.viewRoles().get(i).getRoleName());
         }
+
     }
 
     public void goToLogInPage(ActionEvent event) throws IOException {
@@ -189,14 +196,19 @@ public class staffLogInManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInHome.xhtml");
 
     }
+    
+    public void viewStaffAction(ActionEvent event) throws IOException, ListEmptyException{
+         staffLoggingActionManagedBean.viewLoggingAction(event);
+         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/viewActionLog.xhtml");
+    }
 
     public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
         try {
             if (staffIc != null && password != null && roleName != null) {
                 staffId = smsbl.checkLogin(staffIc, password, roleName);
-                staff = smsbl.viewStaff(staffId);
+                // staff = smsbl.viewStaff(staffId);
                 name = staff.getStaffName();
-
+                System.out.println("*****************Staff id is " + staffId);
 //                for (int i = 0; i < staff.getStaffRoles().size(); i++) {
 //                    roleNames.add(staff.getStaffRoles().get(i).getRoleName());
 //                }
@@ -217,16 +229,17 @@ public class staffLogInManagedBean implements Serializable {
                 } else {
                     //  selectedCustomer = amsbl.diaplayCustomerId(customerId);
                     logInAttempts = 0;
+                    System.out.println("*********Log In Attempts");
 //                    System.out.println("Log In Successful!");
 //                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);
 //                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("name", selectedCustomer.getName());
 
-                    //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
+                //    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
+                //    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
+             //       RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                 }
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
-                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
             } else {
                 System.out.println("Please do not leave blanks!");
             }

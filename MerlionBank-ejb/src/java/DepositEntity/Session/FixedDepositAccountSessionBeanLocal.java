@@ -88,6 +88,6 @@ public interface FixedDepositAccountSessionBeanLocal {
 
     public void changeFixedInterestRate(FixedDepositRate rateEntity, Double newInterestRate);  
 
-    public void logStaffAction(String description, Long customerId, Staff staff);
+    public void logStaffAction(String description, Long customerId, Long staffId);
     
 }

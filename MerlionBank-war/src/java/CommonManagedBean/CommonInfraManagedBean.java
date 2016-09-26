@@ -105,8 +105,6 @@ public class CommonInfraManagedBean implements Serializable {
 //                System.out.println("lala");
 //                return;
 //            }
-
-
             try {
                 System.out.println("ahdhdhdhdaad ");
 
@@ -133,7 +131,6 @@ public class CommonInfraManagedBean implements Serializable {
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-
                 FacesContext facesContext = FacesContext.getCurrentInstance();
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Account created Successfully"));
                 Flash flash = facesContext.getExternalContext().getFlash();
@@ -143,7 +140,7 @@ public class CommonInfraManagedBean implements Serializable {
 //                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 //
 //                RequestContext.getCurrentInstance().showMessageInDialog(message);
-                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -159,7 +156,6 @@ public class CommonInfraManagedBean implements Serializable {
         }
 
       //  return "../LogInHome";
-
     }
 
     public void createFixedDepositAccount(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
@@ -171,9 +167,7 @@ public class CommonInfraManagedBean implements Serializable {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
 
                 //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
-
                 //  amsbl.createFixedAccount(customer, amount, duration);
-
             } else {
                 System.out.println("Message from managed bean: please do not leave blanks!");
             }
@@ -181,7 +175,7 @@ public class CommonInfraManagedBean implements Serializable {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
-         
+
     }
 
     public void configureFixedDeposit(ActionEvent event) throws EmailNotSendException, IOException {
@@ -197,7 +191,7 @@ public class CommonInfraManagedBean implements Serializable {
 //                Flash flash = facesContext.getExternalContext().getFlash();
 //                flash.setKeepMessages(true);
 //                flash.setRedirect(true);
-                                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
 
             }
         } catch (EmailNotSendException ex) {
@@ -205,7 +199,7 @@ public class CommonInfraManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         }
-     //    return "LogInHome";
+        //    return "LogInHome";
 
     }
 
