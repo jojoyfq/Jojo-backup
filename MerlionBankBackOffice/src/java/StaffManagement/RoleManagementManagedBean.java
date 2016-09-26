@@ -166,6 +166,7 @@ staffLogInManagedBean slimbl;
         staffRoles = this.displayAllRoles();
         role = new StaffRole();
         selectedPermission = new Permission();
+        
     }
 
     public List<StaffRole> displayAllRoles() {

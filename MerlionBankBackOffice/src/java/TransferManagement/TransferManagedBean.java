@@ -37,7 +37,7 @@ public class TransferManagedBean implements Serializable {
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
     
-    private List savingAccountList;
+    private List<Long> savingAccountList;
     private String recipientName;
     private String amountString;
     private BigDecimal amountBD;

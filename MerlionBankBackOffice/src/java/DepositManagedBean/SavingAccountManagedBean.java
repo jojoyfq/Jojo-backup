@@ -355,6 +355,9 @@ public class SavingAccountManagedBean implements Serializable {
             System.out.print("User Has Pending Transaction!");
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }catch(UserCloseAccountException e){
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", e.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
 

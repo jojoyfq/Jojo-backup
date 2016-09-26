@@ -134,7 +134,7 @@ try {
 
     public void staffUpdateCustomerProfile(ActionEvent event) {
 
-        ocsbl.updateProfile(staffId, customerId, customerIc, email, birthDate,
+        ocsbl.updateProfile(staffId, customerId, customerIc, customerName, birthDate,
                 address, email, phoneNumber, occupation, familyInfo, financialGoal);
         FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer profile updated successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
