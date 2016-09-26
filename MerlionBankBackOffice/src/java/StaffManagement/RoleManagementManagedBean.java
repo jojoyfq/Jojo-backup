@@ -209,20 +209,7 @@ staffLogInManagedBean slimbl;
         }
 //                return permissions;
     }
-public void deleteRole(ActionEvent event)throws RoleHasStaffException{
-    try {
-        
-         role = (StaffRole) event.getComponent().getAttributes().get("selectedRole");
-         staffRoleId = role.getId();
-        System.out.println("********Selected Role is " + role.getRoleName() + " " + role.getId());
-        staffRoles = smsbl.deleteRole(staffRoleId, adminId);
-        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Deleted successfully");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-    }catch(RoleHasStaffException ex){
-          FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getLocalizedMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-    }
-}
+
     public void editPermission(StaffRole role) throws IOException {
         // permissionId = ((Permission) event.getComponent().getAttributes().get("selectedPermission")).getId();
 
