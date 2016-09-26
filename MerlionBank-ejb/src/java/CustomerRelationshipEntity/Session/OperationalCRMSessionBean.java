@@ -60,6 +60,7 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
     
     @Override
     public void updateProfile(Long staffID, Long customerID, String ic, String name, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String financialGoal){
+        System.out.println("Inside update profile session bean");
         Query query = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         query.setParameter("id", staffID);
         Staff staff = (Staff)query.getSingleResult(); 
@@ -67,6 +68,9 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
         q.setParameter("id", customerID);
         Customer customer = (Customer)q.getSingleResult();
+        
+        System.out.println("customer name: "+customer.getName());
+         System.out.println("customer noe name: "+name);
         customer.setIc(ic);
         customer.setName(name);
         customer.setDateOfBirth(dateOfBirth);
@@ -87,5 +91,7 @@ public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal
             staff.setStaffActions(staffActions);
             em.persist(staff);
             em.flush();
+            
+      System.out.println("End update profile session bean");      
     }
 }
