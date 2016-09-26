@@ -691,10 +691,11 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
 
     @Override
-    public Long lockAccount(Long customerId) {
-        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
-        q.setParameter("id", customerId);
-        Customer customer = (Customer) q.getSingleResult();
+    public Long lockAccount(String customerIc) {
+         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", customerIc);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        Customer customer=temp.get(temp.size()-1);
         customer.setStatus("locked");
         em.flush();
         OnlineAccount onlineAccount = customer.getOnlineAccount();

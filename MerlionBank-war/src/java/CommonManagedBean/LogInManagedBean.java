@@ -206,7 +206,7 @@ public class LogInManagedBean implements Serializable {
                         message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your account has been locked out.");
 
                         RequestContext.getCurrentInstance().showMessageInDialog(message);
-                        System.out.println(amsbl.lockAccount(customerId));
+                        System.out.println(amsbl.lockAccount(ic));
                     }
                 } else {
                     selectedCustomer = amsbl.diaplayCustomerId(customerId);
