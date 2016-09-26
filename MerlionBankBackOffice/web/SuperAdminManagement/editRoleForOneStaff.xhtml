@@ -64,7 +64,7 @@
                                     <p:selectOneMenu id="selectedRole" value="#{staffManagementManagedBean.selectedRoleNameToAdd}">
 
                                         <f:selectItem itemLabel="Select SAvailable Roles" itemValue="" noSelectionOption="true" />
-                                        <f:selectItems value="#{staffManagementManagedBean.allRoles}" />                
+                                        <f:selectItems value="#{staffLogInManagedBean.roleNames}" />                
                                     </p:selectOneMenu>
                                     <p:commandButton  actionListener="#{staffManagementManagedBean.addOneRoleForStaff}" update=":form:panel" icon="ui-icon-search" value="Add"  />
 
