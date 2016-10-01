@@ -308,7 +308,10 @@ public class LogInManagedBean implements Serializable {
 //                Flash flash = facesContext.getExternalContext().getFlash();
 //                flash.setKeepMessages(true);
 //                flash.setRedirect(true);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+     
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", "Profile updated successfully!");
+
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
 
             } else {
                 System.out.println("Please fill in correct information!");

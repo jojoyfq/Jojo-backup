@@ -227,7 +227,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             savingAccounts.setBalance(updateSavingAccountBalance);  //update the balance
 
             //update the balance of the fixed deposit account (+)         
-            fixedDepositAccount.setBalance(amount);
+            fixedDepositAccount.setBalance(fixedDepositAccount.getBalance().add(amount));
             System.out.print("transfer to fixed done");
             //      em.persist(customer);
             //create a transaction record for saving account

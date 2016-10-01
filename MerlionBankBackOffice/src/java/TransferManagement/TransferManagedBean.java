@@ -36,7 +36,7 @@ public class TransferManagedBean implements Serializable {
     TransferSessionBeanLocal tfsb;
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
-    
+
     private List<Long> savingAccountList;
     private String recipientName;
     private String amountString;
@@ -46,60 +46,71 @@ public class TransferManagedBean implements Serializable {
     private Long giverAccountNumLong;
     private Long customerID;
 
-    
     @PostConstruct
     public void init() {
-        try{
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
-            this.getSavingAccountNumbers();
-        }catch(Exception e){
-            System.out.print("Init Encounter Error!");
-        }
     }
-    
+
     public TransferManagedBean() {
     }
-    
+
+    public void dashboardToIntraTransfer(ActionEvent event) {
+        try {
+            customerID = serviceCustomerManagedBean.getCustomer().getId();
+            if (customerID != null) {
+                setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+                this.getSavingAccountNumbers();
+                 FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/TransferManagement/intraTransfer.xhtml");
+            } else {
+              FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
+
+        } catch (Exception e) {
+            System.out.print("Dashboard go to intra transfer encounter error!");
+        }
+    }
+
     public void getSavingAccountNumbers() throws IOException, UserHasNoSavingAccountException {
-        try{
-        savingAccountList = tfsb.getSavingAccountNumbers(customerID);
-        }catch(UserHasNoSavingAccountException ex){
+        try {
+            savingAccountList = tfsb.getSavingAccountNumbers(customerID);
+        } catch (UserHasNoSavingAccountException ex) {
             System.out.print("User Has No Saving Account");
         }
     }
-    
-    public void oneTimeTransfer(ActionEvent event) throws TransferException, IOException {
-        try{
-            if(giverAccountNumLong != null){
-            amountBD = new BigDecimal(amountString);
-            recipientAccountNumLong = Long.parseLong(recipientAccountNumString);  
-            System.out.print(amountBD);
-            System.out.print(recipientAccountNumLong);
-            tfsb.intraOneTimeTransferCheck(customerID,giverAccountNumLong,recipientAccountNumLong,amountBD);
 
-            FacesContext.getCurrentInstance().getExternalContext()
+    public void oneTimeTransfer(ActionEvent event) throws TransferException, IOException {
+        try {
+            if (giverAccountNumLong != null) {
+                amountBD = new BigDecimal(amountString);
+                recipientAccountNumLong = Long.parseLong(recipientAccountNumString);
+                System.out.print(amountBD);
+                System.out.print(recipientAccountNumLong);
+                tfsb.intraOneTimeTransferCheck(customerID, giverAccountNumLong, recipientAccountNumLong, amountBD);
+
+                FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/TransferManagement/intraTransferSuccess.xhtml");
-            }else{
+            } else {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Saving Account!");
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }
-            
-        } catch (TransferException ex){
+
+        } catch (TransferException ex) {
             System.out.print("OneTimeTransfer Encounter Error");
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
-    
+
     public void goBackToHomePage(ActionEvent event) {
-        try{
+        try {
             FacesContext.getCurrentInstance().getExternalContext()
-                        .redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
-        }catch(Exception e){
+                    .redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
+        } catch (Exception e) {
             System.out.print("Redirect to Home Page Encounter Error!");
-        }    
+        }
     }
-    
+
     public List getSavingAccountList() {
         return savingAccountList;
     }

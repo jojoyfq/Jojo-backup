@@ -1,51 +1,70 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:define name="head">
+    </ui:define>
 
-    <f:view>
-        <h:head>
-            <title>Display Fixed Deposit Account Detail</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        </h:head>
-        <h:body>
+    <ui:define name="content">
 
-            <h:form>
-                <p:panel id="panel" header="Customer Fixed Deposit Account Details">
-                    <h:outputLabel value="Customer IC: "/>
-                    <h:outputLabel value="#{serviceCustomerManagedBean.customerIc}"/>
-                    <h:panelGrid columns="4" cellpadding="5">
-                        <p:dataTable var="FixedDepositAccount" value="#{fixedDepositStaffManagedBean.fixedDepositAccounts}">
-                            <p:column headerText="Account Number">
-                                <h:outputText value="#{FixedDepositAccount.accountNumber}" />
-                            </p:column>
-                            <p:column headerText="Amount Set at Opening">
-                                <h:outputText value="#{FixedDepositAccount.amount}" />
-                            </p:column>
-                            <p:column headerText="Amount in Account">
-                                <h:outputText value="#{FixedDepositAccount.balance}" />
-                            </p:column>
-                            
-                            <p:column headerText="Start Date">
-                                <h:outputLabel value="#{FixedDepositAccount.startDate}" >
-                                 <f:convertDateTime pattern="dd/MM/yyyy" />
-                                </h:outputLabel>
-                            </p:column>
-                            
-                            <p:column headerText="End Date">
-                                <h:outputLabel value="#{FixedDepositAccount.endDate}" >
-                                 <f:convertDateTime pattern="dd/MM/yyyy" />
-                                </h:outputLabel>
-                            </p:column>                            
-                        </p:dataTable>
-                    </h:panelGrid>
-                    <p:commandButton actionListener="#{fixedDepositNonTellerManagedBean.goToHomePage}" value="Return to Homepage" />
-                </p:panel>
-            </h:form>
-        </h:body>
-    </f:view>
-</html>
+        <!-- Left Column -->
+        <div class="Container10 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container80 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Display Fixed Deposit Account Detail </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container80 NoPadding Responsive50 ui-fluid">
+
+                        <h:form>
+                            <p:panel id="panel" header="Customer Fixed Deposit Account Details">
+                                <h:outputLabel value="Customer IC: "/>
+                                <h:outputLabel value="#{serviceCustomerManagedBean.customerIc}"/>
+                                <h:panelGrid columns="4" cellpadding="5">
+                                    <p:dataTable var="FixedDepositAccount" value="#{fixedDepositStaffManagedBean.fixedDepositAccounts}">
+                                        <p:column headerText="Account Number">
+                                            <h:outputText value="#{FixedDepositAccount.accountNumber}" />
+                                        </p:column>
+                                        <p:column headerText="Amount Set at Opening">
+                                            <h:outputText value="#{FixedDepositAccount.amount}" />
+                                        </p:column>
+                                        <p:column headerText="Amount in Account">
+                                            <h:outputText value="#{FixedDepositAccount.balance}" />
+                                        </p:column>
+
+                                        <p:column headerText="Start Date">
+                                            <h:outputLabel value="#{FixedDepositAccount.startDate}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputLabel>
+                                        </p:column>
+
+                                        <p:column headerText="End Date">
+                                            <h:outputLabel value="#{FixedDepositAccount.endDate}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputLabel>
+                                        </p:column>                            
+                                    </p:dataTable>
+                                </h:panelGrid>
+                                <p:commandButton actionListener="#{fixedDepositNonTellerManagedBean.goToHomePage}" value="Return to Homepage" />
+                            </p:panel>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container10 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

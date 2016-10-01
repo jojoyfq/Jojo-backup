@@ -73,19 +73,13 @@ public class SavingAccountManagedBean implements Serializable {
     private Double interestRate3;
     private Staff staff;
 
-   
     @PostConstruct
     public void init() {
         try {
-            System.out.print("inside the init() method");
             staff = staffLogInManagedBean.getStaff(); //Get staff who is login
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId()); // Get the customerID 
-            System.out.print("customer is" + customerID);
             this.getSavingAccountType();
-            savingAccounts = sasb.getSavingAccount(customerID);
-            this.getSavingAccountNumbers();
-            this.getNotTerminatedAccountNumbers();
-
+//            this.getSavingAccountNumbers();
+//            this.getNotTerminatedAccountNumbers();
         } catch (Exception e) {
             System.out.print("Init encounter error");
         }
@@ -96,10 +90,16 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void dashboardToCreateSavingAccountEC(ActionEvent event) {
         try {
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
-            this.getSavingAccountType();
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/DepositManagement/createSavingAccountEC.xhtml");
+            customerID = serviceCustomerManagedBean.getCustomer().getId();
+            if (customerID != null) {
+                setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+                this.getSavingAccountType();
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/DepositManagement/createSavingAccountEC.xhtml");
+            } else {
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
         } catch (Exception e) {
             System.out.print("Dashboard to Create Saving Account Existing Customer encounter error!");
         }
@@ -107,10 +107,16 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void dashboardToCashDeposit(ActionEvent event) {
         try {
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
-            this.getNotTerminatedAccountNumbers();
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/DepositManagement/cashDeposit.xhtml");
+            customerID = serviceCustomerManagedBean.getCustomer().getId();
+            if (customerID != null) {
+                setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+                this.getNotTerminatedAccountNumbers();
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/DepositManagement/cashDeposit.xhtml");
+            } else {
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
         } catch (Exception e) {
             System.out.print("Dashboard to Cash Deposit encounter error!");
         }
@@ -118,10 +124,16 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void dashboardToCashWithdraw(ActionEvent event) {
         try {
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
-            this.getSavingAccountNumbers();
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/DepositManagement/cashWithdraw.xhtml");
+            customerID = serviceCustomerManagedBean.getCustomer().getId();
+            if (customerID != null) {
+                setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+                this.getSavingAccountNumbers();
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/DepositManagement/cashWithdraw.xhtml");
+            } else {
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
         } catch (Exception e) {
             System.out.print("Dashboard to Cash Withdraw encounter error!");
         }
@@ -129,10 +141,16 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void dashboardToViewAccounts(ActionEvent event) {
         try {
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
-            savingAccounts = sasb.getSavingAccount(customerID);
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/DepositManagement/displaySavingAccountDetail.xhtml");
+            customerID = serviceCustomerManagedBean.getCustomer().getId();
+            if (customerID != null) {
+                setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+                savingAccounts = sasb.getSavingAccount(customerID);
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/DepositManagement/displaySavingAccountDetail.xhtml");
+            } else {
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
         } catch (Exception e) {
             System.out.print("Dashboard to View Saving Accounts Encounter error!");
         }
@@ -140,10 +158,16 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void dashboardToViewTransactions(ActionEvent event) {
         try {
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
-            this.getSavingAccountNumbers();
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/DepositManagement/viewTransactionRecords_selectAccounts.xhtml");
+            customerID = serviceCustomerManagedBean.getCustomer().getId();
+            if (customerID != null) {
+                setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+                this.getSavingAccountNumbers();
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/DepositManagement/viewTransactionRecords_selectAccounts.xhtml");
+            } else {
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
         } catch (Exception e) {
             System.out.print("Dashboard to View Transaction History Encounter error!");
         }
@@ -151,10 +175,16 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void dashboardToCloseSavingAccount(ActionEvent event) {
         try {
-            setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
-            this.getSavingAccountNumbers();
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBankBackOffice/DepositManagement/closeSavingAccount_selectAccounts.xhtml");
+            customerID = serviceCustomerManagedBean.getCustomer().getId();
+            if (customerID != null) {
+                setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
+                this.getSavingAccountNumbers();
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/DepositManagement/closeSavingAccount_selectAccounts.xhtml");
+            } else {
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
         } catch (Exception e) {
             System.out.print("Dashboard to Close Saving Account Encounter error!");
         }
@@ -258,7 +288,6 @@ public class SavingAccountManagedBean implements Serializable {
 
 //                String description = "Staff " + staff.getStaffIc() + " perform cash deposit from " + notTerminAccountSelected + " saving account for customer " + customerID;
 //                sasb.logStaffAction(description, customerID, staff);
-                
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/DepositManagement/cashDepositSuccess.xhtml");
             } else {
@@ -289,7 +318,7 @@ public class SavingAccountManagedBean implements Serializable {
     public void setInterestRate(ActionEvent event) {
         try {
             sasb.setInterestRate(changeIRsavingAccountType, interestRate1, interestRate2, interestRate3);
-            
+
 //          String description = "Staff " + staff.getStaffIc() + " perform change saving account interest rate";
 //          sasb.logStaffAction(description, null, staff);
             FacesContext.getCurrentInstance().getExternalContext()
@@ -304,7 +333,7 @@ public class SavingAccountManagedBean implements Serializable {
             if (savingAccountSelected != null) {
                 System.out.print("inside the goToTransaction Record method!");
                 this.getTransactionRecords();
-                
+
 //              String description = "Staff " + staff.getStaffIc() + " perform change saving account interest rate";
 //              sasb.logStaffAction(description, null, staff);
                 FacesContext.getCurrentInstance().getExternalContext()
@@ -346,7 +375,7 @@ public class SavingAccountManagedBean implements Serializable {
         try {
             sasb.checkPendingTransaction(savingAccountSelected);
             this.getSavingAccountNumbers();
-            
+
 //          String description = "Staff " + staff.getStaffIc() + " perform close saving account "+savingAccountSelected+"for customer"+customerID;
 //          sasb.logStaffAction(description, customerID, staff);
             FacesContext.getCurrentInstance().getExternalContext()
@@ -355,7 +384,7 @@ public class SavingAccountManagedBean implements Serializable {
             System.out.print("User Has Pending Transaction!");
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }catch(UserCloseAccountException e){
+        } catch (UserCloseAccountException e) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", e.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
@@ -504,16 +533,16 @@ public class SavingAccountManagedBean implements Serializable {
     public void setInterestRate3(Double interestRate3) {
         this.interestRate3 = interestRate3;
     }
-    
-     public String getChangeIRsavingAccountType() {
+
+    public String getChangeIRsavingAccountType() {
         return changeIRsavingAccountType;
     }
 
     public void setChangeIRsavingAccountType(String changeIRsavingAccountType) {
         this.changeIRsavingAccountType = changeIRsavingAccountType;
     }
-    
-     public Staff getStaff() {
+
+    public Staff getStaff() {
         return staff;
     }
 
