@@ -5,7 +5,9 @@
  */
 package DepositEntity;
 
+import CardEntity.DebitCard;
 import CommonEntity.Customer;
+import CommonEntity.OnlineAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -47,6 +49,9 @@ public class SavingAccount implements Serializable {
     private Customer customer;
     @ManyToOne
     private SavingAccountType savingAccountType = new SavingAccountType();
+    @OneToOne(cascade={CascadeType.ALL}) 
+    private DebitCard debitCard; //one saving account is linked with one debit card
+
     
 
     public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, SavingAccountType savingAccountType) {
@@ -58,6 +63,15 @@ public class SavingAccount implements Serializable {
         this.savingAccountType = savingAccountType;
     }
 
+    public DebitCard getDebitCard() {
+        return debitCard;
+    }
+
+    public void setDebitCard(DebitCard debitCard) {
+        this.debitCard = debitCard;
+    }
+    
+    
     public Long getId() {
         return id;
     }
