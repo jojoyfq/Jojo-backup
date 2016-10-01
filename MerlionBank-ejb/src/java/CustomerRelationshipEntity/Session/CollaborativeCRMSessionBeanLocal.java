@@ -25,7 +25,7 @@ public interface CollaborativeCRMSessionBeanLocal {
     public List<StaffRole> displayListOfRoles() throws ListEmptyException;
     public List<Staff> retrieveStaffsAccordingToRole(String issueType)throws ListEmptyException;
     public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseStaffID) throws UserNotExistException;
-    public void addIssue(String content, String issueType, String status, String solution, Staff assignedStaff, CaseEntity newCase);
+    public List<Issue> addIssue(String content, String issueType, String status, String solution, String assignedStaffName, CaseEntity newCase);
     public List<CaseEntity> viewAllCase()throws ListEmptyException;
     public List<Issue> viewAssignedCase(Long staffId) throws ListEmptyException;
     public boolean deleteIssue(Long staffId,Long issueId);

@@ -54,6 +54,12 @@ public List<Staff> retrieveStaffsAccordingToRole(String issueType)throws ListEmp
         if (staffList.isEmpty()){
             throw new ListEmptyException("There are no available staff. Please choose another department.");
          }
+        
+        List<Staff> newStaffList=new ArrayList<Staff>();
+        for (int i=0;i<staffList.size();i++){
+            if (!staffList.get(i).getStatus().equals("terminated") || !staffList.get(i).getStatus().equals("inactive"))
+                newStaffList.add(staffList.get(i));
+        }
        return staffList; 
     
     
@@ -84,8 +90,12 @@ public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseSt
 }
 
 @Override
-public void addIssue(String content, String issueType, String status, String solution, Staff assignedStaff, CaseEntity newCase){
-   
+public List<Issue> addIssue(String content, String issueType, String status, String solution, String assignedStaffName, CaseEntity newCase){
+   Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffName = :assignedStaffName");
+        q.setParameter("assignedStaffName", assignedStaffName);
+        List<Staff> temp = new ArrayList(q.getResultList());
+        Staff assignedStaff=temp.get(temp.size()-1);
+    
     Issue issue=new Issue(content,issueType,status,solution,newCase,assignedStaff);
     em.persist(issue);
     em.flush();
@@ -95,6 +105,8 @@ public void addIssue(String content, String issueType, String status, String sol
     newCase.setIssues(issueList);
     em.persist(newCase);
     em.flush();
+    
+    return issueList;
     
 }
 
