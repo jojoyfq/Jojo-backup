@@ -34,6 +34,16 @@ public interface CollaborativeCRMSessionBeanLocal {
     public boolean staffSolveIssue(Long staffId, Long issueId,String solution);
     public void closeCase() throws EmailNotSendException;
     
-    
+    //Customer views status of the case processing 
+public List<CaseEntity> customerViewCases(Long customerId)throws ListEmptyException;
+
+//Customer view case
+public CaseEntity customerViewCase(Long caseId);
+
+//Customer modifies the details of the case filed
+public boolean customerModifyIssue(Long customerId, Long issueId,String content);
+
+//Customer rate issue
+public boolean customerRateIssue(Long customerId,Long issueId,Integer rating);
     
 }
