@@ -5,6 +5,7 @@
  */
 package CustomerRelationshipEntity;
 
+import CommonEntity.Staff;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,11 +40,23 @@ public class Issue implements Serializable {
     private String content;
     private String issueType; 
     private String status;
-    private String assignedStaff;
-    private Double rating;
+    private int rating;
+    private String solution;
   
     @ManyToOne
     private CaseEntity caseEntity;
+    
+    @ManyToOne
+    private Staff staff;
+
+    public CaseEntity getCaseEntity() {
+        return caseEntity;
+    }
+
+    public void setCaseEntity(CaseEntity caseEntity) {
+        this.caseEntity = caseEntity;
+    }
+    
     
     public String getContent() {
         return content;
@@ -52,21 +65,32 @@ public class Issue implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getSolution() {
+        return solution;
+    }
+
+    public void setSolution(String solution) {
+        this.solution = solution;
+    }
    
     
    
     
     public Issue(){
     }
-    
-    public Issue(Long id, String content, String issueType, String status, String assignedStaff, Double rating) {
-        this.id = id;
+
+    public Issue(String content, String issueType, String status, String solution, CaseEntity caseEntity, Staff staff) {
         this.content = content;
         this.issueType = issueType;
         this.status = status;
-        this.assignedStaff = assignedStaff;
-        this.rating = rating;
+        this.solution = solution;
+        this.caseEntity = caseEntity;
+        this.staff = staff;
     }
+
+    
+   
     public Long getId() {
         return id;
     }
@@ -128,31 +152,26 @@ public class Issue implements Serializable {
         this.status = status;
     }
 
-    /**
-     * @return the assignedStaff
-     */
-    public String getAssignedStaff() {
-        return assignedStaff;
+    public Staff getStaff() {
+        return staff;
     }
 
-    /**
-     * @param assignedStaff the assignedStaff to set
-     */
-    public void setAssignedStaff(String assignedStaff) {
-        this.assignedStaff = assignedStaff;
+    public void setStaff(Staff staff) {
+        this.staff = staff;
     }
+
 
     /**
      * @return the rating
      */
-    public Double getRating() {
+    public int getRating() {
         return rating;
     }
 
     /**
      * @param rating the rating to set
      */
-    public void setRating(Double rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
     
