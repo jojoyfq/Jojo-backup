@@ -5,6 +5,8 @@
  */
 package CommonEntity;
 
+import CustomerRelationshipEntity.CaseEntity;
+import CustomerRelationshipEntity.Issue;
 import CustomerRelationshipEntity.StaffAction;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,6 +55,20 @@ public class Staff implements Serializable {
 @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<CustomerMessage> customerMessages;
 
+  @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
+    private List<CaseEntity> caseEntities;
+
+    public List<CaseEntity> getCaseEntities() {
+        return caseEntities;
+    }
+
+    public void setCaseEntities(List<CaseEntity> caseEntities) {
+        this.caseEntities = caseEntities;
+    }
+
+@OneToMany(cascade={CascadeType.ALL},mappedBy="caseEntity")
+    private List<Issue> issues;
+
     public Staff() {
     }
 
@@ -64,6 +80,15 @@ public class Staff implements Serializable {
         this.mobileNumber = mobileNumber;
         this.status = status;
         this.staffRoles = staffRoles;
+    }
+
+    
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<Issue> issues) {
+        this.issues = issues;
     }
 
     public String getSalt() {

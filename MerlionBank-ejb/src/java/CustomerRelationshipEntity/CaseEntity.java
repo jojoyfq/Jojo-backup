@@ -6,6 +6,7 @@
 package CustomerRelationshipEntity;
 
 import CommonEntity.Customer;
+import CommonEntity.Staff;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,12 +32,11 @@ public class CaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String content;
-
-  
     private String status;
     @Temporal(TemporalType.TIMESTAMP)
     private Date caseCreatedTime;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date caseClosedTime;
     
     @ManyToOne
     private Customer customer;
@@ -45,9 +45,36 @@ public class CaseEntity implements Serializable {
     @OneToMany(cascade={CascadeType.ALL},mappedBy="caseEntity")
     private List<Issue> issues;
     
-   // @ManyToOne
-    //private CaseStaff caseStaff;
+    @ManyToOne
+    private Staff staff;
+
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
+    public CaseEntity(String status, Date caseCreatedTime, Customer customer,Staff staff) {
+        this.status = status;
+        this.caseCreatedTime = caseCreatedTime;
+        this.customer = customer;
+        this.staff = staff;
+    }
     
+    
+    
+    public Date getCaseClosedTime() {
+        return caseClosedTime;
+    }
+
+    // @ManyToOne
+    //private CaseStaff caseStaff;
+    public void setCaseClosedTime(Date caseClosedTime) {    
+        this.caseClosedTime = caseClosedTime;
+    }
+
     public Date getCaseCreatedTime() {
         return caseCreatedTime;
     }
@@ -93,13 +120,6 @@ public class CaseEntity implements Serializable {
      //   this.issues = new ArrayList<Issue>();
 }
     
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
     public Long getId() {
         return id;
     }
