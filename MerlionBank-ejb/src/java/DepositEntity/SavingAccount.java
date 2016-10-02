@@ -5,6 +5,8 @@
  */
 package DepositEntity;
 
+import BillEntity.GIROArrangement;
+import BillEntity.RecurrentBillArrangement;
 import CommonEntity.Customer;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -47,6 +49,29 @@ public class SavingAccount implements Serializable {
     private Customer customer;
     @ManyToOne
     private SavingAccountType savingAccountType = new SavingAccountType();
+    @OneToMany (cascade={CascadeType.ALL},mappedBy="savingAccount")
+    private List<GIROArrangement> giroArrangement;
+    @OneToMany (cascade={CascadeType.ALL},mappedBy="savingAccount")
+    private List<RecurrentBillArrangement> recurrentBillArrangement;
+
+    public List<RecurrentBillArrangement> getRecurrentBillArrangement() {
+        return recurrentBillArrangement;
+    }
+
+    public void setRecurrentBillArrangement(List<RecurrentBillArrangement> recurrentBillArrangement) {
+        this.recurrentBillArrangement = recurrentBillArrangement;
+    }
+    
+    
+    public List<GIROArrangement> getGiroArrangement() {
+        return giroArrangement;
+    }
+
+    public void setGiroArrangement(List<GIROArrangement> giroArrangement) {
+        this.giroArrangement = giroArrangement;
+    }
+    
+    
     
 
     public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, SavingAccountType savingAccountType) {
