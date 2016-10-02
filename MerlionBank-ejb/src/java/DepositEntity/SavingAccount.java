@@ -42,6 +42,7 @@ public class SavingAccount implements Serializable {
     private Date endDate;
     private BigDecimal balance;
     private BigDecimal availableBalance;
+    private BigDecimal accumDailyInterest;
     private String status; //activated, inactive, terminated, below balance
     //@OneToOne(mappedBy="savingAccount")
     //private Customer customer;
@@ -206,6 +207,14 @@ public class SavingAccount implements Serializable {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+    
+    public BigDecimal getAccumDailyInterest() {
+        return accumDailyInterest;
+    }
+
+    public void setAccumDailyInterest(BigDecimal accumDailyInterest) {
+        this.accumDailyInterest = accumDailyInterest;
     }
 
 }
