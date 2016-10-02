@@ -5,6 +5,8 @@
  */
 package CommonEntity;
 
+import CustomerRelationshipEntity.CaseEntity;
+import CustomerRelationshipEntity.Issue;
 import CustomerRelationshipEntity.StaffAction;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,6 +54,29 @@ public class Staff implements Serializable {
       
 @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<CustomerMessage> customerMessages;
+
+@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
+    private List<Issue> issues;
+
+@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
+    private List<CaseEntity> cases;
+
+    public List<CaseEntity> getCases() {
+        return cases;
+    }
+
+    public void setCases(List<CaseEntity> cases) {
+        this.cases = cases;
+    }
+
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<Issue> issues) {
+        this.issues = issues;
+    }
+
 
     public Staff() {
     }
