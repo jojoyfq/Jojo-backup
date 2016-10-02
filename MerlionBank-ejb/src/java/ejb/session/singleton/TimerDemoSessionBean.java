@@ -7,6 +7,7 @@ package ejb.session.singleton;
 
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
+import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import static com.sun.faces.facelets.util.Path.context;
 import java.util.Date;
 import javax.annotation.Resource;
@@ -35,6 +36,9 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
     
     @EJB
     AccountManagementSessionBeanLocal amsbl;
+    
+    @EJB
+    SavingAccountSessionBeanLocal sasbl;
 
     @Override
     public void createTimers(Date startTime){
@@ -45,6 +49,10 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
     
         Timer accountClosureTimer = timerService.createTimer(startTime, 1 * 60 * 1000, "OnlineBankingAccount-TIMER");
         System.err.println("********** OnlineBankingAccount-TIMER TIMER CREATED");
+        
+        //for interest crediting 
+        Timer dailyInterestAccrued = timerService.createTimer(startTime, 1 * 60 * 1000, "DailyInterestAccrued-TIMER");
+        System.err.println("********** DailyInterestAccrued-TIMER TIMER CREATED");
     }
     
     @Override
@@ -56,14 +64,14 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
     public void timeout(Timer timer) {
         System.err.println("********** get in timeout here!!!!");
         if (timer.getInfo().toString().equals("FixedDeposit-TIMER")) {
-            System.err.println("********** FixedDeposit-TIMER go to session bean here!!!!");
+            System.err.println("********** FixedDeposit-TIMER go to fixed deposit session bean here!!!!");
             fdasbl.checkFixedDepositAccountStatus();
         } else if (timer.getInfo().toString().equals("OnlineBankingAccount-TIMER")) {
             System.err.println("********** OnlineBankingAccount-TIMER go to Common Entity Session bean now!!!!");
-//            amsbl.checkOnlineBankingAccountStatus();
+//            amsbl.checkOnlineBankingAccountStatus()
+        } else if (timer.getInfo().toString().equals("DailyInterestAccrued-TIMER")){
+            System.err.println("********** FixedDeposit-TIMER go to saving account session bean here!!!!");
+            sasbl.dailyInterestAccrued();
         }
     }
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
 }

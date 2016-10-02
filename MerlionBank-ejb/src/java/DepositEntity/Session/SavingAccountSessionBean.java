@@ -393,6 +393,58 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         em.flush();
     }
 
+    //daily interest accrual 
+    @Override
+    public void dailyInterestAccrued() {
+        Query query1 = em.createQuery("SELECT a FROM SavingAccount a");
+        List<SavingAccount> savingAccounts = new ArrayList(query1.getResultList());
+
+        BigDecimal availableBalance;
+        BigDecimal remainingBalance;
+        BigDecimal dailyInterest;
+        BigDecimal specialInterest;
+        double interestRate;
+        BigDecimal accumulatedDailyInterest;
+        SavingAccountType savingAccountType;
+
+        for (int i = 0; i < savingAccounts.size(); i++) {
+            String status = savingAccounts.get(i).getStatus();
+            if (status.equals("active")) {
+                //where to store the interest ??
+                dailyInterest = savingAccounts.get(i).getAvailableBalance();
+                availableBalance = savingAccounts.get(i).getAvailableBalance();
+                savingAccountType = savingAccounts.get(i).getSavingAccountType();
+                if (savingAccountType.equals("13")) {
+                    //everyday saving 
+                    // balance > 15000
+                    if (availableBalance.compareTo(BigDecimal.valueOf(150000)) == 1) {
+                        BigDecimal firstInterest = BigDecimal.valueOf(50000 * savingAccounts.get(i).getSavingAccountType().getInterestRate1());
+                        BigDecimal secondInterest = BigDecimal.valueOf(100000 * savingAccounts.get(i).getSavingAccountType().getInterestRate2());
+                        remainingBalance = availableBalance.subtract(BigDecimal.valueOf(150000));
+                        BigDecimal remainingInterest = BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate3());
+
+                        dailyInterest = firstInterest.add(secondInterest).add(remainingInterest);
+                    } else if (availableBalance.compareTo(BigDecimal.valueOf(150000)) == -1 && availableBalance.compareTo(BigDecimal.valueOf(150000)) == 1) {
+                        BigDecimal firstInterest = BigDecimal.valueOf(50000 * savingAccounts.get(i).getSavingAccountType().getInterestRate1());
+                        remainingBalance = availableBalance.subtract(BigDecimal.valueOf(50000));
+                        BigDecimal remainingInterest = BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate2());
+                        dailyInterest = firstInterest.add(remainingInterest);
+                    } else if (availableBalance.compareTo(BigDecimal.valueOf(50000)) == -1) {
+                        dailyInterest = availableBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate1()));
+                    }
+                } else if (savingAccountType.equals("11")) {
+                    //Monthly Saving Account
+                    dailyInterest = availableBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate1()));
+                } else if (savingAccountType.equals("12")) {
+                    //Youth saving account
+                    dailyInterest = availableBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate1()));
+                    if (availableBalance.compareTo(BigDecimal.valueOf(30000)) == 1) {
+                    }
+                }
+            }
+        }
+    }
+
     public Customer getCustomer() {
         return customer;
     }
