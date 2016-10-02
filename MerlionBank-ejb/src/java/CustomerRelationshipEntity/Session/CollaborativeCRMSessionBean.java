@@ -6,6 +6,7 @@
 package CustomerRelationshipEntity.Session;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
@@ -86,7 +87,7 @@ public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseSt
 @Override
 public void addIssue(String content, String issueType, String status, String solution, Staff assignedStaff, CaseEntity newCase){
    
-    Issue issue=new Issue(content,issueType,status,solution,newCase,assignedStaff);
+    Issue issue=new Issue(content,issueType,"unsolved",solution,newCase,assignedStaff);
     em.persist(issue);
     em.flush();
     
@@ -237,5 +238,76 @@ public void closeCase() throws EmailNotSendException{
     
 }
 
+//Customer views status of the case processing 
+@Override
+public List<CaseEntity> customerViewCases(Long customerId)throws ListEmptyException{
+   Query query = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        query.setParameter("id", customerId);
+        Customer customer = (Customer) query.getSingleResult();
+        
+        List<CaseEntity> customerCases=customer.getCases();
+        if (customerCases.isEmpty()){
+            throw new ListEmptyException("customer has no Cases！");
+        }
+return customerCases;
+        
+}
 
+//Customer view case
+@Override
+public CaseEntity customerViewCase(Long caseId){
+    Query query = em.createQuery("SELECT a FROM CaseEnity a WHERE a.id = :id");
+        query.setParameter("id", caseId);
+        CaseEntity caseEntity = (CaseEntity) query.getSingleResult(); 
+        return caseEntity;
+}
+
+//Customer modifies the details of the case filed
+@Override
+public boolean customerModifyIssue(Long customerId, Long issueId,String content){
+    Query query = em.createQuery("SELECT a FROM Issue a WHERE a.id = :id");
+        query.setParameter("id", issueId);
+        Issue issue = (Issue) query.getSingleResult();
+        
+        Customer customer=em.find(Customer.class,customerId);
+        
+        issue.setStatus("unresolved");
+        issue.setContent(content);
+        issue.getCaseEntity().setStatus("unresolved");
+        
+        em.persist(issue);
+        em.flush();
+        
+        //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Update case information", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+        
+   return true;
+}
+
+//Customer rate issue
+@Override
+public boolean customerRateIssue(Long customerId,Long issueId,Integer rating){
+    Customer customer=em.find(Customer.class,customerId);
+    Issue issue=em.find(Issue.class,issueId);
+   
+    int performance=(int)rating;
+   issue.setRating(performance);
+   em.persist(issue);
+   
+   //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Customer rates an issue", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+   return true; 
+}
 }
