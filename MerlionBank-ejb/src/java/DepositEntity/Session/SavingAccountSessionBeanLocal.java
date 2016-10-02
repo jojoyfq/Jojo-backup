@@ -42,4 +42,6 @@ public interface SavingAccountSessionBeanLocal {
     public void logStaffAction(String description, Long customerId, Staff staff);
 
     public void dailyInterestAccrued();
+
+    public void monthlyInterestCrediting();
 }

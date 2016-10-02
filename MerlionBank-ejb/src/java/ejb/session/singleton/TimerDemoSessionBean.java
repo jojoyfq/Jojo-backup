@@ -16,6 +16,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import static org.joda.time.format.ISODateTimeFormat.date;
 
@@ -53,6 +54,9 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
         //for interest crediting 
         Timer dailyInterestAccrued = timerService.createTimer(startTime, 1 * 60 * 1000, "DailyInterestAccrued-TIMER");
         System.err.println("********** DailyInterestAccrued-TIMER TIMER CREATED");
+        
+        Timer monthlyInterest = timerService.createTimer(5*60*1000,"MonthlyInterest-TIMER");
+        System.err.println("********** MonthlyInterest-TIMER TIMER CREATED");
     }
     
     @Override
@@ -70,8 +74,11 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             System.err.println("********** OnlineBankingAccount-TIMER go to Common Entity Session bean now!!!!");
 //            amsbl.checkOnlineBankingAccountStatus()
         } else if (timer.getInfo().toString().equals("DailyInterestAccrued-TIMER")){
-            System.err.println("********** FixedDeposit-TIMER go to saving account session bean here!!!!");
+            System.err.println("********** DailyInterestAccrued-TIMER go to saving account session bean here!!!!");
             sasbl.dailyInterestAccrued();
+        } else if (timer.getInfo().toString().equals("MonthlyInterest-TIMER")){
+            sasbl.monthlyInterestCrediting();
         }
+            
     }
 }
