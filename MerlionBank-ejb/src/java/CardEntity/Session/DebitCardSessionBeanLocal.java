@@ -6,7 +6,9 @@
 package CardEntity.Session;
 
 import CardEntity.DebitCard;
+import Exception.DebitCardException;
 import Exception.UserHasDebitCardException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -18,4 +20,6 @@ import javax.ejb.Local;
 public interface DebitCardSessionBeanLocal {
     public DebitCard createDebitCard(Long savingAccountNum, Long customerID, String cardType)throws UserHasDebitCardException; 
     public List<String> getDebitCardType();
+    public boolean verifyDebitCard(String cardHolder, Long cardNo, Date expiryDate, Long cvv) throws DebitCardException;
+    public void setPassword(Long cardNo, String password);
 }

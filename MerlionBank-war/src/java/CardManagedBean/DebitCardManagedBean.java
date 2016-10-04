@@ -9,10 +9,12 @@ import CardEntity.DebitCard;
 import CardEntity.Session.DebitCardSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
+import Exception.DebitCardException;
 import Exception.UserHasDebitCardException;
 import Exception.UserHasNoSavingAccountException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -45,12 +47,14 @@ public class DebitCardManagedBean implements Serializable {
     private List<String> debitCardTypeList;
     private String debitCardTypeSelected;
     private DebitCard debitCard;
-    
-    //For Activate Debit Card
-    private String dCardNo;
-    private String dCardHolder;
-    private String dExpiryDate;
-    private String dCVV;
+    //for debit card activation
+    private String cardHolder;
+    private String cardNo;
+    private Date expiryDate;
+    private String cvv;
+    //set debitCard password
+    private String newPassword;
+    private String confirmedPassword;
 
     @PostConstruct
     public void init() {
@@ -64,7 +68,7 @@ public class DebitCardManagedBean implements Serializable {
     public DebitCardManagedBean() {
     }
 
-    public void dashboardToCreateDebitCard() throws UserHasNoSavingAccountException {
+    public void dashboardToCreateDebitCard(ActionEvent event) throws UserHasNoSavingAccountException {
         try {
             this.getSavingAccountNumbers();
             FacesContext.getCurrentInstance().getExternalContext()
@@ -73,9 +77,44 @@ public class DebitCardManagedBean implements Serializable {
             System.out.print("dashboard to create debit card encounter error!");
         }
     }
-    
-    public void verifyDebitCard() {
-        
+
+    public void dashboardToActivateDebitCard(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/debitCardActivate_EnterDetail.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to activate debit card encounter error!");
+        }
+    }
+
+    public void verifyDebitCard(ActionEvent event) throws DebitCardException, IOException {
+        try {
+            Long cardNoL = Long.parseLong(cardNo);
+            Long cvvL = Long.parseLong(cvv);
+            if (dcsb.verifyDebitCard(cardHolder, cardNoL, expiryDate, cvvL)) {
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/CardManagement/debitCardActivate_setPassword.xhtml");
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/CardManagement/debitCardActivate_EnterDetail.xhtml");
+            }
+
+        } catch (DebitCardException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void setDebitCardPassword(ActionEvent event) throws IOException {
+        if (!newPassword.equals(confirmedPassword)) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Confirmed Password does not match!! ");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } else {
+            Long cardNoL = Long.parseLong(cardNo);
+            dcsb.setPassword(cardNoL, newPassword);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/debitCardActivateSuccess.xhtml");
+        }
     }
 
     public void goToCreateDebitCard() throws IOException {
@@ -87,8 +126,13 @@ public class DebitCardManagedBean implements Serializable {
     public void createDebitCard() throws IOException, UserHasDebitCardException {
         try {
             debitCard = dcsb.createDebitCard(savingAccountSelected, customerID, debitCardTypeSelected);
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/debitCardApplySuccess.xhtml");
+            if (debitCard != null) {
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/CardManagement/debitCardApplySuccess.xhtml");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Debit Card Application Encounter Error!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
         } catch (UserHasDebitCardException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -98,14 +142,14 @@ public class DebitCardManagedBean implements Serializable {
     public void getSavingAccountNumbers() throws UserHasNoSavingAccountException {
         try {
             System.out.print("inside the getSavingAccountNumbers()");
-            System.out.print("inside getsavingAccountNumbers"+customerID);
+            System.out.print("inside getsavingAccountNumbers" + customerID);
             savingAccountNumberList = sasb.getSavingAccountNumbers(customerID);
         } catch (UserHasNoSavingAccountException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
+
     public void goBackToHomePage(ActionEvent event) {
         try {
             FacesContext.getCurrentInstance().getExternalContext()
@@ -161,6 +205,54 @@ public class DebitCardManagedBean implements Serializable {
 
     public void setDebitCard(DebitCard debitCard) {
         this.debitCard = debitCard;
+    }
+
+    public String getCardHolder() {
+        return cardHolder;
+    }
+
+    public void setCardHolder(String cardHolder) {
+        this.cardHolder = cardHolder;
+    }
+
+    public String getCardNo() {
+        return cardNo;
+    }
+
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public String getCvv() {
+        return cvv;
+    }
+
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmedPassword() {
+        return confirmedPassword;
+    }
+
+    public void setConfirmedPassword(String confirmedPassword) {
+        this.confirmedPassword = confirmedPassword;
     }
 
 }

@@ -8,14 +8,25 @@ package CardEntity.Session;
 import CardEntity.DebitCard;
 import CardEntity.DebitCardType;
 import CommonEntity.Customer;
+import static CommonEntity.Session.AccountManagementSessionBean.SALT_LENGTH;
 import DepositEntity.SavingAccount;
+import Exception.DebitCardException;
 import Exception.UserHasDebitCardException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,6 +42,8 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
     @PersistenceContext
     private EntityManager em;
     private Calendar calS;
+    private static final Random RANDOM = new SecureRandom();
+    public static final int SALT_LENGTH = 32;
 
     @Override
     public DebitCard createDebitCard(Long savingAccountNum, Long customerID, String cardType) throws UserHasDebitCardException {
@@ -44,35 +57,110 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
             throw new UserHasDebitCardException("This saving account is already linked with one Debit Card!");
         } else {
 
-            long cardNumber = generateCardNumber();
-            System.out.println("Debit Card Number is: " + cardNumber);
-            long cvv = generateCVV();
-            System.out.println("CVV Number is: " + cvv);
+            try {
 
-            calS = GregorianCalendar.getInstance();
-            Date startDate = calS.getTime();
+                long cardNumber = generateCardNumber();
+                System.out.println("Debit Card Number is: " + cardNumber);
+                long cvv = generateCVV();
+                System.out.println("CVV Number is: " + cvv);
 
-            calS.add(GregorianCalendar.YEAR, 5);
-            Date expiryDate = calS.getTime();
+                SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy");
 
-            System.out.println("Start Date is: " + startDate);
-            System.out.println("End Date is: " + expiryDate);
+                calS = GregorianCalendar.getInstance();
+                String startDateS = dt.format(calS.getTime());
+                Date startDate;
+                startDate = dt.parse(startDateS);
 
-            String cardHolder = em.find(Customer.class, customerID).getName();
+                calS.add(GregorianCalendar.YEAR, 5);
+                String expiryDateS = dt.format(calS.getTime());
+                Date expiryDate;
+                expiryDate = dt.parse(expiryDateS);
 
-            Query m = em.createQuery("SELECT b FROM DebitCardType b WHERE b.debitCardType = :cardType");
-            m.setParameter("cardType", cardType);
-            List<DebitCardType> debitCardTypes = new ArrayList(m.getResultList());
-            DebitCardType debitCardType = debitCardTypes.get(0);
+                String cardHolder = em.find(Customer.class, customerID).getName();
 
-            DebitCard debitCard = new DebitCard(cardNumber, cardHolder, startDate, expiryDate, cvv, "inactive", savingAccount, debitCardType);
-            em.persist(debitCard);
-            savingAccount.setDebitCard(debitCard);
-            em.persist(savingAccount);
-            em.flush();
+                Query m = em.createQuery("SELECT b FROM DebitCardType b WHERE b.debitCardType = :cardType");
+                m.setParameter("cardType", cardType);
+                List<DebitCardType> debitCardTypes = new ArrayList(m.getResultList());
+                DebitCardType debitCardType = debitCardTypes.get(0);
 
-            return debitCard;
+                DebitCard debitCard = new DebitCard(cardNumber, cardHolder, startDate, expiryDate, cvv, "inactive", savingAccount, debitCardType, "", "");
+                em.persist(debitCard);
+                savingAccount.setDebitCard(debitCard);
+                em.persist(savingAccount);
+                em.flush();
+
+                return debitCard;
+            } catch (Exception e) {
+                System.out.print("debit card creation encounter error!");
+                return null;
+            }
         }
+    }
+
+    @Override
+    public boolean verifyDebitCard(String cardHolder, Long cardNo, Date expiryDate, Long cvv) throws DebitCardException {
+        SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy");
+        String formatExpiryDate = dt.format(expiryDate);
+        Query m = em.createQuery("SELECT b FROM DebitCard b WHERE b.cardNumber = :cardNo");
+        m.setParameter("cardNo", cardNo);
+        List<DebitCard> debitCards = new ArrayList(m.getResultList());
+        if (debitCards.isEmpty()) {
+            throw new DebitCardException("The Card Number is incorrect");
+        } else {
+            DebitCard debitCard = debitCards.get(0);
+            String formateExpiryDateD = dt.format(debitCard.getExpiryDate());
+            if (!debitCard.getCardHolder().equalsIgnoreCase(cardHolder)) {
+                throw new DebitCardException("The Card Holder Name is incorrect");
+            } else if (!formatExpiryDate.equals(formateExpiryDateD)) {
+                throw new DebitCardException("The Expiry Date is incorrect");
+            } else if (!debitCard.getCvv().equals(cvv)) {
+                throw new DebitCardException("The cvv number is incorrect");
+            } else {
+                return true;
+            }
+        }
+    }
+
+    @Override
+    public void setPassword(Long cardNo, String password) {
+        //password salt and hash
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$%^&*!?+-";
+        for (int i = 0; i < SALT_LENGTH; i++) {
+            int index = (int) (RANDOM.nextDouble() * letters.length());
+            salt += letters.substring(index, index + 1);
+        }
+        String passwordDatabase = passwordHash(password + salt);
+        System.out.println("Password after hash&salt:" + passwordDatabase);
+
+        //find the debit card and set password
+        Query m = em.createQuery("SELECT b FROM DebitCard b WHERE b.cardNumber = :cardNo");
+        m.setParameter("cardNo", cardNo);
+        List<DebitCard> debitCards = new ArrayList(m.getResultList());
+        DebitCard debitCard = debitCards.get(0);
+        debitCard.setPassword(passwordDatabase);
+        debitCard.setStatus("active");
+        debitCard.setSalt(salt);
+        em.flush();
+    }
+
+    private String passwordHash(String pass) {
+        String md5 = null;
+
+        try {
+            //Create MessageDigest object for MD5
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            //Update input string in message digest
+            digest.update(pass.getBytes(), 0, pass.length());
+
+            //Converts message digest value in base 16 (hex) 
+            md5 = new BigInteger(1, digest.digest()).toString(16);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md5;
     }
 
     private long generateCardNumber() {

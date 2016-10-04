@@ -35,6 +35,11 @@ public class DebitCard implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expiryDate;
     private Long cvv;
+    private String password;
+    private String salt;
+
+    
+   
     private String status;
     @OneToOne(mappedBy="debitCard")
     private SavingAccount savingAccount;//debit card is link to one saving account
@@ -43,8 +48,9 @@ public class DebitCard implements Serializable {
     
     public DebitCard(){
     }
+    
 
-    public DebitCard(Long cardNumber, String cardHolder, Date startDate, Date expiryDate, Long cvv, String status, SavingAccount savingAccount,DebitCardType debitCardType){
+    public DebitCard(Long cardNumber, String cardHolder, Date startDate, Date expiryDate, Long cvv, String status, SavingAccount savingAccount,DebitCardType debitCardType, String password,String salt){
         this.cardNumber = cardNumber;
         this.cardHolder = cardHolder;
         this.startDate = startDate;
@@ -53,6 +59,8 @@ public class DebitCard implements Serializable {
         this.status = status;
         this.savingAccount = savingAccount;
         this.debitCardType = debitCardType;
+        this.password = password;
+        this.salt = salt;
     }
     
     public DebitCardType getDebitCardType() {
@@ -150,6 +158,22 @@ public class DebitCard implements Serializable {
     @Override
     public String toString() {
         return "CardEntity.DebitCard[ id=" + id + " ]";
+    }
+    
+     public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
     
 }
