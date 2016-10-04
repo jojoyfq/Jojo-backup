@@ -12,6 +12,7 @@ import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
+import LoanEntity.Loan;
 import Other.Session.GeneratePassword;
 import Other.Session.sendEmail;
 import java.math.BigDecimal;
@@ -233,6 +234,83 @@ private String passwordHash(String pass) {
             e.printStackTrace();
         }
         return md5;
+    }
+
+//staff verify customer and choose"reject" or "approve"
+@Override
+public boolean verifyLoanAccountCustomer (Long staffID, Long customerID, String result,Long accountId) throws EmailNotSendException{
+    Query queryStaff = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        queryStaff.setParameter("id", staffID);
+        Staff staff = (Staff)queryStaff.getSingleResult();
+    
+    Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", customerID);
+        Customer customer = (Customer)q.getSingleResult();
+        
+        Query query = em.createQuery("SELECT a FROM Loan a WHERE a.id = :id");
+        query.setParameter("id", accountId);
+        Loan loan = (Loan)query.getSingleResult();
+        
+        String password = GeneratePassword.createPassword();
+        String tempPassword = password;
+
+        password = passwordHash(password + customer.getOnlineAccount().getSalt());
+        customer.getOnlineAccount().setPassword(password);
+        System.out.println("Password after hash&salt:" + password);
+        
+        if (result.equals("approve")){
+            customer.setStatus("inactive");
+            em.persist(customer);
+            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Approve loan account"+loan.getAccountNumber(),customerID, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+            
+            try {
+            sendLoanEmail(customer.getName(),customer.getEmail(),tempPassword,loan.getAccountNumber());
+            } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+            return true;
+        }
+        else if (result.equals("reject")){
+            customer.setStatus("terminated");
+            StaffAction action=new StaffAction(Calendar.getInstance().getTime(),"Reject loan account"+loan.getAccountNumber(),customerID, staff);
+            em.persist(action);
+            List<StaffAction> staffActions=staff.getStaffActions();
+            staffActions.add(action);
+            staff.setStaffActions(staffActions);
+            em.persist(staff);
+            em.flush();
+           try {
+            sendRejectVerificationEmail(customer.getName(),customer.getEmail());
+            } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+            return true;
+        }
+        else return false;
+}
+
+private void sendLoanEmail(String name, String email, String password,Long accountNumber) throws MessagingException {
+        String subject = "Merlion Bank - Online Banking Account \"" + name + "\" Created - Pending Activation";
+        System.out.println("Inside send email");
+
+        String content = "<h2>Dear " + name
+                + ",</h2><br /><h1>  Congratulations! You have successfully registered a Merlion Online Banking Account!</h1><br />"
+                + "<h1>Welcome to Merlion Bank.</h1>"
+                + "<h2 align=\"center\">Loan Account Number: " + accountNumber
+                + "<br />Temporary Password: " + password + "<br />Please activate your account through activation link on the Login page " + "</h2><br />" 
+                + "<p style=\"color: #ff0000;\">Please noted that your loan request will be reviewed by our staff. We will send email notification once it is confirmed. Meanwhile you can Log in and go to Loan management to track the status.</p>"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
     }
 
 }
