@@ -27,15 +27,24 @@ public class BillingOrganization implements Serializable {
     private Long id;
     private String name;
     @ManyToOne
-    private OtherBank bank;
-    
-    private Long accountNumber;
-    
+    private OtherBank bank;   
+    private Long accountNumber;  
+    private String status;//normal,deleted
     @OneToMany (cascade={CascadeType.ALL},mappedBy="billingOrganization")
     private List<GIROArrangement> GIROArrangement;
 
     @OneToMany (cascade={CascadeType.ALL},mappedBy="billingOrganization")
     private List<RecurrentBillArrangement> recurrentBillArrangement;
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy="billingOrganization")
+    private List<BillRecord> billRecord;
+
+    public List<BillRecord> getBillRecord() {
+        return billRecord;
+    }
+
+    public void setBillRecord(List<BillRecord> billRecord) {
+        this.billRecord = billRecord;
+    }
 
     public List<RecurrentBillArrangement> getRecurrentBillArrangement() {
         return recurrentBillArrangement;
@@ -47,12 +56,11 @@ public class BillingOrganization implements Serializable {
     
     public BillingOrganization(){}
     
-    public BillingOrganization(String name, OtherBank bank, Long accountNumber, List<GIROArrangement> GIROArrangement, List<RecurrentBillArrangement> recurrentBillArrangement) {
+    public BillingOrganization(String name, OtherBank bank, Long accountNumber) {
         this.name = name;
         this.bank = bank;
         this.accountNumber = accountNumber;
-        this.GIROArrangement = GIROArrangement;
-        this.recurrentBillArrangement = recurrentBillArrangement;
+        this.status = "normal";
     }
     
     
@@ -97,6 +105,14 @@ public class BillingOrganization implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
     
 

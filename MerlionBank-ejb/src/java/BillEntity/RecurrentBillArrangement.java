@@ -40,6 +40,8 @@ public class RecurrentBillArrangement implements Serializable {
     private Date startDate;
     private Integer billInterval;
     private Integer timesRemaining;
+    private String status;//active, terminated
+    
 
     public RecurrentBillArrangement() {
     }
@@ -53,6 +55,15 @@ public class RecurrentBillArrangement implements Serializable {
         this.startDate = startDate;
         this.billInterval = billInterval;
         this.timesRemaining = timesRemaining;
+        this.status = "active";
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     
