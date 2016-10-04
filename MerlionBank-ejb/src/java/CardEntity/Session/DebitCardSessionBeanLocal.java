@@ -5,6 +5,9 @@
  */
 package CardEntity.Session;
 
+import CardEntity.DebitCard;
+import Exception.UserHasDebitCardException;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +16,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface DebitCardSessionBeanLocal {
-    
+    public DebitCard createDebitCard(Long savingAccountNum, Long customerID, String cardType)throws UserHasDebitCardException; 
+    public List<String> getDebitCardType();
 }

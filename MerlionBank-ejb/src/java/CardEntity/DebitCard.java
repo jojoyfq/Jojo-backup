@@ -7,12 +7,14 @@ package CardEntity;
 
 import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
+import DepositEntity.SavingAccountType;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
@@ -36,8 +38,30 @@ public class DebitCard implements Serializable {
     private String status;
     @OneToOne(mappedBy="debitCard")
     private SavingAccount savingAccount;//debit card is link to one saving account
-
+    @ManyToOne
+    private DebitCardType debitCardType = new DebitCardType();
     
+    public DebitCard(){
+    }
+
+    public DebitCard(Long cardNumber, String cardHolder, Date startDate, Date expiryDate, Long cvv, String status, SavingAccount savingAccount,DebitCardType debitCardType){
+        this.cardNumber = cardNumber;
+        this.cardHolder = cardHolder;
+        this.startDate = startDate;
+        this.expiryDate = expiryDate;
+        this.cvv = cvv;
+        this.status = status;
+        this.savingAccount = savingAccount;
+        this.debitCardType = debitCardType;
+    }
+    
+    public DebitCardType getDebitCardType() {
+        return debitCardType;
+    }
+
+    public void setDebitCardType(DebitCardType debitCardType) {
+        this.debitCardType = debitCardType;
+    }
     
     public SavingAccount getSavingAccount() {
         return savingAccount;

@@ -119,10 +119,8 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     @Override
     public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
         List<Long> savingAccountNumbers = new ArrayList();
-        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
-        q.setParameter("customerID", customerID);
-        List<Customer> customers = q.getResultList();
-        Customer customer = customers.get(0);
+        Customer customer = em.find(Customer.class, customerID);
+        
         if (customer.getSavingAccounts().isEmpty()) {
             throw new UserHasNoSavingAccountException("User has no saving account!");
         } else {
