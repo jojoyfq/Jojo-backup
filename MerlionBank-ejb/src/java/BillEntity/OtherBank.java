@@ -26,12 +26,68 @@ public class OtherBank implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String swiftCode;
+    private String UEN;
+    private String address;
+    
     @OneToMany(cascade={CascadeType.ALL},mappedBy="otherBank")
     private List<TransactionRecord> transactionRecord;
+    private String status;//normal, deleted
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="bank")
+    private List<BillingOrganization> billingOrganization;
 
-    public OtherBank(String name) {
-        this.name = name;
+    public String getSwiftCode() {
+        return swiftCode;
     }
+
+    public void setSwiftCode(String swiftCode) {
+        this.swiftCode = swiftCode;
+    }
+
+    public String getUEN() {
+        return UEN;
+    }
+
+    public void setUEN(String UEN) {
+        this.UEN = UEN;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+   
+    public List<BillingOrganization> getBillingOrganization() {
+        return billingOrganization;
+    }
+
+    public void setBillingOrganization(List<BillingOrganization> billingOrganization) {
+        this.billingOrganization = billingOrganization;
+    }
+    
+    
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public OtherBank(String name, String swiftCode, String UEN, String address) {
+        this.name = name;
+        this.swiftCode = swiftCode;
+        this.UEN = UEN;
+        this.address = address;
+        this.status = "active";
+    }
+    
+   
+
 
     public OtherBank() {
     }

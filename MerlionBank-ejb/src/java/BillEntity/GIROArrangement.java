@@ -31,6 +31,8 @@ public class GIROArrangement implements Serializable {
     @ManyToOne
     private SavingAccount savingAccount;
     
+    private String status;//active, terminated
+    
     public GIROArrangement(){}
 
     public GIROArrangement(BigDecimal deductionLimit, BillingOrganization billingOrganization, String billReference, SavingAccount savingAccount) {
@@ -38,6 +40,15 @@ public class GIROArrangement implements Serializable {
         this.billingOrganization = billingOrganization;
         this.billReference = billReference;
         this.savingAccount = savingAccount;
+        this.status = "active";
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
     
     
