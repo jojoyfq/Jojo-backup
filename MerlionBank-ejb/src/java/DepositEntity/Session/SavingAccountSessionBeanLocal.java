@@ -40,4 +40,8 @@ public interface SavingAccountSessionBeanLocal {
     public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3);
     public void logAction(String description, Long customerId);
     public void logStaffAction(String description, Long customerId, Staff staff);
+
+    public void dailyInterestAccrued();
+
+    public void monthlyInterestCrediting();
 }
