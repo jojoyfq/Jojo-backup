@@ -432,8 +432,9 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
                         System.out.println("***** your second interest: " + secondInterest);
                         
                         remainingBalance = availableBalance.subtract(BigDecimal.valueOf(150000));
-                        BigDecimal remainingInterest = BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate3());
+                        BigDecimal remainingInterest = remainingBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate3()));
                         System.out.println("***** your remaining interest: " + remainingInterest);
+
                         
                         dailyInterest = firstInterest.add(secondInterest).add(remainingInterest);
                         System.out.println("********** Daily interest is: " + dailyInterest);
@@ -442,13 +443,14 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
                         System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
                         savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest.add(dailyInterest));
 
-                    } else if (availableBalance.compareTo(BigDecimal.valueOf(150000)) == -1 && availableBalance.compareTo(BigDecimal.valueOf(100000)) == 1) {
-                        System.out.println("********** Everyday Saving Account with balance in between 150,000 and 100,000 **********");
+                    } else if (availableBalance.compareTo(BigDecimal.valueOf(150000)) == -1 && availableBalance.compareTo(BigDecimal.valueOf(50000)) == 1){
+                        System.out.println("********** Everyday Saving Account with balance in between 150,000 and 50,000 **********");
                         BigDecimal firstInterest = BigDecimal.valueOf(50000 * savingAccounts.get(i).getSavingAccountType().getInterestRate1());
                         System.out.println("***** your first interest: " + firstInterest);
                         
-                        remainingBalance = availableBalance.subtract(BigDecimal.valueOf(50000));
-                        BigDecimal remainingInterest = BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate2());
+                        remainingBalance = BigDecimal.valueOf(150000).subtract(availableBalance);
+                        System.out.println("***** your remaining Balance is* " + remainingBalance);
+                        BigDecimal remainingInterest = remainingBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate2()));
                         System.out.println("***** your remaining interest: " + remainingInterest);
                         
                         dailyInterest = firstInterest.add(remainingInterest);
@@ -457,9 +459,23 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
                         System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
                         savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest);
 
-                    } else if (availableBalance.compareTo(BigDecimal.valueOf(50000)) == -1) {
-                        System.out.println("********** Everyday Saving Account with balance smaller than 50,000 **********");
+                    } else if ((availableBalance.compareTo(BigDecimal.valueOf(50000)) == -1) || (availableBalance.compareTo(BigDecimal.valueOf(50000)) == 0)) {
+                        System.out.println("********** Everyday Saving Account with balance $0 - $50,000 **********");
                         dailyInterest = availableBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate1()));
+                        System.out.println("********** Daily interest is: " + dailyInterest);
+                        accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest().add(dailyInterest);
+                        System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
+                        savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest);
+                    }
+                    else if(availableBalance.compareTo(BigDecimal.valueOf(150000)) == 0){
+                        System.out.println("********** Everyday Saving Account with balance is $150000 **********");
+                        BigDecimal firstInterest = BigDecimal.valueOf(50000 * savingAccounts.get(i).getSavingAccountType().getInterestRate1());
+                        System.out.println("***** your first interest: " + firstInterest);
+                        
+                        BigDecimal remainingInterest = BigDecimal.valueOf(100000 * savingAccounts.get(i).getSavingAccountType().getInterestRate2());
+                        System.out.println("***** your remaining interest: " + remainingInterest);
+                        
+                        dailyInterest = firstInterest.add(remainingInterest);
                         System.out.println("********** Daily interest is: " + dailyInterest);
                         accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest().add(dailyInterest);
                         System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);

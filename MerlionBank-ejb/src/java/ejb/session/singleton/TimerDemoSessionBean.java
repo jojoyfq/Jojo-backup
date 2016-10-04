@@ -59,9 +59,15 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
         System.err.println("********** MonthlyInterest-TIMER TIMER CREATED");
     }
     
-    @Override
-    public void cancelTimers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void cancelTimers(String timerInfo) {
+                if (timerService.getTimers() != null) {
+            for (Timer timer : timerService.getTimers()) {
+                if (timer.getInfo().equals(timerInfo)) {
+                    timer.cancel();
+                    System.out.println(timerInfo + "stopped succesfully **********");
+                }
+            }
+        }
     }
     
     @Timeout
@@ -81,4 +87,5 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
         }
             
     }
+
 }

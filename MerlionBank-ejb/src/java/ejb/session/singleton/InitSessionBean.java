@@ -48,7 +48,7 @@ public class InitSessionBean {
     public void init()
     {      
         Date date = new Date(2017 - 1900, 9, 17, 0, 0, 0);
-
+        
         timerService = context.getTimerService();
         //Timer fixedDepositAccountTimer = timerService.createTimer(date, 86400000, "FixedDeposit-TIMER");
         //
@@ -65,8 +65,9 @@ public class InitSessionBean {
         Timer savingAccountDailyInterestTimer = timerService.createTimer(date, 24 * 60 * 60 * 1000, "SavingAccountDailyInterestTimer-TIMER");
         System.err.println("********** SavingAccountDailyInterestTimer-TIMER");
         
-        Timer savingAccountMonthlyInterestTimer = timerService.createSingleActionTimer(date, new TimerConfig());
-        System.err.println("********** SavingAccountMonthlyInterestTimer-TIMER");
+        
+//        Timer savingAccountMonthlyInterestTimer = timerService.createSingleActionTimer(date, new TimerConfig());
+//        System.err.println("********** SavingAccountMonthlyInterestTimer-TIMER");
     }
 
     @Timeout
