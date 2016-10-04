@@ -12,10 +12,43 @@
             <h1>Set Time for Merlion Bank Timer</h1>
             <h:outputLabel value="Fixed Deposit Account Timer" />
             <h:form>  
-                <p:outputLabel for="datetime" value="Datetime:" />
+                <p:outputLabel for="datetime" value="Datetime: " />
                 <p:calendar id="datetime" value="#{DemoEjbTimerManagedBean.startTime}" pattern="MM/dd/yyyy HH:mm" />
-                <h:commandButton value="Start Timers" actionListener="#{DemoEjbTimerManagedBean.createTimers}" />
+                <p:commandButton value="Start Timers" actionListener="#{DemoEjbTimerManagedBean.createTimers}" />
             </h:form>
+            <br/>
+
+            <h:form>
+                <p:outputLabel value="Stop Saving Account Daily Interest Accural: " />
+                <p:commandButton value="Stop Daily Interest Accural Timer" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                    <f:attribute name="timerName" value="DailyInterestAccrued-TIMER" />
+                </p:commandButton>
+            </h:form>
+            <br/>
+
+            <h:form>  
+                <p:outputLabel value="Stop Saving Account Monthly Interest Crediting: " />
+                <p:commandButton value="Stop Saving Account Monthly Timer" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                    <f:attribute name ="timerName" value="MonthlyInterest-TIMER" />
+                </p:commandButton>              
+            </h:form>
+            <br/>
+
+            <h:form>  
+                <p:outputLabel value="Stop Fixed Deposit Account Status checking: " />
+                <p:commandButton value="Stop Fixed Deposit Account Status Checking" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                    <f:attribute name ="timerName" value="FixedDeposit-TIMER" />
+                </p:commandButton>              
+            </h:form>
+            <br/>
+
+            <h:form>  
+                <p:outputLabel value="Stop Online Account Status checking: " />
+                <p:commandButton value="Stop Online Account Status Checking" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                    <f:attribute name ="timerName" value="OnlineBankingAccount-TIMER" />
+                </p:commandButton>              
+            </h:form>
+
         </h:body>
     </f:view>
 </html>
