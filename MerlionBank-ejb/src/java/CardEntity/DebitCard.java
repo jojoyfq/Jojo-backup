@@ -7,12 +7,14 @@ package CardEntity;
 
 import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
+import DepositEntity.SavingAccountType;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
@@ -33,11 +35,41 @@ public class DebitCard implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expiryDate;
     private Long cvv;
+    private String password;
+    private String salt;
+
+    
+   
     private String status;
     @OneToOne(mappedBy="debitCard")
     private SavingAccount savingAccount;//debit card is link to one saving account
-
+    @ManyToOne
+    private DebitCardType debitCardType = new DebitCardType();
     
+    public DebitCard(){
+    }
+    
+
+    public DebitCard(Long cardNumber, String cardHolder, Date startDate, Date expiryDate, Long cvv, String status, SavingAccount savingAccount,DebitCardType debitCardType, String password,String salt){
+        this.cardNumber = cardNumber;
+        this.cardHolder = cardHolder;
+        this.startDate = startDate;
+        this.expiryDate = expiryDate;
+        this.cvv = cvv;
+        this.status = status;
+        this.savingAccount = savingAccount;
+        this.debitCardType = debitCardType;
+        this.password = password;
+        this.salt = salt;
+    }
+    
+    public DebitCardType getDebitCardType() {
+        return debitCardType;
+    }
+
+    public void setDebitCardType(DebitCardType debitCardType) {
+        this.debitCardType = debitCardType;
+    }
     
     public SavingAccount getSavingAccount() {
         return savingAccount;
@@ -126,6 +158,22 @@ public class DebitCard implements Serializable {
     @Override
     public String toString() {
         return "CardEntity.DebitCard[ id=" + id + " ]";
+    }
+    
+     public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
     
 }

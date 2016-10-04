@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="content">
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Enter Your Debit Card Details </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100">
+                        <h:form id="form">
+
+                            <p:panel style="margin-bottom:10px;" id="panel">
+                                <p:messages id="msgs" />
+                                <h:panelGrid columns="3" cellpadding="5">
+
+                                    <h:outputLabel for="debitCardNumber" value="Debit Card Number:" /> 
+                                    <p:inputMask id="debitCardNumber" value="#{debitCardManagedBean.cardNo}" mask="9999999999999999" required="true" requiredMessage="Please fill in your debit card number!" />
+                                    <p:message for="debitCardNumber" display="icon" />
+
+                                    <h:outputLabel for="cardHolder" value="Card Holder:" /> 
+                                    <p:inputText id="cardHolder" value="#{debitCardManagedBean.cardHolder}"   required="true" requiredMessage="Please fill in the Card holder!"/>
+                                    <p:message for="cardHolder" display="icon" />
+
+                                    <h:outputLabel for="expiryDate" value="Card Expiry Date:" /> 
+                                    <p:calendar id="expiryDate" value="#{debitCardManagedBean.expiryDate}" showOn="button" required="true" requiredMessage="Please choose your date of birth!"/>                                 
+                                    <p:message for="expiryDate" display="icon" />
+
+                                    <h:outputLabel for="cvv" value="CVV:" /> 
+                                    <p:inputMask id="cvv" value="#{debitCardManagedBean.cvv}" mask="999" required="true" requiredMessage="Please fill in your CVV!"/>
+                                    <p:message for="cvv" display="icon"  />
+
+                                    <p:commandButton  update ="panel" icon="ui-icon-script" actionListener="#{debitCardManagedBean.verifyDebitCard}" value="Verify" rendered="true" />
+                                </h:panelGrid>
+                            </p:panel>
+
+                        </h:form>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>
