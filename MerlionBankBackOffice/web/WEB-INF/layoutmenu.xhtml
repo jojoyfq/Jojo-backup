@@ -1,3 +1,4 @@
+
 <ui:composition 
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:f="http://java.sun.com/jsf/core"
@@ -63,6 +64,20 @@
                 <p:submenu id="bill_and_transfer" label="Bill and Transfer">
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(12)}">
                         <p:menuitem id="intraTransfer" value="Transfer to other Merlion Bank Account" actionListener="#{transferManagedBean.dashboardToIntraTransfer}"/>
+                    </p:submenu>
+                    <p:submenu id="bill" label="Bill" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(11)}">
+                        <p:submenu id="manageBank" label="Manage Banks" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(11)}">
+                            <p:menuitem id="addBank" value="Add New Bank" actionListener="#{billStaffManagedBean.dashboardAddBank(event)}"/>
+                            <p:menuitem id="viewBank" value="View Banks" actionListener="#{billStaffManagedBean.dashboardViewBank(event)}"/>
+                            <p:menuitem id="modifyBank" value="Modify Bank Information" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                            <p:menuitem id="deleteBank" value="Delete Bank" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                        </p:submenu>
+                        <p:submenu id="manageBO" label="Manage Billing Organization" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(11)}">
+                            <p:menuitem id="addBO" value="Add Billing Organization" actionListener="#{billStaffManagedBean.dashboardAddBank(event)}"/>
+                            <p:menuitem id="viewBO" value="View Billing Organizations" actionListener="#{billStaffManagedBean.dashboardViewBank(event)}"/>
+                            <p:menuitem id="modifyBO" value="Modify Billing Organization Information" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                            <p:menuitem id="deleteBO" value="Delete Billing Organization" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                        </p:submenu>
                     </p:submenu>
                 </p:submenu>
 
