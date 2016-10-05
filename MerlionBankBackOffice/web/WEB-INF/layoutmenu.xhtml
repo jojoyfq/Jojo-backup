@@ -26,6 +26,9 @@
                         <p:menuitem id="create_saving_accountNC" value="Create Saving Account For New Customer" outcome="/CustomerManagement/createSavingAccountNC"/>
                         <p:menuitem id="staffVerifyCustomer" value="Staff Verify Pending Customer" outcome="/StaffVerifyCustomer/staffVerifyCustomerAccount"/>
                     </p:submenu>
+                     <p:submenu id="saving_accountNC1" label="Collaborative CRM" icon="icon-plus" >
+                         <p:menuitem id="view_all_assigned_issues" value="View All Issues" actionListener="#{staffCaseManagedBean.staffViewAssignedIssue}"/>
+                    </p:submenu>
 
                 </p:submenu>
 
