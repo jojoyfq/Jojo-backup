@@ -10,6 +10,9 @@ import CommonEntity.CustomerMessage;
 import CommonEntity.MessageEntity;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
+import CustomerRelationshipEntity.CaseEntity;
+import CustomerRelationshipEntity.Issue;
+import CustomerRelationshipEntity.Session.CollaborativeCRMSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
@@ -38,7 +41,8 @@ public class MessageManagedBean implements Serializable {
 
     @EJB
     InboxManagementSessionBeanLocal imsbl;
-
+    @EJB
+    CollaborativeCRMSessionBeanLocal ccsbl;
     //maintain the log in function from LogInManagedBean
     @Inject
     private LogInManagedBean logInManagedBean;
@@ -49,7 +53,6 @@ public class MessageManagedBean implements Serializable {
 //    public void setStaffMessageManagedBean(StaffMessageManagedBean staffMessageManagedBean) {
 //        this.staffMessageManagedBean = staffMessageManagedBean;
 //    }
-
     public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
         this.logInManagedBean = logInManagedBean;
     }
@@ -70,6 +73,96 @@ public class MessageManagedBean implements Serializable {
     private String customerReplyMsgStatus = "new";
     private int customerUnreadMsg;
     private CustomerMessage msgAddToStaff;
+    private String caseSubject;
+    private String caseContent;
+    private List<CaseEntity> allCases;
+    private List<Issue> oneCaseAllIssues;
+    private CaseEntity selectedCase;
+    private Issue selectedIssue;
+    private String issueContent;
+    private boolean checkStatus;
+
+    public boolean isCheckStatus() {
+        return checkStatus;
+    }
+
+    public void setCheckStatus(boolean checkStatus) {
+        this.checkStatus = checkStatus;
+    }
+
+    public String getIssueContent() {
+        return issueContent;
+    }
+
+    public void setIssueContent(String issueContent) {
+        this.issueContent = issueContent;
+    }
+
+    public Issue getSelectedIssue() {
+        return selectedIssue;
+    }
+
+    public void setSelectedIssue(Issue selectedIssue) {
+        this.selectedIssue = selectedIssue;
+    }
+
+    public CaseEntity getSelectedCase() {
+        return selectedCase;
+    }
+
+    public void setSelectedCase(CaseEntity selectedCase) {
+        this.selectedCase = selectedCase;
+    }
+
+    public List<Issue> getOneCaseAllIssues() {
+        return oneCaseAllIssues;
+    }
+
+    public void setOneCaseAllIssues(List<Issue> oneCaseAllIssues) {
+        this.oneCaseAllIssues = oneCaseAllIssues;
+    }
+
+    public List<CaseEntity> getAllCases() {
+        return allCases;
+    }
+
+    public void setAllCases(List<CaseEntity> allCases) {
+        this.allCases = allCases;
+    }
+
+    public String getCaseSubject() {
+        return caseSubject;
+    }
+
+    public void setCaseSubject(String caseSubject) {
+        this.caseSubject = caseSubject;
+    }
+
+    public String getCaseContent() {
+        return caseContent;
+    }
+
+    public void setCaseContent(String caseContent) {
+        this.caseContent = caseContent;
+    }
+
+    public String getCaseStatus() {
+        return caseStatus;
+    }
+
+    public void setCaseStatus(String caseStatus) {
+        this.caseStatus = caseStatus;
+    }
+    private String caseStatus;
+    private CustomerMessage caseMessage;
+
+    public CustomerMessage getCaseMessage() {
+        return caseMessage;
+    }
+
+    public void setCaseMessage(CustomerMessage caseMessage) {
+        this.caseMessage = caseMessage;
+    }
 
     public CustomerMessage getMsgAddToStaff() {
         return msgAddToStaff;
@@ -124,24 +217,44 @@ public class MessageManagedBean implements Serializable {
     public void init() {
 
         System.err.println("************ ic: " + logInManagedBean.getIc());
-
+        caseMessage = new CustomerMessage();
         staff = new Staff();
         customer = new Customer();
 //        customerId = customer.getId();
         staffId = staff.getId();
         message = new MessageEntity();
         messages = new ArrayList<>();
+        allCases = new ArrayList<>();
         //customerId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id");
 //      *******This is going to be used in the future!!!**********
         customerId = logInManagedBean.getCustomerId();
         customerIc = logInManagedBean.getIc();
-       customerName = logInManagedBean.getCustomerName();
-     //  customerUnreadMsg = this.customerUnreadMsg;
+        customerName = logInManagedBean.getCustomerName();
+        oneCaseAllIssues = new ArrayList<>();
+        selectedCase = new CaseEntity();
+        selectedIssue = new Issue();
 
+        //  customerUnreadMsg = this.customerUnreadMsg;
         System.out.println("Logged in customer IC is : " + customerId);
         //       messages = imsbl.viewAllMessage(customerId);
 //        System.out.println("message size is: "+messages.size());
         customerUnreadMsg = imsbl.countNewMessage(customerId);
+
+    }
+    
+//    public boolean checkIssueStatus(ActionEvent event){
+//                selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
+//                boolean check;
+//       check = ccsbl.checkStatus(selectedIssue.getId());
+//       return check;
+//    }
+
+    public List<Issue> issuesUnderOneCase(ActionEvent event) {
+        System.out.println("*********** in issueUnderOneCase function alr!!!!");
+        selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
+        System.out.println("**********Selected case to view all the issues, selectedCase.getId()" + selectedCase.getId());
+        oneCaseAllIssues = selectedCase.getIssues();
+        return oneCaseAllIssues;
 
     }
 
@@ -224,6 +337,38 @@ public class MessageManagedBean implements Serializable {
         return customerUnreadMsg;
     }
 
+    //customer read case message
+    public void customerViewAllCaseMessages(ActionEvent event) throws IOException, ListEmptyException {
+
+        try {
+            System.out.println("*************Customer id " + customerId);
+            allCases = ccsbl.customerViewCases(customerId);
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CaseManagement/viewAllCases.xhtml");
+    }
+
+    //customer create case message
+    public CustomerMessage createCaseMessage(ActionEvent event) {
+        caseStatus = null;
+        caseMessage = imsbl.customerSendCaseMessage(caseSubject, caseContent, caseStatus, customerId);
+        System.out.println("Message Created Successfully!");
+        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message Created Successfully!");
+        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        return caseMessage;
+    }
+
+    public void customerModifyIssue(ActionEvent event) {
+        selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
+        System.out.println("************customer Ic modified the content of the issue is " + customerIc);
+        System.out.println("************Issue id modified the content of the issue is " + selectedIssue.getId());
+        checkStatus = ccsbl.checkStatus(selectedIssue.getId());
+        System.out.println("*************issue status is "+checkStatus);
+        ccsbl.customerModifyIssue(customerId, selectedIssue.getId(), issueContent);
+
+    }
 //    public void customerViewAllMessage(ActionEvent event){
 //       //customerId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id");
 //       
@@ -240,6 +385,7 @@ public class MessageManagedBean implements Serializable {
 //         }
 //         
 //    }
+
     public String getCustomerIc() {
         return customerIc;
     }

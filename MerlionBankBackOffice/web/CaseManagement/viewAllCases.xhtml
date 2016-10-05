@@ -1,0 +1,147 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container10 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container80 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Case Management System----Staff </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100">
+
+                        <h:form id="form">
+                            <p:panel id="panel">
+
+                                <p:messages id="msgs" />
+
+                                <h:panelGrid columns="4" cellpadding="5">
+
+
+
+                                    <p:dataTable var="caseEntity" value="#{staffCaseManagedBean.allCases}">
+
+                                        <p:column headerText="Case ID" style="width: 80px;">
+                                            <h:outputText value="#{caseEntity.id}" />
+                                        </p:column>
+
+                                        <p:column headerText="Case Created Time">
+                                            <h:outputText value="#{caseEntity.caseCreatedTime}" />
+                                        </p:column>
+
+                                        <p:column headerText="Case Status">
+                                            <h:outputText value="#{caseEntity.status}" />
+                                        </p:column>
+
+                                        <p:column headerText="View Issues">
+                                            <p:commandButton icon="ui-icon-mail-open"  actionListener="#{staffCaseManagedBean.issuesUnderOneCase}"  update=":form:panel :form1:dialogMessage" ajax="true" oncomplete="PF('dlg2').show()" >
+                                                <f:attribute  name ="selectedCase" value="#{caseEntity}"  />
+                                            </p:commandButton>
+                                        </p:column>
+
+                                        <p:column headerText="Delete" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="ui-icon-trash" actionListener="#{staffCaseManagedBean.caseStaffDeleteCase}" update=":form:panel" ajax="false" type="submit" 
+                                                                 onclick="if (!confirm('Are you sure you want to delete this message'))
+                                                                             return false;">
+                                                    <f:attribute name="selectedCase" value="#{caseEntity}"  />
+                                                </p:commandButton>     
+                                            </center>
+                                        </p:column>
+
+
+                                    </p:dataTable>
+
+                                </h:panelGrid>
+
+
+                            </p:panel>
+                        </h:form>
+                        <h:form id="form1">  
+
+                            <p:dialog id="dialogMessage" header="Edit Issues" widgetVar="dlg2" modal="true" height="100" resizable="true" maximizable="true">
+
+                                <p:dataTable var="issue" value="#{staffCaseManagedBean.oneCaseAllIssues}">
+
+                                    <p:column headerText="Issue Id" style="width: 80px;">
+                                        <h:outputText value="#{issue.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Issue Content">
+                                        <h:outputText value="#{issue.content}" />
+                                    </p:column>
+
+                                    <p:column headerText="Issue Type">
+                                        <h:outputText value="#{issue.issueType}" />
+                                    </p:column>
+
+                                    <p:column headerText="Issue Solution">
+                                        <h:inputText value="#{issue.solution}" />
+                                    </p:column>
+
+                                    <p:column headerText="Issue Status">
+                                        <h:outputText value="#{issue.status}" />
+                                    </p:column>
+
+                                    <p:column headerText="Staff In Charge">
+                                        <h:outputText value="#{issue.staff.staffName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Issue Rating">
+                                        <h:outputText value="#{issue.rating}" />
+                                    </p:column>
+
+
+                                   
+
+                                   
+                                    <p:column headerText="Delete" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton icon="ui-icon-trash" actionListener="#{staffCaseManagedBean.staffDeleteAssingnedIssue}" update=":form:panel" ajax="false" type="submit" 
+                                                             onclick="if (!confirm('Are you sure you want to delete this message'))
+                                                                             return false;"/>
+                                        </center>
+                                    </p:column>
+
+                                </p:dataTable>
+
+
+
+                            </p:dialog>
+                        </h:form>
+                        <div class="Container100 ui-fluid">
+                            <div class="Container30"></div>
+                            <div class="Container40">
+                                <h:form>  
+                                    <p:commandButton value="Send Message"  actionListener="#{staffMessageManagedBean.goIntoStaffVerifyCustomerBeforeSendingMsg}" icon="ui-icon-check" />
+                                </h:form>
+                            </div>
+                            <div class="Container30"></div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container10 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>
