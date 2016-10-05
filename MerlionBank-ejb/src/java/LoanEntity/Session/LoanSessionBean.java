@@ -34,6 +34,7 @@ private BigDecimal monthlyPayment;
 public Long createHomeLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate){
     
         //generate and check account number
+    monthlyPayment=new BigDecimal("0");
         Long accountNum = this.generateLoanAccountNumber();
         LoanType loanType=em.find(LoanType.class,loanTypeId);
         BigDecimal outstandingBalance=new BigDecimal("0");
@@ -41,7 +42,7 @@ public Long createHomeLoan(Customer customer,Long loanTypeId,BigDecimal principa
         outstandingBalance=calculateSiborOutstandingBalance(principal.subtract(downpayment),loanTerm,loanType.getSIBOR(),loanType.getSIBORrate1());
         }
         else if (loanType.getName().equals("Fixed Interest Package")){
-         outstandingBalance=calculateFixedOutstandingBalance(principal,loanTerm,loanType.getFixedRate());   
+         outstandingBalance=calculateFixedOutstandingBalance(principal.subtract(downpayment),loanTerm,loanType.getFixedRate());   
         }
         
         Loan newLoan=new Loan(accountNum,principal,downpayment,loanTerm,outstandingBalance,startDate,"inactive",customer);
@@ -117,8 +118,9 @@ private BigDecimal calculateSiborOutstandingBalance(BigDecimal principal,Integer
 return oustandingAmount;
 }
 
+@Override
 public Long createCarLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate){
-    
+     monthlyPayment=new BigDecimal("0");
         //generate and check account number
         Long accountNum = this.generateLoanAccountNumber();
         LoanType loanType=em.find(LoanType.class,loanTypeId);
@@ -162,16 +164,48 @@ private BigDecimal calculateCarOutstandingBalance(BigDecimal principal,Integer l
 return oustandingAmount;
 }
 
+@Override
 public List<Loan> customerViewListOfLoan(Long customrId){
    Customer customer=em.find(Customer.class,customrId); 
    List<Loan> loans=customer.getLoans();
    return loans;
 }
 
+@Override
 public Loan customerViewLoan(Long loanId){
    Loan loan=em.find(Loan.class,loanId); 
    return loan;
 }
 
+@Override
+public BigDecimal calcultateMonthlyPayment(BigDecimal principal,BigDecimal downpayment, Integer loanTerm,Long loanTypeId){
+    LoanType loanType=em.find(LoanType.class,loanTypeId);
+    Double noValue=0.0;
+    BigDecimal monthlyPayment2=new BigDecimal("0");
+     if (loanType.getName().equals("SIBOR Package"))
+         monthlyPayment2=calculateMonthlyPaymentBalance(principal.subtract(downpayment),loanTerm,loanType.getSIBOR(),loanType.getSIBORrate1());
+    else if (loanType.getName().equals("Fixed Interest Package"))
+        
+     monthlyPayment2=calculateMonthlyPaymentBalance(principal.subtract(downpayment),loanTerm,loanType.getFixedRate(),noValue);
+        else if (loanType.getName().equals("Car loan"))
+     monthlyPayment2=calculateMonthlyPaymentBalance(principal.subtract(downpayment),loanTerm,loanType.getInterestRate(),noValue);
+            
+return monthlyPayment2;
+}
+
+private BigDecimal calculateMonthlyPaymentBalance(BigDecimal principal,Integer loanTerm,Double interest1,Double interest2){
+    BigDecimal monthlyPayment2=new BigDecimal("0");
+ BigDecimal baseRate=new BigDecimal(interest1);
+    BigDecimal baseRate2=new BigDecimal(interest2);
+      BigDecimal month=new BigDecimal("12");
+    BigDecimal trueRate=baseRate.add(baseRate2).divide(month);
+    BigDecimal temp=new BigDecimal("1");
+    BigDecimal temp2=temp.add(trueRate);
+    temp2=temp2.pow(loanTerm);
+    temp2=temp.subtract(temp2);
+    BigDecimal term=new BigDecimal(loanTerm);
+    monthlyPayment2=trueRate.multiply(principal).divide(temp2);
+    return monthlyPayment2;
+}
 
 }
