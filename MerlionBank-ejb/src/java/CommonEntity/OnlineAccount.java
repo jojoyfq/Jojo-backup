@@ -34,6 +34,7 @@ public class OnlineAccount implements Serializable {
     private String accountStatus;
     private String salt;
     private String authenticationCode;
+    private String password;
 
     
 
@@ -60,7 +61,7 @@ public class OnlineAccount implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    private String password;
+   
     
     public OnlineAccount(){
     }

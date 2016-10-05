@@ -325,5 +325,62 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         
  }
  
+ //customer compose collaborative message
+ @Override  
+ public CustomerMessage customerSendCaseMessage(String subject, String content, String status, Long customerID){
+        
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        q.setParameter("id", customerID);
+        Customer customer = (Customer)q.getSingleResult(); 
+        
+        CustomerMessage customerMessage=new CustomerMessage(subject,content,"new",null,false,customer);
+        em.persist(customerMessage);
+        
+        List<CustomerMessage> messages=customer.getCustomerMessages();
+        messages.add(customerMessage);
+        customer.setCustomerMessages(messages);
+        em.flush();
+         
+        return customerMessage;    
+        
+        
+ }
+ 
+ // staff view list of case message
+ @Override
+ public List<CustomerMessage> StaffViewAllCaseMessage()/*throws ListEmptyException*/{
+     Query query = em.createQuery("SELECT a FROM CustomerMessage a WHERE a.staff = :staff");
+        query.setParameter("staff", null);
+        List<CustomerMessage> caseMessages = new ArrayList(query.getResultList());
+        List<CustomerMessage>newMessages=new ArrayList<CustomerMessage>();
+        for (int i=0;i<caseMessages.size();i++){
+            if (!caseMessages.get(i).getStatus().equals("deleted")){
+                newMessages.add(caseMessages.get(i));
+            }
+        }
+//        if (newMessages.size()==0)
+//            throw new ListEmptyException("There are no messages!");
+        return newMessages;
+     
+ }
+ 
+ 
+ //system display number of new case messages for staff
+ @Override
+ public int countStaffNewCaseMessage( ){
+      Query query = em.createQuery("SELECT a FROM CustomerMessage a WHERE a.staff = :staff");
+        query.setParameter("staff", null);
+       List<CustomerMessage> caseMessages = new ArrayList(query.getResultList());     
+        List<CustomerMessage>newMessages=new ArrayList<CustomerMessage>();
+        int count=0;
+        for (int i=0;i<caseMessages.size();i++){
+            if (caseMessages.get(i).getStatus().equals("new")){
+                count=count+1;
+            }
+        }
+        return count;
+        
+ }
+ 
  
 }

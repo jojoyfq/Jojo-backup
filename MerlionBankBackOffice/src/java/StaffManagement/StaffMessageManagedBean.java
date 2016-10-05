@@ -195,6 +195,9 @@ public void goIntoStaffVerifyCustomerBeforeSendingMsg(ActionEvent event){
         if (messageSubject != null && content != null) {
             try {
                 imsbl.sendMessage(customerId, staffId, messageSubject, content);
+                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message has been successfully sent to customer!");
+
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
             } catch (EmailNotSendException ex) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
 

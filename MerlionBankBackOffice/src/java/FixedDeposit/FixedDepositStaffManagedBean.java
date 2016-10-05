@@ -87,18 +87,55 @@ public class FixedDepositStaffManagedBean implements Serializable {
             //serviceCustomerManagedBean.init();
             staff = staffLogInManagedBean.getStaff();
             staffId = staffLogInManagedBean.getStaffId();
-            customerId = serviceCustomerManagedBean.getCustomer().getId();
-            withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId);
-            customer = serviceCustomerManagedBean.getCustomer();
-            System.out.print("************************");
+            //customerId = serviceCustomerManagedBean.getCustomer().getId();
+            //customer = serviceCustomerManagedBean.getCustomer();
+           System.out.print("************************");
             System.out.print(customerId);
-            fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
+            
 
     }
 
     public FixedDepositStaffManagedBean() {
     }
+    
+    public void dashboardCreateAcct(ActionEvent event) throws IOException{
+            customerId = serviceCustomerManagedBean.getCustomer().getId();
+            customer = serviceCustomerManagedBean.getCustomer();
+        if(customerId!= null){
+         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/createFixedDeposit.xhtml");   
+        }else{
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select customer.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);  
+        }
+    }
 
+    public void dashboardDisplayAcct(ActionEvent event) throws IOException{
+                    customerId = serviceCustomerManagedBean.getCustomer().getId();
+            customer = serviceCustomerManagedBean.getCustomer();
+        if(customerId!= null){
+            fixedDepositAccounts = fda.getFixedDepositAccounts(customerId);
+         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/displayFixedDepositAccountDetail.xhtml");   
+        }else{
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select customer.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);  
+        }
+    }
+    
+       public void dashboardWithdraw(ActionEvent event) throws IOException{
+                       customerId = serviceCustomerManagedBean.getCustomer().getId();
+            customer = serviceCustomerManagedBean.getCustomer();
+        if(customerId!= null){
+         withdrawableFixedDeposit = fda.getWithdrawableAccount(customerId);
+         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect("/MerlionBankBackOffice/FixedDepositManagement/withdrawFixedDeposit.xhtml");   
+        }else{
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select customer.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);  
+        }
+    }
+        
     public void createFixedDepositAcct(ActionEvent event) throws IOException {
         customerId = serviceCustomerManagedBean.getCustomer().getId();
         System.out.print(customerId);

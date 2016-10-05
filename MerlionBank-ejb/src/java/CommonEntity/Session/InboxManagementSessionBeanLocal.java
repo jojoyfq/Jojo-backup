@@ -60,4 +60,14 @@ public interface InboxManagementSessionBeanLocal {
  //staff delete customer message
  public List<CustomerMessage> deleteCustomerMessage(Long messageID,Long staffId)throws UnexpectedErrorException;
  
+ //customer compose collaborative message 
+ public CustomerMessage customerSendCaseMessage(String subject, String content, String status, Long customerID);
+
+// staff view list of case message
+ public List<CustomerMessage> StaffViewAllCaseMessage();
+ 
+  //system display number of new case messages for staff
+ public int countStaffNewCaseMessage( );
+ 
+
 }

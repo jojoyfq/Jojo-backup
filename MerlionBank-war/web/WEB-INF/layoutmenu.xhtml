@@ -34,8 +34,17 @@
 
                 </p:submenu>
 
-                <p:submenu id="pa_theme" label="Card Management">
+                <p:submenu id="card_management" label="Card Management">
+                    <p:submenu id="debitCard" label="Debit Card" icon="icon-plus">
+                        <p:menuitem id="Apply_Debit_Card" value="Apply Debit Card" actionListener="#{debitCardManagedBean.dashboardToCreateDebitCard}"/>
+                        <p:menuitem id="Activate_Debit_Card" value="Activate Debit Card" actionListener="#{debitCardManagedBean.dashboardToActivateDebitCard}" /> 
+                        <p:menuitem id="Cancel_Debit_Card" value="Cancel Debit Card" /> 
+                        <p:menuitem id="view_CardSummary" value="View Card Summary" /> 
+                        <p:menuitem id="view_eStatement" value="View eStatement" /> 
+                        <p:menuitem id="submit_Chargeback" value="Submit Chargeback Request" /> 
+                    </p:submenu>
                     
+                    <p:submenu id="creditCard" label="Credit Card" icon="icon-plus"></p:submenu>
                 </p:submenu>
                 
                 <p:submenu id="pa_default" label="Loan Management">
