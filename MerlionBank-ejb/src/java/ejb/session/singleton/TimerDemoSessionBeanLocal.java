@@ -18,6 +18,6 @@ public interface TimerDemoSessionBeanLocal {
 
     public void createTimers(Date startTime);
 
-    public void cancelTimers();;
+    public void cancelTimers(String schedulerId);
     
 }

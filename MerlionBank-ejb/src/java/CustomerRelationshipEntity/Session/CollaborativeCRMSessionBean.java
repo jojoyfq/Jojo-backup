@@ -93,6 +93,7 @@ public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseSt
 }
 
 @Override
+
 public List<Issue> addIssue(String content, String issueType, String status, String solution, String assignedStaffName, CaseEntity newCase){
    Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffName = :assignedStaffName");
         q.setParameter("assignedStaffName", assignedStaffName);
@@ -100,6 +101,7 @@ public List<Issue> addIssue(String content, String issueType, String status, Str
         Staff assignedStaff=temp.get(temp.size()-1);
     
     Issue issue=new Issue(content,issueType,status,solution,newCase,assignedStaff);
+
     em.persist(issue);
     em.flush();
     
@@ -269,6 +271,7 @@ return customerCases;
         
 }
 
+
 //Customer view case
 @Override
 public CaseEntity customerViewCase(Long caseId){
@@ -334,5 +337,6 @@ public boolean checkStatus(Long issueId){
               return true;
       else 
           return false;
+
 }
 }

@@ -5,6 +5,7 @@
  */
 package DepositEntity;
 
+import BillEntity.OtherBank;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -39,6 +41,8 @@ public class TransactionRecord implements Serializable {
     private Date transactionTime;
     private Long giverAccountNum;
     private Long recipientAccountNum;
+    @ManyToOne 
+    private OtherBank otherBank;
 
     
     
@@ -160,6 +164,14 @@ public class TransactionRecord implements Serializable {
 
     public void setRecipientAccountNum(Long recipientAccountNum) {
         this.recipientAccountNum = recipientAccountNum;
+    }
+
+    public OtherBank getOtherBank() {
+        return otherBank;
+    }
+
+    public void setOtherBank(OtherBank otherBank) {
+        this.otherBank = otherBank;
     }
     
     

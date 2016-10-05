@@ -46,6 +46,7 @@ public boolean customerModifyIssue(Long customerId, Long issueId,String content)
 //Customer rate issue
 public boolean customerRateIssue(Long customerId,Long issueId,Integer rating);
 
+
 public boolean checkStatus(Long issueId);
-    
+
 }

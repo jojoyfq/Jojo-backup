@@ -18,6 +18,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.faces.bean.ApplicationScoped;
 import javax.inject.Inject;
@@ -46,8 +47,8 @@ public class InitSessionBean {
     @PostConstruct
     public void init()
     {      
-        Date date = new Date(2017 - 1900, 8,18, 14, 6, 0);
-
+        Date date = new Date(2017 - 1900, 9, 17, 0, 0, 0);
+        
         timerService = context.getTimerService();
         //Timer fixedDepositAccountTimer = timerService.createTimer(date, 86400000, "FixedDeposit-TIMER");
         //
@@ -60,6 +61,13 @@ public class InitSessionBean {
 
         Timer accountClosureTimer = timerService.createTimer(date, 24 * 60 * 60 * 1000, "OnlineBankingAccount-TIMER");
         System.err.println("********** OnlineBankingAccount-TIMER TIMER CREATED");
+        
+        Timer savingAccountDailyInterestTimer = timerService.createTimer(date, 24 * 60 * 60 * 1000, "SavingAccountDailyInterestTimer-TIMER");
+        System.err.println("********** SavingAccountDailyInterestTimer-TIMER");
+        
+        
+//        Timer savingAccountMonthlyInterestTimer = timerService.createSingleActionTimer(date, new TimerConfig());
+//        System.err.println("********** SavingAccountMonthlyInterestTimer-TIMER");
     }
 
     @Timeout
@@ -71,6 +79,8 @@ public class InitSessionBean {
         } else if (timer.getInfo().toString().equals("OnlineBankingAccount-TIMER")) {
             System.err.println("********** OnlineBankingAccount-TIMER go to Common Entity Session bean now!!!!");
 //            amsbl.checkOnlineBankingAccountStatus();
+        } else if (timer.getInfo().toString().equals("SavingAccountDailyInterestTimer-TIMER")){
+            System.err.println("********** SavingAccountDailyInterestTimer-TIMER go to Saving Account Entity Session bean now!!!!");
         }
     }
     

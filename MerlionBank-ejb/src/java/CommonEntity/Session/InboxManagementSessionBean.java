@@ -323,6 +323,7 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
 
         return newList;
 
+
     }
 
     //customer compose collaborative message
@@ -382,5 +383,6 @@ public class InboxManagementSessionBean implements InboxManagementSessionBeanLoc
         return count;
 
     }
+
 
 }
