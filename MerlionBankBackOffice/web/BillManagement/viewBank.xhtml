@@ -1,12 +1,73 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
-    <h:head>
-        <title>Facelet Title</title>
-    </h:head>
-    <h:body>
-        Hello from Facelets
-    </h:body>
-</html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container10 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container80 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+       
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <p:panel id="panel" header="Bank Details">
+
+                                <h:panelGrid columns="4" cellpadding="5">
+                                    <p:dataTable var="Bank" value="#{billStaffManagedBean.bankList}">
+                                        <p:column headerText="Bank Name">
+                                            <h:outputText value="#{Bank.name}" />
+                                        </p:column>
+
+                                        <p:column headerText="SWIFT Code">
+                                            <h:outputText value="#{Bank.swiftCode}" />
+                                        </p:column>
+
+                                        <p:column headerText="UEN">
+                                            <h:outputText value="#{Bank.UEN}" />
+                                        </p:column>
+
+                                        <p:column headerText="Address">
+                                            <h:outputText value="#{Bank.address}" />
+                                        </p:column>
+                                        
+                                        
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{Bank.status}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </h:panelGrid>
+                                
+                                <p:commandButton actionListener="#{billStaffManagedBean.goToDashboard(event)}" value="Back" />
+                            </p:panel>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container10 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

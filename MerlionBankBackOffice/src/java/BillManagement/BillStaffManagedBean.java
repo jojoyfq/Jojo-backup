@@ -46,6 +46,13 @@ public class BillStaffManagedBean implements Serializable {
     private String swiftCode;
     private String address;
     private String UEN;
+    private List<String> bankNames;
+    private String bankNameSelected;
+    private String bankSWIFTSelected;
+    private String bankUENSelected;
+    private String bankAddressSelected;
+    private OtherBank bankSelected;
+    private Long bankIdSelected;
 
     @Inject
     private staffLogInManagedBean staffLogInManagedBean;
@@ -53,14 +60,13 @@ public class BillStaffManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         System.out.print("inside the init method");
-            staffId = staffLogInManagedBean.getStaffId();
+        staffId = staffLogInManagedBean.getStaffId();
         // System.out.print("************************");
         //System.out.print(customerId);
     }
 
     public void addBank(ActionEvent event) throws IOException {
-        System.out.print("UEN:"+UEN);
-        if (bsbl.addBank(bankName,swiftCode,UEN,address) == true) {
+        if (bsbl.addBank(bankName, swiftCode, UEN, address) == true) {
             String description = "Staff " + staffLogInManagedBean.getStaffIc() + " add Bank " + bankName;
             bsbl.logStaffAction(description, null, staffId);
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/BillManagement/addBankSuccess.xhtml");
@@ -69,20 +75,94 @@ public class BillStaffManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
-    public void goToDashboard(ActionEvent event) throws IOException{
+
+    public void goToDashboard(ActionEvent event) throws IOException {
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         ec.redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
     }
-    
-    public void dashboardAddBank(ActionEvent event) throws IOException{
+
+    public void dashboardAddBank(ActionEvent event) throws IOException {
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-        ec.redirect("/MerlionBankBackOffice/BillManagement/addBank.xhtml"); 
+        ec.redirect("/MerlionBankBackOffice/BillManagement/addBank.xhtml");
     }
-    public void dashboardViewBank(ActionEvent event) throws IOException{
+
+    public void dashboardViewBank(ActionEvent event) throws IOException {
         bankList = bsbl.viewBank();
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-        ec.redirect("/MerlionBankBackOffice/BillManagement/viewBank.xhtml"); 
+        ec.redirect("/MerlionBankBackOffice/BillManagement/viewBank.xhtml");
+    }
+
+    public void dashboardModifyBank(ActionEvent event) throws IOException {
+        bankNames = bsbl.viewBankNames();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBankSelect.xhtml");
+    }
+
+    public void displayModifyInfo() throws IOException {
+        bankSelected = bsbl.findBank(bankNameSelected);
+        bankIdSelected = bankSelected.getId();
+        bankSWIFTSelected = bankSelected.getSwiftCode();
+        bankUENSelected = bankSelected.getUEN();
+        bankAddressSelected = bankSelected.getAddress();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBank.xhtml");
+
+    }
+
+    public void modifyBank(ActionEvent event) throws IOException {
+        if (bankNameSelected != null && bankAddressSelected != null && bankSWIFTSelected != null && bankUENSelected != null) {
+            System.out.print("new bank name:"+bankNameSelected);
+            bsbl.modifyBank(bankNameSelected, bankAddressSelected, bankSWIFTSelected, bankUENSelected, bankIdSelected);
+            String description = "Staff "+staffLogInManagedBean.getStaffIc()+" modified bank information for "+bankNameSelected;
+            bsbl.logStaffAction(description, null, staffId);
+           ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBankSuccess.xhtml");
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in all information.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        }
+
+    }
+
+    public Long getBankIdSelected() {
+        return bankIdSelected;
+    }
+
+    public void setBankIdSelected(Long bankIdSelected) {
+        this.bankIdSelected = bankIdSelected;
+    }
+
+    public OtherBank getBankSelected() {
+        return bankSelected;
+    }
+
+    public void setBankSelected(OtherBank bankSelected) {
+        this.bankSelected = bankSelected;
+    }
+
+    public String getBankSWIFTSelected() {
+        return bankSWIFTSelected;
+    }
+
+    public void setBankSWIFTSelected(String bankSWIFTSelected) {
+        this.bankSWIFTSelected = bankSWIFTSelected;
+    }
+
+    public String getBankUENSelected() {
+        return bankUENSelected;
+    }
+
+    public void setBankUENSelected(String bankUENSelected) {
+        this.bankUENSelected = bankUENSelected;
+    }
+
+    public String getBankAddressSelected() {
+        return bankAddressSelected;
+    }
+
+    public void setBankAddressSelected(String bankAddressSelected) {
+        this.bankAddressSelected = bankAddressSelected;
     }
 
     public String getSwiftCode() {
@@ -91,6 +171,22 @@ public class BillStaffManagedBean implements Serializable {
 
     public void setSwiftCode(String swiftCode) {
         this.swiftCode = swiftCode;
+    }
+
+    public List<String> getBankNames() {
+        return bankNames;
+    }
+
+    public void setBankNames(List<String> bankNames) {
+        this.bankNames = bankNames;
+    }
+
+    public String getBankNameSelected() {
+        return bankNameSelected;
+    }
+
+    public void setBankNameSelected(String bankNameSelected) {
+        this.bankNameSelected = bankNameSelected;
     }
 
     public String getAddress() {
@@ -156,6 +252,5 @@ public class BillStaffManagedBean implements Serializable {
     public void setStaffLogInManagedBean(staffLogInManagedBean staffLogInManagedBean) {
         this.staffLogInManagedBean = staffLogInManagedBean;
     }
-    
-    
+
 }

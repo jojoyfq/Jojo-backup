@@ -49,14 +49,27 @@ public class BillSessionBean implements BillSessionBeanLocal {
         return otherBanks;
     }
     
+        @Override
+    public List<String> viewBankNames(){
+        List<OtherBank> otherBanks = this.viewBank();
+        List<String> bankNames = new ArrayList<>();
+        for(int i=0;i<otherBanks.size();i++ ){
+            bankNames.add(otherBanks.get(i).getName());
+        }
+        return bankNames;
+    }
+    
 //    public boolean deleteBank (String id){
 //        
 //    } 
-    public void modifyBank(String newName, String oldName){
-        OtherBank bank = this.findBank(oldName);
-        bank.setName(newName);
-        System.out.print("bank name changed");
-        em.flush();       
+        @Override
+    public void modifyBank(String bankName, String address, String SWIFT, String UEN, Long bankId){
+        OtherBank bank = em.find(OtherBank.class,bankId);
+        bank.setAddress(address);
+        bank.setName(bankName);
+        bank.setUEN(UEN);
+        bank.setSwiftCode(SWIFT);
+        em.flush();
     }
     
     public void addBO(String bOName, String bankName, Long accountNum){
@@ -121,6 +134,7 @@ public class BillSessionBean implements BillSessionBeanLocal {
         return bO;  
     }
     
+        @Override
     public OtherBank findBank(String bankName){
         Query q = em.createQuery("SELECT a FROM OtherBank a WHERE a.name = :bankName");
         q.setParameter("bankName", bankName);
