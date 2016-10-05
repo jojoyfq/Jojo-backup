@@ -5,13 +5,18 @@
  */
 package StaffManagement;
 
+import CommonEntity.CustomerMessage;
 import CommonEntity.MessageEntity;
+import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
 import CustomerRelationshipEntity.CaseEntity;
+import CustomerRelationshipEntity.Issue;
 import CustomerRelationshipEntity.Session.CollaborativeCRMSessionBeanLocal;
+import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Exception.UserNotExistException;
+import java.io.IOException;
 import java.io.Serializable;
 //import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -25,9 +30,11 @@ import javax.inject.Named;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -39,6 +46,8 @@ public class StaffCaseManagedBean implements Serializable {
 
     @EJB
     CollaborativeCRMSessionBeanLocal ccsbl;
+    @EJB
+    InboxManagementSessionBeanLocal imsbl;
     @Inject
     staffLogInManagedBean slimb;
 
@@ -49,72 +58,58 @@ public class StaffCaseManagedBean implements Serializable {
     private String issueType;
     private Date caseCreatedTime;
     private String customerIc;
-    private Long caseStaffId = slimb.getStaffId();
+    private Long caseStaffId;
     private Long customerId;
+    private Long bankStaffId;
+
     // private List availableRoleNames;
     private Map<String, String> availableRoleNames;
     private Map<String, String> availableStaffs;
     private String selectedRoleName;
-    private MessageEntity selectedMsg;
-
-    public MessageEntity getSelectedMsg() {
-        return selectedMsg;
-    }
-
-    public void setSelectedMsg(MessageEntity selectedMsg) {
-        this.selectedMsg = selectedMsg;
-    }
-
-    public String getSelectedRoleName() {
-        return selectedRoleName;
-    }
-
-    public void setSelectedRoleName(String selectedRoleName) {
-        this.selectedRoleName = selectedRoleName;
-    }
-
-    public Map<String, String> getAvailableStaffs() {
-        return availableStaffs;
-    }
-
-    public void setAvailableStaffs(Map<String, String> availableStaffs) {
-        this.availableStaffs = availableStaffs;
-    }
-
-    public Map<String, String> getMap() {
-        return map;
-    }
-
-    public void setMap(Map<String, String> map) {
-        this.map = map;
-    }
+    private CustomerMessage selectedMsg;
+    private List<CustomerMessage> allCaseMessages;
+    private List<Issue> allIssues;
+    private String issueContent;
     Map<String, String> map = new HashMap<String, String>();
-
-    public Map<String, Map<String, String>> getData() {
-        return data;
-    }
-
-    public void setData(Map<String, Map<String, String>> data) {
-        this.data = data;
-    }
-
-    public Map<String, String> getAvailableRoleNames() {
-        return availableRoleNames;
-    }
-
-    public void setAvailableRoleNames(Map<String, String> availableRoleNames) {
-        this.availableRoleNames = availableRoleNames;
-    }
     private CaseEntity caseEntity;
     private CaseEntity selectedCase;
     private String selectedStaffName;
+    private List<Issue> oneBankStaffAllIssues;
 
-    public String getSelectedStaffName() {
-        return selectedStaffName;
+    private Issue selectedIssue;
+    private String solution;
+    private List<Issue> oneCaseAllIssues;
+
+    public List<Issue> getOneCaseAllIssues() {
+        return oneCaseAllIssues;
     }
 
-    public void setSelectedStaffName(String selectedStaffName) {
-        this.selectedStaffName = selectedStaffName;
+    public void setOneCaseAllIssues(List<Issue> oneCaseAllIssues) {
+        this.oneCaseAllIssues = oneCaseAllIssues;
+    }
+
+    public String getSolution() {
+        return solution;
+    }
+
+    public void setSolution(String solution) {
+        this.solution = solution;
+    }
+
+    public Issue getSelectedIssue() {
+        return selectedIssue;
+    }
+
+    public void setSelectedIssue(Issue selectedIssue) {
+        this.selectedIssue = selectedIssue;
+    }
+
+    public List<Issue> getOneBankStaffAllIssues() {
+        return oneBankStaffAllIssues;
+    }
+
+    public void setOneBankStaffAllIssues(List<Issue> oneBankStaffAllIssues) {
+        this.oneBankStaffAllIssues = oneBankStaffAllIssues;
     }
 
     public StaffCaseManagedBean() {
@@ -122,7 +117,7 @@ public class StaffCaseManagedBean implements Serializable {
 
     @PostConstruct
     public void init() {
-
+        selectedIssue = new Issue();
         staffRoles = new ArrayList<StaffRole>();
         //availableRoleNames = new ArrayList<>();
         availableRoleNames = new HashMap<String, String>();
@@ -132,10 +127,37 @@ public class StaffCaseManagedBean implements Serializable {
         allCases = new ArrayList<>();
         caseEntity = new CaseEntity();
         selectedCase = new CaseEntity();
+        allCaseMessages = new ArrayList<>();
+        allIssues = new ArrayList<>();
+        // caseStaffId = slimb.getStaffId();
+        caseStaffId = 4L;
+        bankStaffId = slimb.getStaffId();
+        oneBankStaffAllIssues = new ArrayList<>();
+        oneCaseAllIssues = new ArrayList<>();
 
     }
-    public void caseStaffViewAllCaseMsg(ActionEvent event){
-        
+
+    public void goToViewAllCases(ActionEvent event) throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/viewAllCases.xhtml");
+
+    }
+
+    public List<CustomerMessage> caseStaffViewAllCaseMsg(ActionEvent event) throws IOException {
+
+        allCaseMessages = imsbl.StaffViewAllCaseMessage();
+        System.out.println("************Case message size is " + allCaseMessages.size());
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/viewAllNewCaseMessages.xhtml");
+        return allCaseMessages;
+
+    }
+
+    public List<Issue> issuesUnderOneCase(ActionEvent event) {
+        System.out.println("*********** in issueUnderOneCase function alr!!!!");
+        selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
+        System.out.println("**********Selected case to view all the issues, selectedCase.getId()" + selectedCase.getId());
+        oneCaseAllIssues = selectedCase.getIssues();
+        return oneCaseAllIssues;
+
     }
 
     public void staffViewAllCases(ActionEvent event) throws ListEmptyException {
@@ -151,25 +173,29 @@ public class StaffCaseManagedBean implements Serializable {
         }
     }
 
-    public void staffCreateCase(ActionEvent event) throws ListEmptyException, UserNotExistException {
+    public void staffCreateCase(ActionEvent event) throws ListEmptyException, UserNotExistException, IOException {
         try {
             for (int i = 0; i < slimb.getRoleNames().size(); i++) {
                 availableRoleNames.put(slimb.getRoleNames().get(i).toString(), slimb.getRoleNames().get(i).toString());
+                System.out.println("************** " + availableRoleNames);
                 // issueType = slimb.getRoleNames().get(i).toString();
                 relatedStaff = ccsbl.retrieveStaffsAccordingToRole(slimb.getRoleNames().get(i).toString());
                 for (int j = 0; j < relatedStaff.size(); j++) {
                     map.put(relatedStaff.get(j).getStaffName(), relatedStaff.get(j).getStaffName());
                 }
                 data.put(slimb.getRoleNames().get(i).toString(), map);
+                map = new HashMap<String, String>();
             }
-            selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
-            customerId = selectedCase.getCustomer().getId();
-            customerIc = selectedCase.getCustomer().getIc();
-            System.out.println("**********Selected case: the customer ic is " + customerIc);
+            selectedMsg = (CustomerMessage) event.getComponent().getAttributes().get("selectedCaseMessage");
+            customerId = selectedMsg.getCustomer().getId();
+            customerIc = selectedMsg.getCustomer().getIc();
+            System.out.println("**********Selected case message: the customer ic is " + customerIc);
            // issueType = (String) event.getComponent().getAttributes().get("selectedRoleName");
 
             // relatedStaff = ccsbl.retrieveStaffsAccordingToRole(issueType);
-            selectedCase = ccsbl.createCase(caseCreatedTime, customerIc, caseStaffId);
+            selectedCase = ccsbl.createCase(null, customerIc, caseStaffId);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/createIssues.xhtml");
+
         } catch (ListEmptyException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -178,8 +204,92 @@ public class StaffCaseManagedBean implements Serializable {
     }
 
     public void caseStaffCreateIssue(ActionEvent event) {
-        selectedMsg = (MessageEntity) event.getComponent().getAttributes().get("selectedCaseMessage");
-        ccsbl.addIssue(selectedMsg.getContent(), issueType, null, null, selectedStaffName, selectedCase);
+        selectedMsg = (CustomerMessage) event.getComponent().getAttributes().get("selectedCaseMessage");
+        System.out.println("************ issue content " + issueContent);
+        System.out.println("************ issue type " + issueType);
+        System.out.println("************ selectedStaffName " + selectedStaffName);
+        System.out.println("************Selected case ID is " + selectedCase.getId());
+        System.out.println("************");
+        System.out.println("************");
+
+        allIssues = ccsbl.addIssue(issueContent, issueType, null, null, selectedStaffName, selectedCase);
+        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Issue submitted successfully!!!");
+        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
+    }
+
+    public void openLevel1() {
+
+        Map<String, Object> options = new HashMap<String, Object>();
+        options.put("modal", true);
+        RequestContext.getCurrentInstance().openDialog("/createIssuesDialog", options, null);
+        System.out.println("************level 1 is opened");
+    }
+
+    public void onReturnFromLevel1(SelectEvent event) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Data Returned", event.getObject().toString()));
+    }
+
+    public List<Issue> staffViewAssignedIssue(ActionEvent event) throws ListEmptyException, IOException {
+        try {
+            System.out.println("*************bank staff id " + bankStaffId);
+            oneBankStaffAllIssues = ccsbl.viewAssignedCase(bankStaffId);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/viewAllAssignedIssues.xhtml");
+
+        } catch (ListEmptyException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
+        }
+        return oneBankStaffAllIssues;
+    }
+
+    public List<Issue> staffDeleteAssingnedIssue(ActionEvent event) {
+        selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
+
+        System.out.println("**********staff id that deleted the issue is " + bankStaffId);
+        System.out.println("**************selected issue id is " + selectedIssue.getId());
+        oneBankStaffAllIssues = ccsbl.deleteIssue(bankStaffId, selectedIssue.getId());
+        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Issue deleted successfully!!");
+        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        return oneBankStaffAllIssues;
+    }
+
+    public Issue staffRequireMoreInfo(ActionEvent event) throws EmailNotSendException {
+        try {
+            selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
+            Long issueId = selectedIssue.getId();
+            System.out.println("**********Staff id which required more info is " + bankStaffId);
+            System.out.println("**************selected issue id is " + selectedIssue.getId());
+            
+            selectedIssue = ccsbl.staffModifyIssue(bankStaffId, issueId, solution);
+             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message sent successfully!!");
+        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
+        } catch (EmailNotSendException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+        return selectedIssue;
+    }
+
+    public Issue staffSolveIssue(ActionEvent event) {
+        selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
+
+        System.out.println("**********Staff id which solved issue is " + bankStaffId);
+        System.out.println("**************selected issue id is " + selectedIssue.getId());
+        Long issueId = selectedIssue.getId();
+        selectedIssue = ccsbl.staffSolveIssue(bankStaffId, issueId, solution);
+        return selectedIssue;
+    }
+
+    public List<CaseEntity> caseStaffDeleteCase(ActionEvent event) {
+        selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
+
+        System.out.println("**********Case Staff id which solved issue is " + caseStaffId);
+        System.out.println("**************selected case id is " + selectedCase.getId());
+        allCases = ccsbl.deleteCase(caseStaffId, selectedCase.getId());
+        return allCases;
     }
 
     public CollaborativeCRMSessionBeanLocal getCcsbl() {
@@ -277,4 +387,101 @@ public class StaffCaseManagedBean implements Serializable {
     public void setSelectedCase(CaseEntity selectedCase) {
         this.selectedCase = selectedCase;
     }
+
+    public String getIssueContent() {
+        return issueContent;
+    }
+
+    public void setIssueContent(String issueContent) {
+        this.issueContent = issueContent;
+    }
+
+    public List<Issue> getAllIssues() {
+        return allIssues;
+    }
+
+    public void setAllIssues(List<Issue> allIssues) {
+        this.allIssues = allIssues;
+    }
+
+    public InboxManagementSessionBeanLocal getImsbl() {
+        return imsbl;
+    }
+
+    public void setImsbl(InboxManagementSessionBeanLocal imsbl) {
+        this.imsbl = imsbl;
+    }
+
+    public List<CustomerMessage> getAllCaseMessages() {
+        return allCaseMessages;
+    }
+
+    public void setAllCaseMessages(List<CustomerMessage> allCaseMessages) {
+        this.allCaseMessages = allCaseMessages;
+    }
+
+    public CustomerMessage getSelectedMsg() {
+        return selectedMsg;
+    }
+
+    public void setSelectedMsg(CustomerMessage selectedMsg) {
+        this.selectedMsg = selectedMsg;
+    }
+
+    public String getSelectedRoleName() {
+        return selectedRoleName;
+    }
+
+    public void setSelectedRoleName(String selectedRoleName) {
+        this.selectedRoleName = selectedRoleName;
+    }
+
+    public Map<String, String> getAvailableStaffs() {
+        return availableStaffs;
+    }
+
+    public void setAvailableStaffs(Map<String, String> availableStaffs) {
+        this.availableStaffs = availableStaffs;
+    }
+
+    public Map<String, String> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, String> map) {
+        this.map = map;
+    }
+
+    public Map<String, Map<String, String>> getData() {
+        return data;
+    }
+
+    public void setData(Map<String, Map<String, String>> data) {
+        this.data = data;
+    }
+
+    public Map<String, String> getAvailableRoleNames() {
+        return availableRoleNames;
+    }
+
+    public void setAvailableRoleNames(Map<String, String> availableRoleNames) {
+        this.availableRoleNames = availableRoleNames;
+    }
+
+    public String getSelectedStaffName() {
+        return selectedStaffName;
+    }
+
+    public void setSelectedStaffName(String selectedStaffName) {
+        this.selectedStaffName = selectedStaffName;
+    }
+
+    public Long getBankStaffId() {
+        return bankStaffId;
+    }
+
+    public void setBankStaffId(Long bankStaffId) {
+        this.bankStaffId = bankStaffId;
+    }
+
 }

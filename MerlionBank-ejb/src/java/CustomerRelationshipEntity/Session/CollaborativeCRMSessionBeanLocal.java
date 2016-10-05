@@ -28,12 +28,24 @@ public interface CollaborativeCRMSessionBeanLocal {
     public List<Issue> addIssue(String content, String issueType, String status, String solution, String assignedStaffName, CaseEntity newCase);
     public List<CaseEntity> viewAllCase()throws ListEmptyException;
     public List<Issue> viewAssignedCase(Long staffId) throws ListEmptyException;
-    public boolean deleteIssue(Long staffId,Long issueId);
-    public boolean deleteCase(Long staffId,Long caseId);
-    public boolean staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException;
-    public boolean staffSolveIssue(Long staffId, Long issueId,String solution);
+    public List<Issue> deleteIssue(Long staffId,Long issueId);
+    public List<CaseEntity> deleteCase(Long staffId,Long caseId);
+    public Issue staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException;
+    public Issue staffSolveIssue(Long staffId, Long issueId,String solution);
     public void closeCase() throws EmailNotSendException;
     
-    
+    //Customer views status of the case processing 
+public List<CaseEntity> customerViewCases(Long customerId)throws ListEmptyException;
+
+//Customer view case
+public CaseEntity customerViewCase(Long caseId);
+
+//Customer modifies the details of the case filed
+public boolean customerModifyIssue(Long customerId, Long issueId,String content);
+
+//Customer rate issue
+public boolean customerRateIssue(Long customerId,Long issueId,Integer rating);
+
+public boolean checkStatus(Long issueId);
     
 }

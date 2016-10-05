@@ -40,7 +40,7 @@ public class Issue implements Serializable {
     private String content;
     private String issueType; 
     private String status;
-    private Double rating;
+    private int rating;
     private String solution;
   
     @ManyToOne
@@ -164,14 +164,14 @@ public class Issue implements Serializable {
     /**
      * @return the rating
      */
-    public Double getRating() {
+    public int getRating() {
         return rating;
     }
 
     /**
      * @param rating the rating to set
      */
-    public void setRating(Double rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
     
