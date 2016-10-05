@@ -20,7 +20,7 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Link your card with selected saving account </div>
+                    <div class="CardBigTopic"> Select Debit Card Type </div>
                     <div class="Separator"></div>
 
 
@@ -29,14 +29,14 @@
 
 
                             <div class="Container70 Responsive50">
-                                <p:selectOneMenu id="savingAccountList" value="#{debitCardManagedBean.savingAccountSelected}">
-                                    <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
-                                    <f:selectItems value="#{debitCardManagedBean.savingAccountNumberList}" />
+                                <p:selectOneMenu id="savingAccountList" value="#{debitCardManagedBean.debitCardTypeSelected}">
+                                    <f:selectItem itemLabel="Select Debit Card Type ..." itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{debitCardManagedBean.debitCardTypeList}" />
                                 </p:selectOneMenu>  
                             </div>
                             <div class="Container30 Responsive50">
-                                <p:commandButton value="Submit" id="goToCloseSavingAccount"
-                                                 actionListener="#{debitCardManagedBean.goToCreateDebitCard}"/>    
+                                <p:commandButton value="Submit" id="createDebitCard"
+                                                 actionListener="#{debitCardManagedBean.createDebitCard}"/>    
                             </div>
 
 
