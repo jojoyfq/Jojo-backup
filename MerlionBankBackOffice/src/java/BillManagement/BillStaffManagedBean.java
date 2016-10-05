@@ -53,7 +53,6 @@ public class BillStaffManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         System.out.print("inside the init method");
-            staff = staffLogInManagedBean.getStaff();
             staffId = staffLogInManagedBean.getStaffId();
         // System.out.print("************************");
         //System.out.print(customerId);
@@ -74,6 +73,16 @@ public class BillStaffManagedBean implements Serializable {
     public void goToDashboard(ActionEvent event) throws IOException{
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         ec.redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
+    }
+    
+    public void dashboardAddBank(ActionEvent event) throws IOException{
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/addBank.xhtml"); 
+    }
+    public void dashboardViewBank(ActionEvent event) throws IOException{
+        bankList = bsbl.viewBank();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/viewBank.xhtml"); 
     }
 
     public String getSwiftCode() {

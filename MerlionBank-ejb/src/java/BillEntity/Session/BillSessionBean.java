@@ -41,6 +41,7 @@ public class BillSessionBean implements BillSessionBeanLocal {
       return true;
     }
     
+        @Override
     public List<OtherBank> viewBank(){
         List<OtherBank> otherBanks = new ArrayList<>();
         Query query = em.createQuery("SELECT a FROM OtherBank a");

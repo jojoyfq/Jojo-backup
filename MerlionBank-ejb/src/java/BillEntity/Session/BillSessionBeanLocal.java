@@ -5,6 +5,8 @@
  */
 package BillEntity.Session;
 
+import BillEntity.OtherBank;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -19,5 +21,7 @@ public interface BillSessionBeanLocal {
 
 
     public boolean addBank(String bankName, String swiftCode, String UEN, String address);
+
+    public List<OtherBank> viewBank();
     
 }

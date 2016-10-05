@@ -61,6 +61,10 @@
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(12)}">
                         <p:menuitem id="intraTransfer" value="Transfer to other Merlion Bank Account" actionListener="#{transferManagedBean.dashboardToIntraTransfer}"/>
                     </p:submenu>
+                    <p:submenu id="bill" label="Bill" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(11)}">
+                        <p:menuitem id="addBank" value="Add New Bank" actionListener="#{billStaffManagedBean.dashboardAddBank(event)}"/>
+                        <p:menuitem id="viewBank" value="View Banks" actionListener="#{billStaffManagedBean.dashboardViewBank(event)}"/>
+                    </p:submenu>
                 </p:submenu>
 
                 <p:submenu id="wealth_management" label="Wealth Management">
