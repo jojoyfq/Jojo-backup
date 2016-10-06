@@ -6,6 +6,7 @@
 package LoanEntity.Session;
 
 import CommonEntity.Customer;
+import Exception.EmailNotSendException;
 import LoanEntity.Loan;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -29,6 +30,11 @@ public interface LoanSessionBeanLocal {
    //view loan summary
    public List<Loan> customerViewListOfLoan(Long customrId);
    public Loan customerViewLoan(Long loanId);
+   
+   //customer edit loan
+    public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal downpayment,Integer loanTerm,Date startDate);
+    public List<Loan> customerCancelLoan(Long customerId, Long loanId);
+     public List<Loan> customerAcceptLoan(Long customerId, Long loanId) throws EmailNotSendException;
    
    
    
