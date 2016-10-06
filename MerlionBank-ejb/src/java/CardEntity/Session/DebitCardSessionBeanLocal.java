@@ -22,4 +22,6 @@ public interface DebitCardSessionBeanLocal {
     public List<String> getDebitCardType();
     public boolean verifyDebitCard(String cardHolder, Long cardNo, Date expiryDate, Long cvv) throws DebitCardException;
     public void setPassword(Long cardNo, String password);
+    public List<String> getDebitCardString(Long customerID)throws DebitCardException;
+    public List<DebitCard> getDebitCard(Long customerID)throws DebitCardException;
 }
