@@ -24,13 +24,13 @@ import javax.ejb.Local;
 public interface CollaborativeCRMSessionBeanLocal {
     public List<StaffRole> displayListOfRoles() throws ListEmptyException;
     public List<Staff> retrieveStaffsAccordingToRole(String issueType)throws ListEmptyException;
-    public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseStaffID) throws UserNotExistException;
-    public List<Issue> addIssue(String content, String issueType, String status, String solution, String assignedStaffName, CaseEntity newCase);
+   public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseStaffID,Long messageId) throws UserNotExistException;
+    public Issue addIssue(String content, String issueType, String status, String solution, String assignedStaffName, Long caseId);
     public List<CaseEntity> viewAllCase()throws ListEmptyException;
     public List<Issue> viewAssignedCase(Long staffId) throws ListEmptyException;
     public List<Issue> deleteIssue(Long staffId,Long issueId);
     public List<CaseEntity> deleteCase(Long staffId,Long caseId);
-    public Issue staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException;
+    public List<Issue> staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException;
     public Issue staffSolveIssue(Long staffId, Long issueId,String solution);
     public void closeCase() throws EmailNotSendException;
     
@@ -48,5 +48,7 @@ public boolean customerRateIssue(Long customerId,Long issueId,Integer rating);
 
 
 public boolean checkStatus(Long issueId);
+
+public List<Issue> retrieveIssues(Long caseId);
 
 }

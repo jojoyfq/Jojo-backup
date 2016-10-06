@@ -7,6 +7,7 @@ package CustomerRelationshipEntity.Session;
 
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
+import CommonEntity.CustomerMessage;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
@@ -69,7 +70,9 @@ public List<Staff> retrieveStaffsAccordingToRole(String issueType)throws ListEmp
 }
 
 @Override
-public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseStaffID) throws UserNotExistException{
+public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseStaffID,Long messageId) throws UserNotExistException{
+    CustomerMessage customerMessage=em.find(CustomerMessage.class, messageId);
+    
     Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", customerIc);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -87,6 +90,11 @@ public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseSt
     CaseEntity newCase=new CaseEntity("unresolved",Calendar.getInstance().getTime(),customer,staff);
     List<Issue>issueList=new ArrayList<Issue>();
     newCase.setIssues(issueList);
+    newCase.setCustomerMessage(customerMessage);
+    List<CaseEntity> currentCases=customer.getCases();
+    currentCases.add(newCase);
+    customer.setCases(currentCases);
+
     em.persist(newCase);
     em.flush();
     return newCase;
@@ -94,23 +102,31 @@ public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseSt
 
 @Override
 
-public List<Issue> addIssue(String content, String issueType, String status, String solution, String assignedStaffName, CaseEntity newCase){
+public Issue addIssue(String content, String issueType, String status, String solution, String assignedStaffName, Long caseId){
+    CaseEntity newCase=em.find(CaseEntity.class,caseId);
    Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffName = :assignedStaffName");
         q.setParameter("assignedStaffName", assignedStaffName);
         List<Staff> temp = new ArrayList(q.getResultList());
         Staff assignedStaff=temp.get(temp.size()-1);
     
     Issue issue=new Issue(content,issueType,status,solution,newCase,assignedStaff);
+     em.persist(issue);
+    em.flush();
+    
+    List<Issue> currentIssues=newCase.getIssues();
+    currentIssues.add(issue);
+    newCase.setIssues(currentIssues);
+   
 
-    em.persist(issue);
-    em.flush();
+  
     
-    List<Issue> issueList=newCase.getIssues();
-    issueList.add(issue);
-    newCase.setIssues(issueList);
-    em.flush();
+//    List<Issue> issueList=newCase.getIssues();
+//    issueList.add(issue);
+//    newCase.setIssues(issueList);
     
-    return issueList;
+     System.out.println("Session bean add a issue, issue size: "+ newCase.getIssues().size());
+    
+    return issue;
     
 }
 
@@ -185,7 +201,12 @@ public List<CaseEntity> deleteCase(Long staffId,Long caseId){
 
 //Staff request for more information from customer
 @Override
-public Issue staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException{
+public List<Issue> staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException{
+   
+     Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        q.setParameter("id", staffId);
+        Staff staff = (Staff) q.getSingleResult();
+        
     Query query = em.createQuery("SELECT a FROM Issue a WHERE a.id = :id");
         query.setParameter("id", issueId);
         Issue issue = (Issue) query.getSingleResult();
@@ -206,7 +227,7 @@ public Issue staffModifyIssue(Long staffId, Long issueId,String solution)throws 
                     throw new EmailNotSendException ("Emails not sent");
                 }
         
-   return issue;
+   return staff.getIssues();
 }
 
 //Staff solve an issue
@@ -267,6 +288,7 @@ public List<CaseEntity> customerViewCases(Long customerId)throws ListEmptyExcept
         if (customerCases.isEmpty()){
             throw new ListEmptyException("customer has no Cases！");
         }
+        System.out.println("FQ say: case size "+customerCases.size());
 return customerCases;
         
 }
@@ -289,6 +311,7 @@ public boolean customerModifyIssue(Long customerId, Long issueId,String content)
         Issue issue = (Issue) query.getSingleResult();
         
         Customer customer=em.find(Customer.class,customerId);
+        System.out.print("customer add content"+content);
         
         issue.setStatus("unresolved");
         issue.setContent(content);
@@ -296,7 +319,7 @@ public boolean customerModifyIssue(Long customerId, Long issueId,String content)
         
         em.persist(issue);
         em.flush();
-        
+        System.out.print("After customer add content"+issue.getContent());
         //log an action
         CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Update case information", customer);
         em.persist(action);
@@ -338,5 +361,14 @@ public boolean checkStatus(Long issueId){
       else 
           return false;
 
+}
+
+@Override
+public List<Issue> retrieveIssues(Long caseId){
+    Query q = em.createQuery("SELECT a FROM CaseEntity a WHERE a.id = :id");
+        q.setParameter("id", caseId);
+        CaseEntity caseEntity = (CaseEntity) q.getSingleResult();
+    System.out.println("Fangqing said: issue size is "+caseEntity.getIssues().size());
+    return caseEntity.getIssues();
 }
 }
