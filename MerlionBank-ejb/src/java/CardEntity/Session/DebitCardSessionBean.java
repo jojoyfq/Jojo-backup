@@ -144,6 +144,42 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
         em.flush();
     }
 
+    @Override
+    public List<String> getDebitCardString(Long customerID) throws DebitCardException {
+        List<String> debitCardString = new ArrayList<String>();
+        String cardNo;
+        String cardType;
+
+        Customer customer = em.find(Customer.class, customerID);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        if (savingAccounts.isEmpty()) {
+            throw new DebitCardException("No Debit Card Record Found!");
+        } else {
+            for (int i = 0; i < savingAccounts.size(); i++) {
+                if (savingAccounts.get(i).getDebitCard() != null) {
+                    cardNo = Long.toString(savingAccounts.get(i).getDebitCard().getCardNumber());
+                    cardType = savingAccounts.get(i).getDebitCard().getDebitCardType().getDebitCardType();
+                    debitCardString.add(cardNo + "," + cardType);
+                }
+            }
+            return debitCardString;
+        }
+    }
+
+    @Override
+    public List<DebitCard> getDebitCard(Long customerID)throws DebitCardException {
+        List<DebitCard> debitCard = new ArrayList();
+        Customer customer = em.find(Customer.class, customerID);
+        if (customer.getSavingAccounts().isEmpty()) {
+            throw new DebitCardException("No Debit Card Record Found!");
+        } else {
+            for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
+                debitCard.add(customer.getSavingAccounts().get(i).getDebitCard());
+            }
+            return debitCard;
+        }
+    }
+
     private String passwordHash(String pass) {
         String md5 = null;
 

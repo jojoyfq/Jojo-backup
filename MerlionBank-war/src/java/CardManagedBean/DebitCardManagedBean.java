@@ -55,6 +55,11 @@ public class DebitCardManagedBean implements Serializable {
     //set debitCard password
     private String newPassword;
     private String confirmedPassword;
+    //view debit card summary
+    private List<String> debitCardList;
+    private String debitCardSelected;
+    //view Debit Card
+    private List<DebitCard> debitCards;
 
     @PostConstruct
     public void init() {
@@ -84,6 +89,26 @@ public class DebitCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/debitCardActivate_EnterDetail.xhtml");
         } catch (Exception e) {
             System.out.print("dashboard to activate debit card encounter error!");
+        }
+    }
+    
+    public void dashboardToViewDebitSummary(ActionEvent event){
+        try {
+            debitCardList = dcsb.getDebitCardString(customerID);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/viewDebitCardSummary_selectCard.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to view Debit Card Summary encounter error!");
+        }
+    }
+    
+    public void dashboardToViewDebitCard(ActionEvent event){
+        try {
+            debitCards = dcsb.getDebitCard(customerID);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/viewDebitCard.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to view Debit Card encounter error!");
         }
     }
 
@@ -116,14 +141,24 @@ public class DebitCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/debitCardActivateSuccess.xhtml");
         }
     }
+    
+    public void viewDebitCardSummary(ActionEvent event){
+        if(debitCardSelected==null){
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a debit card!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }else{
+            String[] split = debitCardSelected.split(",");
+            Long debitCardNo = Long.parseLong(split[0]); 
+        }
+    }
 
-    public void goToCreateDebitCard() throws IOException {
+    public void goToCreateDebitCard(ActionEvent event) throws IOException {
         debitCardTypeList = dcsb.getDebitCardType();
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/CardManagement/debitCardApply.xhtml");
     }
 
-    public void createDebitCard() throws IOException, UserHasDebitCardException {
+    public void createDebitCard(ActionEvent event) throws IOException, UserHasDebitCardException {
         try {
             debitCard = dcsb.createDebitCard(savingAccountSelected, customerID, debitCardTypeSelected);
             if (debitCard != null) {
@@ -253,6 +288,30 @@ public class DebitCardManagedBean implements Serializable {
 
     public void setConfirmedPassword(String confirmedPassword) {
         this.confirmedPassword = confirmedPassword;
+    }
+    
+    public List<String> getDebitCardList() {
+        return debitCardList;
+    }
+
+    public void setDebitCardList(List<String> debitCardList) {
+        this.debitCardList = debitCardList;
+    }
+
+    public String getDebitCardSelected() {
+        return debitCardSelected;
+    }
+
+    public void setDebitCardSelected(String debitCardSelected) {
+        this.debitCardSelected = debitCardSelected;
+    }
+    
+    public List<DebitCard> getDebitCards() {
+        return debitCards;
+    }
+
+    public void setDebitCards(List<DebitCard> debitCards) {
+        this.debitCards = debitCards;
     }
 
 }
