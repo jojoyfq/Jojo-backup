@@ -8,11 +8,13 @@ package PayMeEntity.Session;
 import Exception.PasswordNotMatchException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
+import javax.ejb.Local;
 
 /**
  *
  * @author Bella
  */
-interface PayMeSessionBeanLocal {
+@Local
+public interface PayMeSessionBeanLocal {
     public boolean checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException;
 }
