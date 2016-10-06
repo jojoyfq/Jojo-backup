@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container0 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container100 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Issues Management System----Staff </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100">
+
+                        <h:form id="form">
+                            <p:panel id="panel">
+
+                                <p:messages id="msgs" />
+
+                                <h:panelGrid columns="3" cellpadding="5">
+
+                                    <h:outputLabel for="id" value="Case Id" /> 
+                                    <h:outputLabel for="id" value="#{staffCaseManagedBean.selectedCase.id}" /> 
+                                    <h:outputLabel/>
+
+                                    <h:outputLabel for="content" value="Case Content" /> 
+                                    <h:outputLabel for="content" value="#{staffCaseManagedBean.selectedMsg.content}" /> 
+                                    <h:outputLabel/>
+
+                                    <h:outputLabel for="content" value="Case Status" /> 
+                                    <h:outputLabel for="content" value="#{staffCaseManagedBean.selectedCase.status}" /> 
+                                    <h:outputLabel/>
+
+
+
+                                </h:panelGrid>
+
+
+                            </p:panel>
+                        </h:form>
+                        <h:form>
+                            <p:dataTable var="issue" value="#{staffCaseManagedBean.allIssues}">
+                                <p:column headerText="Issue Id" style="width: 80px;">
+                                    <h:outputText value="#{issue.id}" />
+                                </p:column>
+                                <p:column headerText="Issue Content" style="width: 80px;">
+                                    <h:outputText value="#{issue.content}" />
+                                </p:column>
+                                <p:column headerText="Issue Solution" style="width: 80px;">
+                                    <h:outputText value="#{issue.solution}" />
+                                </p:column>
+                                <p:column headerText="Person In Charge" style="width: 80px;">
+                                    <h:outputText value="#{issue.staff.staffName}" />
+                                </p:column>
+
+                                <p:column headerText="Created Time" style="width: 80px;">
+                                    <h:outputText value="#{issue.caseEntity.caseCreatedTime}" />
+                                </p:column>
+
+                                <p:column headerText="Closed Time" style="width: 80px;">
+                                    <h:outputText value="#{issue.caseEntity.caseClosedTime}" />
+                                </p:column>
+
+                                <p:column headerText="Staff Name" style="width: 80px;">
+                                    <h:outputText value="#{issue.staff.staffName}" />
+                                </p:column>
+
+                                <p:column headerText="Issue Status" style="width: 80px;">
+                                    <h:outputText value="#{issue.status}" />
+                                </p:column>
+                                <p:column headerText="Rating" style="width: 80px;">
+                                    <h:outputText value="#{issue.rating}" />
+                                </p:column>
+
+                            </p:dataTable>
+                        </h:form>
+                        <div class="Container100 ui-fluid">
+                            <div class="Container30"></div>
+                            <div class="Container40">
+                                <h:form>  
+                                    <p:growl id="growl" showDetail="true" />
+                                    
+                                    <div class="Container30"></div>
+                                    <div class="Container40">
+                                    <h:panelGrid columns="1" cellpadding="5">
+                                        <p:commandButton value="Create Issue" type="button" onclick="PF('dlg1').show();" />
+
+
+                                    </h:panelGrid>
+                                        </div>
+                                    <div class="Container30"></div>
+                                    <p:dialog header="Modal Dialog" widgetVar="dlg1" modal="true" height="100">
+                                        <h:outputLabel for="content" value="Issue Content: " /> 
+                                        <p:inputText id="content" value="#{staffCaseManagedBean.issueContent}"  required="true" requiredMessage="Please type the issue content" />
+                                        <h:message class="Red" for="content"  />
+
+
+
+                                        <p:outputLabel for="issueType" value="Issue Type: " />
+
+                                        <p:selectOneMenu id="issueType" value="#{staffCaseManagedBean.issueType}" style="width:150px">
+                                            <p:ajax listener="#{staffCaseManagedBean.onCountryChange}" update="staffName"/>
+                                            <f:selectItem itemLabel="Select Issue Type" itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{staffCaseManagedBean.availableRoleNames}" />
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel for="staffName" value="Staff: " />
+                                        <p:selectOneMenu id="staffName" value="#{staffCaseManagedBean.selectedStaffName}" style="width:150px">
+                                            <f:selectItem itemLabel="Select Staff" itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value ="#{staffCaseManagedBean.availableStaffs}"/>
+                                        </p:selectOneMenu>    
+
+                                        <p:commandButton value="Submit"  actionListener="#{staffCaseManagedBean.caseStaffCreateIssue}" icon="ui-icon-check" />
+
+                                    </p:dialog>
+                                </h:form>
+
+                            </div>
+                            <div class="Container30"></div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container0 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>
