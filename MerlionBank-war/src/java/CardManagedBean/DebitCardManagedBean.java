@@ -60,6 +60,12 @@ public class DebitCardManagedBean implements Serializable {
     private String debitCardSelected;
     //view Debit Card
     private List<DebitCard> debitCards;
+    //debit card chargeback
+    private String merchantName;
+    private Date transactionDate;
+    private String transactionAmount;
+
+    
 
     @PostConstruct
     public void init() {
@@ -111,6 +117,15 @@ public class DebitCardManagedBean implements Serializable {
             System.out.print("dashboard to view Debit Card encounter error!");
         }
     }
+    
+    public void dashboardToChargeback(ActionEvent event){
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/debitCardChargeback.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to Debit Card Chargeback encounter error!");
+        }
+    }
 
     public void verifyDebitCard(ActionEvent event) throws DebitCardException, IOException {
         try {
@@ -156,6 +171,15 @@ public class DebitCardManagedBean implements Serializable {
         debitCardTypeList = dcsb.getDebitCardType();
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/CardManagement/debitCardApply.xhtml");
+    }
+    
+    public void chargeback(ActionEvent event){
+        if((merchantName!=null) && (transactionDate!=null) && (transactionAmount!=null)){
+            //send out chargeback request for merlion bank staff to approve
+        }else{
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in the blank box!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
     }
 
     public void createDebitCard(ActionEvent event) throws IOException, UserHasDebitCardException {
@@ -312,6 +336,30 @@ public class DebitCardManagedBean implements Serializable {
 
     public void setDebitCards(List<DebitCard> debitCards) {
         this.debitCards = debitCards;
+    }
+    
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    public Date getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public String getTransactionAmount() {
+        return transactionAmount;
+    }
+
+    public void setTransactionAmount(String transactionAmount) {
+        this.transactionAmount = transactionAmount;
     }
 
 }
