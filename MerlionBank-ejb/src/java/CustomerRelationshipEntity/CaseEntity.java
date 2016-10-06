@@ -6,6 +6,7 @@
 package CustomerRelationshipEntity;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerMessage;
 import CommonEntity.Staff;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,6 +48,17 @@ public class CaseEntity implements Serializable {
     
     @ManyToOne
     private Staff staff;
+    
+     @OneToOne(cascade={CascadeType.ALL}) 
+   private CustomerMessage customerMessage;
+
+    public CustomerMessage getCustomerMessage() {
+        return customerMessage;
+    }
+
+    public void setCustomerMessage(CustomerMessage customerMessage) {
+        this.customerMessage = customerMessage;
+    }
 
     public Staff getStaff() {
         return staff;

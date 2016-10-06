@@ -5,12 +5,15 @@
  */
 package CommonEntity;
 
+import CustomerRelationshipEntity.CaseEntity;
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -38,6 +41,17 @@ public class CustomerMessage implements Serializable {
     
       @ManyToOne
 private Staff staff;
+      
+      @OneToOne(cascade={CascadeType.ALL}) 
+   private CaseEntity caseEntity;
+
+    public CaseEntity getCaseEntity() {
+        return caseEntity;
+    }
+
+    public void setCaseEntity(CaseEntity caseEntity) {
+        this.caseEntity = caseEntity;
+    }
 
     public Staff getStaff() {
         return staff;
