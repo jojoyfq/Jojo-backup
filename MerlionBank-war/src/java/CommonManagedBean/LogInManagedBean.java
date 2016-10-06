@@ -34,6 +34,7 @@ import javax.faces.event.ActionEvent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.Flash;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -70,7 +71,10 @@ public class LogInManagedBean implements Serializable {
     private List data = new ArrayList();
     private List accountTypes;
     private Long customerId;
-
+    
+    @Inject
+    private CustomerViewActionManagedBean customerViewActionManagedBean;
+    
     public LogInManagedBean() {
         logInAttempts = 0;
     }
@@ -97,6 +101,7 @@ public class LogInManagedBean implements Serializable {
 //    public void setAccountType(String accountType) {
 //        this.accountType = accountType;
 //    }
+    
     @PostConstruct
     public void init() {
         selectedCustomer = new Customer();
@@ -120,8 +125,14 @@ public class LogInManagedBean implements Serializable {
     }
     
     public void goToStaffLogInPage(ActionEvent event )throws IOException{
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/staffLogInHome.xhtml");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInHome.xhtml");
 
+    }
+    
+    public void viewCustomerActionLog(ActionEvent event) throws IOException, ListEmptyException{
+      customerViewActionManagedBean.viewLoggingAction(event);
+
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/viewActionLog.xhtml"); 
     }
 
 //   private void warnMsg(String message) {
@@ -195,7 +206,7 @@ public class LogInManagedBean implements Serializable {
                         message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your account has been locked out.");
 
                         RequestContext.getCurrentInstance().showMessageInDialog(message);
-                        System.out.println(amsbl.lockAccount(customerId));
+                        System.out.println(amsbl.lockAccount(ic));
                     }
                 } else {
                     selectedCustomer = amsbl.diaplayCustomerId(customerId);
@@ -274,7 +285,7 @@ public class LogInManagedBean implements Serializable {
     }
 
 
-    public String modifyProfile(ActionEvent event) throws UserExistException {
+    public void modifyProfile(ActionEvent event) throws UserExistException, IOException {
 
         try {
 //            if (FacesContext.getCurrentInstance().getResponseComplete()) {
@@ -292,11 +303,15 @@ public class LogInManagedBean implements Serializable {
 //                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Profile edited successfully!");
 //
 //                RequestContext.getCurrentInstance().showMessageInDialog(message);
-                   FacesContext facesContext = FacesContext.getCurrentInstance();
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Profile edited successfully!"));
-                Flash flash = facesContext.getExternalContext().getFlash();
-                flash.setKeepMessages(true);
-                flash.setRedirect(true);
+//                   FacesContext facesContext = FacesContext.getCurrentInstance();
+//                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Profile edited successfully!"));
+//                Flash flash = facesContext.getExternalContext().getFlash();
+//                flash.setKeepMessages(true);
+//                flash.setRedirect(true);
+     
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Log In Message", "Profile updated successfully!");
+
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
 
             } else {
                 System.out.println("Please fill in correct information!");
@@ -312,7 +327,7 @@ public class LogInManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         }
-        return"dashboard";
+     //   return"dashboard";
     }
 
      public void logout() throws IOException {

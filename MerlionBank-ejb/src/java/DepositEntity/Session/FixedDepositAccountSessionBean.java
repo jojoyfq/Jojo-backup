@@ -227,7 +227,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             savingAccounts.setBalance(updateSavingAccountBalance);  //update the balance
 
             //update the balance of the fixed deposit account (+)         
-            fixedDepositAccount.setBalance(amount);
+            fixedDepositAccount.setBalance(fixedDepositAccount.getBalance().add(amount));
             System.out.print("transfer to fixed done");
             //      em.persist(customer);
             //create a transaction record for saving account
@@ -261,8 +261,12 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     }
 
     @Override
-    public void logStaffAction(String description, Long customerId, Staff staff) {
+    public void logStaffAction(String description, Long customerId, Long staffId) {
         List<StaffAction> actions = new ArrayList<>();
+        System.out.print(customerId);
+        System.out.print(staffId);
+        
+        Staff staff = em.find(Staff.class, staffId);
         StaffAction action = new StaffAction(Calendar.getInstance().getTime(), description, customerId, staff);
         em.persist(action);
         System.out.print(action.getDescription());

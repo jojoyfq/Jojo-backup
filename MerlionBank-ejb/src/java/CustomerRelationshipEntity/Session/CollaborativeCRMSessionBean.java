@@ -6,6 +6,8 @@
 package CustomerRelationshipEntity.Session;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
+import CommonEntity.CustomerMessage;
 import CommonEntity.Session.InboxManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
@@ -20,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -32,6 +35,7 @@ import javax.persistence.Query;
 public class CollaborativeCRMSessionBean implements CollaborativeCRMSessionBeanLocal {
 @PersistenceContext
     private EntityManager em;
+@Inject
 private InboxManagementSessionBeanLocal imsbl;
 
 @Override
@@ -54,13 +58,21 @@ public List<Staff> retrieveStaffsAccordingToRole(String issueType)throws ListEmp
         if (staffList.isEmpty()){
             throw new ListEmptyException("There are no available staff. Please choose another department.");
          }
+        
+        List<Staff> newStaffList=new ArrayList<Staff>();
+        for (int i=0;i<staffList.size();i++){
+            if (!staffList.get(i).getStatus().equals("terminated") || !staffList.get(i).getStatus().equals("inactive"))
+                newStaffList.add(staffList.get(i));
+        }
        return staffList; 
     
     
 }
 
 @Override
-public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseStaffID) throws UserNotExistException{
+public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseStaffID,Long messageId) throws UserNotExistException{
+    CustomerMessage customerMessage=em.find(CustomerMessage.class, messageId);
+    
     Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", customerIc);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -78,23 +90,43 @@ public CaseEntity createCase(Date caseCreatedTime, String customerIc,Long caseSt
     CaseEntity newCase=new CaseEntity("unresolved",Calendar.getInstance().getTime(),customer,staff);
     List<Issue>issueList=new ArrayList<Issue>();
     newCase.setIssues(issueList);
+    newCase.setCustomerMessage(customerMessage);
+    List<CaseEntity> currentCases=customer.getCases();
+    currentCases.add(newCase);
+    customer.setCases(currentCases);
+
     em.persist(newCase);
     em.flush();
     return newCase;
 }
 
 @Override
-public void addIssue(String content, String issueType, String status, String solution, Staff assignedStaff, CaseEntity newCase){
-   
+
+public Issue addIssue(String content, String issueType, String status, String solution, String assignedStaffName, Long caseId){
+    CaseEntity newCase=em.find(CaseEntity.class,caseId);
+   Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffName = :assignedStaffName");
+        q.setParameter("assignedStaffName", assignedStaffName);
+        List<Staff> temp = new ArrayList(q.getResultList());
+        Staff assignedStaff=temp.get(temp.size()-1);
+    
     Issue issue=new Issue(content,issueType,status,solution,newCase,assignedStaff);
-    em.persist(issue);
+     em.persist(issue);
     em.flush();
     
-    List<Issue> issueList=newCase.getIssues();
-    issueList.add(issue);
-    newCase.setIssues(issueList);
-    em.persist(newCase);
-    em.flush();
+    List<Issue> currentIssues=newCase.getIssues();
+    currentIssues.add(issue);
+    newCase.setIssues(currentIssues);
+   
+
+  
+    
+//    List<Issue> issueList=newCase.getIssues();
+//    issueList.add(issue);
+//    newCase.setIssues(issueList);
+    
+     System.out.println("Session bean add a issue, issue size: "+ newCase.getIssues().size());
+    
+    return issue;
     
 }
 
@@ -125,7 +157,7 @@ public List<Issue> viewAssignedCase(Long staffId) throws ListEmptyException{
 }
 
 @Override
-public boolean deleteIssue(Long staffId,Long issueId){
+public List<Issue> deleteIssue(Long staffId,Long issueId){
     Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         q.setParameter("id", staffId);
         Staff staff = (Staff) q.getSingleResult();
@@ -138,13 +170,13 @@ public boolean deleteIssue(Long staffId,Long issueId){
         em.persist(issue);
         em.flush();
         
-        return true;
+        return staff.getIssues();
     
     
 }
 
 @Override 
-public boolean deleteCase(Long staffId,Long caseId){
+public List<CaseEntity> deleteCase(Long staffId,Long caseId){
     Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         q.setParameter("id", staffId);
         Staff staff = (Staff) q.getSingleResult();
@@ -164,12 +196,17 @@ public boolean deleteCase(Long staffId,Long caseId){
         em.persist(caseEntity);
         em.flush();
         
-        return true;   
+        return staff.getCases();   
 }
 
 //Staff request for more information from customer
 @Override
-public boolean staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException{
+public List<Issue> staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException{
+   
+     Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
+        q.setParameter("id", staffId);
+        Staff staff = (Staff) q.getSingleResult();
+        
     Query query = em.createQuery("SELECT a FROM Issue a WHERE a.id = :id");
         query.setParameter("id", issueId);
         Issue issue = (Issue) query.getSingleResult();
@@ -182,17 +219,20 @@ public boolean staffModifyIssue(Long staffId, Long issueId,String solution)throw
         em.flush();
         
         try{
+            System.out.println("inside:customer.getId() "+issue.getCaseEntity().getCustomer().getId());
+            System.out.println("inside:staff.getId() " +staffId);
+            System.out.println("inside:solution "+solution);
         imsbl.sendMessage(issue.getCaseEntity().getCustomer().getId(),staffId, "Merlion Bank - Require more information for your issue",solution);
                 }catch (EmailNotSendException ex){
                     throw new EmailNotSendException ("Emails not sent");
                 }
         
-   return true;
+   return staff.getIssues();
 }
 
 //Staff solve an issue
 @Override 
-public boolean staffSolveIssue(Long staffId, Long issueId,String solution){
+public Issue staffSolveIssue(Long staffId, Long issueId,String solution){
     Query query = em.createQuery("SELECT a FROM Issue a WHERE a.id = :id");
         query.setParameter("id", issueId);
         Issue issue = (Issue) query.getSingleResult();
@@ -203,7 +243,7 @@ public boolean staffSolveIssue(Long staffId, Long issueId,String solution){
         em.persist(issue);
         em.flush();
         
-   return true;
+   return issue;
     
 }
 
@@ -237,5 +277,98 @@ public void closeCase() throws EmailNotSendException{
     
 }
 
+//Customer views status of the case processing 
+@Override
+public List<CaseEntity> customerViewCases(Long customerId)throws ListEmptyException{
+   Query query = em.createQuery("SELECT a FROM Customer a WHERE a.id = :id");
+        query.setParameter("id", customerId);
+        Customer customer = (Customer) query.getSingleResult();
+        
+        List<CaseEntity> customerCases=customer.getCases();
+        if (customerCases.isEmpty()){
+            throw new ListEmptyException("customer has no Cases！");
+        }
+        System.out.println("FQ say: case size "+customerCases.size());
+return customerCases;
+        
+}
 
+
+//Customer view case
+@Override
+public CaseEntity customerViewCase(Long caseId){
+    Query query = em.createQuery("SELECT a FROM CaseEnity a WHERE a.id = :id");
+        query.setParameter("id", caseId);
+        CaseEntity caseEntity = (CaseEntity) query.getSingleResult(); 
+        return caseEntity;
+}
+
+//Customer modifies the details of the case filed
+@Override
+public boolean customerModifyIssue(Long customerId, Long issueId,String content){
+    Query query = em.createQuery("SELECT a FROM Issue a WHERE a.id = :id");
+        query.setParameter("id", issueId);
+        Issue issue = (Issue) query.getSingleResult();
+        
+        Customer customer=em.find(Customer.class,customerId);
+        System.out.print("customer add content"+content);
+        
+        issue.setStatus("unresolved");
+        issue.setContent(content);
+        issue.getCaseEntity().setStatus("unresolved");
+        
+        em.persist(issue);
+        em.flush();
+        System.out.print("After customer add content"+issue.getContent());
+        //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Update case information", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+        
+   return true;
+}
+
+//Customer rate issue
+@Override
+public boolean customerRateIssue(Long customerId,Long issueId,Integer rating){
+    Customer customer=em.find(Customer.class,customerId);
+    Issue issue=em.find(Issue.class,issueId);
+   
+    int performance=(int)rating;
+   issue.setRating(performance);
+   em.persist(issue);
+   
+   //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Customer rates an issue", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+   return true; 
+}
+
+@Override
+public boolean checkStatus(Long issueId){
+      Issue issue=em.find(Issue.class,issueId);
+      if( issue.getStatus().equals("moreInfo"))
+              return true;
+      else 
+          return false;
+
+}
+
+@Override
+public List<Issue> retrieveIssues(Long caseId){
+    Query q = em.createQuery("SELECT a FROM CaseEntity a WHERE a.id = :id");
+        q.setParameter("id", caseId);
+        CaseEntity caseEntity = (CaseEntity) q.getSingleResult();
+    System.out.println("Fangqing said: issue size is "+caseEntity.getIssues().size());
+    return caseEntity.getIssues();
+}
 }

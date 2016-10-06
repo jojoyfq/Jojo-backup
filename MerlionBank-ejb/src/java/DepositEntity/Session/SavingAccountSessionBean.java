@@ -13,6 +13,7 @@ import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import DepositEntity.TransactionRecord;
 import DepositEntity.TransferRecord;
+import Exception.UserCloseAccountException;
 import Exception.UserHasNoInactiveSavingAccountException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserHasPendingTransactionException;
@@ -84,44 +85,42 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             return savingAccountString;
         }
     }
-    
+
     @Override
-    public Double getInterestRate(String accountType, String interestName){
+    public Double getInterestRate(String accountType, String interestName) {
         Query q = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
         q.setParameter("accountType", accountType);
         List<SavingAccountType> savingAccountTypes = q.getResultList();
         SavingAccountType temp = savingAccountTypes.get(0);
-        
-        if(interestName.equals("InterestRate1")){
+
+        if (interestName.equals("InterestRate1")) {
             return temp.getInterestRate1();
-        }else if(interestName.equals("InterestRate2")){
+        } else if (interestName.equals("InterestRate2")) {
             return temp.getInterestRate2();
-        }else{
+        } else {
             return temp.getInterestRate3();
         }
     }
-    
+
     @Override
-    public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3){
+    public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3) {
         Query q = em.createQuery("SELECT a FROM SavingAccountType a WHERE a.accountType = :accountType");
         q.setParameter("accountType", accountType);
         List<SavingAccountType> savingAccountTypes = q.getResultList();
         SavingAccountType temp = savingAccountTypes.get(0);
-        
+
         temp.setInterestRate1(interest1);
         temp.setInterestRate2(interest2);
         temp.setInterestRate3(interest3);
-        
+
         em.flush();
     }
 
     @Override
     public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
         List<Long> savingAccountNumbers = new ArrayList();
-        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
-        q.setParameter("customerID", customerID);
-        List<Customer> customers = q.getResultList();
-        Customer customer = customers.get(0);
+        Customer customer = em.find(Customer.class, customerID);
+        
         if (customer.getSavingAccounts().isEmpty()) {
             throw new UserHasNoSavingAccountException("User has no saving account!");
         } else {
@@ -153,7 +152,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             return savingAccountNumbers;
         }
     }
-    
+
     @Override
     public List<Long> getNotTerminatedAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
         List<Long> savingAccountNumbers = new ArrayList();
@@ -257,31 +256,40 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     }
 
     @Override
-    public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException {
-        String status = "pending";
-        //check whether got pending transaction as giverAccount
-        Query q = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum AND a.status =:giverStatus");
-        q.setParameter("giverAccountNum", savingAccountNum);
-        q.setParameter("giverStatus", status);
-        List<TransactionRecord> record1 = q.getResultList();
-
-        //check whether got pending transaction as a recipientAccount
-        Query w = em.createQuery("SELECT b FROM TransactionRecord b WHERE b.recipientAccountNum = :recipientAccountNum AND b.status =:recipientStatus");
-        w.setParameter("recipientAccountNum", savingAccountNum);
-        w.setParameter("recipientStatus", status);
-        List<TransactionRecord> record2 = w.getResultList();
-
-        if (record1.isEmpty() && record2.isEmpty()) {
-            System.out.print("User has no pending transaction!");
-            Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
-            m.setParameter("savingAccountNum", savingAccountNum);
-            List<SavingAccount> records3 = m.getResultList();
-            SavingAccount record3 = records3.get(0);
-            record3.setStatus("terminated");
-
-            em.flush();
+    public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException, UserCloseAccountException {
+        Query t = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
+        t.setParameter("savingAccountNum", savingAccountNum);
+        List<SavingAccount> savingAccounts = t.getResultList();
+        SavingAccount savingAccount = savingAccounts.get(0);
+        if (savingAccount.getAvailableBalance().compareTo(BigDecimal.ZERO) != 0) {
+            throw new UserCloseAccountException("Please transfer the remaining amount to another account before close this account!");
         } else {
-            throw new UserHasPendingTransactionException("This Saving Account Has pending Transactions!");
+
+            String status = "pending";
+            //check whether got pending transaction as giverAccount
+            Query q = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum AND a.status =:giverStatus");
+            q.setParameter("giverAccountNum", savingAccountNum);
+            q.setParameter("giverStatus", status);
+            List<TransactionRecord> record1 = q.getResultList();
+
+            //check whether got pending transaction as a recipientAccount
+            Query w = em.createQuery("SELECT b FROM TransactionRecord b WHERE b.recipientAccountNum = :recipientAccountNum AND b.status =:recipientStatus");
+            w.setParameter("recipientAccountNum", savingAccountNum);
+            w.setParameter("recipientStatus", status);
+            List<TransactionRecord> record2 = w.getResultList();
+
+            if (record1.isEmpty() && record2.isEmpty()) {
+                System.out.print("User has no pending transaction!");
+                Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
+                m.setParameter("savingAccountNum", savingAccountNum);
+                List<SavingAccount> records3 = m.getResultList();
+                SavingAccount record3 = records3.get(0);
+                record3.setStatus("terminated");
+
+                em.flush();
+            } else {
+                throw new UserHasPendingTransactionException("This Saving Account Has pending Transactions!");
+            }
         }
     }
 
@@ -311,13 +319,15 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         if (savingAccount.deductAmt(withdrawAmount)) {
             BigDecimal updatedBalance = savingAccount.getAvailableBalance().subtract(withdrawAmount);
             savingAccount.setAvailableBalance(updatedBalance);
+            BigDecimal updatedTotalBalance = savingAccount.getBalance().subtract(withdrawAmount);
+            savingAccount.setBalance(updatedTotalBalance);
             em.flush();
             System.out.print("cash withdraw successful");
             System.out.print(savingAccount.getAvailableBalance());
-            
+
             Date currentTime = Calendar.getInstance().getTime();
             java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-            TransactionRecord transactionRecord = new TransactionRecord("CW",withdrawAmount,"settled", "Cash Withdraw",currentTimestamp,accountNum,null);
+            TransactionRecord transactionRecord = new TransactionRecord("CW", withdrawAmount, "settled", "Cash Withdraw", currentTimestamp, accountNum, null);
             em.persist(transactionRecord);
             em.flush();
         } else {
@@ -334,17 +344,19 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
 
         BigDecimal updatedBalance = savingAccount.getAvailableBalance().add(depositAmount);
         savingAccount.setAvailableBalance(updatedBalance);
+        BigDecimal updatedTotalBalance = savingAccount.getBalance().add(depositAmount);
+        savingAccount.setBalance(updatedTotalBalance);
         em.flush();
         System.out.print("cash deposit successful");
         System.out.print(savingAccount.getAvailableBalance());
-        
+
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-        TransactionRecord transactionRecord = new TransactionRecord("CD",depositAmount,"settled", "Cash Deposit",currentTimestamp,null,accountNum);
+        TransactionRecord transactionRecord = new TransactionRecord("CD", depositAmount, "settled", "Cash Deposit", currentTimestamp, null, accountNum);
         em.persist(transactionRecord);
         em.flush();
     }
-    
+
     @Override
     public void logAction(String description, Long customerId) {
         List<CustomerAction> actions = new ArrayList<>();
@@ -362,7 +374,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         em.persist(customer);
         em.flush();
     }
-    
+
     @Override
     public void logStaffAction(String description, Long customerId, Staff staff) {
         List<StaffAction> actions = new ArrayList<>();
@@ -378,7 +390,145 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         }
         em.flush();
     }
+
+    //daily interest accrual 
+    @Override
+    public void dailyInterestAccrued() {
+        Query query1 = em.createQuery("SELECT a FROM SavingAccount a");
+        List<SavingAccount> savingAccounts = new ArrayList(query1.getResultList());
+
+        BigDecimal availableBalance;
+        BigDecimal remainingBalance;
+        BigDecimal dailyInterest;
+        BigDecimal specialInterest;
+        double interestRate;
+        BigDecimal accumulatedDailyInterest;
+        long savingAccountType;
+
+        for (int i = 0; i < savingAccounts.size(); i++) {
+            System.out.println("***** inside the loop *****");
+            String status = savingAccounts.get(i).getStatus();
+            if (status.equals("active")) {
+                //System.out.println("***** display saving active account *****");
+                //System.out.println(savingAccounts);
+                
+                savingAccountType = savingAccounts.get(i).getSavingAccountType().getId();
+                System.out.println(savingAccounts.get(i).getSavingAccountType().getId());
+                
+                if (savingAccountType == 13) {
+                    System.out.println("********** Everyday Saving Account daily interest ********** ");
+                    availableBalance = savingAccounts.get(i).getAvailableBalance();
+                    
+                    System.out.println("***** account balance: " + availableBalance);
+                    
+                    if (availableBalance.compareTo(BigDecimal.valueOf(150000)) == 1) {
+                        System.out.println("********** Everyday Saving Account with balance greater than 150,000 **********");
+                        BigDecimal firstInterest = BigDecimal.valueOf(50000 * savingAccounts.get(i).getSavingAccountType().getInterestRate1());
+                        System.out.println("***** your first interest: " + firstInterest);
+                        
+                        BigDecimal secondInterest = BigDecimal.valueOf(100000 * savingAccounts.get(i).getSavingAccountType().getInterestRate2());
+                        System.out.println("***** your second interest: " + secondInterest);
+                        
+                        remainingBalance = availableBalance.subtract(BigDecimal.valueOf(150000));
+                        BigDecimal remainingInterest = remainingBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate3()));
+                        System.out.println("***** your remaining interest: " + remainingInterest);
+
+                        
+                        dailyInterest = firstInterest.add(secondInterest).add(remainingInterest);
+                        System.out.println("********** Daily interest is: " + dailyInterest);
+                        
+                        accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest();
+                        System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
+                        savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest.add(dailyInterest));
+
+                    } else if (availableBalance.compareTo(BigDecimal.valueOf(150000)) == -1 && availableBalance.compareTo(BigDecimal.valueOf(50000)) == 1){
+                        System.out.println("********** Everyday Saving Account with balance in between 150,000 and 50,000 **********");
+                        BigDecimal firstInterest = BigDecimal.valueOf(50000 * savingAccounts.get(i).getSavingAccountType().getInterestRate1());
+                        System.out.println("***** your first interest: " + firstInterest);
+                        
+                        remainingBalance = BigDecimal.valueOf(150000).subtract(availableBalance);
+                        System.out.println("***** your remaining Balance is* " + remainingBalance);
+                        BigDecimal remainingInterest = remainingBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate2()));
+                        System.out.println("***** your remaining interest: " + remainingInterest);
+                        
+                        dailyInterest = firstInterest.add(remainingInterest);
+                        System.out.println("********** Daily interest is: " + dailyInterest);
+                        accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest().add(dailyInterest);
+                        System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
+                        savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest);
+
+                    } else if ((availableBalance.compareTo(BigDecimal.valueOf(50000)) == -1) || (availableBalance.compareTo(BigDecimal.valueOf(50000)) == 0)) {
+                        System.out.println("********** Everyday Saving Account with balance $0 - $50,000 **********");
+                        dailyInterest = availableBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate1()));
+                        System.out.println("********** Daily interest is: " + dailyInterest);
+                        accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest().add(dailyInterest);
+                        System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
+                        savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest);
+                    }
+                    else if(availableBalance.compareTo(BigDecimal.valueOf(150000)) == 0){
+                        System.out.println("********** Everyday Saving Account with balance is $150000 **********");
+                        BigDecimal firstInterest = BigDecimal.valueOf(50000 * savingAccounts.get(i).getSavingAccountType().getInterestRate1());
+                        System.out.println("***** your first interest: " + firstInterest);
+                        
+                        BigDecimal remainingInterest = BigDecimal.valueOf(100000 * savingAccounts.get(i).getSavingAccountType().getInterestRate2());
+                        System.out.println("***** your remaining interest: " + remainingInterest);
+                        
+                        dailyInterest = firstInterest.add(remainingInterest);
+                        System.out.println("********** Daily interest is: " + dailyInterest);
+                        accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest().add(dailyInterest);
+                        System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
+                        savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest);
+                    }
+                } else if (savingAccountType == 11) {
+                    availableBalance = savingAccounts.get(i).getAvailableBalance();
+                    System.out.println("***** Account balance: " + availableBalance);
+                    System.out.println("********** Monthly Saving Account daily interest ********** ");
+                    //Monthly Saving Account
+                    dailyInterest = availableBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate1()));
+                    System.out.println("********** Daily interest is: " + dailyInterest);
+                    accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest();
+                    System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
+                    savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest.add(dailyInterest));
+                } else if (savingAccountType == 12) {
+                    System.out.println("********** Youth Saving Account daily interest ********** ");
+                    //Youth saving account
+                    availableBalance = savingAccounts.get(i).getAvailableBalance();
+                    System.out.println("***** Account balance: " + availableBalance);
+                    dailyInterest = availableBalance.multiply(BigDecimal.valueOf(savingAccounts.get(i).getSavingAccountType().getInterestRate1()));
+                    System.out.println("********** Daily interest is: " + dailyInterest);
+                    accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest();
+                    System.out.println("********** Accumlated interest is: " + accumulatedDailyInterest);
+                    savingAccounts.get(i).setAccumDailyInterest(accumulatedDailyInterest.add(dailyInterest));
+                }
+            }
+        }
+    }
     
+    @Override
+    public void monthlyInterestCrediting(){
+        BigDecimal accumulatedDailyInterest;
+        BigDecimal availableBalance;
+        BigDecimal newAvailableBalance;
+        String status;
+        
+        Query query1 = em.createQuery("SELECT a FROM SavingAccount a");
+        List<SavingAccount> savingAccounts = new ArrayList(query1.getResultList());
+        
+        for (int i = 0; i < savingAccounts.size(); i++) {
+            System.out.println("***** inside the loop *****");
+            status = savingAccounts.get(i).getStatus();
+            if (status.equals("active")){
+                accumulatedDailyInterest = savingAccounts.get(i).getAccumDailyInterest();
+                availableBalance = savingAccounts.get(i).getAvailableBalance();
+                newAvailableBalance = accumulatedDailyInterest.add(availableBalance);
+                savingAccounts.get(i).setAvailableBalance(newAvailableBalance);
+                em.flush();
+                savingAccounts.get(i).setAccumDailyInterest(BigDecimal.ZERO);
+                em.flush();
+            }
+        }
+    }
+
     public Customer getCustomer() {
         return customer;
     }

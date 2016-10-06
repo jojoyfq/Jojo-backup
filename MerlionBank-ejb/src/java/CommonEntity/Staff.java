@@ -8,6 +8,7 @@ package CommonEntity;
 import CustomerRelationshipEntity.CaseEntity;
 import CustomerRelationshipEntity.Issue;
 import CustomerRelationshipEntity.StaffAction;
+import LoanEntity.Loan;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,19 +56,32 @@ public class Staff implements Serializable {
 @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<CustomerMessage> customerMessages;
 
-  @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
-    private List<CaseEntity> caseEntities;
-
-    public List<CaseEntity> getCaseEntities() {
-        return caseEntities;
-    }
-
-    public void setCaseEntities(List<CaseEntity> caseEntities) {
-        this.caseEntities = caseEntities;
-    }
-
-@OneToMany(cascade={CascadeType.ALL},mappedBy="caseEntity")
+@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<Issue> issues;
+
+@OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
+    private List<CaseEntity> cases;
+
+@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "staff")
+    private List<Loan> loans = new ArrayList<Loan>();
+
+    public List<CaseEntity> getCases() {
+        return cases;
+    }
+
+    public void setCases(List<CaseEntity> cases) {
+        this.cases = cases;
+    }
+
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<Issue> issues) {
+        this.issues = issues;
+    }
+
+
 
     public Staff() {
     }
@@ -83,13 +97,6 @@ public class Staff implements Serializable {
     }
 
     
-    public List<Issue> getIssues() {
-        return issues;
-    }
-
-    public void setIssues(List<Issue> issues) {
-        this.issues = issues;
-    }
 
     public String getSalt() {
         return salt;

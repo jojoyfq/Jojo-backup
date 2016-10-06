@@ -1,51 +1,70 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+    <ui:define name="head">
+    </ui:define>
 
-    <f:view>
-        <h:head>
-            <title>Withdraw Fixed Deposit</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        </h:head>
-        <h:body>
+    <ui:define name="content">
 
-            <h:form>
-                <p:panel id="panel" header="Customer Fixed Deposit Account Details" >
+        <!-- Left Column -->
+        <div class="Container10 NoPadding Responsive100">
 
-                    <h:panelGrid columns="4" cellpadding="5">
-                        <p:dataTable id="fixeddeposittable" var="fixedDepositAccount" value="#{fixedDepositStaffManagedBean.withdrawableFixedDeposit}" selectionMode="single" selection="#{fixedDepositStaffManagedBean.selectedFixedDeposit}" rowKey="#{fixedDepositAccount.accountNumber}" >
-                            
-                            <p:column headerText="Account Number">
-                                <h:outputText value="#{fixedDepositAccount.accountNumber}" />
-                            </p:column>
-                            <p:column headerText="Amount in Account">
-                                <h:outputText value="#{fixedDepositAccount.balance}" />
-                            </p:column>
-                            
-                            <p:column headerText="Start Date">
-                                <h:outputLabel value="#{fixedDepositAccount.startDate}" >
-                                 <f:convertDateTime pattern="dd/MM/yyyy" />
-                                 </h:outputLabel>
-                            </p:column>
-                            
-                            <p:column headerText="End Date">
-                                <h:outputLabel value="#{fixedDepositAccount.endDate}" >
-                                 <f:convertDateTime pattern="dd/MM/yyyy" />
-                                </h:outputLabel>
-                            </p:column>
-                            <f:facet name="footer">
-                                <p:commandButton actionListener="#{fixedDepositStaffManagedBean.withdraw(event)}" value="Withdraw" oncomplete="" />
-                            </f:facet>
-                                                     
-                        </p:dataTable>
-                    </h:panelGrid>
-                </p:panel>
-            </h:form>
-        </h:body>
-    </f:view>
-</html>
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container80 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Withdraw Fixed Deposit Account </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container80 NoPadding Responsive50 ui-fluid">
+
+                        <h:form>
+                            <p:panel id="panel" header="Customer Fixed Deposit Account Details" >
+
+                                <h:panelGrid columns="4" cellpadding="5">
+                                    <p:dataTable id="fixeddeposittable" var="fixedDepositAccount" value="#{fixedDepositStaffManagedBean.withdrawableFixedDeposit}" selectionMode="single" selection="#{fixedDepositStaffManagedBean.selectedFixedDeposit}" rowKey="#{fixedDepositAccount.accountNumber}" >
+
+                                        <p:column headerText="Account Number">
+                                            <h:outputText value="#{fixedDepositAccount.accountNumber}" />
+                                        </p:column>
+                                        <p:column headerText="Amount in Account">
+                                            <h:outputText value="#{fixedDepositAccount.balance}" />
+                                        </p:column>
+
+                                        <p:column headerText="Start Date">
+                                            <h:outputLabel value="#{fixedDepositAccount.startDate}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputLabel>
+                                        </p:column>
+
+                                        <p:column headerText="End Date">
+                                            <h:outputLabel value="#{fixedDepositAccount.endDate}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputLabel>
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <p:commandButton actionListener="#{fixedDepositStaffManagedBean.withdraw(event)}" value="Withdraw" oncomplete="" />
+                                        </f:facet>
+
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container10 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

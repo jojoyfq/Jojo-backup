@@ -9,6 +9,7 @@ import CommonEntity.Staff;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import DepositEntity.TransactionRecord;
+import Exception.UserCloseAccountException;
 import Exception.UserHasNoInactiveSavingAccountException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserHasPendingTransactionException;
@@ -29,7 +30,7 @@ public interface SavingAccountSessionBeanLocal {
     public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
     public List<List> getTransactionRecord(Long savingAccountNumber);
     public List<SavingAccount> getSavingAccountForCloseAccount(Long savingAccountNum);
-    public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException;
+    public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException,UserCloseAccountException;
     public List<Long> getInactiveSavingAccountNumbers(Long customerID) throws UserHasNoInactiveSavingAccountException;
     public void checkInactiveSavingAccount(Long inactiveSavingAccountNum) throws UserNotEnoughBalanceException;
     public void cashWithdraw(Long accountNum, BigDecimal withdrawAmount ) throws UserNotEnoughBalanceException;
@@ -39,4 +40,8 @@ public interface SavingAccountSessionBeanLocal {
     public void setInterestRate(String accountType, Double interest1, Double interest2, Double interest3);
     public void logAction(String description, Long customerId);
     public void logStaffAction(String description, Long customerId, Staff staff);
+
+    public void dailyInterestAccrued();
+
+    public void monthlyInterestCrediting();
 }

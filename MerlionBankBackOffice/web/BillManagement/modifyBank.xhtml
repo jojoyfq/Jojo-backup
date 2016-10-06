@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Modify Bank Information </div>
+                    <div class="Separator"></div>
+
+
+                    <div class="Container100">
+                        <h:form id="form">
+
+                            <p:panel style="margin-bottom:10px;" id="panel">
+
+                                <p:messages id="msgs" />
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    
+                                   <h:outputLabel for="bankName" value="Bank Name:" /> 
+                                   <p:inputText id="bankName" value="#{billStaffManagedBean.bankNameSelected}"   required="true" requiredMessage="Please fill in bank name!"/>
+                                    <p:message for="bankName" display="icon" />
+                                    
+                                    <h:outputLabel for="bankSWIFT" value="Bank SWIFT Code:" /> 
+                                   <p:inputText id="bankSWIFT" value="#{billStaffManagedBean.bankSWIFTSelected}"   required="true" requiredMessage="Please fill in SWIFT code!"/>
+                                    <p:message for="bankSWIFT" display="icon" />
+                                    
+                                    <h:outputLabel for="bankUEN" value="Bank UEN:" /> 
+                                    <p:inputText id="bankUEN" value="#{billStaffManagedBean.bankUENSelected}"   required="true" requiredMessage="Please fill bank UEN!"/>
+                                    <p:message for="bankUEN" display="icon" />
+                                    
+                                   <h:outputLabel for="bankAddress" value="Bank Address:" /> 
+                                   <p:inputText id="bankAddress" value="#{billStaffManagedBean.bankAddressSelected}"   required="true" requiredMessage="Please fill in bank address!"/>
+                                    <p:message for="bankAddress" display="icon" />
+
+
+                                    <p:commandButton  update ="panel" icon="ui-icon-script" actionListener="#{billStaffManagedBean.modifyBank(event)}" value="Submit" rendered="true" />
+                                </h:panelGrid>
+                            </p:panel>
+
+                        </h:form>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

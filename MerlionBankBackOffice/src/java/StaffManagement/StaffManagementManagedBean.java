@@ -49,6 +49,8 @@ public class StaffManagementManagedBean implements Serializable {
     StaffManagementSessionBeanLocal smsbl;
     @Inject
     staffLogInManagedBean slimb;
+    @Inject
+    RoleManagementManagedBean smmb;
     /**
      * Creates a new instance of StaffManagementManagedBean
      */
@@ -275,6 +277,8 @@ public class StaffManagementManagedBean implements Serializable {
         try {
             if (roleName != null && staffId != null) {
                 staffRoles = smsbl.createRole(staffId, roleName);
+                //update rolemanagement staffRoles 
+                smmb.setStaffRoles(staffRoles);
               //  allRoles.add(staffRoles.getRoleName());
                 List temp = new ArrayList<>();
                 for(int i=0;i<staffRoles.size();i++){
@@ -294,7 +298,7 @@ public class StaffManagementManagedBean implements Serializable {
         }
     }
 
-    public void adminGrantPermissionToRole(ActionEvent event) {
+    public void adminGrantPermissionToRole(ActionEvent event) throws IOException {
 //        if (staffId != null && staffRoleId != null && systemUserWorkspace && systemUserAccount != null && operationalCRM != null && collaborativeCRM != null && fixedDeposit != null && savingAccount != null && counterCash != null && debitCard
 //                != null && creditCard != null && secureLoan != null && unsecureLoan != null && billModule != null && transferModule != null && customerPlan != null && executedPlan != null && finalcialInstrument != null && customerPortfolio != null && staffPerformance != null && customerProductRecommendation != null) {
         this.updateRolesToTrue();
@@ -305,6 +309,7 @@ public class StaffManagementManagedBean implements Serializable {
                     transferModule, customerPlan, executedPlan, finalcialInstrument, customerPortfolio, staffPerformance, customerProductRecommendation);
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Role Assigned Successfully!!!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuccessPage.xhtml");
         } else {
             System.out.println("Please do not leave blanks!");
 
@@ -406,11 +411,12 @@ public class StaffManagementManagedBean implements Serializable {
         }
     }
 
-    public void adminAssignStaffRole(ActionEvent event) throws StaffRoleExistException {
+    public void adminAssignStaffRole(ActionEvent event) throws StaffRoleExistException, IOException {
         try {
             System.out.println("***********Message from managed bean is staffId is: " + staffId + " newStaffId is " + staff.getId() + " roleName is " + selectedRoleName);
             roles.add(smsbl.assignStaffRole(staffId, staff.getId(), selectedRoleName));
             System.out.println("Assigned Role Successfully!!");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/SuccessPage.xhtml");
         } catch (StaffRoleExistException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);

@@ -5,7 +5,11 @@
  */
 package DepositEntity;
 
+import BillEntity.GIROArrangement;
+import BillEntity.RecurrentBillArrangement;
+import CardEntity.DebitCard;
 import CommonEntity.Customer;
+import CommonEntity.OnlineAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -40,6 +44,7 @@ public class SavingAccount implements Serializable {
     private Date endDate;
     private BigDecimal balance;
     private BigDecimal availableBalance;
+    private BigDecimal accumDailyInterest;
     private String status; //activated, inactive, terminated, below balance
     //@OneToOne(mappedBy="savingAccount")
     //private Customer customer;
@@ -47,6 +52,35 @@ public class SavingAccount implements Serializable {
     private Customer customer;
     @ManyToOne
     private SavingAccountType savingAccountType = new SavingAccountType();
+
+    @OneToMany (cascade={CascadeType.ALL},mappedBy="savingAccount")
+    private List<GIROArrangement> giroArrangement;
+    @OneToMany (cascade={CascadeType.ALL},mappedBy="savingAccount")
+    private List<RecurrentBillArrangement> recurrentBillArrangement;
+
+    public List<RecurrentBillArrangement> getRecurrentBillArrangement() {
+        return recurrentBillArrangement;
+    }
+
+    public void setRecurrentBillArrangement(List<RecurrentBillArrangement> recurrentBillArrangement) {
+        this.recurrentBillArrangement = recurrentBillArrangement;
+    }
+    
+    
+    public List<GIROArrangement> getGiroArrangement() {
+        return giroArrangement;
+    }
+
+    public void setGiroArrangement(List<GIROArrangement> giroArrangement) {
+        this.giroArrangement = giroArrangement;
+    }
+    
+    
+
+    @OneToOne(cascade={CascadeType.ALL}) 
+    private DebitCard debitCard; //one saving account is linked with one debit card
+
+
     
 
     public SavingAccount(Long accountNumber, BigDecimal balance, BigDecimal availableBalance, String status, Customer customer, SavingAccountType savingAccountType) {
@@ -58,6 +92,15 @@ public class SavingAccount implements Serializable {
         this.savingAccountType = savingAccountType;
     }
 
+    public DebitCard getDebitCard() {
+        return debitCard;
+    }
+
+    public void setDebitCard(DebitCard debitCard) {
+        this.debitCard = debitCard;
+    }
+    
+    
     public Long getId() {
         return id;
     }
@@ -192,6 +235,14 @@ public class SavingAccount implements Serializable {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+    
+    public BigDecimal getAccumDailyInterest() {
+        return accumDailyInterest;
+    }
+
+    public void setAccumDailyInterest(BigDecimal accumDailyInterest) {
+        this.accumDailyInterest = accumDailyInterest;
     }
 
 }

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Success Page</title>
+        <ui:insert name="head" />
+    </h:head>
+
+    <h:body>
+
+        <div class="Wid100 MarAuto">
+            <div class="Wid80 MarAuto WidAutoOnMobile">
+                <div style="margin-top:10rem;"></div>
+
+                <div class="Wid60 MarAuto WidAutoOnMobile">
+                    <div class="Container100">
+                        <div class="Card ui-fluid">
+                            <div class="CardBigTopic TexAlCenter Purple">System Message</div>
+                            <div class="SeparatorFull"></div>
+
+
+                            <div class="Container100 ui-fluid">
+
+
+                                <div class="Card">
+                                    <h:form>
+                                        <div class="Container10"></div>
+                                        <div class="Container80">
+
+
+                                            <p:panel id="panel">
+
+                                                <p:messages id="msgs" />
+
+                                                <h:panelGrid columns="3" cellpadding="5">
+                                                    <center>
+                                                    <h1> Success!</h1>
+                                                    </center>
+                                                </h:panelGrid>
+
+
+                                            </p:panel>
+                                        </div>
+                                        <div class="Container10"></div>
+
+                                        <div class="EmptyBox20"></div>
+                                        <div class="Container30"></div>
+                                       
+                                        <div class="Container30"></div>
+                                    </h:form>
+                                    <div class="Container100 ui-fluid">
+                                        <div class="Container30"></div>
+                                        <div class="Container40">
+                                            <h:form>  
+                                                <p:commandButton value="Return To Home Page"  actionListener="#{accountActivationManagedBean.goToLogInPage}" icon="ui-icon-check" />
+                                            </h:form>
+                                        </div>
+                                        <div class="Container30"></div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+        <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+
+    </h:body>
+
+</html>

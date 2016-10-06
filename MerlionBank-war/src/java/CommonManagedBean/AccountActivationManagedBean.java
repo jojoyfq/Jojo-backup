@@ -119,7 +119,7 @@ public class AccountActivationManagedBean implements Serializable {
         }
     }
 
-    public String resetInitialPassword() throws PasswordTooSimpleException {
+    public void resetInitialPassword(ActionEvent event) throws PasswordTooSimpleException, IOException {
         try {
             if (customerIc != null && initialPassword != null && newPassword != null && confirmedPassword != null) {
                 String msg = msg = amsbl.updatePassword(customerIc, initialPassword, newPassword, confirmedPassword);
@@ -129,11 +129,13 @@ public class AccountActivationManagedBean implements Serializable {
                 if (msg.equals(customerIc)) {
 //                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password has been successfully changed!");
 //                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                    FacesContext facesContext = FacesContext.getCurrentInstance();
-                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your password has been successfully changed!"));
-                    Flash flash = facesContext.getExternalContext().getFlash();
-                    flash.setKeepMessages(true);
-                    flash.setRedirect(true);
+//                    FacesContext facesContext = FacesContext.getCurrentInstance();
+//                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your password has been successfully changed!"));
+//                    Flash flash = facesContext.getExternalContext().getFlash();
+//                    flash.setKeepMessages(true);
+//                    flash.setRedirect(true);
+                                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+
                     boolean msg2 = amsbl.updateAccountStatus(msg);
                     if (msg2 == true) {
                         System.out.println("Status has been updated!");
@@ -158,7 +160,7 @@ public class AccountActivationManagedBean implements Serializable {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
-        return "LogInHome";
+    //    return "LogInHome";
 
     }
 

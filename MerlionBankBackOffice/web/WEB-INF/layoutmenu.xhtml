@@ -1,3 +1,4 @@
+
 <ui:composition 
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:f="http://java.sun.com/jsf/core"
@@ -13,6 +14,7 @@
 
                 <p:menuitem id="pa_dashboards" value="Home" outcome="/StaffDashboard" />
 
+
                 <p:submenu id="staff_management" label="Staff Management" rendered="#{rolePermissionManagedBean.permissionList.get(1)}">
                     <p:menuitem id="create_staff" value="Create Staff" outcome="/SuperAdminManagement/createStaff"/>
                     <p:menuitem id="create_staff_role" value="Create Staff Role" outcome="/SuperAdminManagement/createStaffRole"/>
@@ -23,7 +25,12 @@
                 <p:submenu id="customer_management" label="Customer Management">
                     <p:submenu id="saving_accountNC" label="Operational CRM" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(2)}">
                         <p:menuitem id="create_saving_accountNC" value="Create Saving Account For New Customer" outcome="/CustomerManagement/createSavingAccountNC"/>
+                        <p:menuitem id="staffVerifyCustomer" value="Staff Verify Pending Customer" outcome="/StaffVerifyCustomer/staffVerifyCustomerAccount"/>
                     </p:submenu>
+                     <p:submenu id="saving_accountNC1" label="Collaborative CRM" icon="icon-plus" >
+                         <p:menuitem id="view_all_assigned_issues" value="View All Issues" actionListener="#{staffCaseManagedBean.staffViewAssignedIssue}"/>
+                    </p:submenu>
+
                 </p:submenu>
 
                 <p:submenu id="deposit_management" label="Deposit Management">
@@ -34,14 +41,14 @@
                         <p:menuitem id="close_saving_account" value="Close Saving Account" actionListener="#{savingAccountManagedBean.dashboardToCloseSavingAccount}"/> 
                         <p:menuitem id="saving_account_change_ir" value="Change Interest Rate" actionListener="#{savingAccountManagedBean.dashboardToChangeInterestRate}"/>
                     </p:submenu>
-                    
+
                     <p:submenu id="fixed_deposit_account" label="Fixed Deposit Account" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(4)}">
-                        <p:menuitem id="create_fixed_deposit_account" value="Create Fixed Deposit Account" outcome="/FixedDepositManagement/createFixedDeposit"/>
-                        <p:menuitem id="view_fixed_deposit_account" value="View Account Details" outcome="/FixedDepositManagement/displayFixedDepositAccountDetail"/>
-                        <p:menuitem id="withdraw_fixed_deposit_account" value="Withdraw Fixed Deposit" outcome="/FixedDepositManagement/withdrawFixedDeposit"/>
+                        <p:menuitem id="create_fixed_deposit_account" value="Create Fixed Deposit Account" actionListener="#{fixedDepositStaffManagedBean.dashboardCreateAcct}"/>
+                        <p:menuitem id="view_fixed_deposit_account" value="View Account Details" actionListener="#{fixedDepositStaffManagedBean.dashboardDisplayAcct}"/>
+                        <p:menuitem id="withdraw_fixed_deposit_account" value="Withdraw Fixed Deposit" actionListener="#{fixedDepositStaffManagedBean.dashboardWithdraw}" />
                         <p:menuitem id="change_fixed_interest_rate" value="Change Interest Rate" outcome="/FixedDepositManagement/changeFixedDepositInterestRate"/>
                     </p:submenu>  
-                    
+
                     <p:submenu id="counter_cash" label="Counter Cash" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(6)}">
                         <p:menuitem id="cash_deposit" value="Cash Deposit" actionListener="#{savingAccountManagedBean.dashboardToCashDeposit}"/> 
                         <p:menuitem id="cash_withdraw" value="Cash Withdraw" actionListener="#{savingAccountManagedBean.dashboardToCashWithdraw}"/>   
@@ -56,7 +63,21 @@
 
                 <p:submenu id="bill_and_transfer" label="Bill and Transfer">
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(12)}">
-                        <p:menuitem id="intraTransfer" value="Transfer to other Merlion Bank Account" outcome="/TransferManagement/intraTransfer"/>
+                        <p:menuitem id="intraTransfer" value="Transfer to other Merlion Bank Account" actionListener="#{transferManagedBean.dashboardToIntraTransfer}"/>
+                    </p:submenu>
+                    <p:submenu id="bill" label="Bill" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(11)}">
+                        <p:submenu id="manageBank" label="Manage Banks" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(11)}">
+                            <p:menuitem id="addBank" value="Add New Bank" actionListener="#{billStaffManagedBean.dashboardAddBank(event)}"/>
+                            <p:menuitem id="viewBank" value="View Banks" actionListener="#{billStaffManagedBean.dashboardViewBank(event)}"/>
+                            <p:menuitem id="modifyBank" value="Modify Bank Information" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                            <p:menuitem id="deleteBank" value="Delete Bank" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                        </p:submenu>
+                        <p:submenu id="manageBO" label="Manage Billing Organization" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(11)}">
+                            <p:menuitem id="addBO" value="Add Billing Organization" actionListener="#{billStaffManagedBean.dashboardAddBank(event)}"/>
+                            <p:menuitem id="viewBO" value="View Billing Organizations" actionListener="#{billStaffManagedBean.dashboardViewBank(event)}"/>
+                            <p:menuitem id="modifyBO" value="Modify Billing Organization Information" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                            <p:menuitem id="deleteBO" value="Delete Billing Organization" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                        </p:submenu>
                     </p:submenu>
                 </p:submenu>
 

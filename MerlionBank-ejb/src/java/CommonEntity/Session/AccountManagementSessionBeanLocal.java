@@ -9,6 +9,7 @@ import CommonEntity.Customer;
 
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
+import Exception.LoanTermInvalidException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
@@ -16,6 +17,7 @@ import Exception.UserAlreadyHasSavingAccountException;
 import Exception.UserExistException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
+import LoanEntity.LoanType;
 import com.twilio.sdk.TwilioRestException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -62,7 +64,7 @@ public boolean updateAccountStatus(String ic);
 
 //Log in
      public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException,UserNotActivatedException;
- public Long lockAccount(Long customerId);
+ public Long lockAccount(String customerIc);
  public Customer diaplayCustomerId(Long id);
 
 //Create Fixed Deposit Account - 1st page - create online banking account
@@ -78,5 +80,11 @@ public boolean updateAccountStatus(String ic);
 
  //Teller Create saving Account 
     public void tellerCreateSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException;
+
+  //Create Loan Account - 2nd page - display different type 
+    public List<LoanType> displayLoanType(String type) throws ListEmptyException;
+    
+   ///Create Loan Account - 3rd page - configure home loan  
+    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException;
 
 }

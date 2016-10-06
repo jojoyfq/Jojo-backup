@@ -33,45 +33,45 @@
                                 <h:panelGrid columns="3" cellpadding="5">
 
                                     <h:outputLabel for="ic" value="IC:" /> 
-                                    <p:inputText id="ic" value="#{staffModifyCustomerManagedBean.customerIc}"  required="true" requiredMessage="Please fill in IC!" />
+                                    <p:inputText id="ic" value="#{serviceCustomerManagedBean.customerIc}"  required="true" requiredMessage="Please fill in IC!" />
                                     <p:message for="ic" display="icon" />
 
 
                                     <h:outputLabel for="name" value="Name:" /> 
-                                    <p:inputText id="name" value="#{staffModifyCustomerManagedBean.customerName}"  required="true" requiredMessage="Please fill in Name!" />
+                                    <p:inputText id="name" value="#{serviceCustomerManagedBean.customerName}"  required="true" requiredMessage="Please fill in Name!" />
                                     <p:message for="name" display="icon" />
 
                                     <h:outputLabel for="gender" value="Gender:" /> 
-                                    <h:outputLabel value=" #{staffModifyCustomerManagedBean.gender}" /> 
+                                    <h:outputLabel value=" #{serviceCustomerManagedBean.gender}" /> 
                                     <h:outputLabel/>
 
                                     <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
-                                    <p:calendar id="customerDateOfBirth" value="#{staffModifyCustomerManagedBean.birthDate}" showOn="button" required="true"  requiredMessage="Please input birthday"/>
+                                    <p:calendar id="customerDateOfBirth" value="#{serviceCustomerManagedBean.birthDate}" showOn="button" required="true"  requiredMessage="Please input birthday"/>
                                     <p:message for="customerDateOfBirth" display="icon" />
 
                                     <h:outputLabel for="email" value="Email:" /> 
-                                    <p:inputText id="email" value="#{staffModifyCustomerManagedBean.email}"  required="true" requiredMessage="Please fill in your email!" />
+                                    <p:inputText id="email" value="#{serviceCustomerManagedBean.email}"  required="true" requiredMessage="Please fill in your email!" />
                                     <p:message for="email" display="icon" />
 
 
 
                                     <h:outputLabel for="phoneNumber" value="Phone Number:" /> 
-                                    <p:inputText id="phoneNumber" value="#{staffModifyCustomerManagedBean.phoneNumber}"   required="true" requiredMessage="Please fill in your phone number!"/>
+                                    <p:inputText id="phoneNumber" value="#{serviceCustomerManagedBean.phoneNumber}"   required="true" requiredMessage="Please fill in your phone number!"/>
                                     <p:message for="phoneNumber" display="icon" />
 
                                     <h:outputLabel for="address" value="Address is:" /> 
-                                    <p:inputText id="address" value="#{staffModifyCustomerManagedBean.address}" label="customerAddress" required="true" requiredMessage="Please fill in your address!"/>
+                                    <p:inputText id="address" value="#{serviceCustomerManagedBean.address}" label="customerAddress" required="true" requiredMessage="Please fill in your address!"/>
                                     <p:message for="address" display="icon" />
 
                                     <h:outputLabel for="occupation" value="Occupation:" /> 
-                                    <p:inputText id="occupation" value="#{staffModifyCustomerManagedBean.occupation}" label="occupation" required="true" requiredMessage="Please fill in your occupation!"/>
+                                    <p:inputText id="occupation" value="#{serviceCustomerManagedBean.occupation}" label="occupation" required="true" requiredMessage="Please fill in your occupation!"/>
                                     <p:message for="occupation" display="icon"  />
 
                                     <h:outputLabel for="familyInfo" value="Family Information:" /> 
-                                    <p:inputText id = "familyInfo" value="#{staffModifyCustomerManagedBean.familyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
+                                    <p:inputText id = "familyInfo" value="#{serviceCustomerManagedBean.familyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
                                     <p:message for="familyInfo" display="icon" />
 
-                                    <p:commandButton   icon="ui-icon-script" actionListener="#{staffModifyCustomerManagedBean.staffUpdateCustomerProfile}" value="Submit" rendered="true" />
+                                    <p:commandButton   icon="ui-icon-script" actionListener="#{serviceCustomerManagedBean.staffUpdateCustomerProfile}" value="Submit" rendered="true" />
                                 </h:panelGrid>
                             </p:panel>
 
