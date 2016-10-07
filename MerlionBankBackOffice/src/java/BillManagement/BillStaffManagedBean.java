@@ -5,6 +5,7 @@
  */
 package BillManagement;
 
+import BillEntity.BillingOrganization;
 import BillEntity.OtherBank;
 import BillEntity.Session.BillSessionBeanLocal;
 import CommonEntity.Staff;
@@ -53,6 +54,15 @@ public class BillStaffManagedBean implements Serializable {
     private String bankAddressSelected;
     private OtherBank bankSelected;
     private Long bankIdSelected;
+    private String boName;
+    private String boUEN;
+    private String boAddress;
+    private String boBankName;
+    private Long boAcctNum;
+    private List<BillingOrganization> bos;
+    private List<String> boNames;
+    private BillingOrganization boSelected;
+    private Long boIdSelected;
 
     @Inject
     private staffLogInManagedBean staffLogInManagedBean;
@@ -66,13 +76,21 @@ public class BillStaffManagedBean implements Serializable {
     }
 
     public void addBank(ActionEvent event) throws IOException {
-        if (bsbl.addBank(bankName, swiftCode, UEN, address) == true) {
-            String description = "Staff " + staffLogInManagedBean.getStaffIc() + " add Bank " + bankName;
-            bsbl.logStaffAction(description, null, staffId);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/BillManagement/addBankSuccess.xhtml");
+        if (bankName != null && swiftCode != null && UEN != null && address != null) {
+            System.out.print("** inside if");
+            if (bsbl.addBank(bankName, swiftCode, UEN, address) == true) {
+                String description = "Staff " + staffLogInManagedBean.getStaffIc() + " add Bank " + bankName;
+                bsbl.logStaffAction(description, null, staffId);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/BillManagement/addBankSuccess.xhtml");
+            } else {
+                System.out.print("** inside else");
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Bank already exist. Please confirm bank information");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
         } else {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Bank already exist. Please confirm bank information");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in all information");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+
         }
     }
 
@@ -98,6 +116,78 @@ public class BillStaffManagedBean implements Serializable {
         ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBankSelect.xhtml");
     }
 
+    public void dashboardAddBO(ActionEvent event) throws IOException {
+        bankNames = bsbl.viewBankNames();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/addBO.xhtml");
+    }
+
+    public void dashboardViewBO(ActionEvent event) throws IOException {
+        bos = bsbl.viewBO();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/viewBO.xhtml");
+    }
+
+    public void dashboardModifyBO(ActionEvent event) throws IOException {
+        boNames = bsbl.viewBOName();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBOSelect.xhtml");
+    }
+
+    public void dashboardDeleteBO(ActionEvent event) throws IOException {
+        boNames = bsbl.viewBOName();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/deleteBOSelect.xhtml");
+    }
+
+    public void dashboardDeleteBank(ActionEvent event) throws IOException {
+        bankNames = bsbl.viewBankNames();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/deleteBankSelect.xhtml");
+    }
+
+    public void deleteBO(ActionEvent event) throws IOException {
+        if (boName != null) {
+            int result = bsbl.deleteBO(boName);
+            if (result == 1) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Unsuccessful! Billing organization have associated pending bill.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            } else if (result == 2) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Unsuccessful! Billing organization have associated GIRO or recurrent arrangements.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            } else {
+                System.out.print("BO deleted");
+                ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+                ec.redirect("/MerlionBankBackOffice/BillManagement/deleteBOSuccess.xhtml");
+            }
+
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select billing organization.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void deleteBank(ActionEvent event) throws IOException {
+        if (bankNameSelected != null) {
+            int result = bsbl.deleteBank(bankNameSelected);
+            if (result == 1) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Unsuccessful! Bank has associated billing organization.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            } else if (result == 2) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Unsuccessful! Bank has associated pending transaction.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+            } else {
+                System.out.print("Bank deleted");
+                ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+                ec.redirect("/MerlionBankBackOffice/BillManagement/deleteBankSuccess.xhtml");
+            }
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select bank.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
     public void displayModifyInfo() throws IOException {
         bankSelected = bsbl.findBank(bankNameSelected);
         bankIdSelected = bankSelected.getId();
@@ -109,20 +199,79 @@ public class BillStaffManagedBean implements Serializable {
 
     }
 
+    public void displayBOModifyInfo() throws IOException {
+        boSelected = bsbl.findBO(boName);
+        boIdSelected = boSelected.getId();
+        boUEN = boSelected.getUEN();
+        boAddress = boSelected.getAddress();
+        boBankName = boSelected.getBank().getName();
+        boAcctNum = boSelected.getAccountNumber();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBO.xhtml");
+    }
+
     public void modifyBank(ActionEvent event) throws IOException {
         if (bankNameSelected != null && bankAddressSelected != null && bankSWIFTSelected != null && bankUENSelected != null) {
-            System.out.print("new bank name:"+bankNameSelected);
+            System.out.print("new bank name:" + bankNameSelected);
             bsbl.modifyBank(bankNameSelected, bankAddressSelected, bankSWIFTSelected, bankUENSelected, bankIdSelected);
-            String description = "Staff "+staffLogInManagedBean.getStaffIc()+" modified bank information for "+bankNameSelected;
+            String description = "Staff " + staffLogInManagedBean.getStaffIc() + " modified bank information for " + bankNameSelected;
             bsbl.logStaffAction(description, null, staffId);
-           ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-        ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBankSuccess.xhtml");
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBankSuccess.xhtml");
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in all information.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         }
+    }
 
+    public void modifyBO(ActionEvent event) throws IOException {
+        bsbl.modifyBO(boName, boAddress, boBankName, boUEN, boAcctNum, boIdSelected);
+        String description = "staff " + staffLogInManagedBean.getStaffIc() + " modified BO information for " + boName;
+        bsbl.logStaffAction(description, null, staffId);
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect("/MerlionBankBackOffice/BillManagement/modifyBOSuccess.xhtml");
+    }
+
+    public void addBO(ActionEvent event) throws IOException {
+        if (boName != null && boAddress != null && boAcctNum != null && boBankName != null && boUEN != null) {
+            if (bsbl.addBO(boName, boBankName, boAcctNum, boUEN, boAddress) == true) {
+                String description = "Staff " + staffLogInManagedBean.getStaffIc() + " add BO " + boName;
+                bsbl.logStaffAction(description, null, staffId);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/BillManagement/addBOSuccess.xhtml");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "BO already exist. Please confirm BO information");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in all information");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        }
+    }
+
+    public String getBoAddress() {
+        return boAddress;
+    }
+
+    public void setBoAddress(String boAddress) {
+        this.boAddress = boAddress;
+    }
+
+    public String getBoBankName() {
+        return boBankName;
+    }
+
+    public void setBoBankName(String boBankName) {
+        this.boBankName = boBankName;
+    }
+
+    public Long getBoAcctNum() {
+        return boAcctNum;
+    }
+
+    public void setBoAcctNum(Long boAcctNum) {
+        this.boAcctNum = boAcctNum;
     }
 
     public Long getBankIdSelected() {
@@ -131,6 +280,14 @@ public class BillStaffManagedBean implements Serializable {
 
     public void setBankIdSelected(Long bankIdSelected) {
         this.bankIdSelected = bankIdSelected;
+    }
+
+    public Long getBoIdSelected() {
+        return boIdSelected;
+    }
+
+    public void setBoIdSelected(Long boIdSelected) {
+        this.boIdSelected = boIdSelected;
     }
 
     public OtherBank getBankSelected() {
@@ -159,6 +316,30 @@ public class BillStaffManagedBean implements Serializable {
 
     public String getBankAddressSelected() {
         return bankAddressSelected;
+    }
+
+    public List<BillingOrganization> getBos() {
+        return bos;
+    }
+
+    public void setBos(List<BillingOrganization> bos) {
+        this.bos = bos;
+    }
+
+    public BillingOrganization getBoSelected() {
+        return boSelected;
+    }
+
+    public void setBoSelected(BillingOrganization boSelected) {
+        this.boSelected = boSelected;
+    }
+
+    public List<String> getBoNames() {
+        return boNames;
+    }
+
+    public void setBoNames(List<String> boNames) {
+        this.boNames = boNames;
     }
 
     public void setBankAddressSelected(String bankAddressSelected) {
@@ -251,6 +432,22 @@ public class BillStaffManagedBean implements Serializable {
 
     public void setStaffLogInManagedBean(staffLogInManagedBean staffLogInManagedBean) {
         this.staffLogInManagedBean = staffLogInManagedBean;
+    }
+
+    public String getBoName() {
+        return boName;
+    }
+
+    public void setBoName(String boName) {
+        this.boName = boName;
+    }
+
+    public String getBoUEN() {
+        return boUEN;
+    }
+
+    public void setBoUEN(String boUEN) {
+        this.boUEN = boUEN;
     }
 
 }

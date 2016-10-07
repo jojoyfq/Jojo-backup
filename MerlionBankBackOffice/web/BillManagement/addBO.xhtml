@@ -21,7 +21,7 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Add a New Bank </div>
+                    <div class="CardBigTopic"> Add a New Billing Organization </div>
                     <div class="Separator"></div>
 
                     <div class="Container100 ui-fluid">
@@ -29,37 +29,43 @@
                             <div class="Card">
                                 <div class="Container10"></div>
                                 <div class="Container80">
-                                     <p:panel id="panel" header="Add Bank">
+                                     <p:panel id="panel" header="Add BO">
                                          <p:messages id="msgs" />
-                                    <h:panelGrid  columns="2" id="addBankPanel" cellpadding="5"> 
-                                        
+                                    <h:panelGrid columns="2" id="addBOPanel" cellpadding="5"> 
 
-                                        <h:outputLabel for="bankName" value="Bank Name:" />
-                                        <p:inputText id="bankName" value="#{billStaffManagedBean.bankName}" label="name" required="true" >
+                                        <h:outputLabel for="BOName" value="Name:" />
+                                        <p:inputText id="BOName" value="#{billStaffManagedBean.boName}" label="name" required="true" >
                                         </p:inputText>
 
-                                        <h:outputLabel for="swift" value="SWIFT Code:" />
-                                        <p:inputText id="swift" value="#{billStaffManagedBean.swiftCode}" label="name" required="true" >
-                                        </p:inputText>
-                                        
                                         <h:outputLabel for="uen" value="UEN:" />
-                                        <p:inputText id="uen" value="#{billStaffManagedBean.UEN}" label="name" required="true" >
+                                        <p:inputText id="uen" value="#{billStaffManagedBean.boUEN}" label="name" required="true" >
                                         </p:inputText>
-                                        
+
                                         <h:outputLabel for="address" value="Address:" />
-                                        <p:inputText id="address" value="#{billStaffManagedBean.address}" label="name" required="true" >
+                                        <p:inputText id="address" value="#{billStaffManagedBean.boAddress}" label="name" required="true" >
+                                        </p:inputText>
+
+                                        <h:outputLabel for="bank" value="Bank:" />
+                                        <p:selectOneMenu id="bankSelect" value="#{billStaffManagedBean.boBankName}" >
+                                            <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="false"  />
+                                            <f:selectItems value="#{billStaffManagedBean.bankNames}" />
+                                        </p:selectOneMenu>
+                                        
+                                        
+                                        <h:outputLabel for="accountNumber" value="Account Number:" />
+                                        <p:inputText id="accountNumber" value="#{billStaffManagedBean.boAcctNum}" label="name" required="true" >
+                                        <p:keyFilter regEx="/[\d\-\.]/"/>
                                         </p:inputText>
 
                                     </h:panelGrid>
                                      </p:panel>
-
                                 </div>
                                 <div class="Container10"></div>
 
                                 <div class="EmptyBox20"></div>
                                 <div class="Container30"></div>
                                 <div class="Container40">
-                                    <p:commandButton update="panel" actionListener="#{billStaffManagedBean.addBank(event)}" value="Submit" />
+                                    <p:commandButton update = "panel" actionListener="#{billStaffManagedBean.addBO(event)}" value="Submit" />
                                 </div>
                                 <div class="Container30"></div>
                                 <div class="EmptyBox20"></div>
