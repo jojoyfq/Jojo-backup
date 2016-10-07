@@ -11,6 +11,7 @@ import DepositEntity.Payee;
 import CustomerRelationshipEntity.CaseEntity;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
+import LoanEntity.Loan;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -60,6 +61,17 @@ public class Customer implements Serializable {
     private String riskRating;
     private String status;
     private BigDecimal intraTransferLimit;
+    private BigDecimal monthlyIncome;
+
+    public BigDecimal getMonthlyIncome() {
+        return monthlyIncome;
+    }
+
+    public void setMonthlyIncome(BigDecimal monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
+    }
+    
+    
 
     public BigDecimal getIntraTransferLimit() {
         return intraTransferLimit;
@@ -113,7 +125,19 @@ public class Customer implements Serializable {
     
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<CustomerMessage> customerMessages;
+    
+     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "customer")
+    private List<Loan> loans = new ArrayList<Loan>();
 
+    public List<Loan> getLoans() {
+        return loans;
+    }
+
+    public void setLoans(List<Loan> loans) {
+        this.loans = loans;
+    }
+
+     
     public List<CustomerMessage> getCustomerMessages() {
         return customerMessages;
     }

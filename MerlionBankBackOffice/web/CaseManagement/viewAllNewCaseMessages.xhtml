@@ -20,7 +20,7 @@
         <div class="Container80 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Case Message Management System----Staff </div>
+                    <div class="CardBigTopic">View All New Case Message----Staff </div>
                     <div class="Separator"></div>
 
                     <div class="Container100">
@@ -47,6 +47,10 @@
                                         <p:column headerText="Content">
                                             <h:outputText value="#{messageEntity.content}" />
                                         </p:column>
+                                        
+                                          <p:column headerText="Status">
+                                              <h:outputText value="#{messageEntity.status}" />
+                                        </p:column>
 
                                         <p:column headerText="File for case" style="width: 80px;" >
                                             <center>
@@ -55,6 +59,8 @@
                                                 </p:commandButton>
                                             </center>
                                         </p:column>
+                                        
+                                       
 
                                     </p:dataTable>
 
@@ -63,8 +69,8 @@
 
                             </p:panel>
                         </h:form>
-                        <h:form>
-                            <div class="Container100 TexAlRight"><p:commandLink id="registerNewUser" value="View All Cases" type="submit" actionListener="#{staffCaseManagedBean.goToViewAllCases}"/></div>
+                       <h:form>
+                           <div class="Container100 "><p:commandLink id="registerNewUser" value="View All Cases" type="submit" actionListener="#{staffCaseManagedBean.staffViewAllCases}"/></div>
                         </h:form>
                         <div class="Container100 ui-fluid">
                             <div class="Container30"></div>

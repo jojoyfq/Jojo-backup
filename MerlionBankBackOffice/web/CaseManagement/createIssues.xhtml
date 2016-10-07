@@ -52,7 +52,7 @@
                             </p:panel>
                         </h:form>
                         <h:form>
-                            <p:dataTable var="issue" value="#{staffCaseManagedBean.allIssues}">
+                            <p:dataTable var="issue" value="#{staffCaseManagedBean.allIssues}" rendered="#{not empty staffCaseManagedBean.allIssues}">
                                 <p:column headerText="Issue Id" style="width: 80px;">
                                     <h:outputText value="#{issue.id}" />
                                 </p:column>
@@ -72,10 +72,6 @@
 
                                 <p:column headerText="Closed Time" style="width: 80px;">
                                     <h:outputText value="#{issue.caseEntity.caseClosedTime}" />
-                                </p:column>
-
-                                <p:column headerText="Staff Name" style="width: 80px;">
-                                    <h:outputText value="#{issue.staff.staffName}" />
                                 </p:column>
 
                                 <p:column headerText="Issue Status" style="width: 80px;">

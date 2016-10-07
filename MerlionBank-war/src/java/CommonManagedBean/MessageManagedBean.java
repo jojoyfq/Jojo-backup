@@ -238,22 +238,28 @@ public class MessageManagedBean implements Serializable {
         System.out.println("Logged in customer IC is : " + customerId);
         //       messages = imsbl.viewAllMessage(customerId);
 //        System.out.println("message size is: "+messages.size());
-        customerUnreadMsg = imsbl.countNewMessage(customerId);
+        //      customerUnreadMsg = imsbl.countNewMessage(customerId);
 
     }
-    
+
 //    public boolean checkIssueStatus(ActionEvent event){
 //                selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
 //                boolean check;
 //       check = ccsbl.checkStatus(selectedIssue.getId());
 //       return check;
 //    }
-
     public List<Issue> issuesUnderOneCase(ActionEvent event) {
         System.out.println("*********** in issueUnderOneCase function alr!!!!");
         selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
         System.out.println("**********Selected case to view all the issues, selectedCase.getId()" + selectedCase.getId());
-        oneCaseAllIssues = selectedCase.getIssues();
+        oneCaseAllIssues = ccsbl.retrieveIssues(selectedCase.getId());
+        System.out.println("********issue size is "+oneCaseAllIssues.size());
+        if (selectedCase.getStatus().equals("moreInfo")) {
+            checkStatus = true;
+        } else {
+            checkStatus = false;
+        }
+        System.out.println("*************issue status is " + checkStatus);
         return oneCaseAllIssues;
 
     }
@@ -341,8 +347,12 @@ public class MessageManagedBean implements Serializable {
     public void customerViewAllCaseMessages(ActionEvent event) throws IOException, ListEmptyException {
 
         try {
+
             System.out.println("*************Customer id " + customerId);
             allCases = ccsbl.customerViewCases(customerId);
+            System.out.println("*************Case size is " + allCases.size());
+           
+
         } catch (ListEmptyException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -354,6 +364,7 @@ public class MessageManagedBean implements Serializable {
     public CustomerMessage createCaseMessage(ActionEvent event) {
         caseStatus = null;
         caseMessage = imsbl.customerSendCaseMessage(caseSubject, caseContent, caseStatus, customerId);
+
         System.out.println("Message Created Successfully!");
         FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message Created Successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -364,9 +375,8 @@ public class MessageManagedBean implements Serializable {
         selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
         System.out.println("************customer Ic modified the content of the issue is " + customerIc);
         System.out.println("************Issue id modified the content of the issue is " + selectedIssue.getId());
-        checkStatus = ccsbl.checkStatus(selectedIssue.getId());
-        System.out.println("*************issue status is "+checkStatus);
-        ccsbl.customerModifyIssue(customerId, selectedIssue.getId(), issueContent);
+
+        ccsbl.customerModifyIssue(customerId, selectedIssue.getId(), selectedIssue.getContent());
 
     }
 //    public void customerViewAllMessage(ActionEvent event){

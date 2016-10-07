@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -50,7 +51,8 @@ public class StaffCaseManagedBean implements Serializable {
     InboxManagementSessionBeanLocal imsbl;
     @Inject
     staffLogInManagedBean slimb;
-
+   
+    
     private Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     private List<StaffRole> staffRoles;
     private List<Staff> relatedStaff;
@@ -61,6 +63,15 @@ public class StaffCaseManagedBean implements Serializable {
     private Long caseStaffId;
     private Long customerId;
     private Long bankStaffId;
+    private Long justCreatedCaseId;
+
+    public Long getJustCreatedCaseId() {
+        return justCreatedCaseId;
+    }
+
+    public void setJustCreatedCaseId(Long justCreatedCaseId) {
+        this.justCreatedCaseId = justCreatedCaseId;
+    }
 
     // private List availableRoleNames;
     private Map<String, String> availableRoleNames;
@@ -137,11 +148,6 @@ public class StaffCaseManagedBean implements Serializable {
 
     }
 
-    public void goToViewAllCases(ActionEvent event) throws IOException {
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/viewAllCases.xhtml");
-
-    }
-
     public List<CustomerMessage> caseStaffViewAllCaseMsg(ActionEvent event) throws IOException {
 
         allCaseMessages = imsbl.StaffViewAllCaseMessage();
@@ -160,9 +166,11 @@ public class StaffCaseManagedBean implements Serializable {
 
     }
 
-    public void staffViewAllCases(ActionEvent event) throws ListEmptyException {
+    public void staffViewAllCases(ActionEvent event) throws ListEmptyException, IOException {
 
         allCases = ccsbl.viewAllCase();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/viewAllCases.xhtml");
+
     }
 
     public void onCountryChange() {
@@ -173,34 +181,55 @@ public class StaffCaseManagedBean implements Serializable {
         }
     }
 
-    public void staffCreateCase(ActionEvent event) throws ListEmptyException, UserNotExistException, IOException {
-        try {
-            for (int i = 0; i < slimb.getRoleNames().size(); i++) {
-                availableRoleNames.put(slimb.getRoleNames().get(i).toString(), slimb.getRoleNames().get(i).toString());
-                System.out.println("************** " + availableRoleNames);
-                // issueType = slimb.getRoleNames().get(i).toString();
-                relatedStaff = ccsbl.retrieveStaffsAccordingToRole(slimb.getRoleNames().get(i).toString());
-                for (int j = 0; j < relatedStaff.size(); j++) {
-                    map.put(relatedStaff.get(j).getStaffName(), relatedStaff.get(j).getStaffName());
-                }
-                data.put(slimb.getRoleNames().get(i).toString(), map);
-                map = new HashMap<String, String>();
-            }
-            selectedMsg = (CustomerMessage) event.getComponent().getAttributes().get("selectedCaseMessage");
-            customerId = selectedMsg.getCustomer().getId();
-            customerIc = selectedMsg.getCustomer().getIc();
-            System.out.println("**********Selected case message: the customer ic is " + customerIc);
+    public void staffCreateCase(ActionEvent event) throws UserNotExistException, IOException, ListEmptyException {
+
+//            for (int i = 0; i < slimb.getRoleNames().size(); i++) {
+//                availableRoleNames.put(slimb.getRoleNames().get(i).toString(), slimb.getRoleNames().get(i).toString());
+//                System.out.println("************** " + availableRoleNames);
+//                // issueType = slimb.getRoleNames().get(i).toString();
+//                relatedStaff = ccsbl.retrieveStaffsAccordingToRole(slimb.getRoleNames().get(i).toString());
+//                for (int j = 0; j < relatedStaff.size(); j++) {
+//                    map.put(relatedStaff.get(j).getStaffName(), relatedStaff.get(j).getStaffName());
+//                }
+//                data.put(slimb.getRoleNames().get(i).toString(), map);
+//                map = new HashMap<String, String>();
+//            }
+        selectedMsg = (CustomerMessage) event.getComponent().getAttributes().get("selectedCaseMessage");
+        customerId = selectedMsg.getCustomer().getId();
+        customerIc = selectedMsg.getCustomer().getIc();
+        
+        System.out.println("**********Selected case message: the customer ic is " + customerIc);
            // issueType = (String) event.getComponent().getAttributes().get("selectedRoleName");
 
-            // relatedStaff = ccsbl.retrieveStaffsAccordingToRole(issueType);
-            selectedCase = ccsbl.createCase(null, customerIc, caseStaffId);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/createIssues.xhtml");
+        // relatedStaff = ccsbl.retrieveStaffsAccordingToRole(issueType);
+        imsbl.readCustomerMessage(selectedMsg.getId());
+        selectedCase = ccsbl.createCase(null, customerIc, caseStaffId,selectedMsg.getId());
+        
+        allCases  = ccsbl.viewAllCase();
+        justCreatedCaseId = selectedCase.getId();
+        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Case created successfully! The Case ID is " + justCreatedCaseId);
+        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+          //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/createIssues.xhtml");
 
-        } catch (ListEmptyException ex) {
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+    }
 
+    public void goToCreateIssuePage(ActionEvent event) throws IOException, ListEmptyException {
+        selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
+        allIssues = selectedCase.getIssues();
+        System.out.println("********selected case id is " + selectedCase.getId());
+        for (int i = 0; i < slimb.getRoleNames().size(); i++) {
+            availableRoleNames.put(slimb.getRoleNames().get(i).toString(), slimb.getRoleNames().get(i).toString());
+            System.out.println("************** " + availableRoleNames);
+            // issueType = slimb.getRoleNames().get(i).toString();
+            relatedStaff = ccsbl.retrieveStaffsAccordingToRole(slimb.getRoleNames().get(i).toString());
+            for (int j = 0; j < relatedStaff.size(); j++) {
+                map.put(relatedStaff.get(j).getStaffName(), relatedStaff.get(j).getStaffName());
+            }
+            data.put(slimb.getRoleNames().get(i).toString(), map);
+            map = new HashMap<String, String>();
         }
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/createIssues.xhtml");
+
     }
 
     public void caseStaffCreateIssue(ActionEvent event) {
@@ -211,8 +240,10 @@ public class StaffCaseManagedBean implements Serializable {
         System.out.println("************Selected case ID is " + selectedCase.getId());
         System.out.println("************");
         System.out.println("************");
+        System.out.println("just now case created the id is " + justCreatedCaseId);
 
-        allIssues = ccsbl.addIssue(issueContent, issueType, null, null, selectedStaffName, selectedCase);
+        System.out.println("************issuesize for this case " + allIssues.size());
+        allIssues.add(ccsbl.addIssue(issueContent, issueType, null, null, selectedStaffName, selectedCase.getId()));
         FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Issue submitted successfully!!!");
         RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
@@ -261,10 +292,10 @@ public class StaffCaseManagedBean implements Serializable {
             Long issueId = selectedIssue.getId();
             System.out.println("**********Staff id which required more info is " + bankStaffId);
             System.out.println("**************selected issue id is " + selectedIssue.getId());
-            
-            selectedIssue = ccsbl.staffModifyIssue(bankStaffId, issueId, solution);
-             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message sent successfully!!");
-        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+
+            oneBankStaffAllIssues = ccsbl.staffModifyIssue(bankStaffId, issueId, solution);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message sent successfully!!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
         } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());

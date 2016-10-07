@@ -37,6 +37,14 @@
                                         <p:column headerText="Case ID" style="width: 80px;">
                                             <h:outputText value="#{caseEntity.id}" />
                                         </p:column>
+                                        
+                                        <p:column headerText="Case Subject" style="width: 80px;">
+                                            <h:outputText value="#{caseEntity.customerMessage.subject}" />
+                                        </p:column>
+                                        
+                                         <p:column headerText="Case Content" style="width: 80px;">
+                                             <h:outputText value="#{caseEntity.customerMessage.content}" />
+                                        </p:column>
                                     
                                         <p:column headerText="Created Time">
                                             <h:outputText value="#{caseEntity.caseCreatedTime}" />
@@ -120,7 +128,7 @@
 
                                     <p:column headerText="Submit" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton icon="ui-icon-mail-open" actionListener="#{messageManagedBean.customerModifyIssue}"  disabled="#{messageManagedBean.checkStatus = false}" update=":form:panel " ajax="true"  >
+                                            <p:commandButton icon="ui-icon-mail-open" actionListener="#{messageManagedBean.customerModifyIssue}"  disabled="#{!(messageManagedBean.checkStatus)}" update=":form:panel " ajax="true"  >
                                                 <f:attribute name="selectedIssue" value="#{issue}"  />
                                             </p:commandButton>
                                         </center>

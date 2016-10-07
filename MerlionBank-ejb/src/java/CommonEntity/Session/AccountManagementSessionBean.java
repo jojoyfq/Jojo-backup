@@ -16,6 +16,7 @@ import DepositEntity.SavingAccountType;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
+import Exception.LoanTermInvalidException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
@@ -25,6 +26,8 @@ import Exception.UserAlreadyHasSavingAccountException;
 import Exception.UserExistException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
+import LoanEntity.LoanType;
+import LoanEntity.Session.LoanSessionBeanLocal;
 import Other.Session.sendEmail;
 import Other.Session.GeneratePassword;
 import java.math.BigDecimal;
@@ -80,6 +83,8 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     FixedDepositAccountSessionBeanLocal fdasbl;
     @EJB
     StaffManagementSessionBeanLocal smsbl;
+    @EJB
+    LoanSessionBeanLocal hlsbl;
 //    private GoogleMail gm;
 
     @Override
@@ -941,52 +946,57 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         System.out.println("Debit Account successfully created");
 
     }
+    
+    //Create Loan Account - 2nd page - display different type 
+    @Override
+    public List<LoanType> displayLoanType(String type) throws ListEmptyException{
+         Query q = em.createQuery("SELECT a FROM LoanType a WHERE a.type = :type");
+        q.setParameter("ic", type);
+        List<LoanType> temp = new ArrayList(q.getResultList());
+        if (temp.isEmpty())
+            throw new ListEmptyException("There are no available service under this type of loan");
+        return temp;
+    }
+    
+    //Create Loan Account - 3rd page - configure home loan 
+  @Override
+    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException{
+        LoanType loanType=em.find(LoanType.class,loanTypeId);
+        if (loanType.getType().equals("Home")){
+            if (loanTerm >35)
+                throw new LoanTermInvalidException ("Home repayment period can only be max 35 years");
+        Long accountNumber=hlsbl.createHomeLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);
+        }
+        else if (loanType.getType().equals("Car")){
+            if (loanTerm >7)
+                throw new LoanTermInvalidException ("Car repayment period can only be max 7 years");
+          Long accountNumber=hlsbl.createCarLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);  
+        }
+        String password = GeneratePassword.createPassword();
+        String tempPassword = password;
 
-//    @Override
-//    public void checkOnlineBankingAccountStatus() {
-//        //check fixed deposit account
-//        Query q1 = em.createQuery("SELECT a FROM FixedDepositAccount a");
-//        List<FixedDepositAccount> fixedDepositAccounts = new ArrayList(q1.getResultList());
-//        Query q2 = em.createQuery("SELECT b FROM OnlineAccount b");
-//        List<OnlineAccount> onlineAccounts = new ArrayList(q2.getResultList());
-//        Query q3 = em.createQuery("SELECT c FROM SavingAccount c");
-//        List<SavingAccount> savingAccounts = new ArrayList(q3.getResultList());
-//
-//        //get time now 
-//        DateTime now = new DateTime();
-//        System.out.println(now);
-//        DateTime dateSixMonthBefore = now.minus(Period.months(6)); //date of 6 months before 
-//        System.out.println(dateSixMonthBefore);
-//
-//        for (int j = 0; j < onlineAccounts.size(); j++) {
-//            //get customer ID here
-//            if(onlineAccounts.get(j).getAccountStatus().equals("active")){
-//            Long customerID = onlineAccounts.get(j).getId();
-//            for (int i = 0; i < fixedDepositAccounts.size(); i++) {
-//                if (fixedDepositAccounts.get(i).getCustomer().getId().equals(customerID)) {
-//                    //check account status
-//                    if (fixedDepositAccounts.get(i).getStatus().equals("terminated") && fixedDepositAccounts.get(i).getEndDate().after(dateSixMonthBefore.toDate())) {
-//                        int check1 = 1;
-//                    } else {
-//                        int check1 = -1;
-//                    }
-//                } else {
-//                    System.out.print("the fixed deposite account has not been terminated for 6 months");
-//                }
-//
-//                for (int k = 0; k < savingAccounts.size(); k++) {
-//                    if (savingAccounts.get(k).getCustomer().getId().equals(customerID)) {
-////                        if (savingAccounts.get(k).getStatus().equals("terminated") && savingAccounts.get(k).getEndDate().after(dateSixMonthBefore.toDate())) {
-////                            int check2 = 1;
-////                        } else {
-////                            int check2 = -1;
-////                        }
-//                    } else {
-//                        System.out.print("the saving account has not been terminated for 6 months");
-//                    }
-//                }
-//            }
-//        }
-//        }
-//    }
+        password = passwordHash(password + customer.getOnlineAccount().getSalt());
+        customer.getOnlineAccount().setPassword(password);
+        System.out.println("Password after hash&salt:" + password);
+
+        try {
+            // reminder: remove password
+            SendPendingVerificationEmail(customer.getName(), customer.getEmail(), tempPassword);
+
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+
+        customer.setMonthlyIncome(monthlyIncome);
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create new Loan Account", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+
+        return customer.getId();
+    }
+
+
 }
