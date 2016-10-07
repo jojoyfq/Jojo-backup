@@ -38,7 +38,7 @@ public class RecurrentBillArrangement implements Serializable {
     private Integer billTimes;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
-    private Integer billInterval;
+    private Integer billInterval;// in weeks
     private Integer timesRemaining;
     private String status;//active, terminated
     
