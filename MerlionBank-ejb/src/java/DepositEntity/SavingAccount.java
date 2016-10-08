@@ -61,7 +61,7 @@ public class SavingAccount implements Serializable {
     private List<RecurrentBillArrangement> recurrentBillArrangement;
     
     @OneToOne (cascade={CascadeType.ALL})
-    private PayMe payme;
+    private PayMe payMe;
  
     public List<RecurrentBillArrangement> getRecurrentBillArrangement() {
         return recurrentBillArrangement;
@@ -250,12 +250,12 @@ public class SavingAccount implements Serializable {
         this.accumDailyInterest = accumDailyInterest;
     }
     
-    public PayMe getPayme() {
-        return payme;
+    public PayMe getPayMe() {
+        return payMe;
     }
 
-    public void setPayme(PayMe payme) {
-        this.payme = payme;
+    public void setPayMe(PayMe payMe) {
+        this.payMe = payMe;
     }
 
 }

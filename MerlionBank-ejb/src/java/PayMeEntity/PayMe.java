@@ -26,9 +26,9 @@ public class PayMe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToOne(mappedBy="payme")
+    @OneToOne(mappedBy="payMe")
     private Customer customer;
-    @OneToOne(mappedBy="payme")
+    @OneToOne(mappedBy="payMe")
     private SavingAccount savingAccount;
     
     private BigDecimal balance;

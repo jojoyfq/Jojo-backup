@@ -111,7 +111,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal{
         em.persist(payMe);
         customer.setPayMe(payMe);
         em.persist(customer);
-        savingAccountL.setPayme(payMe);
+        savingAccountL.setPayMe(payMe);
         em.persist(savingAccountL);
         em.flush();
         
