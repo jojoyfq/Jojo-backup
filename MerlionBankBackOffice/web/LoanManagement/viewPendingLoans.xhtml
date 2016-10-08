@@ -1,0 +1,146 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{staffLoanManagedBean.pendingLoans}" editable="true" selectionMode="single" selection="#{staffLoanManagedBean.selectedLoan}" rowKey="#{pendingLoan.id}">
+                                    <f:facet name="header">
+                                        Pending Loans
+                                    </f:facet>
+                                    <p:ajax event="rowEdit" listener="#{staffLoanManagedBean.satffUpdateLoan}"  />
+
+                                    <p:column selectionMode="single"/>
+
+
+                                    <p:column headerText="Loan ID" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+
+
+                                    <p:column headerText="Loan Type">
+                                        <h:outputText value="#{pendingLoan.loanType}" />
+                                    </p:column>
+
+                                    <p:column headerText="Loan Account Number">
+                                        <h:outputText value="#{pendingLoan.accountNumber}" />
+                                    </p:column>
+
+                                    <p:column headerText="Loan Term"> 
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{pendingLoan.loanTerm}" /></f:facet>
+                                            <f:facet name="input"><p:inputText id="loanTerm" value="#{pendingLoan.loanTerm}" style="width:100%"/></f:facet>
+
+                                        </p:cellEditor>
+                                    </p:column>
+
+                                    <p:column headerText="Loan Principal">
+                                        <h:outputText value="#{pendingLoan.principal}" />
+                                    </p:column>
+
+                                    <p:column headerText="Loan Downpayment">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{pendingLoan.downpayment}" /></f:facet>
+                                            <f:facet name="input"><p:inputText id="downpayment" value="#{pendingLoan.downpayment}" style="width:100%"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+
+                                    <p:column headerText="Loan Monthly Payment">
+                                        <h:outputText value="#{pendingLoan.monthlyPayment}" />
+                                    </p:column>
+
+                                    <p:column headerText="Loan Outstanding Balance ">
+                                        <h:outputText value="#{pendingLoan.outstandingBalance}" />
+                                    </p:column>
+
+                                    <p:column headerText="Customer Detail" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton icon="ui-icon-mail-open" onclick="PF('msgDialog').show()" update=":form:panel :form:dialogMessage" ajax="true" type="submit" >
+                                                <f:attribute name="selectedLoan" value="#{pendingLoan}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+                                    <p:column style="width:32px">
+                                        <p:rowEditor />
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffLoanManagedBean.staffViewPendingLoans}" oncomplete="PF('carDialog').show()" />
+                                        <p:separator/>
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffLoanManagedBean.staffApprovePending}" oncomplete="PF('carDialog').show()" styleClass="RedButton"/>
+                                        <p:separator/>
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Edit" actionListener="#{staffLoanManagedBean.satffUpdateLoan}" oncomplete="PF('carDialog').show()" styleClass="RedButton"/>
+
+                                    </f:facet>
+                                </p:dataTable>
+
+                            </h:panelGrid>
+
+                            <p:dialog id="dialogMessage"  appendTo="@(body)" header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+
+                                        <h:outputText value="Customer ID: " />
+                                        <h:outputText value="#{pendingLoan.customer.id}" />
+
+                                        <h:outputText value="Customer IC:" />
+                                        <h:outputText value="#{pendingLoan.customer.ic}" />
+
+                                        <h:outputText value="Customer Name: " />
+                                        <h:outputText value="#{pendingLoan.customer.name}" />
+
+                                        <h:outputText value="Customer Email: " />
+                                        <h:outputText value="#{pendingLoan.customer.email}"  />
+
+                                        <h:outputText value="Customer Date of Birth: " />
+                                        <h:outputText value="#{pendingLoan.customer.dateOfBirth}"  />
+
+
+                                        <h:outputText value="Customer Family Information: " />
+                                        <h:outputText value="#{pendingLoan.customer.familyInfo}"  />
+
+                                        <h:outputText value="Customer Financial Asset: " />
+                                        <h:outputText value="#{pendingLoan.customer.financialAsset}"  />
+
+
+
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

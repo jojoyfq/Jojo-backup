@@ -37,15 +37,15 @@
                                         <p:column headerText="Case ID" style="width: 80px;">
                                             <h:outputText value="#{caseEntity.id}" />
                                         </p:column>
-                                        
+
                                         <p:column headerText="Case Subject" style="width: 80px;">
                                             <h:outputText value="#{caseEntity.customerMessage.subject}" />
                                         </p:column>
-                                        
-                                         <p:column headerText="Case Content" style="width: 80px;">
-                                             <h:outputText value="#{caseEntity.customerMessage.content}" />
+
+                                        <p:column headerText="Case Content" style="width: 80px;">
+                                            <h:outputText value="#{caseEntity.customerMessage.content}" />
                                         </p:column>
-                                    
+
                                         <p:column headerText="Created Time">
                                             <h:outputText value="#{caseEntity.caseCreatedTime}" />
                                         </p:column>
@@ -112,19 +112,24 @@
                                     <p:column headerText="Issue Solution">
                                         <h:outputText value="#{issue.solution}" />
                                     </p:column>
-                                    
-                                     <p:column headerText="Issue Status">
-                                         <h:outputText value="#{issue.status}" />
-                                        </p:column>
-                                    
+
+                                    <p:column headerText="Issue Status">
+                                        <h:outputText value="#{issue.status}" />
+                                    </p:column>
+
                                     <p:column headerText="Staff In Charge">
                                         <h:outputText value="#{issue.staff.staffName}" />
-                                        </p:column>
-                                    
+                                    </p:column>
+
                                     <p:column headerText="Issue Rating">
-                                        <h:outputText value="#{issue.rating}" />
-                                        </p:column>
-                                    
+                                        <p:rating value="#{messageManagedBean.rating1}">
+                                            <f:attribute name="selectedIssue" value="#{issue}"  />
+                                            <p:ajax event="rate" listener="#{messageManagedBean.customerRateIssue}" />
+                                           
+                                        </p:rating>
+                                       
+                                    </p:column>
+
 
                                     <p:column headerText="Submit" style="width: 80px;" >
                                         <center>
@@ -136,7 +141,7 @@
 
                                 </p:dataTable>
 
-                                
+
 
                             </p:dialog>
                         </h:form>

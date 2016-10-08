@@ -24,8 +24,8 @@ public interface LoanSessionBeanLocal {
    public BigDecimal calcultateMonthlyPayment(BigDecimal principal,BigDecimal downpayment, Integer loanTerm,Long loanTypeId);
    
    //create new account call these two functions
-   public Long createHomeLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate); 
-   public Long createCarLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
+public Long createHomeLoan(Customer customer,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
+public Long createCarLoan(Customer customer,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
    
    //view loan summary
    public List<Loan> customerViewListOfLoan(Long customrId);
