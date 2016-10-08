@@ -6,6 +6,7 @@
 package BillEntity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -37,6 +38,25 @@ public class BillingOrganization implements Serializable {
     private List<RecurrentBillArrangement> recurrentBillArrangement;
     @OneToMany(cascade = {CascadeType.ALL},mappedBy="billingOrganization")
     private List<BillRecord> billRecord;
+    
+    private String UEN;
+    private String address;
+
+    public String getUEN() {
+        return UEN;
+    }
+
+    public void setUEN(String UEN) {
+        this.UEN = UEN;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     public List<BillRecord> getBillRecord() {
         return billRecord;
@@ -55,14 +75,20 @@ public class BillingOrganization implements Serializable {
     }
     
     public BillingOrganization(){}
-    
-    public BillingOrganization(String name, OtherBank bank, Long accountNumber) {
+
+    public BillingOrganization(String name, OtherBank bank, Long accountNumber, String UEN, String address) {
         this.name = name;
         this.bank = bank;
         this.accountNumber = accountNumber;
-        this.status = "normal";
+        this.UEN = UEN;
+        this.address = address;
+        this.status = "active";
+        this.GIROArrangement = new ArrayList<>();
+        this.recurrentBillArrangement = new ArrayList<>();
+        this.billRecord = new ArrayList<>();
     }
     
+
     
 
     

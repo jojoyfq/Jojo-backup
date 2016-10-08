@@ -54,7 +54,8 @@ public class BillSessionBean implements BillSessionBeanLocal {
         List<OtherBank> otherBanks = this.viewBank();
         List<String> bankNames = new ArrayList<>();
         for(int i=0;i<otherBanks.size();i++ ){
-            bankNames.add(otherBanks.get(i).getName());
+            if(otherBanks.get(i).getStatus().equalsIgnoreCase("active")){
+            bankNames.add(otherBanks.get(i).getName());}
         }
         return bankNames;
     }
@@ -72,11 +73,25 @@ public class BillSessionBean implements BillSessionBeanLocal {
         em.flush();
     }
     
-    public void addBO(String bOName, String bankName, Long accountNum){
-      OtherBank bank = this.findBank(bankName);
-      BillingOrganization bO = new BillingOrganization(bOName,bank,accountNum); 
+        @Override
+    public boolean addBO(String bOName, String bankName, Long accountNum,String UEN, String address){
+        List<BillingOrganization> bOs = this.viewBO();
+        OtherBank bank = this.findBank(bankName);
+        for(int i=0;i<bOs.size();i++){
+            if(bOs.get(i).getName().equalsIgnoreCase(bOName)||bOs.get(i).getUEN().equals(UEN)||(bOs.get(i).getBank().equals(bank)&&bOs.get(i).getAccountNumber().equals(accountNum))){
+              System.out.print("Error! Existing BO name/acct/uen");
+              return false;
+            }
+        }
+      
+      BillingOrganization bO = new BillingOrganization(bOName, bank, accountNum, UEN, address);
+      bank.getBillingOrganization().add(bO);
+      em.persist(bO);
+      em.flush();
+      return true;
     }
     
+        @Override
     public List<BillingOrganization> viewBO(){
         List<BillingOrganization> bOs = new ArrayList<>();
         Query q = em.createQuery("SELECT a FROM BillingOrganization a");
@@ -84,49 +99,80 @@ public class BillSessionBean implements BillSessionBeanLocal {
         return bOs;
     }
     
-    public void modifyBO(String oldBOName, String newName, String newBankName, Long newAcctNum){
-        BillingOrganization bO = this.findBO(oldBOName);
-        if(!oldBOName.equalsIgnoreCase(newName)){
-            bO.setName(newName);
-            System.out.print("name changed");
+        @Override
+    public List<String> viewBOName(){
+        List<BillingOrganization> bos = this.viewBO();
+        List<String> boNames = new ArrayList<>();
+        for(int i =0;i<bos.size();i++){
+            if(bos.get(i).getStatus().equalsIgnoreCase("active")){
+               boNames.add(bos.get(i).getName());
+            }
         }
-        if(!newBankName.equalsIgnoreCase(bO.getBank().getName())){
-            OtherBank oldBank = bO.getBank();
-            OtherBank newBank = this.findBank(newBankName);
-            bO.setBank(newBank);
-            oldBank.getBillingOrganization().remove(bO);
-            newBank.getBillingOrganization().add(bO);
-            System.out.print("bank changed");
-        }
-        if(!newAcctNum.equals(bO.getAccountNumber())){
-            bO.setAccountNumber(newAcctNum);
-            System.out.print("account number changed");
+        return boNames;
+    }
+    
+        @Override
+    public void modifyBO(String boName, String boAddress, String boBankName,String boUEN, Long accountNumber, Long boId){
+        BillingOrganization bo = em.find(BillingOrganization.class, boId);
+        bo.setAccountNumber(accountNumber);
+        bo.setAddress(boAddress);
+        bo.setName(boName);
+        bo.setUEN(boUEN);
+        if(!bo.getBank().getName().equalsIgnoreCase(boBankName)){
+        OtherBank oldBank =  bo.getBank();
+        oldBank.getBillingOrganization().remove(bo);
+        OtherBank newBank = this.findBank(boBankName);
+        bo.setBank(newBank);
+        newBank.getBillingOrganization().add(bo);
         }
         em.flush();
          
     }
     
+        @Override
     public int deleteBO(String bOName){
      BillingOrganization bO = this.findBO(bOName);
+     //when giro and recurrent ends, disconnect them with BO
      if(bO.getGIROArrangement().isEmpty()&& bO.getRecurrentBillArrangement().isEmpty()){
          for(int i =0;i<bO.getBillRecord().size();i++){
              if(bO.getBillRecord().get(i).getStatus().equalsIgnoreCase("pending")){
                  System.out.print("have pending bill");
-                 return 1;           
+                 return 1;  //have pending bill         
              }
          }
-     bO.setStatus("deleted");
+     bO.setStatus("terminated");
      OtherBank bank = bO.getBank();
      bank.getBillingOrganization().remove(bO);
      System.out.print("successfully removed");
-     return 3;
+     em.flush();
+     return 3; //successful
      }else{
          System.out.print("have giro and recurrent arrangement");
-         return 2;
-     }
-     
+         return 2; //have arrangement
+     }     
     }
     
+        @Override
+    public int deleteBank(String bankName){
+        OtherBank bank =  this.findBank(bankName);
+        if(bank.getBillingOrganization().isEmpty()){
+            for(int i=0;i<bank.getTransactionRecord().size();i++){
+                if(bank.getTransactionRecord().get(i).getStatus().equalsIgnoreCase("pending")){
+                    System.out.print("have pending transaction!");
+                    return 2;
+                }
+            }
+            bank.setStatus("terminated");
+            System.out.print("successfully removed");
+            em.flush();
+            return 3;
+        }else{
+            System.out.print("have associated BO");
+            return 1;
+        }  
+    }
+    
+        @Override
     public BillingOrganization findBO(String bOName){
         Query q = em.createQuery("SELECT a FROM BillingOrganization a WHERE a.name = :bOName");
         q.setParameter("bOName", bOName);
