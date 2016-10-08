@@ -85,6 +85,6 @@ public boolean updateAccountStatus(String ic);
     public List<LoanType> displayLoanType(String type) throws ListEmptyException;
     
    ///Create Loan Account - 3rd page - configure home loan  
-    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException;
+    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException;
 
 }

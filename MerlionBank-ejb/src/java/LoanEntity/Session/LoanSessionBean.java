@@ -34,12 +34,12 @@ private BigDecimal monthlyPayment;
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 @Override
-public Long createHomeLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate){
+public Long createHomeLoan(Customer customer,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate){
     
         //generate and check account number
     monthlyPayment=new BigDecimal("0");
         Long accountNum = this.generateLoanAccountNumber();
-        LoanType loanType=em.find(LoanType.class,loanTypeId);
+        LoanType loanType=em.find(LoanType.class,loanTypeName);
         BigDecimal outstandingBalance=new BigDecimal("0");
         if (loanType.getName().equals("SIBOR Package")){
         outstandingBalance=calculateSiborOutstandingBalance(principal.subtract(downpayment),loanTerm,loanType.getSIBOR(),loanType.getSIBORrate1());
@@ -122,11 +122,11 @@ return oustandingAmount;
 }
 
 @Override
-public Long createCarLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate){
+public Long createCarLoan(Customer customer,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate){
      monthlyPayment=new BigDecimal("0");
         //generate and check account number
         Long accountNum = this.generateLoanAccountNumber();
-        LoanType loanType=em.find(LoanType.class,loanTypeId);
+        LoanType loanType=em.find(LoanType.class,loanTypeName);
         BigDecimal outstandingBalance;
       
         outstandingBalance=calculateCarOutstandingBalance(principal.subtract(downpayment),loanTerm,loanType.getInterestRate());

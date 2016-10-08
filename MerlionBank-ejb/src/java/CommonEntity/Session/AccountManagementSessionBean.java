@@ -960,17 +960,17 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     
     //Create Loan Account - 3rd page - configure home loan 
   @Override
-    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException{
-        LoanType loanType=em.find(LoanType.class,loanTypeId);
-        if (loanType.getType().equals("Home")){
+    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException{
+       // LoanType loanType=em.find(LoanType.class,loanTypeId);
+        if (loanTypeName.equals("Home Loan")){
             if (loanTerm >35)
                 throw new LoanTermInvalidException ("Home repayment period can only be max 35 years");
-        Long accountNumber=hlsbl.createHomeLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);
+        Long accountNumber=hlsbl.createHomeLoan(customer,loanTypeName,principal,downpayment,loanTerm,startDate);
         }
-        else if (loanType.getType().equals("Car")){
+        else if (loanTypeName.equals("Car Loan")){
             if (loanTerm >7)
                 throw new LoanTermInvalidException ("Car repayment period can only be max 7 years");
-          Long accountNumber=hlsbl.createCarLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);  
+          Long accountNumber=hlsbl.createCarLoan(customer,loanTypeName,principal,downpayment,loanTerm,startDate);  
         }
         String password = GeneratePassword.createPassword();
         String tempPassword = password;
