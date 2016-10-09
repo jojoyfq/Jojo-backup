@@ -70,13 +70,13 @@
                             <p:menuitem id="addBank" value="Add New Bank" actionListener="#{billStaffManagedBean.dashboardAddBank(event)}"/>
                             <p:menuitem id="viewBank" value="View Banks" actionListener="#{billStaffManagedBean.dashboardViewBank(event)}"/>
                             <p:menuitem id="modifyBank" value="Modify Bank Information" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
-                            <p:menuitem id="deleteBank" value="Delete Bank" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                            <p:menuitem id="deleteBank" value="Delete Bank" actionListener="#{billStaffManagedBean.dashboardDeleteBank(event)}"/>
                         </p:submenu>
                         <p:submenu id="manageBO" label="Manage Billing Organization" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(11)}">
-                            <p:menuitem id="addBO" value="Add Billing Organization" actionListener="#{billStaffManagedBean.dashboardAddBank(event)}"/>
-                            <p:menuitem id="viewBO" value="View Billing Organizations" actionListener="#{billStaffManagedBean.dashboardViewBank(event)}"/>
-                            <p:menuitem id="modifyBO" value="Modify Billing Organization Information" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
-                            <p:menuitem id="deleteBO" value="Delete Billing Organization" actionListener="#{billStaffManagedBean.dashboardModifyBank(event)}"/>
+                            <p:menuitem id="addBO" value="Add Billing Organization" actionListener="#{billStaffManagedBean.dashboardAddBO(event)}"/>
+                            <p:menuitem id="viewBO" value="View Billing Organizations" actionListener="#{billStaffManagedBean.dashboardViewBO(event)}"/>
+                            <p:menuitem id="modifyBO" value="Modify Billing Organization Information" actionListener="#{billStaffManagedBean.dashboardModifyBO(event)}"/>
+                            <p:menuitem id="deleteBO" value="Delete Billing Organization" actionListener="#{billStaffManagedBean.dashboardDeleteBO(event)}"/>
                         </p:submenu>
                     </p:submenu>
                 </p:submenu>

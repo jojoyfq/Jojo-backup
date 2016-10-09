@@ -7,6 +7,7 @@ package BillEntity;
 
 import DepositEntity.TransactionRecord;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ public class OtherBank implements Serializable {
     
     @OneToMany(cascade={CascadeType.ALL},mappedBy="otherBank")
     private List<TransactionRecord> transactionRecord;
-    private String status;//normal, deleted
+    private String status;//active, terminated
     @OneToMany(cascade={CascadeType.ALL},mappedBy="bank")
     private List<BillingOrganization> billingOrganization;
 
@@ -84,6 +85,9 @@ public class OtherBank implements Serializable {
         this.UEN = UEN;
         this.address = address;
         this.status = "active";
+        this.transactionRecord = new ArrayList<>();
+        this.billingOrganization = new ArrayList<>();
+        
     }
     
    

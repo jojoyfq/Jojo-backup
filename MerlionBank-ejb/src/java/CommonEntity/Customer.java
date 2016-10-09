@@ -12,6 +12,7 @@ import CustomerRelationshipEntity.CaseEntity;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import LoanEntity.Loan;
+import PayMeEntity.PayMe;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -112,6 +113,9 @@ public class Customer implements Serializable {
   
     @OneToOne(cascade={CascadeType.ALL}) 
    private OnlineAccount onlineAccount;//same as ic
+    
+    @OneToOne(cascade={CascadeType.ALL})
+    private PayMe payMe; //one customer has one payme account
 
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<SavingAccount> savingAccounts;
@@ -204,7 +208,7 @@ public class Customer implements Serializable {
     
   //  @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
     public Customer (){
-    };
+    }
     
 
     public Customer(String IC, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String riskRating, OnlineAccount onlineAccount,String status,BigDecimal intraTransferLimit) {
@@ -425,7 +429,12 @@ public class Customer implements Serializable {
         this.onlineAccount = onlineAccount;
     }
     
+    public PayMe getPayMe() {
+        return payMe;
+    }
 
-   
-    
+    public void setPayMe(PayMe payMe) {
+        this.payMe = payMe;
+    }
+       
 }

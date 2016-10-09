@@ -42,7 +42,7 @@
                         <p:menuitem id="view_CardSummary" value="View Card Summary" actionListener="#{debitCardManagedBean.dashboardToViewDebitSummary}"/> 
                         <p:menuitem id="view_eStatement" value="View eStatement" /> 
                         <p:menuitem id="Cancel_Debit_Card" value="Cancel Debit Card" /> 
-                        <p:menuitem id="submit_Chargeback" value="Submit Chargeback Request" /> 
+                        <p:menuitem id="submit_Chargeback" value="Submit Chargeback Request" actionListener="#{debitCardManagedBean.dashboardToChargeback}" /> 
                     </p:submenu>
                     
                     <p:submenu id="creditCard" label="Credit Card" icon="icon-plus"></p:submenu>

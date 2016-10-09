@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -32,7 +33,9 @@ public class GIROArrangement implements Serializable {
     private SavingAccount savingAccount;
     
     private String status;//active, terminated
+    private DateTime deductionDay;
     
+
     public GIROArrangement(){}
 
     public GIROArrangement(BigDecimal deductionLimit, BillingOrganization billingOrganization, String billReference, SavingAccount savingAccount) {

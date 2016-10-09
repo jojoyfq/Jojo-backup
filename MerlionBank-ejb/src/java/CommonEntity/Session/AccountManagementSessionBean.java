@@ -966,21 +966,28 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         LoanType loanType=em.find(LoanType.class,loanTypeId);
         if (loanType.getType().equals("Home")){
             if (loanTerm >420)
+
                 throw new LoanTermInvalidException ("Home repayment period can only be max 35 years");
+
             if (principal.multiply(new BigDecimal ("0.2")).compareTo(downpayment)==-1)
                 throw new LoanTermInvalidException ("Down Payment must be greater than 20% of your total asset value");
        
             Long accountNumber=hlsbl.createHomeLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);
+
         }
+
         else if (loanType.getType().equals("Car")){
             if (loanTerm >84)
+
                 throw new LoanTermInvalidException ("Car repayment period can only be max 7 years");
+
           Long accountNumber=hlsbl.createCarLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);  
         }
         else if (loanType.getType().equals("Education")){
             if (loanTerm >96)
                 throw new LoanTermInvalidException ("Education repayment period can only be max 8 years");
           Long accountNumber=hlsbl.createEducationLoan(customer,loanTypeId,principal,loanTerm,startDate);  
+
         }
         String password = GeneratePassword.createPassword();
         String tempPassword = password;

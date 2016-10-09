@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Select an Account Type</title>
+        <ui:insert name="head" />
+    </h:head>
+
+    <h:body>
+        <h:form>
+            <div class="Wid100 MarAuto">
+                <div class="Wid80 MarAuto WidAutoOnMobile">
+                    <div style="margin-top:10rem;"></div>
+
+                    <div class="Wid60 MarAuto WidAutoOnMobile">
+                        <div class="Container100">
+                            <div class="Card ui-fluid">
+                                <div class="CardBigTopic TexAlCenter Purple">Select an Loan Account Type</div>
+                                <div class="SeparatorFull"></div>
+
+
+                                <div class="Container100 ui-fluid">
+
+                                    <div class="Card">
+                                        <div class="Container10"></div>
+                                        <div class="Container50">
+                                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+
+                                                <p:outputLabel for="loanCat" value="Loan Category " />
+                                                <p:selectOneMenu id="loanCat" value="#{customerLoanManagedBean.loanTypeName}" style="width:150px">
+                                                    <p:ajax listener="#{customerLoanManagedBean.onCountryChange}" update="city" />
+                                                    <f:selectItem itemLabel="Select Loan Category" itemValue="" noSelectionOption="true" />
+                                                    <f:selectItems value="#{customerLoanManagedBean.loanCategories}" />
+                                                </p:selectOneMenu>
+
+                                                <p:outputLabel for="city" value="Loan Type: " />
+                                                <p:selectOneMenu id="city" value="#{customerLoanManagedBean.loanName}" style="width:150px">
+                                                    <f:selectItem itemLabel="Select Specific Loan Type" itemValue="" noSelectionOption="true" />
+                                                    <f:selectItems value="#{customerLoanManagedBean.loanNames}" />
+                                                </p:selectOneMenu>
+
+                                                <h:outputLabel for="principal" value="Principal Amount(S$):" />
+                                                <p:inputText id="principal" value="#{customerLoanManagedBean.principal}" label="principal" required="true" requiredMessage="Please enter your amount!" />
+                                                <p:message for="principal" display="icon"/>
+                                                <h:outputLabel />
+
+                                                <h:outputLabel for="downpayment" value="Downpayment(S$):" />
+                                                <p:inputText id="downpayment" value="#{customerLoanManagedBean.downpayment}" label="downpayment" required="true" requiredMessage="Please enter your downpayment!" />
+                                                <p:message for="downpayment" display="icon"/>
+                                                <h:outputLabel />
+
+                                                <h:outputLabel for="loanTerm" value="Loan Term:" />
+                                                <p:inputNumber id="loanTerm" value="#{customerLoanManagedBean.loanTerm}" label="loanTerm" symbolPosition="s" emptyValue="zero" required="true" requiredMessage="Please enter your downpayment!" />
+                                                <p:message for="loanTerm" display="icon"/>
+                                                <p:watermark for="loanTerm" value="Please key in the number of months" id="watermark" />
+
+                                                <h:outputLabel />
+
+
+
+
+                                            </p:panelGrid>
+                                            <p:separator />
+
+                                        </div>
+
+                                        <div class="Container10"></div>
+
+                                        <div class="EmptyBox20"></div>
+                                        <div class="Container30"></div>
+                                        <div class="Container40">
+                                            <p:commandButton actionListener="#{customerLoanManagedBean.customerApplyLoan}" value="Submit" />
+                                        </div>
+                                        <div class="Container30"></div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="Container100 Responsive50">
+                <div class="Card ui-fluid">
+                    <i class="fa fa-fw"></i>
+                    <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
+                    <div class="EmptyBox10"></div>
+                    <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
+                    <div class="EmptyBox10"></div>
+                    <p:commandButton actionListener="#{customerLoanManagedBean.customerApplyLoan}" styleClass="BlueButton" value="Start Calculate" />
+
+
+                </div>
+            </div>
+
+            <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+        </h:form>
+    </h:body>
+
+</html>

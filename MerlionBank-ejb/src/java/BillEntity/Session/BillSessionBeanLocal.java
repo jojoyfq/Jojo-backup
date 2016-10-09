@@ -5,6 +5,7 @@
  */
 package BillEntity.Session;
 
+import BillEntity.BillingOrganization;
 import BillEntity.OtherBank;
 import java.util.List;
 import javax.ejb.Local;
@@ -29,5 +30,20 @@ public interface BillSessionBeanLocal {
     public OtherBank findBank(String bankName);
 
     public void modifyBank(String bankName, String address, String SWIFT, String UEN, Long bankId);
+
+    public boolean addBO(String bOName, String bankName, Long accountNum, String UEN, String address);
+
+    public BillingOrganization findBO(String bOName);
+
+    public List<BillingOrganization> viewBO();
+
+    public List<String> viewBOName();
+
+    public void modifyBO(String boName, String boAddress, String boBankName, String boUEN, Long accountNumber, Long boId);
+
+    public int deleteBO(String bOName);
+
+    public int deleteBank(String bankName);
+
     
 }
