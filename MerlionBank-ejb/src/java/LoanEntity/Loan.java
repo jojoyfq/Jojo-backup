@@ -36,6 +36,60 @@ public class Loan implements Serializable {
     private Date startDate;
     private String status;
     private BigDecimal monthlyPayment;
+    private BigDecimal latePayment;
+    private Integer paidTerm;
+    private BigDecimal loanAmount;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date loanDate;
+    private Integer payTime;
+
+    public Integer getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(Integer payTime) {
+        this.payTime = payTime;
+    }
+    
+    
+
+    public Date getLoanDate() {
+        return loanDate;
+    }
+
+    public void setLoanDate(Date loanDate) {
+        this.loanDate = loanDate;
+    }
+
+    public BigDecimal getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanAmount(BigDecimal loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+    
+    
+
+    public Integer getPaidTerm() {
+        return paidTerm;
+    }
+
+    public void setPaidTerm(Integer paidTerm) {
+        this.paidTerm = paidTerm;
+    }
+    
+    
+
+    public BigDecimal getLatePayment() {
+        return latePayment;
+    }
+
+    public void setLatePayment(BigDecimal latePayment) {
+        this.latePayment = latePayment;
+    }
+    
+    
 
     public Long getAccountNumber() {
         return accountNumber;

@@ -825,6 +825,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
 
     //Teller Create Fixed Deposit Account - 1st page - create online banking account
+    //Teller Create Loan Account - 1st page - create online banking account
     @Override
     public Customer tellerCreateFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String enterPassword) throws UserExistException, EmailNotSendException {
         String salt = "";
@@ -948,6 +949,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
     
     //Create Loan Account - 2nd page - display different type 
+     //Teller Create Loan Account - 2nd page - display different type 
     @Override
     public List<LoanType> displayLoanType(String type) throws ListEmptyException{
          Query q = em.createQuery("SELECT a FROM LoanType a WHERE a.type = :type");
@@ -960,17 +962,32 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     
     //Create Loan Account - 3rd page - configure home loan 
   @Override
-    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException{
-       // LoanType loanType=em.find(LoanType.class,loanTypeId);
-        if (loanTypeName.equals("Home Loan")){
-            if (loanTerm >35)
+    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException{
+        LoanType loanType=em.find(LoanType.class,loanTypeId);
+        if (loanType.getType().equals("Home")){
+            if (loanTerm >420)
+
                 throw new LoanTermInvalidException ("Home repayment period can only be max 35 years");
-        Long accountNumber=hlsbl.createHomeLoan(customer,loanTypeName,principal,downpayment,loanTerm,startDate);
+
+            if (principal.multiply(new BigDecimal ("0.2")).compareTo(downpayment)==-1)
+                throw new LoanTermInvalidException ("Down Payment must be greater than 20% of your total asset value");
+       
+            Long accountNumber=hlsbl.createHomeLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);
+
         }
-        else if (loanTypeName.equals("Car Loan")){
-            if (loanTerm >7)
+
+        else if (loanType.getType().equals("Car")){
+            if (loanTerm >84)
+
                 throw new LoanTermInvalidException ("Car repayment period can only be max 7 years");
-          Long accountNumber=hlsbl.createCarLoan(customer,loanTypeName,principal,downpayment,loanTerm,startDate);  
+
+          Long accountNumber=hlsbl.createCarLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);  
+        }
+        else if (loanType.getType().equals("Education")){
+            if (loanTerm >96)
+                throw new LoanTermInvalidException ("Education repayment period can only be max 8 years");
+          Long accountNumber=hlsbl.createEducationLoan(customer,loanTypeId,principal,loanTerm,startDate);  
+
         }
         String password = GeneratePassword.createPassword();
         String tempPassword = password;
@@ -998,5 +1015,32 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         return customer.getId();
     }
 
-
+ 
+   //Teller Create Loan Account - 3nd page - configure loan
+  @Override
+    public Long StaffCreateLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException{
+        Customer customer=em.find(Customer.class,customerId);
+        LoanType loanType=em.find(LoanType.class,loanTypeId);
+        Long accountNumber=0L;
+        if (loanType.getType().equals("Home")){
+            if (loanTerm >420)
+                throw new LoanTermInvalidException ("Home repayment period can only be max 35 years");
+            if (principal.multiply(new BigDecimal ("0.2")).compareTo(downpayment)==-1)
+                throw new LoanTermInvalidException ("Down Payment must be greater than 20% of your total asset value");
+       
+            accountNumber=hlsbl.createHomeLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);
+        }
+        else if (loanType.getType().equals("Car")){
+            if (loanTerm >84)
+                throw new LoanTermInvalidException ("Car repayment period can only be max 7 years");
+          accountNumber=hlsbl.createCarLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);  
+        }
+        else if (loanType.getType().equals("Education")){
+            if (loanTerm >96)
+                throw new LoanTermInvalidException ("Education repayment period can only be max 8 years");
+          accountNumber=hlsbl.createEducationLoan(customer,loanTypeId,principal,loanTerm,startDate);  
+        }
+       return accountNumber;
+    }
+    
 }

@@ -6,7 +6,11 @@
 package LoanEntity.Session;
 
 import CommonEntity.Customer;
+import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
+import Exception.LoanTermInvalidException;
+import Exception.NotEnoughAmountException;
 import LoanEntity.Loan;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -24,9 +28,9 @@ public interface LoanSessionBeanLocal {
    public BigDecimal calcultateMonthlyPayment(BigDecimal principal,BigDecimal downpayment, Integer loanTerm,Long loanTypeId);
    
    //create new account call these two functions
-public Long createHomeLoan(Customer customer,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
-public Long createCarLoan(Customer customer,String loanTypeName,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
-   
+   public Long createHomeLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate); 
+   public Long createCarLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
+   public Long createEducationLoan(Customer customer,Long loanTypeId,BigDecimal principal,Integer loanTerm,Date graduationDate);
    //view loan summary
    public List<Loan> customerViewListOfLoan(Long customrId);
    public Loan customerViewLoan(Long loanId);
@@ -36,6 +40,21 @@ public Long createCarLoan(Customer customer,String loanTypeName,BigDecimal princ
     public List<Loan> customerCancelLoan(Long customerId, Long loanId);
      public List<Loan> customerAcceptLoan(Long customerId, Long loanId) throws EmailNotSendException;
    
+   //one time loan payment
+     public List<Loan> displayLoans(Long customerId) throws ListEmptyException;
+     public List<SavingAccount> displaySavingAccounts(Long customerId)throws ListEmptyException;
+     public BigDecimal loanPayBySaving(Long customerId, Long savingAccountId, Long loanId)throws NotEnoughAmountException;
+     
+     //loan payment by GIRO
+     //loan payment by external organization
+     
+     //early redemption-display interest
+     public BigDecimal displayRedemptionInterest(Long loanId);
+     
+     //early redemption-choose redemption method
+     //early redemption- choose pay my saving account and display saving account (using function above)
+     public Loan applyEarlyRedemption(Long customerId, Long loanId,Long savingAccountId)throws NotEnoughAmountException;
    
-   
+      //staff and customer create existing account
+   public List<Loan> CreateExistingLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException,EmailNotSendException;
 }
