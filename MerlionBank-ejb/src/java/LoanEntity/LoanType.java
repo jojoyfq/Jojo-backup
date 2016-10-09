@@ -34,6 +34,7 @@ public class LoanType implements Serializable {
     private Double SIBOR;
     private Double SIBORrate1;
     private Double interestRate;
+    private Double educationRate;
     
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "loanType")
     private List<Loan> loans = new ArrayList<Loan>();
@@ -46,6 +47,15 @@ public class LoanType implements Serializable {
         this.name = name;
     }
 
+    public Double getEducationRate() {
+        return educationRate;
+    }
+
+    public void setEducationRate(Double educationRate) {
+        this.educationRate = educationRate;
+    }
+
+    
     public Double getInterestRate() {
         return interestRate;
     }
