@@ -27,6 +27,8 @@ import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -65,6 +67,25 @@ public class CommonInfraManagedBean implements Serializable {
     private Date dateOfEnd;
     private String duration;
     private Long depositAccountNumber;
+    
+    UploadedFile file;
+
+	public UploadedFile getFile() {
+		return file;
+	}
+
+	public void setFile(UploadedFile file) {
+		this.file = file;
+	}
+
+	public void fileUploadListener(FileUploadEvent e){
+		// Get uploaded file from the FileUploadEvent
+		this.file = e.getFile();
+                customer.
+                System.out.println("");
+		// Print out the information of the file
+		System.out.println("Uploaded File Name Is :: "+file.getFileName()+" :: Uploaded File Size :: "+file.getSize());
+	}
 
     public Long getDepositAccountNumber() {
         return depositAccountNumber;

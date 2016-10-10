@@ -39,7 +39,7 @@ and open the template in the editor.
                                         <h:form>
                                             <p:growl life="2000"/>                                         
                                             <p:panel id="panel" header="Activate Account">
-                                             
+
 
                                                 <h:panelGrid columns="3" id="createSavingAccount" cellpadding="5">                   
                                                     <h:outputLabel for="ic" value="IC:" />
@@ -105,11 +105,21 @@ and open the template in the editor.
                                                 <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" rendered="true" />
                                             </div>
                                             <div class="Container30"></div>
+                                        </h:form>       
+                                        <h:form>
 
+                                            <div class="Container100">
+                                                <div class="Card">
+                                                    <h1 class="CardBigTopic">Advanced</h1>
+                                                    <h:form>
+                                                        <p:fileUpload value="#{commonInfraManagedBean.file}"  fileUploadListener="#{commonInfraManagedBean.fileUploadListener}" mode="advanced" dragDropSupport="false"
+                                                                      multiple="true" update="messages" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
 
-
-
-                                        </h:form>                                        
+                                                        <p:growl id="messages" showDetail="true" />
+                                                    </h:form>
+                                                </div>
+                                            </div>
+                                        </h:form>
                                     </div>
                                 </div>
 
