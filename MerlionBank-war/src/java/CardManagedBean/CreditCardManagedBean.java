@@ -10,6 +10,7 @@ import CardEntity.Session.CreditCardSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -29,19 +30,19 @@ import org.primefaces.model.UploadedFile;
  */
 @Named(value = "creditCardManagedBean")
 @SessionScoped
-public class CreditCardManagedBean implements Serializable{
+public class CreditCardManagedBean implements Serializable {
 
     @EJB
     CreditCardSessionBeanLocal ccsb;
     @Inject
     LogInManagedBean logInManagedBean;
-    
+
     private Long customerID;
     private List<String> creditCardTypeList;
     private String creditCardTypeSelected;
     private CreditCard creditCard;
     //create credit card
-    private List<String> identityList;
+    private List<String> identityList = new ArrayList<>();
     private String identitySelected;
     //upload file
     private UploadedFile employmentPass;
@@ -49,54 +50,88 @@ public class CreditCardManagedBean implements Serializable{
     private UploadedFile paySlip;
     private UploadedFile salaryApprove;
 
-    
     @PostConstruct
     public void init() {
         try {
             this.setCustomerID(logInManagedBean.getCustomerId());
+            identityList.add(0, "Singaporean");
+            identityList.add(1, "Permanent Resident");
+            identityList.add(2, "Foreigner");
+            System.out.print(identityList);
         } catch (Exception e) {
             System.out.print("init encounter error!");
         }
     }
-    
+
     public CreditCardManagedBean() {
     }
-    
-    public void dashboardToCreateCreditCard(ActionEvent event){
+
+    public void dashboardToCreateCreditCard(ActionEvent event) {
         try {
-            identityList.set(0, "Singaporean");
-            identityList.set(1, "Permanent Resident");
-            identityList.set(2, "Foreigner");
+
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_SelectIdentity.xhtml");
         } catch (Exception e) {
             System.out.print("dashboard to create credit card encounter error!");
         }
     }
-    
-    public void creditApplyEnterDetail(ActionEvent event) throws IOException{
-        if(identitySelected==null){
+
+    public void creditApplyEnterDetail(ActionEvent event) throws IOException {
+        if (identitySelected == null) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select your citizenship!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }else if(identitySelected.equals("Singaporean") || identitySelected.equals("Permanent Resident")){
+        } else if (identitySelected.equals("Singaporean") || identitySelected.equals("Permanent Resident")) {
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileSingaporean.xhtml");
-        }else {
+        } else {
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileForeigner.xhtml");
         }
     }
-    
+
+    public void handleCPFUpload(FileUploadEvent event) {
+        cpfContribution = event.getFile();
+        System.out.print(cpfContribution.getFileName());
+        String fileName = cpfContribution.getFileName();
+        String contentType = cpfContribution.getContentType();
+//        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
+//        RequestContext.getCurrentInstance().showMessageInDialog(message);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType)));
+    }
+
+    public void handlePaySlipUpload(FileUploadEvent event) {
+        paySlip = event.getFile();
+        System.out.print(paySlip.getFileName());
+        String fileName = paySlip.getFileName();
+        String contentType = paySlip.getContentType();
+//        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
+//        RequestContext.getCurrentInstance().showMessageInDialog(message);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType)));
+
+    }
+
     public void uploadFileForeigner(ActionEvent event) {
-        if(employmentPass!=null && salaryApprove!=null){
-            FacesMessage message = new FacesMessage("Succesful", employmentPass.getFileName() + " and "+ salaryApprove.getFileName()+" is uploaded.");
+        if (employmentPass != null && salaryApprove != null) {
+            FacesMessage message = new FacesMessage("Succesful", employmentPass.getFileName() + " and " + salaryApprove.getFileName() + " is uploaded.");
             FacesContext.getCurrentInstance().addMessage(null, message);
-        }else{
+        } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please upload all the file!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
+
+    public void uploadFileSingaporean(ActionEvent event) {
+        if (cpfContribution != null) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "CPF Contribution uploaded!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please upload all the file!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
     public Long getCustomerID() {
         return customerID;
     }
@@ -128,23 +163,23 @@ public class CreditCardManagedBean implements Serializable{
     public void setCreditCard(CreditCard creditCard) {
         this.creditCard = creditCard;
     }
-    
-     public List<String> getIdentityList() {
+
+    public List<String> getIdentityList() {
         return identityList;
     }
 
     public void setIdentityList(List<String> identityList) {
         this.identityList = identityList;
     }
-    
-     public String getIdentitySelected() {
+
+    public String getIdentitySelected() {
         return identitySelected;
     }
 
     public void setIdentitySelected(String identitySelected) {
         this.identitySelected = identitySelected;
     }
-    
+
     public UploadedFile getEmploymentPass() {
         return employmentPass;
     }
@@ -176,5 +211,5 @@ public class CreditCardManagedBean implements Serializable{
     public void setSalaryApprove(UploadedFile salaryApprove) {
         this.salaryApprove = salaryApprove;
     }
-    
+
 }

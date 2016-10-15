@@ -17,12 +17,15 @@ import javax.persistence.Entity;
 @Entity
 public class CardTransaction extends TransactionRecord {
     private Long cardNumber;
+    private String emv; // VISA, MASTERCARD, NETS
+
     
     public CardTransaction(){}
     
-    public CardTransaction(String code, BigDecimal amount,String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,Long cardNumber){
+    public CardTransaction(String code, BigDecimal amount,String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,Long cardNumber, String emv){
         super(code,amount,status,description,transactionTime,giverAccountNum,recipientAccountNum);
         this.cardNumber = cardNumber;
+        this.emv = emv;
     }
 
     public Long getCardNumber() {
@@ -33,5 +36,12 @@ public class CardTransaction extends TransactionRecord {
         this.cardNumber = cardNumber;
     }
     
+    public String getEmv() {
+        return emv;
+    }
+
+    public void setEmv(String emv) {
+        this.emv = emv;
+    }
     
 }
