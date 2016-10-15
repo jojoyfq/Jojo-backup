@@ -5,6 +5,7 @@
  */
 package DepositEntity.Session;
 
+import DepositEntity.TransactionRecord;
 import Exception.PayeeNotFoundException;
 import Exception.TransferException;
 import Exception.UserHasNoSavingAccountException;
@@ -37,5 +38,7 @@ public interface TransferSessionBeanLocal {
     public void deletePayee(Long customerID, Long accountNum);
     
     public BigDecimal getTransferLimit(Long customerID);
+    
+    public List<TransactionRecord> getTransactionRecord(Long savingAccountNumber);
 
 }

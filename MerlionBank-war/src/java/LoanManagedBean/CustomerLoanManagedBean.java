@@ -179,11 +179,11 @@ public void onCountryChange() {
         System.out.println("*************Customer create home loan details - startDate " + startDate);
 
         if (loanTypeName.equals("Home Loan")) {
-           lsbl.createHomeLoan(customer, loanName, principal, downpayment,loanTerm, startDate);
+           lsbl.createHomeLoan(customer, loanId, principal, downpayment,loanTerm, startDate);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan account has been successfully created!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } else if (getLoanTypeName().equals("Car Loan")) {
-           lsbl.createCarLoan(customer, loanName, principal, downpayment,loanTerm, startDate);
+           lsbl.createCarLoan(customer, loanId, principal, downpayment,loanTerm, startDate);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan account has been successfully created!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }

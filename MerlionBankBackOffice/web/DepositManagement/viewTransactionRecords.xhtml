@@ -28,25 +28,25 @@
                                 <h:panelGrid columns="5" cellpadding="5">
                                     <p:dataTable var="TransactionRecord" value="#{savingAccountManagedBean.transactionRecordList}">
                                         <p:column headerText="Date">
-                                            <h:outputLabel value="#{TransactionRecord.get(0)}" >
+                                            <h:outputLabel value="#{TransactionRecord.transactionTime}" >
                                                 <f:convertDateTime pattern="dd/MM/yyyy" />
                                             </h:outputLabel>
                                         </p:column>
 
                                         <p:column headerText="Code">
-                                            <h:outputText value="#{TransactionRecord.get(1)}" />
+                                            <h:outputText value="#{TransactionRecord.code}" />
                                         </p:column>
 
                                         <p:column headerText="Reference No">
-                                            <h:outputText value="#{TransactionRecord.get(2)}" />
+                                            <h:outputText value="#{TransactionRecord.description}" />
                                         </p:column>
 
                                         <p:column headerText="Debit">
-                                            <h:outputText value="#{TransactionRecord.get(3)}" />
+                                            <h:outputText value="#{TransactionRecord.debit}" />
                                         </p:column>
 
                                         <p:column headerText="Credit">
-                                            <h:outputText value="#{TransactionRecord.get(4)}" />
+                                            <h:outputText value="#{TransactionRecord.credit}" />
                                         </p:column>
 
 

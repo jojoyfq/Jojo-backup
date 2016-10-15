@@ -81,8 +81,8 @@ public class CommonInfraManagedBean implements Serializable {
 	public void fileUploadListener(FileUploadEvent e){
 		// Get uploaded file from the FileUploadEvent
 		this.file = e.getFile();
-                customer.
-                System.out.println("");
+//                customer.
+//                System.out.println("");
 		// Print out the information of the file
 		System.out.println("Uploaded File Name Is :: "+file.getFileName()+" :: Uploaded File Size :: "+file.getSize());
 	}

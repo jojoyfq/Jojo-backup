@@ -60,6 +60,9 @@ public class SavingAccount implements Serializable {
     @OneToMany (cascade={CascadeType.ALL},mappedBy="savingAccount")
     private List<RecurrentBillArrangement> recurrentBillArrangement;
     
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="savingAccount")
+    private List<TransactionRecord> transactionRecord;
+    
     @OneToOne (cascade={CascadeType.ALL})
     private PayMe payMe;
  
@@ -256,6 +259,14 @@ public class SavingAccount implements Serializable {
 
     public void setPayMe(PayMe payMe) {
         this.payMe = payMe;
+    }
+    
+     public List<TransactionRecord> getTransactionRecord() {
+        return transactionRecord;
+    }
+
+    public void setTransactionRecord(List<TransactionRecord> transactionRecord) {
+        this.transactionRecord = transactionRecord;
     }
 
 }
