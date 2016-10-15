@@ -23,23 +23,12 @@ import javax.ejb.Local;
  */
 @Local
 public interface LoanSessionBeanLocal {
-   
-    // loan calculator
-   public BigDecimal calcultateMonthlyPayment(BigDecimal principal,BigDecimal downpayment, Integer loanTerm,Long loanTypeId);
-   
-   //create new account call these two functions
-   public Long createHomeLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate); 
-   public Long createCarLoan(Customer customer,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
-   public Long createEducationLoan(Customer customer,Long loanTypeId,BigDecimal principal,Integer loanTerm,Date graduationDate);
-   //view loan summary
-   public List<Loan> customerViewListOfLoan(Long customrId);
-   public Loan customerViewLoan(Long loanId);
-   
+    
    //customer edit loan
     public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal downpayment,Integer loanTerm,Date startDate);
     public List<Loan> customerCancelLoan(Long customerId, Long loanId);
      public List<Loan> customerAcceptLoan(Long customerId, Long loanId) throws EmailNotSendException;
-   
+   public Loan customerViewLoan(Long loanId);
    //one time loan payment
      public List<Loan> displayLoans(Long customerId) throws ListEmptyException;
      public List<SavingAccount> displaySavingAccounts(Long customerId)throws ListEmptyException;
@@ -56,5 +45,5 @@ public interface LoanSessionBeanLocal {
      public Loan applyEarlyRedemption(Long customerId, Long loanId,Long savingAccountId)throws NotEnoughAmountException;
    
       //staff and customer create existing account
-   public List<Loan> CreateExistingLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException,EmailNotSendException;
+   //public List<Loan> CreateExistingLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException,EmailNotSendException;
 }

@@ -41,16 +41,36 @@ public class Loan implements Serializable {
     private BigDecimal loanAmount;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date loanDate;
-    private Integer payTime;
+    private Double interestRate1;
+    private Double interestRate2;
+    //private Integer payTime;
 
-    public Integer getPayTime() {
-        return payTime;
-    }
+//    public Integer getPayTime() {
+//        return payTime;
+//    }
+//
+//    public void setPayTime(Integer payTime) {
+//        this.payTime = payTime;
+//    }
+//    
 
-    public void setPayTime(Integer payTime) {
-        this.payTime = payTime;
-    }
+
     
+    public Double getInterestRate1() {
+        return interestRate1;
+    }
+
+    public void setInterestRate1(Double interestRate1) {
+        this.interestRate1 = interestRate1;
+    }
+
+    public Double getInterestRate2() {
+        return interestRate2;
+    }
+
+    public void setInterestRate2(Double interestRate2) {
+        this.interestRate2 = interestRate2;
+    }
     
 
     public Date getLoanDate() {
@@ -118,24 +138,27 @@ public class Loan implements Serializable {
 
     @ManyToOne
     private Customer customer;
-    @ManyToOne
-    private Staff staff;
+   // @ManyToOne
+    //private Staff staff;
     @ManyToOne
     private LoanType loanType = new LoanType();
 
     public Loan() {
     }
 
-    public Loan(Long accountNumber, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, BigDecimal outstandingBalance, Date startDate, String status, Customer customer) {
+    public Loan(Long accountNumber, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, String status, BigDecimal monthlyPayment, Integer paidTerm, BigDecimal loanAmount, Customer customer) {
         this.accountNumber = accountNumber;
         this.principal = principal;
         this.downpayment = downpayment;
         this.loanTerm = loanTerm;
-        this.outstandingBalance = outstandingBalance;
-        this.startDate = startDate;
         this.status = status;
+        this.monthlyPayment = monthlyPayment;
+        this.paidTerm = paidTerm;
+        this.loanAmount = loanAmount;
         this.customer = customer;
     }
+
+ 
 
     
     public BigDecimal getPrincipal() {
@@ -194,13 +217,13 @@ public class Loan implements Serializable {
         this.customer = customer;
     }
 
-    public Staff getStaff() {
-        return staff;
-    }
-
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
+//    public Staff getStaff() {
+//        return staff;
+//    }
+//
+//    public void setStaff(Staff staff) {
+//        this.staff = staff;
+//    }
 
     public LoanType getLoanType() {
         return loanType;
