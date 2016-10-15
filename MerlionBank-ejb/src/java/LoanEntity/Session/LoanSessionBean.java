@@ -376,7 +376,8 @@ public List<Loan> customerCancelLoan(Long customerId, Long loanId){
            Date currentTime = Calendar.getInstance().getTime();
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-                TransactionRecord transactionRecord = new TransactionRecord("LP",amount,"settled", "Loan Payment",currentTimestamp,savingAccount.getAccountNumber(),loan.getAccountNumber());
+                TransactionRecord transactionRecord = new TransactionRecord("LP",amount,null,"settled", "Loan Payment",currentTimestamp,savingAccount.getAccountNumber(),loan.getAccountNumber(),savingAccount,"MerlionBank","MerlionBank");
+                savingAccount.getTransactionRecord().add(transactionRecord);
                 em.persist(transactionRecord);
                 em.flush();
                 
@@ -446,7 +447,7 @@ public List<Loan> customerCancelLoan(Long customerId, Long loanId){
             Date currentTime = Calendar.getInstance().getTime();
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-                TransactionRecord transactionRecord = new TransactionRecord("LP",amount,"settled", "Loan Early Redemption",currentTimestamp,savingAccount.getAccountNumber(),loan.getAccountNumber());
+                TransactionRecord transactionRecord = new TransactionRecord("LP",amount,null,"settled", "Loan Early Redemption",currentTimestamp,savingAccount.getAccountNumber(),loan.getAccountNumber(),savingAccount,"MerlionBank","MerlionBank");
                 em.persist(transactionRecord);
                 em.flush();
                 

@@ -9,7 +9,6 @@ import CommonEntity.Customer;
 import DepositEntity.Payee;
 import DepositEntity.SavingAccount;
 import DepositEntity.TransactionRecord;
-import DepositEntity.TransferRecord;
 import Exception.PayeeNotFoundException;
 import Exception.TransferException;
 import java.math.BigDecimal;
@@ -102,10 +101,16 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 Date currentTime = Calendar.getInstance().getTime();
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-                TransferRecord transferRecord = new TransferRecord("TF", transferAmount, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, "intraTransfer", "MerlionBank", "MerlionBank");
-                em.persist(transferRecord);
+                TransactionRecord transaction1 = new TransactionRecord("TF", transferAmount,null , "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum,giverSavingAccount, "MerlionBank", "MerlionBank");
+                giverSavingAccount.getTransactionRecord().add(transaction1);                
+                em.persist(transaction1);
                 em.flush();
-
+                
+                TransactionRecord transaction2 = new TransactionRecord("TF", null,transferAmount , "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum,recipientSavingAccount, "MerlionBank", "MerlionBank");
+                recipientSavingAccount.getTransactionRecord().add(transaction2);
+                em.persist(transaction2);
+                em.flush();
+                
                 System.out.println("transfer successfully!");
             }
         }
@@ -204,53 +209,16 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         return savingAccount.getCustomer().getName();
     }
 
-    public List<List> getTransactionRecord(Long savingAccountNumber) {
-        List<List> displayList = new ArrayList();
-
-        Query m = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum");
-        m.setParameter("giverAccountNum", savingAccountNumber);
-        List<TransactionRecord> record1 = m.getResultList();
-        displayList.addAll(addTransferList(record1, "debit"));
-
-        Query n = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.recipientAccountNum = :recipientAccountNum");
-        n.setParameter("recipientAccountNum", savingAccountNumber);
-        List<TransactionRecord> record2 = n.getResultList();
-        displayList.addAll(addTransferList(record2, "credit"));
-
-        return displayList;
-
-    }
-
-    public List<List> addTransferList(List<TransactionRecord> record, String type) {
-        List<List> list = new ArrayList();
-        int count = 0;
-        if (type.equals("credit")) {
-            for (int i = 0; i < record.size(); i++) {
-                if (record.get(i).equals("settled")) {
-                    list.get(count).add(0, record.get(i).getTransactionTime());
-                    list.get(count).add(1, record.get(i).getCode());
-                    list.get(count).add(2, record.get(i).getDescription());
-                    list.get(count).add(3, null);
-                    list.get(count).add(4, record.get(i).getAmount());
-                    count = count + 1;
-                }
-
-            }
-
-        } else if (type.equals("debit")) {
-            for (int i = 0; i < record.size(); i++) {
-                if (record.get(i).equals("settled")) {
-                    list.get(count).add(0, record.get(i).getTransactionTime());
-                    list.get(count).add(1, record.get(i).getCode());
-                    list.get(count).add(2, record.get(i).getDescription());
-                    list.get(count).add(3, record.get(i).getAmount());
-                    list.get(count).add(4, null);
-                    count = count + 1;
-                }
-
-            }
-        }
-        return list;
+    @Override
+    public List<TransactionRecord> getTransactionRecord(Long savingAccountNumber) {
+        List<TransactionRecord> displayList = new ArrayList();
+        
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNumber");
+        q.setParameter("savingAccountNumber", savingAccountNumber);
+        SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
+        displayList = savingAccount.getTransactionRecord();
+        
+        return displayList;   
     }
 
     @Override
@@ -276,19 +244,20 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String todayString = dateFormat.format(currentTimestamp);
+        
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
+        q.setParameter("savingAccountNum", savingAccountNum);
+        SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
+        List<TransactionRecord> record = savingAccount.getTransactionRecord();
 
-        Query m = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum and a.description = :description");
-        m.setParameter("giverAccountNum", savingAccountNum);
-        m.setParameter("description", description);
-        List<TransactionRecord> record1 = m.getResultList();
 
-        if (record1.isEmpty()) {
+        if (record.isEmpty()) {
             totalAmount = accumulatedAmount.add(transferAmount);
             return totalAmount.compareTo(intraLimit) != 1;
         } else {
-            for (int i = 0; i < record1.size(); i++) {
-                if (dateFormat.format(record1.get(i).getTransactionTime()).equals(todayString)) {
-                    accumulatedAmount = accumulatedAmount.add(record1.get(i).getAmount());
+            for (int i = 0; i < record.size(); i++) {
+                if (dateFormat.format(record.get(i).getTransactionTime()).equals(todayString) && record.get(i).getDescription().equals(description)) {
+                    accumulatedAmount = accumulatedAmount.add(record.get(i).getDebit());                    
                 }
             }
             totalAmount = accumulatedAmount.add(transferAmount);

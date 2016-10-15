@@ -12,7 +12,6 @@ import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import DepositEntity.TransactionRecord;
-import DepositEntity.TransferRecord;
 import Exception.UserCloseAccountException;
 import Exception.UserHasNoInactiveSavingAccountException;
 import Exception.UserHasNoSavingAccountException;
@@ -191,105 +190,41 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     }
 
     @Override
-    public List<List> getTransactionRecord(Long savingAccountNumber) {
-        System.out.print("inside the getTransactionRecord SessionBean");
-
-        List<List> displayList = new ArrayList();
-
-        Query m = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum");
-        m.setParameter("giverAccountNum", savingAccountNumber);
-        List<TransactionRecord> record1 = m.getResultList();
-        System.out.print("record1 size" + record1.size());
-        List<List> temp = new ArrayList();
-        temp = addTransferList(record1, "debit");
-        displayList.addAll(temp);
-
-        System.out.print("in the middle of transaction session Bean" + displayList.size());
-
-        Query n = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.recipientAccountNum = :recipientAccountNum");
-        n.setParameter("recipientAccountNum", savingAccountNumber);
-        List<TransactionRecord> record2 = n.getResultList();
-        List<List> temp2 = new ArrayList();
-        temp2 = addTransferList(record2, "credit");
-        displayList.addAll(temp2);
-
-        return displayList;
-
-    }
-
-    private List<List> addTransferList(List<TransactionRecord> record, String type) {
-
-        List<List> list = new ArrayList();
-        int count = 0;
-        if (type.equals("credit")) {
-            for (int i = 0; i < record.size(); i++) {
-                if (record.get(i).getStatus().equals("settled")) {
-                    list.add(count, new ArrayList<>());
-                    list.get(count).add(0, record.get(i).getTransactionTime());
-                    list.get(count).add(1, record.get(i).getCode());
-                    list.get(count).add(2, record.get(i).getDescription());
-                    list.get(count).add(3, null);
-                    list.get(count).add(4, record.get(i).getAmount());
-                    count = count + 1;
-                }
-
-            }
-
-        } else if (type.equals("debit")) {
-            System.out.print("Inside the addTransferList method");
-            for (int i = 0; i < record.size(); i++) {
-                if (record.get(i).getStatus().equals("settled")) {
-                    list.add(count, new ArrayList<>());
-                    list.get(count).add(0, record.get(i).getTransactionTime());
-                    list.get(count).add(1, record.get(i).getCode());
-                    list.get(count).add(2, record.get(i).getDescription());
-                    list.get(count).add(3, record.get(i).getAmount());
-                    list.get(count).add(4, null);
-                    count = count + 1;
-                }
-
-            }
-
-        }
-        System.out.print("Inside the addTransferList method " + list.size());
-        return list;
+    public List<TransactionRecord> getTransactionRecord(Long savingAccountNumber) {
+        List<TransactionRecord> displayList = new ArrayList();
+        
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNumber");
+        q.setParameter("savingAccountNumber", savingAccountNumber);
+        SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
+        displayList = savingAccount.getTransactionRecord();
+        
+        return displayList;   
     }
 
     @Override
     public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException, UserCloseAccountException {
         Query t = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
         t.setParameter("savingAccountNum", savingAccountNum);
-        List<SavingAccount> savingAccounts = t.getResultList();
-        SavingAccount savingAccount = savingAccounts.get(0);
+        SavingAccount savingAccount = (SavingAccount) t.getSingleResult();
+        
         if (savingAccount.getAvailableBalance().compareTo(BigDecimal.ZERO) != 0) {
             throw new UserCloseAccountException("Please transfer the remaining amount to another account before close this account!");
         } else {
-
             String status = "pending";
-            //check whether got pending transaction as giverAccount
-            Query q = em.createQuery("SELECT a FROM TransactionRecord a WHERE a.giverAccountNum = :giverAccountNum AND a.status =:giverStatus");
-            q.setParameter("giverAccountNum", savingAccountNum);
-            q.setParameter("giverStatus", status);
-            List<TransactionRecord> record1 = q.getResultList();
-
-            //check whether got pending transaction as a recipientAccount
-            Query w = em.createQuery("SELECT b FROM TransactionRecord b WHERE b.recipientAccountNum = :recipientAccountNum AND b.status =:recipientStatus");
-            w.setParameter("recipientAccountNum", savingAccountNum);
-            w.setParameter("recipientStatus", status);
-            List<TransactionRecord> record2 = w.getResultList();
-
-            if (record1.isEmpty() && record2.isEmpty()) {
+            
+            List<TransactionRecord> record = savingAccount.getTransactionRecord();
+            if(record.isEmpty()){
                 System.out.print("User has no pending transaction!");
-                Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
-                m.setParameter("savingAccountNum", savingAccountNum);
-                List<SavingAccount> records3 = m.getResultList();
-                SavingAccount record3 = records3.get(0);
-                record3.setStatus("terminated");
-
+                savingAccount.setStatus("terminated");
                 em.flush();
-            } else {
-                throw new UserHasPendingTransactionException("This Saving Account Has pending Transactions!");
+            }else{
+                for(int i=0;i<record.size();i++){
+                    if(record.get(i).getStatus().equals(status)){
+                        throw new UserHasPendingTransactionException("This Saving Account Has pending Transactions!");
+                    }
+                }
             }
+           
         }
     }
 
@@ -313,8 +248,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     public void cashWithdraw(Long accountNum, BigDecimal withdrawAmount) throws UserNotEnoughBalanceException {
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :accountNum");
         q.setParameter("accountNum", accountNum);
-        List<SavingAccount> savingAccounts = q.getResultList();
-        SavingAccount savingAccount = savingAccounts.get(0);
+        SavingAccount savingAccount = (SavingAccount)q.getSingleResult();
 
         if (savingAccount.deductAmt(withdrawAmount)) {
             BigDecimal updatedBalance = savingAccount.getAvailableBalance().subtract(withdrawAmount);
@@ -327,7 +261,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
 
             Date currentTime = Calendar.getInstance().getTime();
             java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-            TransactionRecord transactionRecord = new TransactionRecord("CW", withdrawAmount, "settled", "Cash Withdraw", currentTimestamp, accountNum, null);
+            TransactionRecord transactionRecord = new TransactionRecord("CW", withdrawAmount,null, "settled", "Cash Withdraw", currentTimestamp, accountNum, null,savingAccount,"MerlionBank","MerlionBank");
             em.persist(transactionRecord);
             em.flush();
         } else {
@@ -339,8 +273,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     public void cashDeposit(Long accountNum, BigDecimal depositAmount) {
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :accountNum");
         q.setParameter("accountNum", accountNum);
-        List<SavingAccount> savingAccounts = q.getResultList();
-        SavingAccount savingAccount = savingAccounts.get(0);
+        SavingAccount savingAccount = (SavingAccount)q.getSingleResult();
 
         BigDecimal updatedBalance = savingAccount.getAvailableBalance().add(depositAmount);
         savingAccount.setAvailableBalance(updatedBalance);
@@ -352,7 +285,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
 
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-        TransactionRecord transactionRecord = new TransactionRecord("CD", depositAmount, "settled", "Cash Deposit", currentTimestamp, null, accountNum);
+        TransactionRecord transactionRecord = new TransactionRecord("CD", null, depositAmount, "settled", "Cash Deposit", currentTimestamp, null, accountNum,savingAccount,"MerlionBank","MerlionBank");
         em.persist(transactionRecord);
         em.flush();
     }

@@ -5,6 +5,7 @@
  */
 package CardEntity;
 
+import DepositEntity.SavingAccount;
 import DepositEntity.TransactionRecord;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,8 +23,8 @@ public class CardTransaction extends TransactionRecord {
     
     public CardTransaction(){}
     
-    public CardTransaction(String code, BigDecimal amount,String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,Long cardNumber, String emv){
-        super(code,amount,status,description,transactionTime,giverAccountNum,recipientAccountNum);
+    public CardTransaction(String code, BigDecimal debit, BigDecimal credit, String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,SavingAccount savingAccount, String giverBank, String recipientBank, Long cardNumber, String emv){
+        super(code,debit,credit,status,description,transactionTime,giverAccountNum,recipientAccountNum,savingAccount, giverBank, recipientBank);
         this.cardNumber = cardNumber;
         this.emv = emv;
     }

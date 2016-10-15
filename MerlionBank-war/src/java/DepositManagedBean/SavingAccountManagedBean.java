@@ -9,6 +9,7 @@ import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import DepositEntity.SavingAccount;
+import DepositEntity.TransactionRecord;
 import Exception.EmailNotSendException;
 import Exception.UserAlreadyHasSavingAccountException;
 import Exception.UserCloseAccountException;
@@ -55,7 +56,7 @@ public class SavingAccountManagedBean implements Serializable {
     private List<Long> inactiveSavingAccountNumberList;
     private Long savingAccountSelected;
     private Long inactiveSavingAccountSelected;
-    private List<List> transactionRecordList;
+    private List<TransactionRecord> transactionRecordList;
     private List<SavingAccount> savingAccountForCloseAccount;
 
     @PostConstruct
@@ -337,11 +338,11 @@ public class SavingAccountManagedBean implements Serializable {
         this.savingAccountSelected = savingAccountSelected;
     }
 
-    public List<List> getTransactionRecordList() {
+    public List<TransactionRecord> getTransactionRecordList() {
         return transactionRecordList;
     }
 
-    public void setTransactionRecordList(List<List> transactionRecordList) {
+    public void setTransactionRecordList(List<TransactionRecord> transactionRecordList) {
         this.transactionRecordList = transactionRecordList;
     }
 
