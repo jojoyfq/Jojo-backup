@@ -40,7 +40,7 @@ public interface LoanManagementSessionBeanLocal {
     //counter staff activate loan
     //public boolean staffGenerateLoanReport(Long loanId);
 
-    public Loan staffActivateLoan(Long loanId);
+    public Loan staffActivateLoan(Long loanId,Date loanDate);
 
     public List<Loan> searchLoan(String customerIc) throws UserNotExistException, UserNotActivatedException, ListEmptyException;
 
@@ -48,6 +48,15 @@ public interface LoanManagementSessionBeanLocal {
 
     public LoanType updateLoanType(Long loanTypeId, Double interest1, Double interest2);
     
-    //timer - close redundant accounts
+    //timer 
+    // close redundant account
     public void closeAccounts();
+    
+    //run daily- check all loan accounts
+    
+    public void calculateLatePayment(Date currentDate) throws EmailNotSendException;
+    
+    public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException;
+   
+    public void autoBadDebt(Date currentDate)throws EmailNotSendException;
 }

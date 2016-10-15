@@ -76,15 +76,19 @@ public boolean updateAccountStatus(String ic);
 
 
 //Teller Create Fixed Deposit Account - 1st page - create online banking account
+    //Teller Create Loan Account - 1st page - create online banking account
     public Customer tellerCreateFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo,String enterPassword) throws UserExistException, EmailNotSendException;
 
  //Teller Create saving Account 
     public void tellerCreateSavingAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String savingAccountName,String enterPassword) throws UserExistException, EmailNotSendException;
 
   //Create Loan Account - 2nd page - display different type 
+       //Create Loan Account - 2nd page - display different type 
     public List<LoanType> displayLoanType(String type) throws ListEmptyException;
     
    ///Create Loan Account - 3rd page - configure home loan  
-    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException;
+   public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException;
 
+    //Teller Create Loan Account - 3nd page - configureloan
+    public Long StaffCreateLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException;
 }
