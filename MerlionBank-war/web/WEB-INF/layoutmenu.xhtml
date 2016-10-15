@@ -45,7 +45,9 @@
                         <p:menuitem id="submit_Chargeback" value="Submit Chargeback Request" actionListener="#{debitCardManagedBean.dashboardToChargeback}" /> 
                     </p:submenu>
                     
-                    <p:submenu id="creditCard" label="Credit Card" icon="icon-plus"></p:submenu>
+                    <p:submenu id="creditCard" label="Credit Card" icon="icon-plus">
+                        <p:menuitem id="Apply_Credit_Card" value="Apply Credit Card" actionListener="#{creditCardManagedBean.dashboardToCreateCreditCard}"/> 
+                    </p:submenu>
                 </p:submenu>
                 
                 <p:submenu id="pa_default" label="Loan Management">

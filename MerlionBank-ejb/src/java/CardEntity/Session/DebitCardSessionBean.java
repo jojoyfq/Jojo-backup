@@ -5,12 +5,15 @@
  */
 package CardEntity.Session;
 
+import CardEntity.CardTransaction;
 import CardEntity.DebitCard;
 import CardEntity.DebitCardType;
 import CommonEntity.Customer;
 import static CommonEntity.Session.AccountManagementSessionBean.SALT_LENGTH;
 import DepositEntity.SavingAccount;
+import DepositEntity.TransactionRecord;
 import Exception.DebitCardException;
+import Exception.NoTransactionRecordFoundException;
 import Exception.UserHasDebitCardException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -167,7 +170,7 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
     }
 
     @Override
-    public List<DebitCard> getDebitCard(Long customerID)throws DebitCardException {
+    public List<DebitCard> getDebitCard(Long customerID) throws DebitCardException {
         List<DebitCard> debitCard = new ArrayList();
         Customer customer = em.find(Customer.class, customerID);
         if (customer.getSavingAccounts().isEmpty()) {
@@ -177,6 +180,36 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
                 debitCard.add(customer.getSavingAccounts().get(i).getDebitCard());
             }
             return debitCard;
+        }
+    }
+
+    @Override
+    public List<CardTransaction> getEStatement(Long customerID, Long debitCardNo, Date currentTime) throws NoTransactionRecordFoundException {
+        List<CardTransaction> cardTransactionFiltered = new ArrayList<>();
+        String pattern = "MM-YYYY";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+        String currentTimeFormated = simpleDateFormat.format(currentTime);
+        System.out.println(currentTimeFormated);
+        String transactionTime;
+        //Search For Customer Email
+        Customer customer = em.find(Customer.class, customerID);
+        String email = customer.getEmail();
+
+        Query m = em.createQuery("SELECT b FROM CardTransaction b WHERE b.cardNumber = :debitCardNo");
+        m.setParameter("debitCardNo", debitCardNo);
+        List<CardTransaction> cardTransactions = new ArrayList(m.getResultList());
+        if (cardTransactions.isEmpty()) {
+            throw new NoTransactionRecordFoundException("No Transaction Record Found!");
+        } else {
+            //search for card transactions that match the current month
+            for (int i = 0; i < cardTransactions.size(); i++) {
+                transactionTime = simpleDateFormat.format(cardTransactions.get(i).getTransactionTime());
+                if (transactionTime.equals(currentTimeFormated)) {
+                    cardTransactionFiltered.add(cardTransactions.get(i));
+                }
+            }
+            return cardTransactionFiltered;
         }
     }
 

@@ -9,6 +9,7 @@ import CardEntity.DebitCard;
 import CardEntity.Session.DebitCardSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
+import DepositEntity.TransactionRecord;
 import Exception.DebitCardException;
 import Exception.UserHasDebitCardException;
 import Exception.UserHasNoSavingAccountException;
@@ -208,6 +209,8 @@ public class DebitCardManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
+    
+    
 
     public void goBackToHomePage(ActionEvent event) {
         try {

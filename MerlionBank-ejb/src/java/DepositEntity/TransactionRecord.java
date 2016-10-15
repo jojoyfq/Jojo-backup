@@ -34,7 +34,7 @@ public class TransactionRecord implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String code;
-    BigDecimal amount;
+    private BigDecimal amount;
     private String status;
     private String description;
     @Temporal(javax.persistence.TemporalType.DATE)
