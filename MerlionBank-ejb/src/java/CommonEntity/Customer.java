@@ -63,6 +63,7 @@ public class Customer implements Serializable {
     private String status;
     private BigDecimal intraTransferLimit;
     private BigDecimal monthlyIncome;
+    private String fileDestination;
 
     public BigDecimal getMonthlyIncome() {
         return monthlyIncome;
@@ -70,6 +71,14 @@ public class Customer implements Serializable {
 
     public void setMonthlyIncome(BigDecimal monthlyIncome) {
         this.monthlyIncome = monthlyIncome;
+    }
+
+    public String getFileDestination() {
+        return fileDestination;
+    }
+
+    public void setFileDestination(String fileDestination) {
+        this.fileDestination = fileDestination;
     }
     
     

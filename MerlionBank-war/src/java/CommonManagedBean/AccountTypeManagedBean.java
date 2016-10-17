@@ -90,7 +90,7 @@ public class AccountTypeManagedBean implements Serializable {
                     System.out.println("This service is currently not available!");
                     break;
                 case "Loan Account":
-                    System.out.println("This service is currently not available!");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/createLoanAccount.xhtml");
                     break;
                 case "Wealth Management Account":
                     System.out.println("This service is currently not available!");

@@ -88,7 +88,16 @@ public class CreditCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileForeigner.xhtml");
         }
     }
+public void dashboardToCreateLoanAccount (ActionEvent event) {
+ try {
 
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/LoanManagement/createLoanAccount.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to loan page error!");
+        }
+    
+}
     public void handleCPFUpload(FileUploadEvent event) {
         cpfContribution = event.getFile();
         System.out.print(cpfContribution.getFileName());
