@@ -8,20 +8,22 @@ package LoanEntity.Session;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.OnlineAccount;
-import CommonEntity.Session.AccountManagementSessionBean;
-import static CommonEntity.Session.AccountManagementSessionBean.SALT_LENGTH;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Exception.LoanTermInvalidException;
 import Exception.UserExistException;
+import Exception.UserNotActivatedException;
+import Exception.UserNotExistException;
 import LoanEntity.Loan;
 import LoanEntity.LoanType;
 import Other.Session.GeneratePassword;
 import Other.Session.sendEmail;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -51,8 +53,6 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
 
     public static final int SALT_LENGTH = 8;
 
-    @EJB
-    private AccountManagementSessionBean amsb;
     
     @EJB
     private StaffManagementSessionBeanLocal smsbl;
@@ -158,7 +158,8 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
         BigDecimal temp2 = trueRate.add(temp).pow(loanTerm);
         BigDecimal temp3 = amount.multiply(trueRate).multiply(temp2);
         BigDecimal temp4 = temp2.subtract(temp);
-        BigDecimal monthlyPayment = temp3.divide(temp4);
+        BigDecimal monthlyPayment = temp3.divide(temp4,MathContext.DECIMAL128);
+        monthlyPayment.setScale(2, RoundingMode.HALF_UP);
         System.out.println("monthly payment is" + monthlyPayment);
         return monthlyPayment;
 
@@ -166,7 +167,8 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
 
     //Create Loan Account - 3rd page - configure home loan 
     @Override
-    public Long createLoanAccount(Customer customer, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException {
+    public Long createLoanAccount(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException {
+        Customer customer=em.find(Customer.class,customerId);
         LoanType loanType = em.find(LoanType.class, loanTypeId);
         BigDecimal monthlyPayment = new BigDecimal("0");
         Double temp = 0.0;
@@ -359,13 +361,56 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
         Long accountNum=0L;
        
         try{
-        accountNum=createLoanAccount(customer,monthlyIncome,loanTypeId,principal,downpayment,loanTerm);
+        accountNum=createLoanAccount(customer.getId(),monthlyIncome,loanTypeId,principal,downpayment,loanTerm);
         }catch (LoanTermInvalidException|EmailNotSendException ex){
             throw new LoanTermInvalidException(ex.getMessage());
         }
         
         smsbl.recordStaffAction(staffId, "Create new loan account " + accountNum, customerId);
         return accountNum;
+    }
+    
+    @Override
+    public Long findTypeIdByName(String name){
+          Query query = em.createQuery("SELECT a FROM LoanType a WHERE a.name = :name");
+        query.setParameter("name", name);
+        LoanType loanType = (LoanType) query.getSingleResult();
+        return loanType.getId();
+    }
+
+    @Override
+     public LoanType findTypeByName(String name){
+          Query query = em.createQuery("SELECT a FROM LoanType a WHERE a.name = :name");
+        query.setParameter("name", name);
+        LoanType loanType = (LoanType) query.getSingleResult();
+        return loanType;
+    }
+     @Override
+    public Customer searchCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException {
+        System.out.println("testing: " + customerIc);
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", customerIc);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        System.out.println("testing: " + temp.size());
+        if (temp.isEmpty()) {
+            System.out.println("Username " + customerIc + " does not exist!");
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+        }
+
+        int size = temp.size();
+        Customer customer = temp.get(size - 1);
+        //System.out.println("testing: "+customer.getIc());
+        if (customer.getStatus().equals("terminated")) {
+            System.out.println("Username " + customerIc + " does not exist!");
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+        } else if (customer.getStatus().equals("inactive")) {
+            System.out.println("Username " + customerIc + "Customer has not activated his or her account!");
+            throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
+        } else {
+            System.out.println("Username " + customerIc + " IC check pass!");
+        }
+        return customer;
+
     }
 
 }

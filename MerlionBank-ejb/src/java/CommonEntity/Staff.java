@@ -62,8 +62,8 @@ public class Staff implements Serializable {
 @OneToMany(cascade={CascadeType.ALL},mappedBy="staff")
     private List<CaseEntity> cases;
 
-@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "staff")
-    private List<Loan> loans = new ArrayList<Loan>();
+//@OneToMany(cascade = {CascadeType.ALL}, mappedBy = "staff")
+//    private List<Loan> loans = new ArrayList<Loan>();
 
     public List<CaseEntity> getCases() {
         return cases;
