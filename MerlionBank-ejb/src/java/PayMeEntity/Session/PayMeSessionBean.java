@@ -16,6 +16,11 @@ import Exception.UserHasNoSavingAccountException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.PayMe;
+import com.twilio.sdk.TwilioRestClient;
+import com.twilio.sdk.TwilioRestException;
+import com.twilio.sdk.resource.factory.MessageFactory;
+import com.twilio.sdk.resource.instance.Account;
+import com.twilio.sdk.resource.instance.Message;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -29,21 +34,23 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
  * @author Bella
  */
 @Stateless
-public class PayMeSessionBean implements PayMeSessionBeanLocal{
+public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
-   @PersistenceContext
+    @PersistenceContext
     private EntityManager em;
     private static final Random RANDOM = new SecureRandom();
     public static final int SALT_LENGTH = 32;
-   
-   @Override
-   public boolean checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
+
+    @Override
+    public boolean checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -79,22 +86,80 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal{
 //            Long i = Long.parseLong("1");
             return false;
         }
-          return true;
+        return true;
 //        return customer.getId();
     }
-   
-   @Override
-   public PayMe createPayMe(Long customerID, String savingAccountNo, String paymePassword){
-       //get Customer Entity
-       Customer customer = em.find(Customer.class, customerID);
-       Long savingAccount = Long.valueOf(savingAccountNo);
-       //get Saving Account Entity
-       Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccount");
-        q.setParameter("savingAccount", savingAccount);
-        List<SavingAccount> temp = new ArrayList(q.getResultList());
-        SavingAccount savingAccountL = temp.get(0);
-       
-       //password salt and hash
+
+    @Override
+    public boolean checkPayMeLogin(String phoneNumber, String password) {
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
+        q.setParameter("phoneNumber", phoneNumber);
+        PayMe payme = (PayMe) q.getSingleResult();
+        if(passwordHash(password + payme.getSalt()).equals(payme.getPaymePassword())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public String sendTwoFactorAuthentication(String ic) throws TwilioRestException {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        Customer customer = temp.get(temp.size() - 1);
+        String ACCOUNT_SID = "AC0607da3843c85473703f3f5078a21a52";
+        String AUTH_TOKEN = "79993c87540fe09ba96d8f1990d78eed";
+        TwilioRestClient client = new TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN);
+
+        Account account = client.getAccount();
+
+        MessageFactory messageFactory = account.getMessageFactory();
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("To", customer.getPhoneNumber())); // Replace with a valid phone number for your account.
+        params.add(new BasicNameValuePair("From", "+12013451118")); // Replace with a valid phone number for your account.
+        Long number = Math.round(Math.random() * 1000000);
+        String oTP = "" + number;
+        customer.getOnlineAccount().setAuthenticationCode(oTP);
+        em.flush();
+        params.add(new BasicNameValuePair("Body", oTP));
+
+        try {
+            Message message = messageFactory.create(params);
+        } catch (TwilioRestException e) {
+            System.out.println(e.getErrorMessage());
+        }
+        //Message sms = messageFactory.create(params);
+        return ic;
+    }
+
+    @Override
+    public boolean verifyTwoFactorAuthentication(String ic, String inputCode) {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        Customer customer = (Customer) q.getSingleResult();
+
+        if (customer.getOnlineAccount().getAuthenticationCode().equals(inputCode)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public PayMe createPayMe(String ic, String savingAccountNo, String phoneNumber, String paymePassword) {
+        //get Customer Entity      
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        Customer customer = (Customer) q.getSingleResult();
+
+        //get Saving Account Entity
+        Long savingAccount = Long.valueOf(savingAccountNo);
+        Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccount");
+        m.setParameter("savingAccount", savingAccount);
+        SavingAccount temp = (SavingAccount) m.getSingleResult();
+
+        //password salt and hash
         String salt = "";
         String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$%^&*!?+-";
         for (int i = 0; i < SALT_LENGTH; i++) {
@@ -105,47 +170,47 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal{
         System.out.println("PayMePassword after hash&salt:" + passwordDatabase);
         //set initial balance to 0
         BigDecimal balance = new BigDecimal("0.00");
-        
+
         //Create New PayMe Account
-        PayMe payMe = new PayMe(customer, savingAccountL, balance, passwordDatabase);
+        PayMe payMe = new PayMe(phoneNumber, customer, temp, balance, passwordDatabase,salt);
         em.persist(payMe);
         customer.setPayMe(payMe);
         em.persist(customer);
-        savingAccountL.setPayMe(payMe);
-        em.persist(savingAccountL);
+        temp.setPayMe(payMe);
+        em.persist(temp);
         em.flush();
-        
-        return payMe;              
-   }
-   
-   @Override
-    public List<String> getSavingAccountString(Long customerID) throws UserHasNoSavingAccountException{
+
+        return payMe;
+    }
+
+    @Override
+    public List<String> getSavingAccountString(Long customerID) throws UserHasNoSavingAccountException {
         List<String> savingAccountString = new ArrayList<String>();
         String savingAccountNo;
         String accountType;
-        
+
         Customer customer = em.find(Customer.class, customerID);
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
         if (savingAccounts.isEmpty()) {
             throw new UserHasNoSavingAccountException("No Saving Account Found!");
         } else {
             for (int i = 0; i < savingAccounts.size(); i++) {
-                    savingAccountNo = Long.toString(savingAccounts.get(i).getAccountNumber());
-                    accountType = savingAccounts.get(i).getSavingAccountType().getAccountType();
-                    savingAccountString.set(i,savingAccountNo + "," + accountType);              
+                savingAccountNo = Long.toString(savingAccounts.get(i).getAccountNumber());
+                accountType = savingAccounts.get(i).getSavingAccountType().getAccountType();
+                savingAccountString.set(i, savingAccountNo + "," + accountType);
             }
             return savingAccountString;
         }
     }
-    
+
     @Override
-    public String getPhoneNumber(Long customerID){
+    public String getPhoneNumber(Long customerID) {
         Customer customer = em.find(Customer.class, customerID);
         return customer.getPhoneNumber();
     }
-    
+
     @Override
-    public String getBalance(Long customerID){
+    public String getBalance(Long customerID) {
         Customer customer = em.find(Customer.class, customerID);
         return customer.getPayMe().getBalance().toString();
     }

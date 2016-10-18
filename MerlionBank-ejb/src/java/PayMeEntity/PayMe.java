@@ -26,6 +26,7 @@ public class PayMe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String phoneNumber;
     @OneToOne(mappedBy="payMe")
     private Customer customer;
     @OneToOne(mappedBy="payMe")
@@ -33,14 +34,17 @@ public class PayMe implements Serializable {
     
     private BigDecimal balance;
     private String paymePassword;
+    private String salt;
     
     public PayMe(){}
     
-    public PayMe(Customer customer, SavingAccount savingAccount, BigDecimal balance, String paymePassword){
+    public PayMe(String phoneNumber, Customer customer, SavingAccount savingAccount, BigDecimal balance, String paymePassword,String salt){
+        this.phoneNumber = phoneNumber;
         this.customer = customer;
         this.savingAccount = savingAccount;
         this.balance = balance;
         this.paymePassword = paymePassword;
+        this.salt = salt;
     }
 
     public BigDecimal getBalance() {
@@ -90,6 +94,15 @@ public class PayMe implements Serializable {
         return hash;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+    
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -107,5 +120,13 @@ public class PayMe implements Serializable {
     public String toString() {
         return "PayMeEntity.PayMe[ id=" + id + " ]";
     }
-    
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+        
 }
