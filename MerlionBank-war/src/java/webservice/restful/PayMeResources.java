@@ -10,7 +10,6 @@ import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.Session.PayMeSessionBeanLocal;
 import javax.ejb.EJB;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.POST;
@@ -28,6 +27,8 @@ public class PayMeResources {
     PayMeSessionBeanLocal payMeSessionBeanLocal;
 
     IsExistingCustomerResponse isExistingCustomerResponse;
+    IsValidPasswordResponse isValidPasswordResponse;
+    String merlionBankIC;
 
     public PayMeResources() {
     }
@@ -39,13 +40,14 @@ public class PayMeResources {
             @FormParam("password") String password) {
 
         boolean checkExisting = false;
-        
+
         System.err.println("isExistingCustomer: " + customerIC);
-               
+
         try {
-           
+
             checkExisting = payMeSessionBeanLocal.checkLogin(customerIC, password);
             isExistingCustomerResponse = new IsExistingCustomerResponse(0, "", checkExisting);
+            merlionBankIC = customerIC;
 
         } catch (UserNotExistException ex) {
             isExistingCustomerResponse = new IsExistingCustomerResponse(1, "Invalid IC", false);
@@ -62,6 +64,22 @@ public class PayMeResources {
 
     }
 
-   
+    @POST
+    @Path(value = "isValidPassword")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IsValidPasswordResponse isValidPassword(@FormParam("password") String password) {
+
+        boolean checkValidity = false;
+        
+        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);       
+        checkValidity = payMeSessionBeanLocal.checkPayMeLogin(phoneNumber, password);        
+        if(checkValidity == true){
+            isValidPasswordResponse = new IsValidPasswordResponse(0, "", checkValidity);
+        }else{
+            isValidPasswordResponse = new IsValidPasswordResponse(1, "Invalid password", false);
+        }
+
+        return isValidPasswordResponse;
+    }
 
 }
