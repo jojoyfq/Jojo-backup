@@ -204,14 +204,19 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public String getPhoneNumber(Long customerID) {
-        Customer customer = em.find(Customer.class, customerID);
+    public String getPhoneNumber(String ic) {
+        
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        Customer customer = (Customer) q.getSingleResult();
         return customer.getPhoneNumber();
     }
 
     @Override
-    public String getBalance(Long customerID) {
-        Customer customer = em.find(Customer.class, customerID);
+    public String getBalance(String ic) {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        Customer customer = (Customer) q.getSingleResult();
         return customer.getPayMe().getBalance().toString();
     }
 
