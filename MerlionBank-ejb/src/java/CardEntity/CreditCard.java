@@ -5,13 +5,18 @@
  */
 package CardEntity;
 
+import CommonEntity.Customer;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 /**
@@ -36,6 +41,18 @@ public class CreditCard implements Serializable {
     
     @ManyToOne
     private CreditCardType creditCardType = new CreditCardType();
+    @ManyToOne
+    private Customer customer = new Customer();
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "creditCard")
+    List<CreditChargeback> chargeback = new ArrayList();
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
     public CreditCardType getCreditCardType() {
         return creditCardType;
@@ -109,6 +126,16 @@ public class CreditCard implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public List<CreditChargeback> getChargeback() {
+        return chargeback;
+    }
+
+    public void setChargeback(List<CreditChargeback> chargeback) {
+        this.chargeback = chargeback;
+    }
+    
+    
 
     @Override
     public int hashCode() {
