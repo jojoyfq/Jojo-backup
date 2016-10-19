@@ -15,8 +15,8 @@
 
 
                 <p:submenu id="deposit_management" label="Deposit Management">
-       
-                     <p:submenu id="saving_account" label="Saving Account" icon="icon-plus">
+
+                    <p:submenu id="saving_account" label="Saving Account" icon="icon-plus">
                         <p:menuitem id="create_saving_account" value="Apply for Saving Account" actionListener="#{savingAccountManagedBean.dashboardCreateAccount}"/>
                         <p:menuitem id="activate_saving_account" value="Activate Saving Account" actionListener="#{savingAccountManagedBean.dashboardActivateAccount}"/> 
                         <p:menuitem id="view_details" value="My Accounts" actionListener="#{savingAccountManagedBean.dashboardDisplaySavingAccount}"/> 
@@ -44,14 +44,14 @@
                         <p:menuitem id="Cancel_Debit_Card" value="Cancel Debit Card" /> 
                         <p:menuitem id="submit_Chargeback" value="Submit Chargeback Request" actionListener="#{debitCardManagedBean.dashboardToChargeback}" /> 
                     </p:submenu>
-                    
+
                     <p:submenu id="creditCard" label="Credit Card" icon="icon-plus"></p:submenu>
                 </p:submenu>
-                
+
                 <p:submenu id="pa_default" label="Loan Management">
- 
+
                 </p:submenu>
-                
+
                 <p:submenu id="pa_hierarchy" label="Bill and Payment">
 
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus">
@@ -60,11 +60,17 @@
                         <p:menuitem id="changeLimit" value="Change Transfer Limit" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />           
 
                     </p:submenu>
+                    <p:submenu id="bill" label="Bill" icon="icon-plus">
+
+                        <p:menuitem id="addGIRO" value="Add GIRO Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddGIROArrangement(event)}" /> 
+                        <p:menuitem id="deleteGIRO" value="Delete GIRO Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />           
+
+                    </p:submenu>
                 </p:submenu>
 
                 <p:submenu id="wealth_management" label="Wealth Management">
                 </p:submenu>
-                
+
                 <p:submenu id="pa_docs" label="Portfolio Management">
                 </p:submenu>
 

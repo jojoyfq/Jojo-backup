@@ -58,6 +58,7 @@ public class testCustomerManagedBean implements Serializable {
     public void insertTest(ActionEvent event) throws UserExistException, EmailNotSendException, IOException{
           System.out.print("inside managed bean");
           customerDateOfBirth = Calendar.getInstance().getTime();
+          System.out.print("LALALLALALALA"+customerDateOfBirth);
           customer = amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);
           customerId = customer.getId();
           testl.setStatus(customerId, balance);
