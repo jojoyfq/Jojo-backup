@@ -64,8 +64,25 @@ public class Customer implements Serializable {
     private String status;
     private BigDecimal intraTransferLimit;
     private BigDecimal monthlyIncome;
+    private String fileDestination;
 
-    
+
+    public BigDecimal getMonthlyIncome() {
+        return monthlyIncome;
+    }
+
+    public void setMonthlyIncome(BigDecimal monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
+    }
+
+    public String getFileDestination() {
+        return fileDestination;
+    }
+
+    public void setFileDestination(String fileDestination) {
+        this.fileDestination = fileDestination;
+    }
+
   
     @OneToOne(cascade={CascadeType.ALL}) 
    private OnlineAccount onlineAccount;//same as ic
@@ -164,13 +181,6 @@ public class Customer implements Serializable {
         this.payees = payees;
     }
     
-    public BigDecimal getMonthlyIncome() {
-        return monthlyIncome;
-    }
-
-    public void setMonthlyIncome(BigDecimal monthlyIncome) {
-        this.monthlyIncome = monthlyIncome;
-    }
     
     
 

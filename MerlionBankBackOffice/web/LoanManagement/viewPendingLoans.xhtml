@@ -76,6 +76,10 @@
                                     <p:column headerText="Loan Outstanding Balance ">
                                         <h:outputText value="#{pendingLoan.outstandingBalance}" />
                                     </p:column>
+                                    
+                                     <p:column headerText="Loan Status ">
+                                         <h:outputText value="#{pendingLoan.status}" />
+                                    </p:column>
 
                                     <p:column headerText="Customer Detail" style="width: 80px;" >
                                         <center>
@@ -92,7 +96,7 @@
                                         <p:separator/>
                                         <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffLoanManagedBean.staffApprovePending}" oncomplete="PF('carDialog').show()" styleClass="RedButton"/>
                                         <p:separator/>
-                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Edit" actionListener="#{staffLoanManagedBean.satffUpdateLoan}" oncomplete="PF('carDialog').show()" styleClass="RedButton"/>
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Edit" actionListener="#{staffLoanManagedBean.goToUpdateCustomerLoanPage}" styleClass="RedButton"/>
 
                                     </f:facet>
                                 </p:dataTable>

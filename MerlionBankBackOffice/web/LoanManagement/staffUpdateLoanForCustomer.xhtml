@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="2" cellpadding="5">
+                              
+
+                                <h:outputText value="Loan ID: " />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.id}" />
+                             
+
+                                <h:outputText value="Loan Type" />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.loanType}" />
+
+                                <h:outputText value="Loan Principal: " />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.principal}" />
+
+                                <h:outputText value="Loan Downpayament: " />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.downpayment}"  />
+
+                                <h:outputText value="Loan Term: " />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.loanTerm}"  />
+
+
+                                <h:outputText value="Loan Start Date: " />
+                                <p:calendar id="german" value="#{staffLoanManagedBean.selectedLoan.startDate}" locale="de" navigator="true" pattern="yyyy-MMM-dd" />
+
+                                <p:commandButton icon="fa fa-save" actionListener="#{staffLoanManagedBean.satffUpdateLoan}"  styleClass="Fleft Fs14 White" value="Save"  update=":form " ajax="true"  />
+
+                            </h:panelGrid>
+
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

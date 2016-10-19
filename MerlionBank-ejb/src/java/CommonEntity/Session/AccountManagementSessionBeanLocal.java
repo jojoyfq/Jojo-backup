@@ -84,11 +84,12 @@ public boolean updateAccountStatus(String ic);
 
   //Create Loan Account - 2nd page - display different type 
        //Create Loan Account - 2nd page - display different type 
-    public List<LoanType> displayLoanType(String type) throws ListEmptyException;
+   // public List<LoanType> displayLoanType(String type) throws ListEmptyException;
     
    ///Create Loan Account - 3rd page - configure home loan  
-   public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException;
+   //public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException;
 
     //Teller Create Loan Account - 3nd page - configureloan
-    public Long StaffCreateLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException;
+   // public Long StaffCreateLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException;
+public void setFileDestination(Long customerId,String fileDestination);
 }

@@ -22,8 +22,8 @@ import javax.ejb.Local;
 public interface PayMeSessionBeanLocal {
     public boolean checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException;
     public List<String> getSavingAccountString(Long customerID) throws UserHasNoSavingAccountException;
-    public String getPhoneNumber(Long customerID);
-    public String getBalance(Long customerID);
+    public String getPhoneNumber(String ic);
+    public String getBalance(String ic);
     public boolean verifyTwoFactorAuthentication(String ic, String inputCode);
     public String sendTwoFactorAuthentication(String ic) throws TwilioRestException;
     public PayMe createPayMe(String ic, String savingAccountNo, String phoneNumber, String paymePassword);
