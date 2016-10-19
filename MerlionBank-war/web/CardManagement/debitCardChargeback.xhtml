@@ -26,7 +26,10 @@
                             <p:panel style="margin-bottom:10px;" id="panel">
                                 <p:messages id="msgs" />
                                 <h:panelGrid columns="3" cellpadding="5">
-
+                                    <h:outputLabel for="cardNo" value="Debit Card Number:" /> 
+                                    <p:inputText id="cardNo" value="#{debitCardManagedBean.debitCardNo}" required="true" requiredMessage="Please fill in the debit card number!" />
+                                    <p:message for="cardNo" display="icon" />
+                                    
                                     <h:outputLabel for="MerchantName" value="Merchant Name:" /> 
                                     <p:inputText id="MerchantName" value="#{debitCardManagedBean.merchantName}" required="true" requiredMessage="Please fill in the merchant name!" />
                                     <p:message for="MerchantName" display="icon" />
@@ -38,6 +41,10 @@
                                     <h:outputLabel for="transactionAmount" value="Transaction Amount:" /> 
                                     <p:inputText id="transactionAmount" value="#{debitCardManagedBean.transactionAmount}" required="true" requiredMessage="Please fill in the transaction amount!"/>                                 
                                     <p:message for="transactionAmount" display="icon" />
+                                    
+                                    <h:outputLabel for="description" value="Chargeback Description:" /> 
+                                    <p:inputText id="description" value="#{debitCardManagedBean.chargebackDescription}" required="true" requiredMessage="Please fill in the chargeback description!"/>                                 
+                                    <p:message for="description" display="icon" />
 
                                
                                     <p:commandButton  update ="panel" icon="ui-icon-script" actionListener="#{debitCardManagedBean.chargeback}" value="Submit" rendered="true" />

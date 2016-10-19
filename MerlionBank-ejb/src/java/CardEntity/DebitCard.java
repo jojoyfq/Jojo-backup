@@ -9,12 +9,16 @@ import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
@@ -45,6 +49,8 @@ public class DebitCard implements Serializable {
     private SavingAccount savingAccount;//debit card is link to one saving account
     @ManyToOne
     private DebitCardType debitCardType = new DebitCardType();
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "debitCard")
+    List<DebitChargeback> chargeback = new ArrayList();
     
     public DebitCard(){
     }
@@ -134,6 +140,16 @@ public class DebitCard implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public List<DebitChargeback> getChargeback() {
+        return chargeback;
+    }
+
+    public void setChargeback(List<DebitChargeback> chargeback) {
+        this.chargeback = chargeback;
+    }
+    
+    
 
     @Override
     public int hashCode() {

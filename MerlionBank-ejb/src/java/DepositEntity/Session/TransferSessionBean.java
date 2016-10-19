@@ -6,6 +6,7 @@
 package DepositEntity.Session;
 
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
 import DepositEntity.Payee;
 import DepositEntity.SavingAccount;
 import DepositEntity.TransactionRecord;
@@ -43,9 +44,8 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     private Long payeeAccount;
     private String payeeName;
 
-
     @Override
-    public void intraOneTimeTransferCheck(Long customerID,Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException {
+    public void intraOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException {
 
         BigDecimal giverAvailableBalance;
         BigDecimal giverBalance;
@@ -64,10 +64,9 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         giverBalance = giverSavingAccount.getBalance();
 
         //check whether customer has exceed the transfer limit amount
-        if(!this.checkTransferLimit(customerID, giverBankAccountNum, transferAmount)){
+        if (!this.checkTransferLimit(customerID, giverBankAccountNum, transferAmount)) {
             throw new TransferException("Saving account " + giverBankAccountNum + " Has Exceed the daily Transfer Limit");
-        }
-        //if balance<transferAmount, the transfer is not allowed, return false
+        } //if balance<transferAmount, the transfer is not allowed, return false
         else if (giverAvailableBalance.compareTo(transferAmount) == -1) {
             throw new TransferException("Saving account " + giverBankAccountNum + " does not have enough fund!");
         } else {
@@ -101,26 +100,98 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 Date currentTime = Calendar.getInstance().getTime();
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-                TransactionRecord transaction1 = new TransactionRecord("TF", transferAmount,null , "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum,giverSavingAccount, "MerlionBank", "MerlionBank");
-                giverSavingAccount.getTransactionRecord().add(transaction1);                
+                TransactionRecord transaction1 = new TransactionRecord("TF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "MerlionBank", "MerlionBank");
+                giverSavingAccount.getTransactionRecord().add(transaction1);
                 em.persist(transaction1);
                 em.flush();
-                
-                TransactionRecord transaction2 = new TransactionRecord("TF", null,transferAmount , "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum,recipientSavingAccount, "MerlionBank", "MerlionBank");
+
+                TransactionRecord transaction2 = new TransactionRecord("TF", null, transferAmount, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, recipientSavingAccount, "MerlionBank", "MerlionBank");
                 recipientSavingAccount.getTransactionRecord().add(transaction2);
                 em.persist(transaction2);
                 em.flush();
                 
+                logAction("Transfer to "+recipientBankAccountNum, customerID);
+
                 System.out.println("transfer successfully!");
             }
         }
 
     }
+
+    @Override
+    public void payeeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException {
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :giverBankAccountNum");
+        q.setParameter("giverBankAccountNum", giverBankAccountNum);
+        SavingAccount giverSavingAccount = (SavingAccount) q.getSingleResult();
+
+        BigDecimal giverAvailableBalance = giverSavingAccount.getAvailableBalance();
+        BigDecimal giverBalance = giverSavingAccount.getBalance();
+
+        //check whether customer has exceed the transfer limit amount
+        if (!this.checkTransferLimit(customerID, giverBankAccountNum, transferAmount)) {
+            throw new TransferException("Saving account " + giverBankAccountNum + " Has Exceed the daily Transfer Limit");
+        } else {
+            Query m = em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :recipientBankAccountNum");
+            m.setParameter("recipientBankAccountNum", recipientBankAccountNum);
+            SavingAccount recipientAccount = (SavingAccount) m.getSingleResult();
+            BigDecimal recipientAvailableBalance = recipientAccount.getAvailableBalance();
+            BigDecimal recipientBalance = recipientAccount.getBalance();
+            //update the available balance of giver BankAccount (-)
+            BigDecimal updatedGiverAvailableBalance = giverAvailableBalance.subtract(transferAmount);
+            giverSavingAccount.setAvailableBalance(updatedGiverAvailableBalance);
+            //update the balance of giver BankAccount (-)
+            BigDecimal updatedGiverBalance = giverBalance.subtract(transferAmount);
+            giverSavingAccount.setBalance(updatedGiverBalance);
+            //update the available balance of recipient BankAccount (+)
+            BigDecimal updatedRecipientAvailableBalance = recipientAvailableBalance.add(transferAmount);
+            recipientAccount.setAvailableBalance(updatedRecipientAvailableBalance);
+            //update the balance of recipient BankAccount (+)
+            BigDecimal updatedRecipientBalance = recipientBalance.add(transferAmount);
+            recipientAccount.setBalance(updatedRecipientBalance);
+            em.flush();
+
+            Date currentTime = Calendar.getInstance().getTime();
+            java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+
+            TransactionRecord transaction1 = new TransactionRecord("TF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "MerlionBank", "MerlionBank");
+            giverSavingAccount.getTransactionRecord().add(transaction1);
+            em.persist(transaction1);
+            em.flush();
+
+            TransactionRecord transaction2 = new TransactionRecord("TF", null, transferAmount, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, recipientAccount, "MerlionBank", "MerlionBank");
+            recipientAccount.getTransactionRecord().add(transaction2);
+            em.persist(transaction2);
+            em.flush();
+            
+            logAction("Transfer to "+recipientBankAccountNum, customerID);
+
+            System.out.println("transfer successfully!");
+
+        }
+    }
     
     @Override
-    public BigDecimal getTransferLimit(Long customerID){
-        Customer customer = em.find(Customer.class,customerID);
-       return customer.getIntraTransferLimit();
+    public void logAction(String description, Long customerId) {
+        List<CustomerAction> actions = new ArrayList<>();
+        Customer customer = em.find(Customer.class, customerId);
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), description, customer);
+        em.persist(action);
+        System.out.print(action.getDescription());
+        if (customer.getCustomerActions() == null) {
+            actions.add(action);
+            customer.setCustomerActions(actions);
+            em.persist(actions);
+        } else {
+            customer.getCustomerActions().add(action);
+        }
+        em.persist(customer);
+        em.flush();
+    }
+
+    @Override
+    public BigDecimal getTransferLimit(Long customerID) {
+        Customer customer = em.find(Customer.class, customerID);
+        return customer.getIntraTransferLimit();
     }
 
     @Override
@@ -150,7 +221,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
 
     @Override
     public void deletePayee(Long customerID, Long accountNum) {
-        Customer customer = em.find(Customer.class,customerID);
+        Customer customer = em.find(Customer.class, customerID);
         List<Payee> currentList = customer.getPayees();
         List<Payee> newList = new ArrayList<Payee>();
 
@@ -167,16 +238,14 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     @Override
     public List getPayeeList(Long customerID) {
         List payeeAccountList = new ArrayList();
-        Query m = em.createQuery("SELECT b FROM Customer b WHERE b.id = :customerID");
-        m.setParameter("customerID", customerID);
-        List<Customer> customers = m.getResultList();
-        Customer customer = customers.get(0);
-
+        
+        Customer customer = em.find(Customer.class, customerID);
         System.out.print("customer is: " + customer.getName());
 
         for (int i = 0; i < customer.getPayees().size(); i++) {
-            Long savingAccount = customer.getPayees().get(i).getSavingAccount().getAccountNumber();
-            payeeAccountList.add(savingAccount);
+            String savingAccount = Long.toString(customer.getPayees().get(i).getSavingAccount().getAccountNumber());
+            String payeeName = customer.getPayees().get(i).getSavingAccount().getCustomer().getName();
+            payeeAccountList.add(savingAccount+","+payeeName);
         }
         return payeeAccountList;
     }
@@ -208,17 +277,29 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         SavingAccount savingAccount = savingAccounts.get(0);
         return savingAccount.getCustomer().getName();
     }
+    
+    @Override
+    public boolean checkPayeeValidity (Long payeeAccount) {
+        Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :payeeAccount");
+        m.setParameter("payeeAccount", payeeAccount);
+        SavingAccount savingAccount = (SavingAccount) m.getSingleResult();
+        if(savingAccount != null){
+            return true;
+        }else{
+            return false;
+        }        
+    }
 
     @Override
     public List<TransactionRecord> getTransactionRecord(Long savingAccountNumber) {
         List<TransactionRecord> displayList = new ArrayList();
-        
+
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNumber");
         q.setParameter("savingAccountNumber", savingAccountNumber);
         SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
         displayList = savingAccount.getTransactionRecord();
-        
-        return displayList;   
+
+        return displayList;
     }
 
     @Override
@@ -244,12 +325,11 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String todayString = dateFormat.format(currentTimestamp);
-        
+
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
         q.setParameter("savingAccountNum", savingAccountNum);
         SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
         List<TransactionRecord> record = savingAccount.getTransactionRecord();
-
 
         if (record.isEmpty()) {
             totalAmount = accumulatedAmount.add(transferAmount);
@@ -257,7 +337,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         } else {
             for (int i = 0; i < record.size(); i++) {
                 if (dateFormat.format(record.get(i).getTransactionTime()).equals(todayString) && record.get(i).getDescription().equals(description)) {
-                    accumulatedAmount = accumulatedAmount.add(record.get(i).getDebit());                    
+                    accumulatedAmount = accumulatedAmount.add(record.get(i).getDebit());
                 }
             }
             totalAmount = accumulatedAmount.add(transferAmount);
@@ -345,6 +425,5 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     public void setPayeeName(String payeeName) {
         this.payeeName = payeeName;
     }
-
 
 }
