@@ -1,39 +1,34 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-    <h:head>
-        <f:facet name="first">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-            <meta name="apple-mobile-web-app-capable" content="yes" />
-        </f:facet>
-        <title>Select an Account Type</title>
-        <ui:insert name="head" />
-    </h:head>
+    <ui:define name="head">
 
-    <h:body>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container5 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container90 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Loan Management System </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 NoPadding Responsive50 ui-fluid">
+
         <h:form>
-            <div class="Wid100 MarAuto">
-                <div class="Wid80 MarAuto WidAutoOnMobile">
-                    <div style="margin-top:10rem;"></div>
-
-                    <div class="Wid60 MarAuto WidAutoOnMobile">
-                        <div class="Container100">
-                            <div class="Card ui-fluid">
+            
                                 <div class="CardBigTopic TexAlCenter Purple">Select Loan Account Type</div>
-                                <div class="SeparatorFull"></div>
-
-
-                                <div class="Container100 ui-fluid">
-
-                                    <div class="Card">
-                                        <div class="Container10"></div>
-                                        <div class="Container100">
+                                
                                             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 
 
@@ -61,8 +56,7 @@
                                             </p:panelGrid>
                                             <p:separator />
 
-                                        </div>
-
+                                     
                                         <div class="Container10"></div>
 
                                         <div class="EmptyBox20"></div>
@@ -70,17 +64,7 @@
                                         <div class="Container40">
                                             <p:commandButton actionListener="#{customerLoanManagedBean.customerApplyLoan}" value="Submit" />
                                         </div>
-                                        <div class="Container30"></div>
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+                                      
 
             <div class="Container100 ui-fluid">
                 <div class="Container20"></div>
@@ -99,11 +83,7 @@
                 </div>
                 <div class="Container20"></div>
             </div>
-            <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
-            <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
-            <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
-            <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
-            <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+          
         </h:form>
         <h:form>  
 
@@ -129,16 +109,20 @@
                     </h:outputText>
                     <h:outputLabel />
 
-                    <p:commandButton value="calculate"  actionListener="#{customerLoanManagedBean.calculateMonthlyPayment}" icon="ui-icon-check" oncomplete="PF('carPanelWDG').loadContents();" />
+                    <p:commandButton value="Calculate"  actionListener="#{customerLoanManagedBean.calculateMonthlyPayment}" icon="ui-icon-check" />
                 </p:panelGrid>
-                      <p:overlayPanel  widgetVar="carPanelWDG" showCloseIcon="true">
-                                    <h:outputLabel value="Monthly Repayment(S$): "/>
-                                    <h:outputText value="#{customerLoanManagedBean.monthlyRepayment}"  >
-                                         <f:convertNumber pattern="#0.00" locale="pt_BR"/>
-                                    </h:outputText>
-                                 </p:overlayPanel>
             </p:dialog>
         </h:form>
     </h:body>
+      </div>
+                </div>
+            </div> 
+        </div>
 
-</html>
+        <!-- Right Column -->
+        <div class="Container5 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>
