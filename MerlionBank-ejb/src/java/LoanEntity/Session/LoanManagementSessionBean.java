@@ -353,12 +353,30 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
     }
 
     @Override
-    public double calculateRisk(Long customerId, Long longId) {
+    public double calculateRisk(Long customerId, Long loanId) {
+        Customer customer = em.find(Customer.class, customerId);
+        Loan loan = em.find(Loan.class, loanId);
         Query query = em.createQuery("SELECT a FROM Instance a");
         List<Instance> instances = new ArrayList(query.getResultList());
         Logistic logistic = new Logistic(3);
         train(instances, logistic);
-        int[] x = {2, 1, 1, 0, 1};
+        int income=customer.getMonthlyIncome().intValueExact()-loan.getMonthlyPayment().intValueExact();
+        
+        int gender=0;
+        if (customer.getGender().equals("Female"))
+            gender=0;
+        if (customer.getGender().equals("Male"))
+            gender=1;
+        
+        int status=0;
+        if(customer.getFamilyInfo().equals("Single"))
+            status=0;
+        if(customer.getFamilyInfo().equals("Married"))
+            status=1;
+        if(customer.getFamilyInfo().equals("Divorced"))
+            status=2;
+        
+        int[] x = {income,gender,status};
         System.out.println("prob(1|x) = " + classify(x, logistic));
 
         return classify(x, logistic);
