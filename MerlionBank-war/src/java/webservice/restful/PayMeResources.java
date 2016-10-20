@@ -6,10 +6,15 @@
 package webservice.restful;
 
 import Exception.PasswordNotMatchException;
+import Exception.UserHasNoSavingAccountException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.Session.PayMeSessionBeanLocal;
 import com.twilio.sdk.TwilioRestException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.Path;
@@ -31,6 +36,7 @@ public class PayMeResources {
     IsValidPasswordResponse isValidPasswordResponse;
     SendTFAResponse sendTFAResponse;
     IsValidOTPResponse isValidOTPResponse;
+    GetPhoneNumberResponse getPhoneNumberResponse;
     String merlionBankIC;
 
     public PayMeResources() {
@@ -106,14 +112,44 @@ public class PayMeResources {
     public IsValidOTPResponse isValidOTP(@FormParam("OneTimePassword") String OTPString) {
 //        payMeSessionBeanLocal.verifyTwoFactorAuthentication(merlionBankIC, OTPString);
         boolean checkOTPValidity;
-        
+
         checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication("ruijia", OTPString);
-        if(checkOTPValidity == true){
+        if (checkOTPValidity == true) {
             return new IsValidOTPResponse(0, "", true);
-        }else{
+        } else {
             return new IsValidOTPResponse(1, "Invalid OTP", false);
         }
-        
+
+    }
+
+    @POST
+    @Path(value = "getPhoneNumber")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetPhoneNumberResponse getPhoneNumberString() {
+
+//        String phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
+        String phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
+        if (phoneNumStr.isEmpty()) {
+            return new GetPhoneNumberResponse(1, "Empty Phone Number String", "");
+        } else {
+            return new GetPhoneNumberResponse(0, "", phoneNumStr);
+        }
+
+    }
+
+    @POST
+    @Path(value = "getSavingAccountList")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetSavingAccountsResponse getSavingAccountStringList() {
+       
+        List<String> savingAccountsList;
+        try {
+//        List<String> savingAccountsList = payMeSessionBeanLocal.getSavingAccountString(merlionBankIC);
+            savingAccountsList = payMeSessionBeanLocal.getSavingAccountString("ruijia");
+        } catch (UserHasNoSavingAccountException ex) {
+            return new GetSavingAccountsResponse(1, "No Saving Account Found", Arrays.asList(""));
+        }       
+        return new GetSavingAccountsResponse(0, "", savingAccountsList);
     }
 
 }

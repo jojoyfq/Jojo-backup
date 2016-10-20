@@ -21,7 +21,7 @@ import javax.ejb.Local;
 @Local
 public interface PayMeSessionBeanLocal {
     public boolean checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException;
-    public List<String> getSavingAccountString(Long customerID) throws UserHasNoSavingAccountException;
+    public List<String> getSavingAccountString(String ic) throws UserHasNoSavingAccountException;
     public String getPhoneNumber(String ic);
     public String getBalance(String ic);
     public boolean verifyTwoFactorAuthentication(String ic, String inputCode);
