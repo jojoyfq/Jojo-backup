@@ -18,34 +18,34 @@
 
         <!-- Center Column -->
         <div class="Container90 NoPadding Responsive50">
-            <div class="Container100">
+            <div class="Container200">
                 <div class="Card Flex FlexWrap">
                     <div class="CardBigTopic"> Loan Management System </div>
                     <div class="Separator"></div>
 
-                    <div class="Container100 NoPadding Responsive50 ui-fluid">
+                    <div class="Container150 NoPadding Responsive50 ui-fluid">
 
                         <h:form id="form">
-                            <p:panel id="panel" header="Loan Management Payment System - Customer" >
+                            <p:panel id="panel" header="Loan Management System - Customer" >
 
                                 <p:messages id="msgs" />
 
                                 <h:panelGrid columns="4" cellpadding="5">
 
-                                    <p:dataTable var="loan" value="#{customerLoanManagedBean.oneCustomerAllLoans}"  editable="true" >
+                                    <p:dataTable var="loan" value="#{customerLoanManagedBean.oneCustomerAllLoans}"  editable="true" tableStyle="width:auto" >
                                         <f:facet name="header">
                                             My Loans
                                         </f:facet>
                                         <p:ajax event="rowEdit" listener="#{customerLoanManagedBean.customerUpdateLoan}"  />
 
-                                        <p:column headerText="Loan ID" style="width: 80px;">
+                                        <p:column headerText="Loan ID">
 
                                             <h:outputText value="#{loan.id}" />
                                         </p:column>
 
                                         <p:column headerText="Loan Type">
 
-                                            <h:outputText value="#{loan.loanType}" />
+                                            <h:outputText value="#{loan.loanType.name}" />
                                         </p:column>
 
                                         <p:column headerText="Loan Account Number">
@@ -62,40 +62,53 @@
                                         </p:column>
 
                                         <p:column headerText="Loan Principal">
-                                            <h:outputText value="#{loan.principal}" />
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value="#{loan.principal}" >
+                                                        <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                                    </h:outputText></f:facet>
+                                                <f:facet name="input"><p:inputText id="principal" value="#{loan.principal}" style="width:100%"/></f:facet>
+                                            </p:cellEditor>
                                         </p:column>
 
                                         <p:column headerText="Loan Downpayment">
                                             <p:cellEditor>
-                                                <f:facet name="output"><h:outputText value="#{loan.downpayment}" /></f:facet>
+                                                <f:facet name="output"><h:outputText value="#{loan.downpayment}" >
+                                                        <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                                    </h:outputText></f:facet>
                                                 <f:facet name="input"><p:inputText id="downpayment" value="#{loan.downpayment}" style="width:100%"/></f:facet>
                                             </p:cellEditor>
                                         </p:column>
 
                                         <p:column headerText="Loan Monthly Payment">
-                                            <h:outputText value="#{loan.monthlyPayment}" />
+                                            <h:outputText value="#{loan.monthlyPayment}" >
+                                                <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Loan Outstanding Balance ">
 
-                                            <h:outputText value="#{loan.outstandingBalance}" />
-                                        </p:column>
-                                        
-                                        <p:column headerText="Loan Monthly Payment ">
-
-                                            <h:outputText value="#{loan.monthlyPayment}" />
+                                            <h:outputText value="#{loan.outstandingBalance}" >
+                                                <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Loan Status ">
                                             <h:outputText value="#{loan.status}" />
                                         </p:column>
 
-                                      
-                                        <p:column headerText="Pay By Saving Account" style="width: 80px;" >
+                                        <p:column headerText="Cancel" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
-                                                    <f:attribute name="selectedLoan" value="#{customerLoanManagedBean.selectedLoan}"  />
-                                             </p:commandButton>
+                                                <p:commandButton icon="ui-icon-times" actionListener="#{customerLoanManagedBean.customerCancelLoan(loanId)}" update=":form:panel" ajax="false" type="submit" 
+                                                                 onclick="if (!confirm('Are you sure you want to cancel this loan'))
+                                                                             return false;"/>
+                                            </center>
+                                        </p:column>
+
+                                        <p:column headerText="Accept" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="ui-icon-check" actionListener="#{customerLoanManagedBean.customerAcceptLoan(loanId)}" update=":form:panel" ajax="false" type="submit" 
+                                                                 onclick="if (!confirm('Are you sure you want to approve this '))
+                                                                             return false;"/>
                                             </center>
                                         </p:column>
                                         <p:column style="width:32px">
@@ -103,7 +116,6 @@
                                         </p:column>
 
                                     </p:dataTable>
-                                    <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/></div>
 
 
                                 </h:panelGrid>

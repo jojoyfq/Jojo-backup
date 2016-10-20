@@ -192,6 +192,24 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
             em.flush();
         }
     }
+    
+    @Override
+    public List<DebitChargeback> getPendingDebitChargeback(){
+        String status = "staff unverified";
+        Query m = em.createQuery("SELECT b FROM DebitChargeback b WHERE b.status = :status");
+        m.setParameter("status", status);
+        List<DebitChargeback> debitChargeback = m.getResultList();
+        return debitChargeback;
+    }
+    
+    @Override
+    public void setChargebackStatus(DebitChargeback chargeback, String status){
+        Long cid = chargeback.getId();
+        DebitChargeback dChargeback = em.find(DebitChargeback.class, cid);
+        dChargeback.setStatus(status);
+        em.persist(dChargeback);
+        em.flush();
+    }
 
     @Override
     public void setPassword(Long cardNo, String password) {

@@ -7,6 +7,7 @@ package StaffLoanManagement;
 
 import CommonEntity.Customer;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.LoanTermInvalidException;
 import Exception.UserExistException;
 import Exception.UserNotActivatedException;
@@ -19,6 +20,7 @@ import StaffManagement.staffLogInManagedBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -81,11 +83,14 @@ public class StaffLoanManagedBean implements Serializable {
     private Long loanId;
     private Long staffId;
     private Loan selectedLoan;
-//    pri
+    private BigDecimal loanAmount;
+    private Integer calLoanTerm;
     private List<Loan> pendingLoans;
+    private List<Loan> oneCustomerAllLoans;
+    private List<LoanType> allLoanTypes;
     private String detail;
     private BigDecimal monthlyRepayment;
-
+    private Date loanDate;
     private Double interest1;
 
     private Double interest2;
@@ -95,6 +100,7 @@ public class StaffLoanManagedBean implements Serializable {
     private Map<String, String> loanNames;
 
     private String password;
+    private LoanType selectedLoanType;
 
     @PostConstruct
     public void init() {
@@ -102,8 +108,13 @@ public class StaffLoanManagedBean implements Serializable {
         searchedCustomer = new Customer();
         selectedLoan = new Loan();
         loanToCal = new LoanType();
+        selectedLoanType = new LoanType();
         staffId = staffLogInManagedBean.getStaffId();
+        monthlyRepayment = new BigDecimal("0.00000");
+        monthlyRepayment.setScale(2, BigDecimal.ROUND_DOWN);
         pendingLoans = new ArrayList<>();
+        oneCustomerAllLoans = new ArrayList<>();
+        allLoanTypes = new ArrayList<>();
         loanCategories = new HashMap<String, String>();
         loanNames = new HashMap<String, String>();
         loanCategories.put("Home", "Home");
@@ -160,8 +171,11 @@ public class StaffLoanManagedBean implements Serializable {
             interest1 = loanToCal.getInterestRate();
             interest2 = null;
         }
-
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffApplyLoanForCustomer.xhtml");
+        if (customer.getId() == null) {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffCreateLoanAccountForExistCustomer.xhtml");
+        } else {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffApplyLoanForCustomer.xhtml");
+        }
 
     }
 
@@ -170,6 +184,54 @@ public class StaffLoanManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffUpdateLoanForCustomer.xhtml");
 
     }
+
+    public void goToUpdateCustomerLoanPage1() throws IOException, UserNotExistException, UserNotActivatedException, ListEmptyException {
+        try {
+            System.out.println("*****Searched Customer IC: "+customerIc);
+            oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewCustomerLoan.xhtml");
+        } catch (IOException | UserNotExistException | UserNotActivatedException | ListEmptyException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+
+
+public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffCreateLoanAccountForNewCustomer.xhtml");
+
+    }
+
+    public void goToActivateCustomerLoanPage() throws IOException, UserNotExistException, ListEmptyException, UserNotActivatedException {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffActivateLoanForCustomer.xhtml");
+            oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
+        } catch (IOException | UserNotExistException | ListEmptyException | UserNotActivatedException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+    
+    public BigDecimal calculateMonthlyPayment(ActionEvent event) {
+        System.out.println("*********Caculator: loan name " + loanName);
+
+        if (loanName.equals("NUS Education Loan")) {
+            interest2 = 0.00;
+        } else if (loanName.equals("Car Loan")) {
+            interest2 = 0.00;
+        }
+        System.out.println("*********Caculator: loan amount " + loanAmount);
+        System.out.println("*********Caculator: loan term " + calLoanTerm);
+        System.out.println("*********Caculator: interest1 " + interest1);
+        System.out.println("*********Caculator: interest2 " + interest2);
+
+        monthlyRepayment = lasbl.fixedCalculator(loanAmount, calLoanTerm, interest1, interest2);
+//        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your Monthly Payment: " + monthlyRepayment);
+//        RequestContext.getCurrentInstance().showMessageInDialog(message);
+        return monthlyRepayment;
+    }
+
 
     public void staffCreateLoanAcct(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
@@ -195,21 +257,25 @@ public class StaffLoanManagedBean implements Serializable {
 
     public void staffApplyLoanForCustomer(ActionEvent event) throws LoanTermInvalidException {
 
-        System.out.println("*************Customer create loan details - customerId " + customer.getIc());
+        //System.out.println("*************Customer create loan details - customerId " + customer.getIc());
         System.out.println("*************Customer create loan details - loanTypeName " + loanTypeName);
         System.out.println("*************Customer create loan details - loanName " + loanName);
         System.out.println("*************Customer create loan details - principal " + principal);
         System.out.println("*************Customer create loan details - downpayment " + downpayment);
         System.out.println("*************Customer create loan details - loanTerm " + loanTerm);
-        System.out.println("*************Customer create loan details - startDate " + startDate);
+        System.out.println("*************Customer create loan details - monthly income " + monthlyIncome);
 
         try {
 
             loanTypeId = lasbl.findTypeIdByName(loanName);
-            if (!customer.getId().equals(null)) {
-                lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+            if (customer.getId()==null) {
+                System.out.println("Create loan account for EXISTING customer");
+                lasbl.StaffCreateLoanAccountExisting(staffId,customerId , monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
             } else {
-                lasbl.StaffCreateLoanAccount(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+                                System.out.println("Create loan account for NEW customer customerID "+customer.getId());
+
+                lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+             
             }
         } catch (LoanTermInvalidException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -218,9 +284,15 @@ public class StaffLoanManagedBean implements Serializable {
 
     }
 
-    public void staffViewPendingLoans(ActionEvent event) {
+    public void staffViewPendingLoans(ActionEvent event) throws IOException {
         System.out.println("**** go to view pending loans alr!");
         pendingLoans = lmsbl.staffViewPendingLoans();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewPendingLoans.xhtml");
+
+    }
+    public void staffViewCustomer(ActionEvent event){
+                    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+                    
 
     }
 
@@ -242,7 +314,8 @@ public class StaffLoanManagedBean implements Serializable {
 
     public void staffApprovePending(ActionEvent event) throws EmailNotSendException {
         try {
-            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+            System.out.println("go into approve customer!");
+        //    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
             loanId = selectedLoan.getId();
             System.out.println("*************Selected pending loan to view - loan ID is " + selectedLoan.getId());
             System.out.println("**************Selected pending loan to view - customer ic" + selectedLoan.getCustomer().getName());
@@ -256,16 +329,15 @@ public class StaffLoanManagedBean implements Serializable {
 
     }
 
-    public void satffUpdateLoan(RowEditEvent event) throws EmailNotSendException {
+    public void staffUpdateLoan(ActionEvent event) throws EmailNotSendException {
         try {
-            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+          //  selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
             loanId = selectedLoan.getId();
             System.out.println("*************Selected loan to update - loan ID is " + selectedLoan.getId());
-            System.out.println("*************Selected loan to update - loan downpayment is " + downpayment);
-            System.out.println("*************Selected loan to update - loan loanTerm is " + loanTerm);
-            System.out.println("*************Selected loan to update - loan startDate is " + startDate);
+            System.out.println("*************Selected loan to update - loan downpayment is " + selectedLoan.getDownpayment());
+            System.out.println("*************Selected loan to update - loan loanTerm is " + selectedLoan.getLoanTerm());
 
-            pendingLoans = lmsbl.staffUpdateLoan(staffId, loanId, principal, downpayment, loanTerm, startDate);
+            selectedLoan = lmsbl.staffUpdateLoan(staffId, loanId, selectedLoan.getPrincipal(), selectedLoan.getDownpayment(), selectedLoan.getLoanTerm(), startDate);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been updated successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (EmailNotSendException ex) {
@@ -275,9 +347,50 @@ public class StaffLoanManagedBean implements Serializable {
         }
     }
 
-//    public Loan staffActivateLoan(ActionEvent event){
-//        loan 
-//    }
+    public List<Loan> staffActivateLoan(ActionEvent event) throws UserNotExistException, UserNotActivatedException, ListEmptyException {
+        try {
+            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+            System.out.println("*****Loan ID to activate loan is " + selectedLoan.getId());
+            lmsbl.staffActivateLoan(selectedLoan.getId(), loanDate);
+            System.out.println("*****Customer IC to activate loan is " + customerIc);
+            oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
+        } catch (UserNotExistException | ListEmptyException | UserNotActivatedException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+        return oneCustomerAllLoans;
+
+    }
+
+    public List<LoanType> getAllLoanTypes() {
+        return allLoanTypes;
+    }
+
+    public void setAllLoanTypes(List<LoanType> allLoanTypes) {
+        this.allLoanTypes = allLoanTypes;
+    }
+
+    public LoanType getSelectedLoanType() {
+        return selectedLoanType;
+    }
+
+    public void setSelectedLoanType(LoanType selectedLoanType) {
+        this.selectedLoanType = selectedLoanType;
+    }
+
+    public void staffViewLoanTypeList(ActionEvent event) throws IOException {
+        allLoanTypes = lmsbl.viewLoanTypeList();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffViewAllLoanTypes.xhtml");
+    }
+
+    public void staffUpdateLoanType(RowEditEvent event) {
+        selectedLoanType = (LoanType) (event.getObject());
+        System.out.println("********Loan Type selected to be updated: " + selectedLoanType.getName());
+        //   selectedLoanType = (LoanType) event.getComponent().getAttributes().get("selectedLoanType");
+        allLoanTypes = lmsbl.updateLoanType(selectedLoanType.getId(), interest1, interest2);
+    }
+ 
+
     public LoanManagementSessionBeanLocal getLmsbl() {
         return lmsbl;
     }
@@ -572,6 +685,38 @@ public class StaffLoanManagedBean implements Serializable {
 
     public void setSearchedCustomer(Customer searchedCustomer) {
         this.searchedCustomer = searchedCustomer;
+    }
+
+    public List<Loan> getOneCustomerAllLoans() {
+        return oneCustomerAllLoans;
+    }
+
+    public void setOneCustomerAllLoans(List<Loan> oneCustomerAllLoans) {
+        this.oneCustomerAllLoans = oneCustomerAllLoans;
+    }
+
+    public Date getLoanDate() {
+        return loanDate;
+    }
+
+    public void setLoanDate(Date loanDate) {
+        this.loanDate = loanDate;
+    }
+
+    public BigDecimal getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanAmount(BigDecimal loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+
+    public Integer getCalLoanTerm() {
+        return calLoanTerm;
+    }
+
+    public void setCalLoanTerm(Integer calLoanTerm) {
+        this.calLoanTerm = calLoanTerm;
     }
 
 }

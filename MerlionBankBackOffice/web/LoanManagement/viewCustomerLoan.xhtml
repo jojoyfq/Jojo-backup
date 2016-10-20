@@ -26,17 +26,17 @@
                     <div class="Container100 NoPadding Responsive50 ui-fluid">
 
                         <h:form id="form">
-                            <p:panel id="panel" header="Loan Management Payment System - Customer" >
+                            <p:panel id="panel" header="View Customer's Loan Details" >
 
                                 <p:messages id="msgs" />
 
                                 <h:panelGrid columns="4" cellpadding="5">
 
-                                    <p:dataTable var="loan" value="#{customerLoanManagedBean.oneCustomerAllLoans}"  editable="true" >
+                                    <p:dataTable var="loan" value="#{staffLoanManagedBean.oneCustomerAllLoans}"  editable="true" >
                                         <f:facet name="header">
                                             My Loans
                                         </f:facet>
-                                        <p:ajax event="rowEdit" listener="#{customerLoanManagedBean.customerUpdateLoan}"  />
+                                        <p:ajax event="rowEdit" listener="#{staffLoanManagedBean.staffUpdateLoan}"  />
 
                                         <p:column headerText="Loan ID" style="width: 80px;">
 
@@ -66,11 +66,11 @@
                                         </p:column>
 
                                         <p:column headerText="Loan Downpayment">
-                                            <p:cellEditor>
-                                                <f:facet name="output"><h:outputText value="#{loan.downpayment}" /></f:facet>
-                                                <f:facet name="input"><p:inputText id="downpayment" value="#{loan.downpayment}" style="width:100%"/></f:facet>
-                                            </p:cellEditor>
-                                        </p:column>
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{loan.downpayment}" /></f:facet>
+                                            <f:facet name="input"><p:inputText id="downpayment" value="#{loan.downpayment}" style="width:100%"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
 
                                         <p:column headerText="Loan Monthly Payment">
                                             <h:outputText value="#{loan.monthlyPayment}" />
@@ -80,24 +80,12 @@
 
                                             <h:outputText value="#{loan.outstandingBalance}" />
                                         </p:column>
-                                        
-                                        <p:column headerText="Loan Monthly Payment ">
-
-                                            <h:outputText value="#{loan.monthlyPayment}" />
-                                        </p:column>
 
                                         <p:column headerText="Loan Status ">
                                             <h:outputText value="#{loan.status}" />
                                         </p:column>
-
                                       
-                                        <p:column headerText="Pay By Saving Account" style="width: 80px;" >
-                                            <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
-                                                    <f:attribute name="selectedLoan" value="#{customerLoanManagedBean.selectedLoan}"  />
-                                             </p:commandButton>
-                                            </center>
-                                        </p:column>
+                                      
                                         <p:column style="width:32px">
                                             <p:rowEditor />
                                         </p:column>

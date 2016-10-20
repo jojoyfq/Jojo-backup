@@ -17,7 +17,7 @@
         </div>
 
         <!-- Center Column -->
-        <div class="Container60 NoPadding Responsive50">
+        <div class="Container100 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
 
@@ -43,7 +43,7 @@
 
 
                                     <p:column headerText="Loan Type">
-                                        <h:outputText value="#{pendingLoan.loanType}" />
+                                        <h:outputText value="#{pendingLoan.loanType.name}" />
                                     </p:column>
 
                                     <p:column headerText="Loan Account Number">
@@ -76,58 +76,60 @@
                                     <p:column headerText="Loan Outstanding Balance ">
                                         <h:outputText value="#{pendingLoan.outstandingBalance}" />
                                     </p:column>
-                                    
-                                     <p:column headerText="Loan Status ">
-                                         <h:outputText value="#{pendingLoan.status}" />
+
+                                    <p:column headerText="Loan Status ">
+                                        <h:outputText value="#{pendingLoan.status}" />
                                     </p:column>
 
                                     <p:column headerText="Customer Detail" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton icon="ui-icon-mail-open" onclick="PF('msgDialog').show()" update=":form:panel :form:dialogMessage" ajax="true" type="submit" >
+                                            <p:commandButton icon="ui-icon-mail-open" actionListener="#{staffLoanManagedBean.staffViewCustomer}" onclick="PF('msgDialog').show()"  ajax="true" type="submit" >
                                                 <f:attribute name="selectedLoan" value="#{pendingLoan}"  />
                                             </p:commandButton>
                                         </center>
                                     </p:column>
-                                    <p:column style="width:32px">
-                                        <p:rowEditor />
-                                    </p:column>
+
                                     <f:facet name="footer">
-                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffLoanManagedBean.staffViewPendingLoans}" oncomplete="PF('carDialog').show()" />
+                                        <p:commandButton process="radioDT"  update=":form"  value="Approve" actionListener="#{staffLoanManagedBean.staffApprovePending}" oncomplete="PF('carDialog').show()" />
                                         <p:separator/>
-                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffLoanManagedBean.staffApprovePending}" oncomplete="PF('carDialog').show()" styleClass="RedButton"/>
+                                        <p:commandButton process="radioDT"  update=":form"  value="Reject" actionListener="#{staffLoanManagedBean.staffRejectPending}" oncomplete="PF('carDialog').show()" styleClass="RedButton"/>
                                         <p:separator/>
-                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Edit" actionListener="#{staffLoanManagedBean.goToUpdateCustomerLoanPage}" styleClass="RedButton"/>
+                                        <p:commandButton process="radioDT"  update=":form"  value="Edit" actionListener="#{staffLoanManagedBean.goToUpdateCustomerLoanPage}" />
 
                                     </f:facet>
                                 </p:dataTable>
 
                             </h:panelGrid>
 
+
                             <p:dialog id="dialogMessage"  appendTo="@(body)" header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
                                 <p:outputPanel id="msgDetail" style="text-align:center;">
                                     <p:panelGrid  columns="2"  >
 
                                         <h:outputText value="Customer ID: " />
-                                        <h:outputText value="#{pendingLoan.customer.id}" />
+                                        <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.id}" />
 
                                         <h:outputText value="Customer IC:" />
-                                        <h:outputText value="#{pendingLoan.customer.ic}" />
+                                        <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.ic}" />
 
                                         <h:outputText value="Customer Name: " />
-                                        <h:outputText value="#{pendingLoan.customer.name}" />
+                                        <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.name}" />
+                                        <h:outputText value="Customer Gender: " />
+                                        <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.gender}" />
 
                                         <h:outputText value="Customer Email: " />
-                                        <h:outputText value="#{pendingLoan.customer.email}"  />
+                                        <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.email}"  />
 
                                         <h:outputText value="Customer Date of Birth: " />
-                                        <h:outputText value="#{pendingLoan.customer.dateOfBirth}"  />
-
-
+                                        <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.dateOfBirth}"  >
+                                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+                                        
                                         <h:outputText value="Customer Family Information: " />
-                                        <h:outputText value="#{pendingLoan.customer.familyInfo}"  />
+                                        <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.familyInfo}"  />
 
                                         <h:outputText value="Customer Financial Asset: " />
-                                        <h:outputText value="#{pendingLoan.customer.financialAsset}"  />
+                                        <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.financialAsset}"  />
 
 
 

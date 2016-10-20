@@ -39,7 +39,8 @@ public class LoanType implements Serializable {
     private String description;
     
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "loanType")
-    private List<Loan> loans = new ArrayList<Loan>();
+    private List<Loan> loans;
+    
 
     public LoanType() {
     }
