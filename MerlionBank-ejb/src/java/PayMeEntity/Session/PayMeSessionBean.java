@@ -184,12 +184,17 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public List<String> getSavingAccountString(Long customerID) throws UserHasNoSavingAccountException {
+    public List<String> getSavingAccountString(String ic) throws UserHasNoSavingAccountException {
         List<String> savingAccountString = new ArrayList<String>();
         String savingAccountNo;
         String accountType;
+        
+        System.out.println("Customer ic is: "+ic+"******");
 
-        Customer customer = em.find(Customer.class, customerID);
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        Customer customer = (Customer) q.getSingleResult();
+        
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
         if (savingAccounts.isEmpty()) {
             throw new UserHasNoSavingAccountException("No Saving Account Found!");
@@ -197,7 +202,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             for (int i = 0; i < savingAccounts.size(); i++) {
                 savingAccountNo = Long.toString(savingAccounts.get(i).getAccountNumber());
                 accountType = savingAccounts.get(i).getSavingAccountType().getAccountType();
-                savingAccountString.set(i, savingAccountNo + "," + accountType);
+                savingAccountString.add(savingAccountNo + " - " + accountType);
             }
             return savingAccountString;
         }
