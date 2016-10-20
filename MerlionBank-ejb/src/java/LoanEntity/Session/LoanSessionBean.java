@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
@@ -37,7 +38,9 @@ import org.joda.time.DateTime;
 public class LoanSessionBean implements LoanSessionBeanLocal {
 @PersistenceContext
     private EntityManager em;
+ @EJB
 
+    private LoanApplicationSessionBeanLocal lasb;
 
    @Override 
      public List<Loan> displayLoans(Long customerId) throws ListEmptyException{
@@ -57,13 +60,41 @@ public Loan customerViewLoan(Long loanId){
 
 
 @Override
-public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal downpayment,Integer loanTerm,Date startDate){
+public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate){
     Customer customer=em.find(Customer.class,customerId);
     Loan loan=em.find(Loan.class,loanId);
+    LoanType loanType = loan.getLoanType();
+
+        BigDecimal monthlyPayment2 = new BigDecimal(0);
+        Double temp = 0.0;
+        if (loanType.getName().equals("SIBOR Package")) {
+            System.out.println("principal "+principal);
+            System.out.println("downpayment "+downpayment);
+            System.out.println("loanTerm "+loanTerm);
+             System.out.println("loan.getInterestRate1()"+loan.getInterestRate1());
+            System.out.println("loan.getInterestRate2()"+loan.getInterestRate2());
+            monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getSIBOR(), loanType.getSIBORrate1());
+        } else if (loanType.getName().equals("Fixed Interest Package")) {
+            monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
+        } else if (loanType.getType().equals("Car")) {
+            monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
+        } else if (loanType.getType().equals("Education")) {
+            monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
+
+        }
+
+        loan.setMonthlyPayment(monthlyPayment2);
+        loan.setPrincipal(principal);
         loan.setDownpayment(downpayment);
         loan.setLoanTerm(loanTerm);
-        loan.setStartDate(startDate);
-        loan.setStatus("staffVerified");
+         Date currentTime = Calendar.getInstance().getTime();
+        DateTime payDate = new DateTime(currentTime);
+        DateTime currentTime1 = payDate.plusMonths(1);
+        Date currentTimestamp = currentTime1.toDate();
+
+        loan.setStartDate(currentTimestamp);
+        
+        loan.setStatus("inactive");
         em.flush();
       return customer.getLoans();
     

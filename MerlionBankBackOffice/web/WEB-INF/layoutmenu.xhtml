@@ -25,10 +25,12 @@
                 <p:submenu id="customer_management" label="Customer Management">
                     <p:submenu id="saving_accountNC" label="Operational CRM" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(2)}">
                         <p:menuitem id="create_saving_accountNC" value="Create Saving Account For New Customer" outcome="/CustomerManagement/createSavingAccountNC"/>
+                        <p:menuitem id="create_Loan_for_new_customer" value="Create Loan Account For New Customer" actionListener="#{staffLoanManagedBean.goToApplyLoanForNewCustomerPage}"/> 
+
                         <p:menuitem id="staffVerifyCustomer" value="Staff Verify Pending Customer" outcome="/StaffVerifyCustomer/staffVerifyCustomerAccount"/>
                     </p:submenu>
-                     <p:submenu id="saving_accountNC1" label="Collaborative CRM" icon="icon-plus" >
-                         <p:menuitem id="view_all_assigned_issues" value="View All Issues" actionListener="#{staffCaseManagedBean.staffViewAssignedIssue}"/>
+                    <p:submenu id="saving_accountNC1" label="Collaborative CRM" icon="icon-plus" >
+                        <p:menuitem id="view_all_assigned_issues" value="View All Issues" actionListener="#{staffCaseManagedBean.staffViewAssignedIssue}"/>
                     </p:submenu>
 
                 </p:submenu>
@@ -60,8 +62,10 @@
                         <p:menuitem id="view_debit_chargeback" value="View Pending Debit Card Chargeback" actionListener="#{debitCardManagedBean.dashboardToViewDebitChargeback}"/>                                              
                     </p:submenu>
                 </p:submenu>
-
-                <p:menuitem id="loan_management" value="Loan Management" />
+                <p:submenu id="loan_management" label="Loan Management">
+                    <p:menuitem id="view_pending_loans" value="View All Pending Loan Applications" actionListener="#{staffLoanManagedBean.staffViewPendingLoans}"/> 
+                    <p:menuitem id="create_Loan_for_old_customer" value="Create Loan Account For Existing Customer" actionListener="#{staffLoanManagedBean.goToLoanPage}"/> 
+                </p:submenu>
 
                 <p:submenu id="bill_and_transfer" label="Bill and Transfer">
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(12)}">

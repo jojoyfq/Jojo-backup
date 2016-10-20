@@ -104,6 +104,7 @@ public class Customer implements Serializable {
     private List<CustomerMessage> customerMessages;
     
      @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "customer")
+
     private List<Loan> loans = new ArrayList<Loan>();
      
      @OneToMany (cascade = {CascadeType.ALL}, mappedBy = "customer")

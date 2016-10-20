@@ -51,12 +51,16 @@
                                     </p:column>
 
                                     <p:column headerText="Customer Date Of Birth" >
-                                        <h:outputText value="#{pendingCustomer.dateOfBirth}" />
+                                        <h:outputText value="#{pendingCustomer.dateOfBirth}" >
+                                          <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+
                                     </p:column>
+                                    
 
                                     <f:facet name="footer">
-                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" oncomplete="PF('carDialog').show()" />
-                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}" oncomplete="PF('carDialog').show()" />
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}"  />
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}"  />
                                     </f:facet>
                                 </p:dataTable>
 
