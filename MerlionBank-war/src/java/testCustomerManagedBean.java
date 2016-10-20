@@ -71,8 +71,8 @@ public class testCustomerManagedBean implements Serializable {
           System.out.print("******password set****");
           
           //setPayMe
-          String savingAccountNo = customer.getSavingAccounts().get(0).getAccountNumber().toString();
-          pmsbl.createPayMe(ic, savingAccountNo, customerPhoneNumber, "ruijia123");
+//          String savingAccountNo = customer.getSavingAccounts().get(0).getAccountNumber().toString();
+//          pmsbl.createPayMe(ic, savingAccountNo, customerPhoneNumber, "ruijia123");
           
           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
          
