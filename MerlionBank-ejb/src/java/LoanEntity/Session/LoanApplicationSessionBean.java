@@ -8,20 +8,22 @@ package LoanEntity.Session;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.OnlineAccount;
-import CommonEntity.Session.AccountManagementSessionBean;
-import static CommonEntity.Session.AccountManagementSessionBean.SALT_LENGTH;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Exception.LoanTermInvalidException;
 import Exception.UserExistException;
+import Exception.UserNotActivatedException;
+import Exception.UserNotExistException;
 import LoanEntity.Loan;
 import LoanEntity.LoanType;
 import Other.Session.GeneratePassword;
 import Other.Session.sendEmail;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -52,8 +54,6 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
     
     public static final int SALT_LENGTH = 8;
 
-    @EJB
-    private AccountManagementSessionBean amsb;
     
     @EJB
     private StaffManagementSessionBeanLocal smsbl;
@@ -155,11 +155,14 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
         BigDecimal month = new BigDecimal("12");
         BigDecimal temp = new BigDecimal("1");
         BigDecimal term = new BigDecimal(loanTerm);
-        BigDecimal trueRate = baseRate.add(baseRate2).divide(month);
+        BigDecimal trueRate = baseRate.add(baseRate2).divide(month,MathContext.DECIMAL128);
+        trueRate.setScale(2, RoundingMode.HALF_UP);
         BigDecimal temp2 = trueRate.add(temp).pow(loanTerm);
-        BigDecimal temp3 = amount.multiply(trueRate).multiply(temp2);
+        BigDecimal temp3 = amount.multiply(trueRate).multiply(temp2,MathContext.DECIMAL128);
+        temp3.setScale(2, RoundingMode.HALF_UP);
         BigDecimal temp4 = temp2.subtract(temp);
-        BigDecimal monthlyPayment = temp3.divide(temp4);
+        BigDecimal monthlyPayment = temp3.divide(temp4,MathContext.DECIMAL128);
+        monthlyPayment.setScale(2, RoundingMode.HALF_UP);
         System.out.println("monthly payment is" + monthlyPayment);
         return monthlyPayment;
 
@@ -167,7 +170,8 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
 
     //Create Loan Account - 3rd page - configure home loan 
     @Override
-    public Long createLoanAccount(Customer customer, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException {
+    public Long createLoanAccount(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException {
+        Customer customer=em.find(Customer.class,customerId);
         LoanType loanType = em.find(LoanType.class, loanTypeId);
         BigDecimal monthlyPayment = new BigDecimal("0");
         Double temp = 0.0;
@@ -178,7 +182,7 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
                 throw new LoanTermInvalidException("Home repayment period can only be max 35 years");
             }
 
-            if (principal.multiply(new BigDecimal("0.2")).compareTo(downpayment) == -1) {
+            if (principal.multiply(new BigDecimal("0.2")).compareTo(downpayment) == 1) {
                 throw new LoanTermInvalidException("Down Payment must be greater than 20% of your total asset value");
             }
 
@@ -360,7 +364,156 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
         Long accountNum=0L;
        
         try{
-        accountNum=createLoanAccount(customer,monthlyIncome,loanTypeId,principal,downpayment,loanTerm);
+        accountNum=createLoanAccount(customer.getId(),monthlyIncome,loanTypeId,principal,downpayment,loanTerm);
+        }catch (LoanTermInvalidException|EmailNotSendException ex){
+            throw new LoanTermInvalidException(ex.getMessage());
+        }
+        
+        smsbl.recordStaffAction(staffId, "Create new loan account " + accountNum, customerId);
+        return accountNum;
+    }
+    
+    @Override
+    public Long findTypeIdByName(String name){
+          Query query = em.createQuery("SELECT a FROM LoanType a WHERE a.name = :name");
+        query.setParameter("name", name);
+        LoanType loanType = (LoanType) query.getSingleResult();
+        return loanType.getId();
+    }
+
+    @Override
+     public LoanType findTypeByName(String name){
+          Query query = em.createQuery("SELECT a FROM LoanType a WHERE a.name = :name");
+        query.setParameter("name", name);
+        LoanType loanType = (LoanType) query.getSingleResult();
+        return loanType;
+    }
+     @Override
+    public Customer searchCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException {
+        System.out.println("testing: " + customerIc);
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", customerIc);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        System.out.println("testing: " + temp.size());
+        if (temp.isEmpty()) {
+            System.out.println("Username " + customerIc + " does not exist!");
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+        }
+
+        int size = temp.size();
+        Customer customer = temp.get(size - 1);
+        //System.out.println("testing: "+customer.getIc());
+        if (customer.getStatus().equals("terminated")) {
+            System.out.println("Username " + customerIc + " does not exist!");
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+        } else if (customer.getStatus().equals("inactive")) {
+            System.out.println("Username " + customerIc + "Customer has not activated his or her account!");
+            throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
+        } else {
+            System.out.println("Username " + customerIc + " IC check pass!");
+        }
+        return customer;
+
+    }
+    
+    //Create Loan Account - 3rd page - configure home loan 
+    @Override
+    public Long createLoanAccountExisting(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException {
+        Customer customer=em.find(Customer.class,customerId);
+        LoanType loanType = em.find(LoanType.class, loanTypeId);
+        BigDecimal monthlyPayment = new BigDecimal("0");
+        Double temp = 0.0;
+        Long accountNum = this.generateLoanAccountNumber();
+
+        if (loanType.getType().equals("Home")) {
+            if (loanTerm > 420) {
+                throw new LoanTermInvalidException("Home repayment period can only be max 35 years");
+            }
+
+            if (principal.multiply(new BigDecimal("0.2")).compareTo(downpayment) == 1) {
+                throw new LoanTermInvalidException("Down Payment must be greater than 20% of your total asset value");
+            }
+
+            if (loanType.getName().equals("SIBOR Package")) {
+                monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getSIBOR(), loanType.getSIBORrate1());
+            } else if (loanType.getName().equals("Fixed Interest Package")) {
+                monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getFixedRate(), temp);
+            }
+        } else if (loanType.getType().equals("Car")) {
+            if (loanTerm > 84) {
+                throw new LoanTermInvalidException("Car repayment period can only be max 7 years");
+            }
+
+            monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getInterestRate(), temp);
+        } else if (loanType.getType().equals("Education")) {
+            if (loanTerm > 96) {
+                throw new LoanTermInvalidException("Education repayment period can only be max 8 years");
+            }
+            monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getEducationRate(), temp);
+
+        }
+
+        Loan loan = new Loan(accountNum, principal, downpayment, loanTerm, "inactive", monthlyPayment, 0, principal.subtract(downpayment), customer);
+        em.persist(loan);
+        em.flush();
+
+        loan.setLoanType(loanType);
+
+        if (loanType.getName().equals("SIBOR Package")) {
+            BigDecimal term = new BigDecimal(loanTerm);
+            loan.setOutstandingBalance(monthlyPayment.multiply(term));
+        } else if (loanType.getName().equals("Fixed Interest Package")) {
+            BigDecimal monthly2 = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getSIBOR(), loanType.getFixedRate2());
+            BigDecimal temp2 = new BigDecimal(36);
+            BigDecimal temp3 = new BigDecimal(loanTerm - 36);
+            loan.setInterestRate1(loanType.getFixedRate());
+            loan.setInterestRate2(loanType.getFixedRate2());
+            loan.setOutstandingBalance(monthlyPayment.multiply(temp2).add(monthly2.multiply(temp3)));
+        }else if (loanType.getType().equals("Car")) {
+            BigDecimal term = new BigDecimal(loanTerm);
+            loan.setInterestRate1(loanType.getInterestRate());
+            loan.setOutstandingBalance(monthlyPayment.multiply(term));
+        }else if (loanType.getType().equals("Education")) {
+            BigDecimal term = new BigDecimal(loanTerm);
+            loan.setInterestRate1(loanType.getEducationRate());
+            loan.setOutstandingBalance(monthlyPayment.multiply(term));
+        }
+
+        Date currentTime = Calendar.getInstance().getTime();
+        DateTime payDate = new DateTime(currentTime);
+        DateTime currentTime1 = payDate.plusMonths(1);
+        Date currentTimestamp = currentTime1.toDate();
+        loan.setStartDate(currentTimestamp);
+
+        List<Loan> loans = new ArrayList<Loan>();
+        //customer may alr have fixed acct
+        if (customer.getLoans() == null) {
+            loans.add(loan);
+            customer.setLoans(loans);
+        } else {//alr have fixed acct
+            customer.getLoans().add(loan);
+        }
+
+       
+        customer.setMonthlyIncome(monthlyIncome);
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create new Loan Account", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+
+        return accountNum;
+    }
+    
+     //Teller Create Loan Account - 3nd page - configure loan
+    @Override
+    public Long StaffCreateLoanAccountExisting(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws LoanTermInvalidException {
+        Staff staff=em.find(Staff.class,staffId);
+        Customer customer = em.find(Customer.class, customerId);
+        Long accountNum=0L;
+       
+        try{
+        accountNum=createLoanAccountExisting(customer.getId(),monthlyIncome,loanTypeId,principal,downpayment,loanTerm);
         }catch (LoanTermInvalidException|EmailNotSendException ex){
             throw new LoanTermInvalidException(ex.getMessage());
         }

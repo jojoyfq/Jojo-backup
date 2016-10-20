@@ -5,13 +5,19 @@
  */
 package CardEntity.Session;
 
+import CardEntity.CardTransaction;
 import CardEntity.DebitCard;
 import CardEntity.DebitCardType;
+import CardEntity.DebitChargeback;
 import CommonEntity.Customer;
 import static CommonEntity.Session.AccountManagementSessionBean.SALT_LENGTH;
 import DepositEntity.SavingAccount;
+import DepositEntity.TransactionRecord;
+import Exception.ChargebackException;
 import Exception.DebitCardException;
+import Exception.NoTransactionRecordFoundException;
 import Exception.UserHasDebitCardException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -122,6 +128,90 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
     }
 
     @Override
+    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount) {
+
+        BigDecimal posAmount = new BigDecimal(amount);
+        Long cardNoL = Long.parseLong(cardNo);
+        Long cvvl = Long.parseLong(cvv);
+
+        Query m = em.createQuery("SELECT b FROM DebitCard b WHERE b.cardNumber = :cardNoL");
+        m.setParameter("cardNoL", cardNoL);
+        DebitCard debitCard = (DebitCard) m.getSingleResult();
+
+        if (debitCard == null) {
+            return false;
+        } else {
+            if (!debitCard.getCardHolder().equalsIgnoreCase(cardHolder)) {
+                System.out.print("card Holder name is incorrect!");
+                return false;
+            } else if (!debitCard.getCvv().equals(cvvl)) {
+                System.out.print("The cvv number is incorrect");
+                return false;
+            } else if (amount != null) {
+                if (debitCard.getSavingAccount().getAvailableBalance().compareTo(posAmount) == 1) {
+                    //update user's balance
+                    BigDecimal updatedAvailable = debitCard.getSavingAccount().getAvailableBalance().subtract(posAmount);
+                    BigDecimal updatedBalance = debitCard.getSavingAccount().getBalance().subtract(posAmount);
+                    debitCard.getSavingAccount().setAvailableBalance(updatedAvailable);
+                    debitCard.getSavingAccount().setBalance(updatedBalance);
+
+                    Date currentTime = Calendar.getInstance().getTime();
+                    java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+
+                    TransactionRecord transactionRecord = new TransactionRecord("POS", posAmount, null, "settled", cardNo + ", Cold Storage", currentTimestamp, debitCard.getSavingAccount().getAccountNumber(), null, debitCard.getSavingAccount(), "MerlionBank", null);
+                    debitCard.getSavingAccount().getTransactionRecord().add(transactionRecord);
+                    em.persist(transactionRecord);
+                    em.flush();
+                    return true;
+                } else {
+                    System.out.print("Not enough balance");
+                    return false;
+                }
+            } else {
+                System.out.print("Some thing bad happen!");
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String debitCardNo) throws ChargebackException {
+        Long debitCardNoL = Long.parseLong(debitCardNo);
+        Query m = em.createQuery("SELECT b FROM DebitCard b WHERE b.cardNumber = :debitCardNoL");
+        m.setParameter("debitCardNoL", debitCardNoL);
+        DebitCard debitCard = (DebitCard) m.getSingleResult();
+        if (debitCard == null) {
+            throw new ChargebackException("The Card Number Entered is not valid!");
+        } else {
+            Date currentTime = Calendar.getInstance().getTime();
+            //chargeback has 5 status: staff unverified, VISA/MasterCard unverified, Merchant Bank unverified, rejected, approved
+            DebitChargeback chargeback = new DebitChargeback(merchantName,transactionDate,transactionAmount,chargebackDescription,currentTime,"staff unverified",debitCard);
+            debitCard.getChargeback().add(chargeback);
+            em.persist(chargeback);
+            em.persist(debitCard);
+            em.flush();
+        }
+    }
+    
+    @Override
+    public List<DebitChargeback> getPendingDebitChargeback(){
+        String status = "staff unverified";
+        Query m = em.createQuery("SELECT b FROM DebitChargeback b WHERE b.status = :status");
+        m.setParameter("status", status);
+        List<DebitChargeback> debitChargeback = m.getResultList();
+        return debitChargeback;
+    }
+    
+    @Override
+    public void setChargebackStatus(DebitChargeback chargeback, String status){
+        Long cid = chargeback.getId();
+        DebitChargeback dChargeback = em.find(DebitChargeback.class, cid);
+        dChargeback.setStatus(status);
+        em.persist(dChargeback);
+        em.flush();
+    }
+
+    @Override
     public void setPassword(Long cardNo, String password) {
         //password salt and hash
         String salt = "";
@@ -167,7 +257,7 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
     }
 
     @Override
-    public List<DebitCard> getDebitCard(Long customerID)throws DebitCardException {
+    public List<DebitCard> getDebitCard(Long customerID) throws DebitCardException {
         List<DebitCard> debitCard = new ArrayList();
         Customer customer = em.find(Customer.class, customerID);
         if (customer.getSavingAccounts().isEmpty()) {
@@ -177,6 +267,36 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
                 debitCard.add(customer.getSavingAccounts().get(i).getDebitCard());
             }
             return debitCard;
+        }
+    }
+
+    @Override
+    public List<CardTransaction> getEStatement(Long customerID, Long debitCardNo, Date currentTime) throws NoTransactionRecordFoundException {
+        List<CardTransaction> cardTransactionFiltered = new ArrayList<>();
+        String pattern = "MM-YYYY";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+        String currentTimeFormated = simpleDateFormat.format(currentTime);
+        System.out.println(currentTimeFormated);
+        String transactionTime;
+        //Search For Customer Email
+        Customer customer = em.find(Customer.class, customerID);
+        String email = customer.getEmail();
+
+        Query m = em.createQuery("SELECT b FROM CardTransaction b WHERE b.cardNumber = :debitCardNo");
+        m.setParameter("debitCardNo", debitCardNo);
+        List<CardTransaction> cardTransactions = new ArrayList(m.getResultList());
+        if (cardTransactions.isEmpty()) {
+            throw new NoTransactionRecordFoundException("No Transaction Record Found!");
+        } else {
+            //search for card transactions that match the current month
+            for (int i = 0; i < cardTransactions.size(); i++) {
+                transactionTime = simpleDateFormat.format(cardTransactions.get(i).getTransactionTime());
+                if (transactionTime.equals(currentTimeFormated)) {
+                    cardTransactionFiltered.add(cardTransactions.get(i));
+                }
+            }
+            return cardTransactionFiltered;
         }
     }
 

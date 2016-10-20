@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form>
+
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+
+                                <p:outputLabel for="loanCat" value="Loan Category " />
+                                <p:selectOneMenu id="loanCat" value="#{staffLoanManagedBean.loanTypeName}" style="width:200px">
+                                    <p:ajax listener="#{staffLoanManagedBean.onLoanChange}" update="city" />
+                                    <f:selectItem itemLabel="Select Loan Category" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{staffLoanManagedBean.loanCategories}" />
+
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="city" value="Loan Type: " />
+                                <p:selectOneMenu id="city" value="#{staffLoanManagedBean.loanName}" style="width:200px">
+                                    <f:selectItem itemLabel="Select Specific Loan Type" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{staffLoanManagedBean.loanNames}" />
+                                </p:selectOneMenu>
+
+
+
+
+
+
+                            </p:panelGrid>
+                            <p:separator />
+
+
+
+                            <div class="Container10"></div>
+
+                            <div class="EmptyBox20"></div>
+                            <div class="Container30"></div>
+                            <div class="Container40">
+                                <p:commandButton actionListener="#{staffLoanManagedBean.displayLoanPackageDetail}" onclick="PF('dlg1').show();" icon="fa-info-circle" value="View Loan Details" />
+                            </div>
+
+                            <p:separator/>
+
+                            <div class="EmptyBox20"></div>
+                            <div class="Container30"></div>
+                            <div class="Container40">
+                                <p:commandButton actionListener="#{staffLoanManagedBean.goToLoanPage}"  value="Next" />
+
+                                <p:dialog header="About #{staffLoanManagedBean.loanName}" widgetVar="dlg1" modal="true" height="100">
+
+                                    <h:outputText value="#{staffLoanManagedBean.detail}" />
+
+                                </p:dialog>
+                            </div>
+                            <div class="Container30"></div>
+
+
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

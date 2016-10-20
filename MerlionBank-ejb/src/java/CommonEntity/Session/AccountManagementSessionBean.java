@@ -948,6 +948,14 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     }
     
+    @Override
+    public void setFileDestination(Long customerId,String fileDestination){
+        Customer customer=em.find(Customer.class,customerId);
+        customer.setFileDestination(fileDestination);
+        em.flush();
+        
+    }
+    
    
     
 }

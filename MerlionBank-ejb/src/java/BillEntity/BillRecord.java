@@ -5,6 +5,7 @@
  */
 package BillEntity;
 
+import DepositEntity.SavingAccount;
 import DepositEntity.TransactionRecord;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -32,8 +33,8 @@ public class BillRecord extends TransactionRecord {
     public BillRecord() {
     }
 
-    public BillRecord(Long id, BillingOrganization billingOrganization, String billReference, String code, BigDecimal amount, String status, String description, Date transactionTime, Long giverAccountNum, Long recipientAccountNum) {
-        super(code, amount, status, description, transactionTime, giverAccountNum, recipientAccountNum);
+    public BillRecord(Long id, BillingOrganization billingOrganization, String billReference, String code, BigDecimal debit, BigDecimal credit, String status, String description, Date transactionTime, Long giverAccountNum, Long recipientAccountNum, SavingAccount savingAccount, String giverBank, String recipientBank) {
+        super(code, debit, credit,  status, description, transactionTime, giverAccountNum, recipientAccountNum, savingAccount, giverBank, recipientBank);
         this.id = id;
         this.billingOrganization = billingOrganization;
         this.billReference = billReference;

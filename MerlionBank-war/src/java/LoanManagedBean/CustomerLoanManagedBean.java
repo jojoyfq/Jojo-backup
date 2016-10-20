@@ -6,11 +6,17 @@
 package LoanManagedBean;
 
 import CommonEntity.Customer;
-import CommonEntity.Session.AccountManagementSessionBeanLocal;
+//import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
+import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
+import Exception.LoanTermInvalidException;
+import Exception.NotEnoughAmountException;
 import Exception.UserExistException;
 import LoanEntity.Loan;
+import LoanEntity.LoanType;
+import LoanEntity.Session.LoanApplicationSessionBeanLocal;
 import LoanEntity.Session.LoanSessionBeanLocal;
 import java.io.IOException;
 import java.io.Serializable;
@@ -42,7 +48,7 @@ public class CustomerLoanManagedBean implements Serializable {
     @EJB
     private LoanSessionBeanLocal lsbl;
     @EJB
-    private AccountManagementSessionBeanLocal amsbl;
+    private LoanApplicationSessionBeanLocal lasbl;
     @Inject
     private LogInManagedBean logInManagedBean;
     /**
@@ -52,7 +58,10 @@ public class CustomerLoanManagedBean implements Serializable {
     private Long loanTypeId;
     private Long customerId;
     private Long loanId;
-
+    private Double interest1;
+    private List<SavingAccount> oneCustomerAllSavingAccts;
+    private Double interest2;
+    private BigDecimal paidAmount;
     private String customerIc;
     private BigDecimal principal;
     private BigDecimal downpayment;
@@ -66,53 +75,20 @@ public class CustomerLoanManagedBean implements Serializable {
     private String customerAddress;
     private String customerEmail;
     private String customerPhoneNumber;
-
     private String customerOccupation;
     private String customerFamilyInfo;
     private String password;
     private List<Loan> oneCustomerAllLoans;
     private Loan selectedLoan;
-    
+    private LoanType loanToCal;
+    private BigDecimal loanAmount;
     private BigDecimal calPrincipal;
-     private BigDecimal calDownpayment;
-
-    public BigDecimal getCalPrincipal() {
-        return calPrincipal;
-    }
-
-    public void setCalPrincipal(BigDecimal calPrincipal) {
-        this.calPrincipal = calPrincipal;
-    }
-
-    public BigDecimal getCalDownpayment() {
-        return calDownpayment;
-    }
-
-    public void setCalDownpayment(BigDecimal calDownpayment) {
-        this.calDownpayment = calDownpayment;
-    }
-
-    public Integer getCalLoanTerm() {
-        return calLoanTerm;
-    }
-
-    public void setCalLoanTerm(Integer calLoanTerm) {
-        this.calLoanTerm = calLoanTerm;
-    }
-       private Integer calLoanTerm;
-       private BigDecimal monthlyRepayment;
-
-    public BigDecimal getMonthlyRepayment() {
-        return monthlyRepayment;
-    }
-
-    public void setMonthlyRepayment(BigDecimal monthlyRepayment) {
-        this.monthlyRepayment = monthlyRepayment;
-    }
-     
-
+    private BigDecimal calDownpayment;
+    private String detail;
+    private SavingAccount selectedSavingAccout;
+    private Integer calLoanTerm;
+    private BigDecimal monthlyRepayment;
     private Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
-
     private Map<String, String> loanCategories;
     private Map<String, String> loanNames;
 
@@ -122,105 +98,211 @@ public class CustomerLoanManagedBean implements Serializable {
     @PostConstruct
     public void init() {
         customer = new Customer();
-       selectedLoan = new Loan();
-       oneCustomerAllLoans = new ArrayList<>();
-       loanCategories = new HashMap<String, String>();
-       loanNames = new HashMap<String, String>(); 
-       loanCategories.put("Home Loan", "Home Loan");
-       loanCategories.put("Car Loan", "Car Loan");
+        selectedLoan = new Loan();
+        loanToCal = new LoanType();
+        selectedSavingAccout = new SavingAccount();
+        oneCustomerAllLoans = new ArrayList<>();
+        oneCustomerAllSavingAccts = new ArrayList<>();
+        loanCategories = new HashMap<String, String>();
+        loanNames = new HashMap<String, String>();
+        loanCategories.put("Home", "Home");
+        loanCategories.put("Car", "Car");
+        loanCategories.put("Education", "Education");
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("SIBOR Package", "SIBOR Package");
         map.put("Fixed Interest Package", "Fixed Interest Package");
-        data.put("Home Loan", map);
+        data.put("Home", map);
 
         map = new HashMap<String, String>();
         map.put("Car Loan", "Car Loan");
 
-       data.put("Car Loan", map);
+        data.put("Car", map);
 
-       customerId = logInManagedBean.getCustomerId();
+        map = new HashMap<String, String>();
+        map.put("NUS Education Loan", "NUS Education Loan");
+
+        data.put("Education", map);
+
+        //customerId = logInManagedBean.getCustomerId();
+    }
+
+    public void goToViewLoanTypesForApply(ActionEvent event) throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/displayLoanTypes.xhtml");
 
     }
 
     public void goToLoanPage(ActionEvent event) throws IOException {
 
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/customerViewMessage.xhtml");
+        loanToCal = lasbl.findTypeByName(loanName);
+        if (loanName.equals("Fixed Interest Package")) {
+            interest1 = loanToCal.getFixedRate();
+            interest2 = loanToCal.getFixedRate2();
+        } else if (loanName.equals("SIBOR Package")) {
+            interest1 = loanToCal.getSIBOR();
+            interest2 = loanToCal.getSIBORrate1();
+        } else if (loanName.equals("NUS Education Loan")) {
+            interest1 = loanToCal.getEducationRate();
+            interest2 = null;
+        } else {
+            interest1 = loanToCal.getInterestRate();
+            interest2 = null;
+        }
+        if (customer.getId() == null) {
+            customerId = logInManagedBean.getCustomerId();
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/existingCustomerApplyLoan.xhtml");
+
+        } else {
+            customerId = customer.getId();
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/applyLoan.xhtml");
+
+        }
 
     }
-    public void calculateMonthlyPayment(ActionEvent event){
-        monthlyRepayment = lsbl.calcultateMonthlyPayment(principal, downpayment, loanTerm, loanTypeId);
-    }
-public void onCountryChange() {
-        if(loanTypeName !=null && !loanTypeName.equals(""))
-            loanNames = data.get(loanTypeName);
-        else
-            loanNames = new HashMap<String, String>();
-    }
-    public void customerCreateLoanAcct(ActionEvent event) throws UserExistException, EmailNotSendException {
+
+    public void goToApproveMyLoanPage(ActionEvent event) throws IOException, ListEmptyException {
         try {
-            customer= amsbl.createFixedDepositAccount(customerIc, customerName,customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been successfully created! Detailed informaiton has been sent to your email!");
+            customerId = logInManagedBean.getCustomerId();
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/approveAllLoans.xhtml");
+            oneCustomerAllLoans = this.customerViewAllLoans(customerId);
+        } catch (IOException | ListEmptyException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void goToViewAllMyLoans(ActionEvent event) throws IOException, ListEmptyException {
+        try {
+
+            customerId = logInManagedBean.getCustomerId();
+            oneCustomerAllLoans = this.customerViewAllLoans(customerId);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/viewAllLoans.xhtml");
+
+        } catch (IOException | ListEmptyException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public BigDecimal calculateMonthlyPayment(ActionEvent event) {
+        System.out.println("*********Caculator: loan name " + loanName);
+
+        if (loanName.equals("NUS Education Loan")) {
+            interest2 = 0.00;
+        } else if (loanName.equals("Car Loan")) {
+            interest2 = 0.00;
+        }
+        System.out.println("*********Caculator: loan amount " + loanAmount);
+        System.out.println("*********Caculator: loan term " + calLoanTerm);
+        System.out.println("*********Caculator: interest1 " + interest1);
+        System.out.println("*********Caculator: interest2 " + interest2);
+
+        monthlyRepayment = lasbl.fixedCalculator(loanAmount, calLoanTerm, interest1, interest2);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your Monthly Payment: " + monthlyRepayment);
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+        return monthlyRepayment;
+    }
+
+    public void onLoanChange() {
+        if (loanTypeName != null && !loanTypeName.equals("")) {
+            loanNames = data.get(loanTypeName);
+
+        } else {
+            loanNames = new HashMap<String, String>();
+        }
+    }
+
+    public void customerCreateLoanAcct(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
+        try {
+            customer = lasbl.createNewLoanAccount(customerIc, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been successfully created! Detailed informaiton has been sent to your email!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/displayLoanTypes.xhtml");
+
         } catch (UserExistException | EmailNotSendException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
 
-    public void customerApplyLoan(ActionEvent event) {
+    public String displayLoanPackageDetail(ActionEvent event) {
+        System.out.println("****************Selected loan name to display " + loanName);
 
-        System.out.println("*************Customer create home loan details - customerId " + customerId);
-        System.out.println("*************Customer create home loan details - loanTypeName " + loanTypeName);
-        System.out.println("*************Customer create home loan details - loanName " + loanName);
-        System.out.println("*************Customer create home loan details - principal " + principal);
-        System.out.println("*************Customer create home loan details - downpayment " + downpayment);
-        System.out.println("*************Customer create home loan details - loanTerm " +loanTerm);
-        System.out.println("*************Customer create home loan details - startDate " + startDate);
+        detail = lasbl.displayPackageDetail(loanName);
+        System.out.println("Loan package detailed " + detail);
 
-        if (loanTypeName.equals("Home Loan")) {
-           lsbl.createHomeLoan(customer, loanName, principal, downpayment,loanTerm, startDate);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan account has been successfully created!");
+        return detail;
+    }
+
+    public void customerApplyLoan(ActionEvent event) throws EmailNotSendException, LoanTermInvalidException {
+
+        System.out.println("*************Customer create loan details - customerId " + customer.getId());
+        System.out.println("*************Customer create loan details - loanTypeName " + loanTypeName);
+        System.out.println("*************Customer create loan details - loanName " + loanName);
+        System.out.println("*************Customer create loan details - principal " + principal);
+        System.out.println("*************Customer create loan details - downpayment " + downpayment);
+        System.out.println("*************Customer create loan details - loanTerm " + loanTerm);
+        System.out.println("*************Customer create loan details - startDate " + startDate);
+
+        try {
+
+            loanTypeId = lasbl.findTypeIdByName(loanName);
+            System.out.println("*************Customer create loan details - loantypeId " + loanTypeId);
+            if (customer.getId() == null) {
+                customerId = logInManagedBean.getCustomerId();
+                lasbl.createLoanAccountExisting(customerId, monthlyRepayment, loanTypeId, principal, downpayment, loanTerm);
+
+            } else {
+                customerId = customer.getId();
+                lasbl.createLoanAccount(customerId, monthlyRepayment, loanTypeId, principal, downpayment, loanTerm);
+
+            }
+
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your loan account has been successfully created! Please check your email for further details.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
-        } else if (getLoanTypeName().equals("Car Loan")) {
-           lsbl.createCarLoan(customer, loanName, principal, downpayment,loanTerm, startDate);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan account has been successfully created!");
+        } catch (EmailNotSendException | LoanTermInvalidException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
 
     }
 
-    public List<Loan> customerViewAllLoans(ActionEvent event) {
-        oneCustomerAllLoans=lsbl.customerViewListOfLoan(customerId);
-        return getOneCustomerAllLoans();
+    public List<Loan> customerViewAllLoans(Long id) throws ListEmptyException {
+        try {
+            customerId = logInManagedBean.getCustomerId();
+            oneCustomerAllLoans = lsbl.displayLoans(customerId);
+
+        } catch (ListEmptyException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+        return oneCustomerAllLoans;
     }
 
     public void customerViewOneLoan(ActionEvent event) {
-        selectedLoan =(Loan) event.getComponent().getAttributes().get("selectedLoan");
+        selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
         System.out.println("*************Selected loan to view - loan ID is " + getSelectedLoan().getId());
-       loanId = selectedLoan.getId();
+        loanId = selectedLoan.getId();
         lsbl.customerViewLoan(loanId);
-
     }
 
-    public void customerUpdateLoan(RowEditEvent  event) {
-              selectedLoan =(Loan) event.getComponent().getAttributes().get("selectedLoan");
-        loanId = selectedLoan.getId();
+    public void customerUpdateLoan(RowEditEvent event) {
+  selectedLoan= (Loan) event.getObject();
+  loanId = selectedLoan.getId();
         System.out.println("*************Selected loan to update - loan ID is " + loanId);
-        System.out.println("*************Selected loan to update - loan downpayment is " + downpayment);
-        System.out.println("*************Selected loan to update - loan loanTerm is " + loanTerm);
-        System.out.println("*************Selected loan to update - loan startDate is " + startDate);
+        System.out.println("*************Selected loan to update - loan downpayment is " + selectedLoan.getDownpayment());
+        System.out.println("*************Selected loan to update - loan loanTerm is " + selectedLoan.getLoanTerm());
 
-        oneCustomerAllLoans=lsbl.customerUpdateLoan(customerId, loanId, downpayment, loanTerm, startDate);
+        oneCustomerAllLoans = lsbl.customerUpdateLoan(customerId, loanId,selectedLoan.getPrincipal(), selectedLoan.getDownpayment(), selectedLoan.getLoanTerm(), startDate);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been updated successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
     }
 
     public void customerCancelLoan(Long loanId) {
-     //   selectedLoan =(Loan) event.getComponent().getAttributes().get("selectedLoan");
+        //   selectedLoan =(Loan) event.getComponent().getAttributes().get("selectedLoan");
         System.out.println("*************Selected loan to cancel - loan ID is " + loanId);
-     // loanId = selectedLoan.getId();
-        oneCustomerAllLoans=lsbl.customerCancelLoan(customerId, loanId);
+        // loanId = selectedLoan.getId();
+        oneCustomerAllLoans = lsbl.customerCancelLoan(customerId, loanId);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been canceled successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
 
@@ -228,11 +310,11 @@ public void onCountryChange() {
 
     public void customerAcceptLoan(Long loanId) throws EmailNotSendException {
         try {
-          //    selectedLoan =(Loan) event.getComponent().getAttributes().get("selectedLoan");
+            //    selectedLoan =(Loan) event.getComponent().getAttributes().get("selectedLoan");
 
-        System.out.println("*************Selected loan to accept - loan ID is " + loanId);
-     // loanId = selectedLoan.getId();
-        oneCustomerAllLoans=lsbl.customerAcceptLoan(customerId, loanId);
+            System.out.println("*************Selected loan to accept - loan ID is " + loanId);
+            // loanId = selectedLoan.getId();
+            oneCustomerAllLoans = lsbl.customerAcceptLoan(customerId, loanId);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully accepted the loan!  Detailed informaiton has been sent to your email!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (EmailNotSendException ex) {
@@ -242,20 +324,42 @@ public void onCountryChange() {
         }
     }
 
+    public void customerDisplaySavingAccounts(ActionEvent event) throws ListEmptyException, IOException {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/customerDisplayAllSaving.xhtml");
+            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+            customerId = logInManagedBean.getCustomerId();
+            oneCustomerAllSavingAccts = lsbl.displaySavingAccounts(customerId);
+
+        } catch (ListEmptyException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void customerPayBySaving(ActionEvent event) throws NotEnoughAmountException {
+        try {
+            customerId = logInManagedBean.getCustomerId();
+            selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
+            System.out.println("******Selected saving account id " + selectedSavingAccout.getId());
+            paidAmount = lsbl.loanPayBySaving(customerId, selectedSavingAccout.getId(), selectedLoan.getId());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have paid " + selectedLoan.getMonthlyPayment() + " successfully!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } catch (NotEnoughAmountException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+//    public void customerDisplayLoans(ActionEvent event) {
+//
+//    }
+
     public LoanSessionBeanLocal getLsbl() {
         return lsbl;
     }
 
     public void setLsbl(LoanSessionBeanLocal lsbl) {
         this.lsbl = lsbl;
-    }
-
-    public AccountManagementSessionBeanLocal getAmsbl() {
-        return amsbl;
-    }
-
-    public void setAmsbl(AccountManagementSessionBeanLocal amsbl) {
-        this.amsbl = amsbl;
     }
 
     public LogInManagedBean getLogInManagedBean() {
@@ -489,4 +593,109 @@ public void onCountryChange() {
     public void setLoanNames(Map<String, String> loanNames) {
         this.loanNames = loanNames;
     }
+
+    public LoanType getLoanToCal() {
+        return loanToCal;
+    }
+
+    public void setLoanToCal(LoanType loanToCal) {
+        this.loanToCal = loanToCal;
+    }
+
+    public Double getInterest1() {
+        return interest1;
+    }
+
+    public void setInterest1(Double interest1) {
+        this.interest1 = interest1;
+    }
+
+    public Double getInterest2() {
+        return interest2;
+    }
+
+    public void setInterest2(Double interest2) {
+        this.interest2 = interest2;
+    }
+
+    public LoanApplicationSessionBeanLocal getLasbl() {
+        return lasbl;
+    }
+
+    public void setLasbl(LoanApplicationSessionBeanLocal lasbl) {
+        this.lasbl = lasbl;
+    }
+
+    public BigDecimal getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanAmount(BigDecimal loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public BigDecimal getCalPrincipal() {
+        return calPrincipal;
+    }
+
+    public void setCalPrincipal(BigDecimal calPrincipal) {
+        this.calPrincipal = calPrincipal;
+    }
+
+    public BigDecimal getCalDownpayment() {
+        return calDownpayment;
+    }
+
+    public void setCalDownpayment(BigDecimal calDownpayment) {
+        this.calDownpayment = calDownpayment;
+    }
+
+    public Integer getCalLoanTerm() {
+        return calLoanTerm;
+    }
+
+    public void setCalLoanTerm(Integer calLoanTerm) {
+        this.calLoanTerm = calLoanTerm;
+    }
+
+    public BigDecimal getMonthlyRepayment() {
+        return monthlyRepayment;
+    }
+
+    public void setMonthlyRepayment(BigDecimal monthlyRepayment) {
+        this.monthlyRepayment = monthlyRepayment;
+    }
+
+    public List<SavingAccount> getOneCustomerAllSavingAccts() {
+        return oneCustomerAllSavingAccts;
+    }
+
+    public void setOneCustomerAllSavingAccts(List<SavingAccount> oneCustomerAllSavingAccts) {
+        this.oneCustomerAllSavingAccts = oneCustomerAllSavingAccts;
+    }
+
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public SavingAccount getSelectedSavingAccout() {
+        return selectedSavingAccout;
+    }
+
+    public void setSelectedSavingAccout(SavingAccount selectedSavingAccout) {
+        this.selectedSavingAccout = selectedSavingAccout;
+    }
+
 }

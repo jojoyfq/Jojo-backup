@@ -7,6 +7,7 @@ package CommonEntity;
 
 //import DepositEntity.FixedDepositAccount;
 
+import CardEntity.CreditCard;
 import DepositEntity.Payee;
 import CustomerRelationshipEntity.CaseEntity;
 import DepositEntity.FixedDepositAccount;
@@ -64,6 +65,8 @@ public class Customer implements Serializable {
     private String status;
     private BigDecimal intraTransferLimit;
     private BigDecimal monthlyIncome;
+    private String fileDestination;
+
 
     public BigDecimal getMonthlyIncome() {
         return monthlyIncome;
@@ -72,57 +75,15 @@ public class Customer implements Serializable {
     public void setMonthlyIncome(BigDecimal monthlyIncome) {
         this.monthlyIncome = monthlyIncome;
     }
-    
-    
 
-    public BigDecimal getIntraTransferLimit() {
-        return intraTransferLimit;
+    public String getFileDestination() {
+        return fileDestination;
     }
 
-    public void setIntraTransferLimit(BigDecimal intraTransferLimit) {
-        this.intraTransferLimit = intraTransferLimit;
+    public void setFileDestination(String fileDestination) {
+        this.fileDestination = fileDestination;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
-    private List<MessageEntity> messages;
-  
- @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
-    private List<UploadedFile> files;
- 
- @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
-    private List<DiscretionaryAccount> discretionaryAccounts;
-
-    public List<DiscretionaryAccount> getDiscretionaryAccounts() {
-        return discretionaryAccounts;
-    }
-
-    public void setDiscretionaryAccounts(List<DiscretionaryAccount> discretionaryAccounts) {
-        this.discretionaryAccounts = discretionaryAccounts;
-    }
-
- 
-    public List<UploadedFile> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<UploadedFile> files) {
-        this.files = files;
-    }
- 
-    public List<MessageEntity> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<MessageEntity> messages) {
-        this.messages = messages;
-    }
   
     @OneToOne(cascade={CascadeType.ALL}) 
    private OnlineAccount onlineAccount;//same as ic
@@ -144,7 +105,19 @@ public class Customer implements Serializable {
     private List<CustomerMessage> customerMessages;
     
      @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "customer")
+
     private List<Loan> loans = new ArrayList<Loan>();
+     
+     @OneToMany (cascade = {CascadeType.ALL}, mappedBy = "customer")
+     private List<CreditCard> creditCard = new ArrayList<CreditCard>();
+
+    public List<CreditCard> getCreditCard() {
+        return creditCard;
+    }
+
+    public void setCreditCard(List<CreditCard> creditCard) {
+        this.creditCard = creditCard;
+    }
 
     public List<Loan> getLoans() {
         return loans;
@@ -208,6 +181,46 @@ public class Customer implements Serializable {
 
     public void setPayees(List<Payee> payees) {
         this.payees = payees;
+    }
+    
+    
+    
+
+    public BigDecimal getIntraTransferLimit() {
+        return intraTransferLimit;
+    }
+
+    public void setIntraTransferLimit(BigDecimal intraTransferLimit) {
+        this.intraTransferLimit = intraTransferLimit;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<MessageEntity> messages;
+  
+ @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<UploadedFile> files;
+
+    public List<UploadedFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<UploadedFile> files) {
+        this.files = files;
+    }
+ 
+    public List<MessageEntity> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<MessageEntity> messages) {
+        this.messages = messages;
     }
     
 //    public List<FixedDepositAccount> getFixedDepositeAccounts() {

@@ -91,4 +91,5 @@ public boolean updateAccountStatus(String ic);
 
     //Teller Create Loan Account - 3nd page - configureloan
    // public Long StaffCreateLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException;
+public void setFileDestination(Long customerId,String fileDestination);
 }

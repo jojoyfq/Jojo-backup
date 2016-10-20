@@ -25,7 +25,7 @@
                     <div class="Wid60 MarAuto WidAutoOnMobile">
                         <div class="Container100">
                             <div class="Card ui-fluid">
-                                <div class="CardBigTopic TexAlCenter Purple">Select an Loan Account Type</div>
+                                <div class="CardBigTopic TexAlCenter Purple">Select Loan Account Type</div>
                                 <div class="SeparatorFull"></div>
 
 
@@ -33,34 +33,23 @@
 
                                     <div class="Card">
                                         <div class="Container10"></div>
-                                        <div class="Container50">
+                                        <div class="Container100">
                                             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 
-                                                <p:outputLabel for="loanCat" value="Loan Category " />
-                                                <p:selectOneMenu id="loanCat" value="#{customerLoanManagedBean.loanTypeName}" style="width:150px">
-                                                    <p:ajax listener="#{customerLoanManagedBean.onCountryChange}" update="city" />
-                                                    <f:selectItem itemLabel="Select Loan Category" itemValue="" noSelectionOption="true" />
-                                                    <f:selectItems value="#{customerLoanManagedBean.loanCategories}" />
-                                                </p:selectOneMenu>
 
-                                                <p:outputLabel for="city" value="Loan Type: " />
-                                                <p:selectOneMenu id="city" value="#{customerLoanManagedBean.loanName}" style="width:150px">
-                                                    <f:selectItem itemLabel="Select Specific Loan Type" itemValue="" noSelectionOption="true" />
-                                                    <f:selectItems value="#{customerLoanManagedBean.loanNames}" />
-                                                </p:selectOneMenu>
 
                                                 <h:outputLabel for="principal" value="Principal Amount(S$):" />
-                                                <p:inputText id="principal" value="#{customerLoanManagedBean.principal}" label="principal" required="true" requiredMessage="Please enter your amount!" />
+                                                <p:inputNumber id="principal" value="#{customerLoanManagedBean.principal}" label="principal" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter your downpayment!" />
                                                 <p:message for="principal" display="icon"/>
                                                 <h:outputLabel />
 
                                                 <h:outputLabel for="downpayment" value="Downpayment(S$):" />
-                                                <p:inputText id="downpayment" value="#{customerLoanManagedBean.downpayment}" label="downpayment" required="true" requiredMessage="Please enter your downpayment!" />
+                                                <p:inputNumber id="downpayment" value="#{customerLoanManagedBean.downpayment}" label="downpayment" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter your downpayment!" />
                                                 <p:message for="downpayment" display="icon"/>
                                                 <h:outputLabel />
 
                                                 <h:outputLabel for="loanTerm" value="Loan Term:" />
-                                                <p:inputNumber id="loanTerm" value="#{customerLoanManagedBean.loanTerm}" label="loanTerm" symbolPosition="s" emptyValue="zero" required="true" requiredMessage="Please enter your downpayment!" />
+                                                <p:inputNumber id="loanTerm" value="#{customerLoanManagedBean.loanTerm}" label="loanTerm" symbolPosition="s" emptyValue="zero" decimalPlaces="0" required="true" requiredMessage="Please enter your loan term!" />
                                                 <p:message for="loanTerm" display="icon"/>
                                                 <p:watermark for="loanTerm" value="Please key in the number of months" id="watermark" />
 
@@ -92,24 +81,63 @@
 
                 </div>
             </div>
-            <div class="Container100 Responsive50">
-                <div class="Card ui-fluid">
-                    <i class="fa fa-fw"></i>
-                    <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
-                    <div class="EmptyBox10"></div>
-                    <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
-                    <div class="EmptyBox10"></div>
-                    <p:commandButton actionListener="#{customerLoanManagedBean.customerApplyLoan}" styleClass="BlueButton" value="Start Calculate" />
 
+            <div class="Container100 ui-fluid">
+                <div class="Container20"></div>
+                <div class="Container60 Responsive50">
+                    <div class="Card ui-fluid">
+                        <i class="fa fa-fw"></i>
+                        <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
+                        <div class="EmptyBox10"></div>
+                        <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
+                        <div class="EmptyBox10"></div>
+                       
+                        <p:commandButton  value="Calculate" type="button" icon="fa fa-calculator"   styleClass="Fleft Fs14 White" onclick="PF('dlg1').show();"/>
+                       
 
+                    </div>
                 </div>
+                <div class="Container20"></div>
             </div>
-
             <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
             <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
             <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
             <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
             <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+        </h:form>
+        <h:form>  
+
+            <p:dialog header="Calculator" widgetVar="dlg1" modal="true" height="100">
+                <p:panelGrid  columns="3" >
+                    <h:outputLabel for="amount" value="Amount " /> 
+                    <p:inputText id="amount" value="#{customerLoanManagedBean.loanAmount}"  required="true" requiredMessage="Please enter your loan amount!" />
+                    <h:message class="Red" for="amount"  />
+
+                    <h:outputLabel for="loanTerm" value="Loan Term: " /> 
+                    <p:inputText id="loanTerm" value="#{customerLoanManagedBean.calLoanTerm}"  required="true" requiredMessage="Please enter your loan term" />
+                    <h:message class="Red" for="loanTerm"  />
+
+                    <h:outputLabel for="rate1" value="Interest1:  " /> 
+                    <h:outputText id="rate1" value="#{customerLoanManagedBean.interest1}"   >
+                    	<f:convertNumber type="percent" minFractionDigits="4" />
+                    </h:outputText>
+                    <h:outputLabel />
+
+                    <h:outputLabel for="rate2" value="Interest2:  " /> 
+                    <h:outputText id="rate2" value="#{customerLoanManagedBean.interest2}"   >
+                    	<f:convertNumber type="percent" minFractionDigits="4" />
+                    </h:outputText>
+                    <h:outputLabel />
+
+                    <p:commandButton value="calculate"  actionListener="#{customerLoanManagedBean.calculateMonthlyPayment}" icon="ui-icon-check" oncomplete="PF('carPanelWDG').loadContents();" />
+                </p:panelGrid>
+                      <p:overlayPanel  widgetVar="carPanelWDG" showCloseIcon="true">
+                                    <h:outputLabel value="Monthly Repayment(S$): "/>
+                                    <h:outputText value="#{customerLoanManagedBean.monthlyRepayment}"  >
+                                         <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                    </h:outputText>
+                                 </p:overlayPanel>
+            </p:dialog>
         </h:form>
     </h:body>
 

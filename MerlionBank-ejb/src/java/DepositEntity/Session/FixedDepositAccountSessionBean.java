@@ -12,7 +12,7 @@ import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.FixedDepositRate;
 import DepositEntity.SavingAccount;
-import DepositEntity.TransferRecord;
+import DepositEntity.TransactionRecord;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.text.DateFormat;
@@ -234,8 +234,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             String description1 = "Transfer to fixed deposit " + fixedDepositAccountNum;
             Date currentTime = Calendar.getInstance().getTime();
             java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-            TransferRecord transferRecord = new TransferRecord("TFF", amount, "settled", description1, currentTimestamp, savingAccountNum, null, "intraTransfer", "MerlionBank", "MerlionBank");
-            em.persist(transferRecord);
+            TransactionRecord transactionRecord = new TransactionRecord("TFF", amount,null, "settled", description1, currentTimestamp, savingAccountNum, null,savingAccounts,  "MerlionBank", "MerlionBank");
+            savingAccounts.getTransactionRecord().add(transactionRecord);
+            em.persist(transactionRecord);
             em.flush();
             System.out.println("Fixed Deposit account transferred successfullly");
             return true;
@@ -387,8 +388,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         String description1 = "Withdraw fixed deposit " + fixedAccountNum;
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-        TransferRecord transferRecord = new TransferRecord("TFF", totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, "intraTransfer", "MerlionBank", "MerlionBank");
-        em.persist(transferRecord);
+        TransactionRecord transactionRecord = new TransactionRecord("TFF", null,totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, savingAccount, "MerlionBank", "MerlionBank");
+        savingAccount.getTransactionRecord().add(transactionRecord);
+        em.persist(transactionRecord);
         em.flush();
         System.out.println("Fixed Deposit account transferred successfullly");
         return interest;
@@ -442,8 +444,9 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         String description1 = "Withdraw fixed deposit " + fixedAccountNum;
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-        TransferRecord transferRecord = new TransferRecord("TFF", totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, "intraTransfer", "MerlionBank", "MerlionBank");
-        em.persist(transferRecord);
+        TransactionRecord transactionRecord = new TransactionRecord("TFF",null, totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, savingAccount, "MerlionBank", "MerlionBank");
+        savingAccount.getTransactionRecord().add(transactionRecord);
+        em.persist(transactionRecord);
         em.flush();
     }
 

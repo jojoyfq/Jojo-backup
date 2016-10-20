@@ -9,7 +9,6 @@ import BillEntity.OtherBank;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,28 +33,36 @@ public class TransactionRecord implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String code;
-    BigDecimal amount;
+    private BigDecimal debit;
+    private BigDecimal credit;
     private String status;
     private String description;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date transactionTime;
     private Long giverAccountNum;
     private Long recipientAccountNum;
+    private String giverBankName;
+    private String recipientBankName;
     @ManyToOne 
     private OtherBank otherBank;
+    @ManyToOne
+    private SavingAccount savingAccount;
 
-    
     
     public TransactionRecord(){}
     
-    public TransactionRecord(String code,BigDecimal amount,String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum){
+    public TransactionRecord(String code,BigDecimal debit,BigDecimal credit, String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum, SavingAccount savingAccount, String giverBank, String recipientBank){
         this.code = code;
-        this.amount = amount;
+        this.debit = debit;
+        this.credit = credit;
         this.status = status;
         this.description = description;
         this.transactionTime = transactionTime;
         this.giverAccountNum = giverAccountNum;
         this.recipientAccountNum = recipientAccountNum;
+        this.giverBankName = giverBank;
+        this.recipientBankName = recipientBank;
+        this.savingAccount = savingAccount;
     }
     
     public Long getId() {
@@ -91,19 +98,6 @@ public class TransactionRecord implements Serializable {
         return "DepositEntity.TransactionRecord[ id=" + id + " ]";
     }
 
-    /**
-     * @return the amount
-     */
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    /**
-     * @param amount the amount to set
-     */
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
 
 
     /**
@@ -172,6 +166,46 @@ public class TransactionRecord implements Serializable {
 
     public void setOtherBank(OtherBank otherBank) {
         this.otherBank = otherBank;
+    }
+    
+    public BigDecimal getDebit() {
+        return debit;
+    }
+
+    public void setDebit(BigDecimal debit) {
+        this.debit = debit;
+    }
+
+    public BigDecimal getCredit() {
+        return credit;
+    }
+
+    public void setCredit(BigDecimal credit) {
+        this.credit = credit;
+    }
+
+    public SavingAccount getSavingAccount() {
+        return savingAccount;
+    }
+
+    public void setSavingAccount(SavingAccount savingAccount) {
+        this.savingAccount = savingAccount;
+    }
+
+    public String getGiverBankName() {
+        return giverBankName;
+    }
+
+    public void setGiverBankName(String giverBankName) {
+        this.giverBankName = giverBankName;
+    }
+
+    public String getRecipientBankName() {
+        return recipientBankName;
+    }
+
+    public void setRecipientBankName(String recipientBankName) {
+        this.recipientBankName = recipientBankName;
     }
     
     

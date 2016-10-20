@@ -11,7 +11,9 @@ import CommonEntity.Session.StaffVerifyCustomerAccountSessionBeanLocal;
 import DepositEntity.SavingAccountType;
 import Exception.EmailNotSendException;
 import Exception.UserExistException;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,7 +28,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
+import org.apache.commons.io.FileUtils;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -65,6 +70,25 @@ public class CommonInfraManagedBean implements Serializable {
     private Date dateOfEnd;
     private String duration;
     private Long depositAccountNumber;
+    
+    UploadedFile file;
+
+	public UploadedFile getFile() {
+		return file;
+	}
+
+	public void setFile(UploadedFile file) {
+		this.file = file;
+	}
+
+//	public void fileUploadListener(FileUploadEvent e){
+//		// Get uploaded file from the FileUploadEvent
+//		this.file = e.getFile();
+////                customer.
+////                System.out.println("");
+//		// Print out the information of the file
+//		System.out.println("Uploaded File Name Is :: "+file.getFileName()+" :: Uploaded File Size :: "+file.getSize());
+//	}
 
     public Long getDepositAccountNumber() {
         return depositAccountNumber;
@@ -157,6 +181,29 @@ public class CommonInfraManagedBean implements Serializable {
 
       //  return "../LogInHome";
     }
+      public void fileUploadListener(FileUploadEvent e) throws IOException {
+  
+ // Get uploaded file from the FileUploadEvent
+         this.file = e.getFile();
+         InputStream input = e.getFile().getInputstream();
+ 
+         // Get uploaded file from the FileUploadEvent
+         this.file = e.getFile();
+ //                customer.
+ //                System.out.println("");
+         // Print out the information of the file
+         System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
+         System.out.println("Uploade file Customer Ic: "+ic);
+        String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + ic + file.getFileName();
+        // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "Sxiaojing" ;
+ 
+         File destFile = new File(destPath);
+         //FileUtils.forceMkdir(destFile);
+         FileUtils.copyInputStreamToFile(input, destFile);
+           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+ 
+     }
+
 
     public void createFixedDepositAccount(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {

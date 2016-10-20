@@ -38,50 +38,65 @@ and open the template in the editor.
                                     <div class="Card">
                                         <h:form>
                                             <p:growl life="2000"/>                                         
-                                            <p:panel id="panel" header="Activate Account">
-                                             
+                                            <p:panel id="panel" header="Application Form">
 
-                                                <h:panelGrid columns="3" id="createSavingAccount" cellpadding="5">                   
+
+                                                <h:panelGrid columns="4" id="createSavingAccount" cellpadding="5">                   
                                                     <h:outputLabel for="ic" value="IC:" />
-                                                    <p:inputText id="ic" value="#{commonInfraManagedBean.ic}" label="IC" required="true" requiredMessage="Please input your IC"/>
+                                                    <p:inputText id="ic" value="#{commonInfraManagedBean.ic}" label="IC" required="true" requiredMessage="Please input your IC"  />
+                                                    <p:tooltip  for="ic" showEvent="focus" hideEvent="blur" position="top" value="For NRIC holders, please enter your NRIC number. For Pass holders, enter your FIN. "/>
                                                     <p:message for="ic" display="icon" />
 
                                                     <h:outputLabel for="customerName" value="Name:" />
                                                     <p:inputText id="customerName" value="#{commonInfraManagedBean.customerName}" label="customerName" required="true" requiredMessage="Please input your name"/>
                                                     <p:message for="customerName" display="icon"/>
+                                                    <h:outputLabel />
 
                                                     <h:outputLabel for="customerGender" value="Gender:" />
-                                                    <p:inputText id="customerGender" value="#{commonInfraManagedBean.customerGender}" label="customerGender" required="true" requiredMessage="Please input your gender" />
+                                                    <p:selectOneRadio id="customerGender" value="#{commonInfraManagedBean.customerGender}">
+                                                        <f:selectItem itemLabel="Female" itemValue="Female" />
+                                                        <f:selectItem itemLabel="Male" itemValue="Male" />
+                                                    </p:selectOneRadio>
                                                     <p:message for="customerGender" display="icon" />
+                                                    <h:outputLabel />
 
                                                     <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
-                                                    <p:calendar id="customerDateOfBirth" value="#{commonInfraManagedBean.customerDateOfBirth}" showOn="button" required="true"  requiredMessage="Please input your birthday"/>
+                                                    <p:calendar id="customerDateOfBirth" value="#{commonInfraManagedBean.customerDateOfBirth}" locale="de" navigator="true" showOn="button" required="true"  requiredMessage="Please input your birthday"/>
                                                     <p:message for="customerDateOfBirth" display="icon" />
+                                                    <h:outputLabel />
 
                                                     <h:outputLabel for="customerAddress" value="Address:" />
                                                     <p:inputText id="customerAddress" value="#{commonInfraManagedBean.customerAddress}" label="customerAddress" required="true" requiredMessage="Please input your address"/>
                                                     <p:message for="customerAddress" display="icon" />
+                                                    <h:outputLabel />
 
 
                                                     <h:outputLabel for="customerEmail" value="Email:" />
                                                     <p:inputText id="customerEmail" value="#{commonInfraManagedBean.customerEmail}" label="customerEmail" required="true" requiredMessage="Please input your email"/>
                                                     <p:message for="customerEmail" display="icon" />
+                                                    <h:outputLabel />
 
 
                                                     <h:outputLabel for="customerPhoneNumber" value="Phone Number:" />
                                                     <p:inputText id="customerPhoneNumber" value="#{commonInfraManagedBean.customerPhoneNumber}" label="customerPhoneNumber" required="true" requiredMessage="Please input your phone number"/>
                                                     <p:message for="customerPhoneNumber" display="icon" />
+                                                    <h:outputLabel />
 
 
                                                     <h:outputLabel for="customerOccupation" value="Occupation:" />
                                                     <p:inputText id="customerOccupation" value="#{commonInfraManagedBean.customerOccupation}" label="customerOccupation" required="true" requiredMessage="Please input your Occupation"/>
                                                     <p:message for="customerOccupation" display="icon" />
+                                                    <h:outputLabel />
 
 
                                                     <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
-                                                    <p:inputText id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" requiredMessage="Please input your family information"/>
+                                                    <p:selectOneRadio id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}">
+                                                        <f:selectItem itemLabel="Single" itemValue="Single" />
+                                                        <f:selectItem itemLabel="Married" itemValue="Married" />
+                                                        <f:selectItem itemLabel="Divorced" itemValue="Divorced" />
+                                                    </p:selectOneRadio>
                                                     <p:message for="customerFamilyInfo" display="icon" />
-
+                                                    <h:outputLabel />
 
                                                     <h:outputLabel for="savingAccountType" value="Saving Account Type:" />
                                                     <p:selectOneMenu id="savingAccountType" value="#{commonInfraManagedBean.savingAccountType}" required="true" requiredMessage="Please select the saving account type!">
@@ -89,6 +104,8 @@ and open the template in the editor.
                                                         <f:selectItem itemLabel="Select Saving Account Type" itemValue="" noSelectionOption="true" />
                                                         <f:selectItems value="#{commonInfraManagedBean.savingAccountTypes}" />                
                                                     </p:selectOneMenu>
+                                                    <h:outputLabel />
+
                                                 </h:panelGrid>
                                                 <p:message for="savingAccountType" display="icon"/>
 
@@ -105,11 +122,21 @@ and open the template in the editor.
                                                 <p:commandButton update="panel" actionListener="#{commonInfraManagedBean.setAllVariables}" value="Submit" rendered="true" />
                                             </div>
                                             <div class="Container30"></div>
+                                        </h:form>       
+                                        <h:form>
 
+                                            <div class="Container100">
+                                                <div class="Card">
+                                                    <h1 class="CardBigTopic">Upload Documents </h1>
+                                                    <h:form>
+                                                        <p:fileUpload value="#{commonInfraManagedBean.file}"  fileUploadListener="#{commonInfraManagedBean.fileUploadListener}" mode="advanced" dragDropSupport="false"
+                                                                      multiple="true" update="messages" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
 
-
-
-                                        </h:form>                                        
+                                                        <p:growl id="messages" showDetail="true" />
+                                                    </h:form>
+                                                </div>
+                                            </div>
+                                        </h:form>
                                     </div>
                                 </div>
 
