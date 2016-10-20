@@ -40,7 +40,7 @@ public class testCustomerManagedBean implements Serializable {
     private Date customerDateOfBirth;
     private String customerAddress = "kent ridge" ;
     private String customerEmail= "ruijiaruijia@mailinator.com";
-    private String customerPhoneNumber = "81006551";
+    private String customerPhoneNumber = "+6584527086";
 
     private String customerOccupation ="student";
     private String customerFamilyInfo = "single";
