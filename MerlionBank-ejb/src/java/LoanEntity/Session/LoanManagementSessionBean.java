@@ -224,6 +224,7 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
     public Loan staffActivateLoan(Long loanId, Date loanDate) {
         Loan loan = em.find(Loan.class, loanId);
         loan.setStatus("active");
+        loan.setStartDate(null);
         loan.setLoanDate(loanDate);
         em.flush();
         return loan;

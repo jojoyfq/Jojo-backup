@@ -66,6 +66,7 @@ public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal pri
     LoanType loanType = loan.getLoanType();
 
         BigDecimal monthlyPayment2 = new BigDecimal(0);
+        BigDecimal term = new BigDecimal(loanTerm);
         Double temp = 0.0;
         if (loanType.getName().equals("SIBOR Package")) {
             System.out.println("principal "+principal);
@@ -74,13 +75,20 @@ public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal pri
              System.out.println("loan.getInterestRate1()"+loan.getInterestRate1());
             System.out.println("loan.getInterestRate2()"+loan.getInterestRate2());
             monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getSIBOR(), loanType.getSIBORrate1());
+       loan.setOutstandingBalance(monthlyPayment2.multiply(term));
         } else if (loanType.getName().equals("Fixed Interest Package")) {
             monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
+            
+            BigDecimal monthly2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getSIBOR(), loanType.getFixedRate2());
+            BigDecimal temp2 = new BigDecimal(36);
+            BigDecimal temp3 = new BigDecimal(loanTerm - 36);
+            loan.setOutstandingBalance(monthlyPayment2.multiply(temp2).add(monthly2.multiply(temp3)));
         } else if (loanType.getType().equals("Car")) {
             monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
+            loan.setOutstandingBalance(monthlyPayment2.multiply(term));
         } else if (loanType.getType().equals("Education")) {
             monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
-
+            loan.setOutstandingBalance(monthlyPayment2.multiply(term));
         }
 
         loan.setMonthlyPayment(monthlyPayment2);

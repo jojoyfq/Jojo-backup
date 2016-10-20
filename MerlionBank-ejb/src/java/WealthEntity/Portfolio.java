@@ -6,6 +6,8 @@
 package WealthEntity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -25,6 +28,15 @@ public class Portfolio implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private BigDecimal investAmount;
+    private BigDecimal presentValue;
+    private Double monthlyInterestRate;
+    private Double expectedRateOfReturn;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date startDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date endDate;
+    
     
     @ManyToOne
     private DiscretionaryAccount discretionaryAccount;
@@ -35,6 +47,79 @@ public class Portfolio implements Serializable {
     @OneToMany(cascade={CascadeType.ALL},mappedBy="portfolio")
     private List<Product> products;
 
+    public Double getExpectedRateOfReturn() {
+        return expectedRateOfReturn;
+    }
+
+    public void setExpectedRateOfReturn(Double expectedRateOfReturn) {
+        this.expectedRateOfReturn = expectedRateOfReturn;
+    }
+    
+    public BigDecimal getInvestAmount() {
+        return investAmount;
+    }
+
+    public void setInvestAmount(BigDecimal investAmount) {
+        this.investAmount = investAmount;
+    }
+
+    public BigDecimal getPresentValue() {
+        return presentValue;
+    }
+
+    public void setPresentValue(BigDecimal presentValue) {
+        this.presentValue = presentValue;
+    }
+
+    public Double getMonthlyInterestRate() {
+        return monthlyInterestRate;
+    }
+
+    public void setMonthlyInterestRate(Double monthlyInterestRate) {
+        this.monthlyInterestRate = monthlyInterestRate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public DiscretionaryAccount getDiscretionaryAccount() {
+        return discretionaryAccount;
+    }
+
+    public void setDiscretionaryAccount(DiscretionaryAccount discretionaryAccount) {
+        this.discretionaryAccount = discretionaryAccount;
+    }
+
+    public List<PortfolioTransaction> getPortfolioTransactions() {
+        return portfolioTransactions;
+    }
+
+    public void setPortfolioTransactions(List<PortfolioTransaction> portfolioTransactions) {
+        this.portfolioTransactions = portfolioTransactions;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    
     public Long getId() {
         return id;
     }
