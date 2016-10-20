@@ -103,7 +103,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public String sendTwoFactorAuthentication(String ic) throws TwilioRestException {
+    public boolean sendTwoFactorAuthentication(String ic) throws TwilioRestException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -130,7 +130,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             System.out.println(e.getErrorMessage());
         }
         //Message sms = messageFactory.create(params);
-        return ic;
+        return true;
     }
 
     @Override
@@ -205,6 +205,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public String getPhoneNumber(String ic) {
+        System.err.println("get phone number: ic = " + ic);
         
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);

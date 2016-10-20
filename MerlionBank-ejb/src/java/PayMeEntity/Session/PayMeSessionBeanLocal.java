@@ -25,7 +25,7 @@ public interface PayMeSessionBeanLocal {
     public String getPhoneNumber(String ic);
     public String getBalance(String ic);
     public boolean verifyTwoFactorAuthentication(String ic, String inputCode);
-    public String sendTwoFactorAuthentication(String ic) throws TwilioRestException;
+    public boolean sendTwoFactorAuthentication(String ic) throws TwilioRestException;
     public PayMe createPayMe(String ic, String savingAccountNo, String phoneNumber, String paymePassword);
     public boolean checkPayMeLogin(String phoneNumber, String password);
 }
