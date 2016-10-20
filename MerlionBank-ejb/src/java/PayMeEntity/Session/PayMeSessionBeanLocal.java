@@ -6,8 +6,12 @@
 package PayMeEntity.Session;
 
 import Exception.PasswordNotMatchException;
+import Exception.UserHasNoSavingAccountException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
+import PayMeEntity.PayMe;
+import com.twilio.sdk.TwilioRestException;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -17,4 +21,11 @@ import javax.ejb.Local;
 @Local
 public interface PayMeSessionBeanLocal {
     public boolean checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException;
+    public List<String> getSavingAccountString(Long customerID) throws UserHasNoSavingAccountException;
+    public String getPhoneNumber(String ic);
+    public String getBalance(String ic);
+    public boolean verifyTwoFactorAuthentication(String ic, String inputCode);
+    public String sendTwoFactorAuthentication(String ic) throws TwilioRestException;
+    public PayMe createPayMe(String ic, String savingAccountNo, String phoneNumber, String paymePassword);
+    public boolean checkPayMeLogin(String phoneNumber, String password);
 }

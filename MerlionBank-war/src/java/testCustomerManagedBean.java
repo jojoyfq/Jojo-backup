@@ -4,11 +4,14 @@
  * and open the template in the editor.
  */
 
+import CardEntity.DebitCard;
+import CardEntity.Session.DebitCardSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonEntity.Session.TestCustomerSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.UserExistException;
+import PayMeEntity.Session.PayMeSessionBeanLocal;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -49,6 +52,8 @@ public class testCustomerManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
         @EJB
         TestCustomerSessionBeanLocal testl;
+        @EJB
+        PayMeSessionBeanLocal pmsbl;
     /**
      * Creates a new instance of testCustomerManagedBean
      */
@@ -65,11 +70,15 @@ public class testCustomerManagedBean implements Serializable {
           System.out.print("******status set****");
           testl.setPassword(customerId);
           System.out.print("******password set****");
+          
+          //setPayMe
+          String savingAccountNo = customer.getSavingAccounts().get(0).getAccountNumber().toString();
+          pmsbl.createPayMe(ic, savingAccountNo, customerPhoneNumber, "ruijia123");
+          
           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
- 
-        
-        
+         
     }
+    
 
     public Customer getCustomer() {
         return customer;

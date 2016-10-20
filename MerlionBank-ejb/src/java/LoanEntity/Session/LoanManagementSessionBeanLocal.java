@@ -33,14 +33,12 @@ public interface LoanManagementSessionBeanLocal {
 
     public List<Loan> staffApproveLoans(Long staffId, Long loanId) throws EmailNotSendException;
 
-    public BigDecimal calcultateMonthlyPayment(BigDecimal principal, BigDecimal downpayment, Integer loanTerm, Long loanTypeId);
-
-    public List<Loan> staffUpdateLoan(Long staffId, Long loanId, BigDecimal downpayment, Integer loanTerm, Date startDate)throws EmailNotSendException;
+   public List<Loan> staffUpdateLoan(Long staffId, Long loanId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, Date startDate)throws EmailNotSendException;
 
     //counter staff activate loan
     //public boolean staffGenerateLoanReport(Long loanId);
 
-    public Loan staffActivateLoan(Long loanId);
+    public Loan staffActivateLoan(Long loanId,Date loanDate);
 
     public List<Loan> searchLoan(String customerIc) throws UserNotExistException, UserNotActivatedException, ListEmptyException;
 
@@ -48,6 +46,5 @@ public interface LoanManagementSessionBeanLocal {
 
     public LoanType updateLoanType(Long loanTypeId, Double interest1, Double interest2);
     
-    //timer - close redundant accounts
-    public void closeAccounts();
+   public double calculateRisk(Long customerId, Long longId);
 }

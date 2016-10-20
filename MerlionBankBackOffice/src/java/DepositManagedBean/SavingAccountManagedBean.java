@@ -11,6 +11,7 @@ import CommonEntity.Staff;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
+import DepositEntity.TransactionRecord;
 import Exception.EmailNotSendException;
 import Exception.UserAlreadyHasSavingAccountException;
 import Exception.UserCloseAccountException;
@@ -62,7 +63,7 @@ public class SavingAccountManagedBean implements Serializable {
     private List<Long> notTerminAccountNumList;
     private Long savingAccountSelected;
     private Long notTerminAccountSelected;
-    private List<List> transactionRecordList;
+    private List<TransactionRecord> transactionRecordList;
     private List<SavingAccount> savingAccountForCloseAccount;
     private BigDecimal withdrawAmount;
     private String withdrawAmountString;
@@ -446,11 +447,11 @@ public class SavingAccountManagedBean implements Serializable {
         this.savingAccountSelected = savingAccountSelected;
     }
 
-    public List<List> getTransactionRecordList() {
+    public List<TransactionRecord> getTransactionRecordList() {
         return transactionRecordList;
     }
 
-    public void setTransactionRecordList(List<List> transactionRecordList) {
+    public void setTransactionRecordList(List<TransactionRecord> transactionRecordList) {
         this.transactionRecordList = transactionRecordList;
     }
 

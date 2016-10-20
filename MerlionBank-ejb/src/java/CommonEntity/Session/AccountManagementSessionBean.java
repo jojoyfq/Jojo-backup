@@ -825,6 +825,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
     }
 
     //Teller Create Fixed Deposit Account - 1st page - create online banking account
+    //Teller Create Loan Account - 1st page - create online banking account
     @Override
     public Customer tellerCreateFixedDepositAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String enterPassword) throws UserExistException, EmailNotSendException {
         String salt = "";
@@ -947,56 +948,14 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
 
     }
     
-    //Create Loan Account - 2nd page - display different type 
     @Override
-    public List<LoanType> displayLoanType(String type) throws ListEmptyException{
-         Query q = em.createQuery("SELECT a FROM LoanType a WHERE a.type = :type");
-        q.setParameter("ic", type);
-        List<LoanType> temp = new ArrayList(q.getResultList());
-        if (temp.isEmpty())
-            throw new ListEmptyException("There are no available service under this type of loan");
-        return temp;
+    public void setFileDestination(Long customerId,String fileDestination){
+        Customer customer=em.find(Customer.class,customerId);
+        customer.setFileDestination(fileDestination);
+        em.flush();
+        
     }
     
-    //Create Loan Account - 3rd page - configure home loan 
-  @Override
-    public Long createLoanAccount(Customer customer,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws EmailNotSendException,LoanTermInvalidException{
-        LoanType loanType=em.find(LoanType.class,loanTypeId);
-        if (loanType.getType().equals("Home")){
-            if (loanTerm >35)
-                throw new LoanTermInvalidException ("Home repayment period can only be max 35 years");
-        Long accountNumber=hlsbl.createHomeLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);
-        }
-        else if (loanType.getType().equals("Car")){
-            if (loanTerm >7)
-                throw new LoanTermInvalidException ("Car repayment period can only be max 7 years");
-          Long accountNumber=hlsbl.createCarLoan(customer,loanTypeId,principal,downpayment,loanTerm,startDate);  
-        }
-        String password = GeneratePassword.createPassword();
-        String tempPassword = password;
-
-        password = passwordHash(password + customer.getOnlineAccount().getSalt());
-        customer.getOnlineAccount().setPassword(password);
-        System.out.println("Password after hash&salt:" + password);
-
-        try {
-            // reminder: remove password
-            SendPendingVerificationEmail(customer.getName(), customer.getEmail(), tempPassword);
-
-        } catch (MessagingException ex) {
-            System.out.println("Error sending email.");
-            throw new EmailNotSendException("Error sending email.");
-        }
-
-        customer.setMonthlyIncome(monthlyIncome);
-        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Create new Loan Account", customer);
-        em.persist(action);
-        List<CustomerAction> customerActions = customer.getCustomerActions();
-        customerActions.add(action);
-        customer.setCustomerActions(customerActions);
-
-        return customer.getId();
-    }
-
-
+   
+    
 }

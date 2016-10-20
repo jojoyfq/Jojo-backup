@@ -50,9 +50,14 @@ public class TransferManagedBean implements Serializable {
     private String payeeName;
     private Long customerID;
     private List payeeList;
-    private Long payeeTransferAccount;
-    private Long payeeDelete;
+    private String payeeTransferAccount;
+    private Long payeeDeleteLong;
+    private String payeeDeleteName;
+    private String payeeDelete;
     private BigDecimal transferLimitDatabase;
+    private Long payeeSelectedLong;
+
+    
 
    
 
@@ -105,9 +110,19 @@ public class TransferManagedBean implements Serializable {
     public void goToTransferByPayee(ActionEvent event) {
         try {
             if(payeeTransferAccount != null) {
-                payeeName = tfsb.searchPayeeName(payeeTransferAccount);
+                String[] payeeString = payeeTransferAccount.split(",");
+                //selected payee saving account number
+                String payeeSelected = payeeString[0];
+                payeeSelectedLong = Long.parseLong(payeeSelected);
+                //selected payee name
+                payeeName = payeeString[1];
+                if(tfsb.checkPayeeValidity(payeeSelectedLong)){
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/TransferManagement/transferByPayee.xhtml");
+                }else{
+                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Payee account you selected is no longer valid!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage); 
+                }
             }else{
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Payee from the Payee List!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);    
@@ -151,7 +166,7 @@ public class TransferManagedBean implements Serializable {
         try {
             if (payeeTransferAccount != null) {
                 amountBD = new BigDecimal(amountString);
-                tfsb.intraOneTimeTransferCheck(customerID,giverAccountNumLong, payeeTransferAccount, amountBD);
+                tfsb.payeeTransferCheck(customerID, giverAccountNumLong, payeeSelectedLong, amountBD);
 
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/TransferManagement/transferSuccess.xhtml");
@@ -203,7 +218,10 @@ public class TransferManagedBean implements Serializable {
     
     public void deletePayee(ActionEvent event) throws IOException {
         if(payeeDelete != null){
-            tfsb.deletePayee(customerID, payeeDelete);
+            String[] deletePayee = payeeDelete.split(",");
+            payeeDeleteLong = Long.parseLong(deletePayee[0]);
+            payeeDeleteName = deletePayee[1];
+            tfsb.deletePayee(customerID, payeeDeleteLong);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/TransferManagement/deletePayeeSuccess.xhtml");
         }else{
@@ -364,13 +382,6 @@ public class TransferManagedBean implements Serializable {
         this.payeeList = payeeList;
     }
 
-    public Long getPayeeTransferAccount() {
-        return payeeTransferAccount;
-    }
-
-    public void setPayeeTransferAccount(Long payeeTransferAccount) {
-        this.payeeTransferAccount = payeeTransferAccount;
-    }
 
     public List getSavingAccountList() {
         return savingAccountList;
@@ -396,11 +407,11 @@ public class TransferManagedBean implements Serializable {
         this.transferLimitBD = transferLimitBD;
     }
 
-    public Long getPayeeDelete() {
+    public String getPayeeDelete() {
         return payeeDelete;
     }
 
-    public void setPayeeDelete(Long payeeDelete) {
+    public void setPayeeDelete(String payeeDelete) {
         this.payeeDelete = payeeDelete;
     }
     
@@ -411,4 +422,38 @@ public class TransferManagedBean implements Serializable {
     public void setTransferLimitDatabase(BigDecimal transferLimitDatabase) {
         this.transferLimitDatabase = transferLimitDatabase;
     }
+    
+    public String getPayeeTransferAccount() {
+        return payeeTransferAccount;
+    }
+
+    public void setPayeeTransferAccount(String payeeTransferAccount) {
+        this.payeeTransferAccount = payeeTransferAccount;
+    }
+
+    public Long getPayeeSelectedLong() {
+        return payeeSelectedLong;
+    }
+
+    public void setPayeeSelectedLong(Long payeeSelectedLong) {
+        this.payeeSelectedLong = payeeSelectedLong;
+    }
+
+    public Long getPayeeDeleteLong() {
+        return payeeDeleteLong;
+    }
+
+    public void setPayeeDeleteLong(Long payeeDeleteLong) {
+        this.payeeDeleteLong = payeeDeleteLong;
+    }
+
+    public String getPayeeDeleteName() {
+        return payeeDeleteName;
+    }
+
+    public void setPayeeDeleteName(String payeeDeleteName) {
+        this.payeeDeleteName = payeeDeleteName;
+    }
+    
+    
 }

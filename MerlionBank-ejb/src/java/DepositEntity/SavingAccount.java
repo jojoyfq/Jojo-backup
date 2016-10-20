@@ -10,6 +10,7 @@ import BillEntity.RecurrentBillArrangement;
 import CardEntity.DebitCard;
 import CommonEntity.Customer;
 import CommonEntity.OnlineAccount;
+import PayMeEntity.PayMe;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -55,9 +56,16 @@ public class SavingAccount implements Serializable {
 
     @OneToMany (cascade={CascadeType.ALL},mappedBy="savingAccount")
     private List<GIROArrangement> giroArrangement;
+    
     @OneToMany (cascade={CascadeType.ALL},mappedBy="savingAccount")
     private List<RecurrentBillArrangement> recurrentBillArrangement;
-
+    
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="savingAccount")
+    private List<TransactionRecord> transactionRecord;
+    
+    @OneToOne (cascade={CascadeType.ALL})
+    private PayMe payMe;
+ 
     public List<RecurrentBillArrangement> getRecurrentBillArrangement() {
         return recurrentBillArrangement;
     }
@@ -245,6 +253,22 @@ public class SavingAccount implements Serializable {
 
     public void setAccumDailyInterest(BigDecimal accumDailyInterest) {
         this.accumDailyInterest = accumDailyInterest;
+    }
+    
+    public PayMe getPayMe() {
+        return payMe;
+    }
+
+    public void setPayMe(PayMe payMe) {
+        this.payMe = payMe;
+    }
+    
+     public List<TransactionRecord> getTransactionRecord() {
+        return transactionRecord;
+    }
+
+    public void setTransactionRecord(List<TransactionRecord> transactionRecord) {
+        this.transactionRecord = transactionRecord;
     }
 
 }

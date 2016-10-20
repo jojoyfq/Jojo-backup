@@ -7,11 +7,13 @@ package CommonEntity;
 
 //import DepositEntity.FixedDepositAccount;
 
+import CardEntity.CreditCard;
 import DepositEntity.Payee;
 import CustomerRelationshipEntity.CaseEntity;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import LoanEntity.Loan;
+import PayMeEntity.PayMe;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -62,6 +64,8 @@ public class Customer implements Serializable {
     private String status;
     private BigDecimal intraTransferLimit;
     private BigDecimal monthlyIncome;
+    private String fileDestination;
+
 
     public BigDecimal getMonthlyIncome() {
         return monthlyIncome;
@@ -70,48 +74,21 @@ public class Customer implements Serializable {
     public void setMonthlyIncome(BigDecimal monthlyIncome) {
         this.monthlyIncome = monthlyIncome;
     }
-    
-    
 
-    public BigDecimal getIntraTransferLimit() {
-        return intraTransferLimit;
+    public String getFileDestination() {
+        return fileDestination;
     }
 
-    public void setIntraTransferLimit(BigDecimal intraTransferLimit) {
-        this.intraTransferLimit = intraTransferLimit;
+    public void setFileDestination(String fileDestination) {
+        this.fileDestination = fileDestination;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
-    private List<MessageEntity> messages;
-  
- @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
-    private List<UploadedFile> files;
-
-    public List<UploadedFile> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<UploadedFile> files) {
-        this.files = files;
-    }
- 
-    public List<MessageEntity> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<MessageEntity> messages) {
-        this.messages = messages;
-    }
   
     @OneToOne(cascade={CascadeType.ALL}) 
    private OnlineAccount onlineAccount;//same as ic
+    
+    @OneToOne(cascade={CascadeType.ALL})
+    private PayMe payMe; //one customer has one payme account
 
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<SavingAccount> savingAccounts;
@@ -128,6 +105,17 @@ public class Customer implements Serializable {
     
      @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "customer")
     private List<Loan> loans = new ArrayList<Loan>();
+     
+     @OneToMany (cascade = {CascadeType.ALL}, mappedBy = "customer")
+     private List<CreditCard> creditCard = new ArrayList<CreditCard>();
+
+    public List<CreditCard> getCreditCard() {
+        return creditCard;
+    }
+
+    public void setCreditCard(List<CreditCard> creditCard) {
+        this.creditCard = creditCard;
+    }
 
     public List<Loan> getLoans() {
         return loans;
@@ -193,6 +181,46 @@ public class Customer implements Serializable {
         this.payees = payees;
     }
     
+    
+    
+
+    public BigDecimal getIntraTransferLimit() {
+        return intraTransferLimit;
+    }
+
+    public void setIntraTransferLimit(BigDecimal intraTransferLimit) {
+        this.intraTransferLimit = intraTransferLimit;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<MessageEntity> messages;
+  
+ @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<UploadedFile> files;
+
+    public List<UploadedFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<UploadedFile> files) {
+        this.files = files;
+    }
+ 
+    public List<MessageEntity> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<MessageEntity> messages) {
+        this.messages = messages;
+    }
+    
 //    public List<FixedDepositAccount> getFixedDepositeAccounts() {
 //        return fixedDepositeAccounts;
 //    }
@@ -204,7 +232,7 @@ public class Customer implements Serializable {
     
   //  @OneToMany(cascade = {CascadeType.ALL}, mappedBy="customer")
     public Customer (){
-    };
+    }
     
 
     public Customer(String IC, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, BigDecimal financialAsset, String riskRating, OnlineAccount onlineAccount,String status,BigDecimal intraTransferLimit) {
@@ -425,7 +453,12 @@ public class Customer implements Serializable {
         this.onlineAccount = onlineAccount;
     }
     
+    public PayMe getPayMe() {
+        return payMe;
+    }
 
-   
-    
+    public void setPayMe(PayMe payMe) {
+        this.payMe = payMe;
+    }
+       
 }

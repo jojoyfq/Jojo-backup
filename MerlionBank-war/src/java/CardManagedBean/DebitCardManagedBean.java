@@ -5,15 +5,19 @@
  */
 package CardManagedBean;
 
+import CardEntity.DebitChargeback;
 import CardEntity.DebitCard;
 import CardEntity.Session.DebitCardSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
+import DepositEntity.TransactionRecord;
+import Exception.ChargebackException;
 import Exception.DebitCardException;
 import Exception.UserHasDebitCardException;
 import Exception.UserHasNoSavingAccountException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -64,6 +68,8 @@ public class DebitCardManagedBean implements Serializable {
     private String merchantName;
     private Date transactionDate;
     private String transactionAmount;
+    private String chargebackDescription;
+    private String debitCardNo;
 
     
 
@@ -173,9 +179,17 @@ public class DebitCardManagedBean implements Serializable {
                 .redirect("/MerlionBank-war/CardManagement/debitCardApply.xhtml");
     }
     
-    public void chargeback(ActionEvent event){
-        if((merchantName!=null) && (transactionDate!=null) && (transactionAmount!=null)){
-            //send out chargeback request for merlion bank staff to approve
+    public void chargeback(ActionEvent event) throws ChargebackException, IOException{
+        if((merchantName!=null) && (transactionDate!=null) && (transactionAmount!=null) && (chargebackDescription!=null) &&(debitCardNo !=null)){
+            BigDecimal amount = new BigDecimal(transactionAmount);
+            try{
+            dcsb.createChargeback(merchantName, transactionDate, amount, chargebackDescription, debitCardNo);
+            FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/MerlionBank-war/CardManagement/debitCardChargebackSuccess.xhtml");
+            }catch(ChargebackException e){
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", e.getMessage());
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
         }else{
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in the blank box!");
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -208,6 +222,8 @@ public class DebitCardManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
+    
+    
 
     public void goBackToHomePage(ActionEvent event) {
         try {
@@ -361,5 +377,23 @@ public class DebitCardManagedBean implements Serializable {
     public void setTransactionAmount(String transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
+
+    public String getChargebackDescription() {
+        return chargebackDescription;
+    }
+
+    public void setChargebackDescription(String chargebackDescription) {
+        this.chargebackDescription = chargebackDescription;
+    }
+
+    public String getDebitCardNo() {
+        return debitCardNo;
+    }
+
+    public void setDebitCardNo(String debitCardNo) {
+        this.debitCardNo = debitCardNo;
+    }
+    
+    
 
 }

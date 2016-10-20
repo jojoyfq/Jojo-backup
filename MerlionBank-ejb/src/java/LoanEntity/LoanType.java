@@ -28,12 +28,15 @@ public class LoanType implements Serializable {
     private Long id;
     private String type;
     private String name;
-    private Double FHR18;
-    private Double FHR18rate;
+    //private Double FHR18;
+    //private Double FHR18rate;
     private Double fixedRate;
+    private Double fixedRate2;
     private Double SIBOR;
     private Double SIBORrate1;
     private Double interestRate;
+    private Double educationRate;
+    private String description;
     
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "loanType")
     private List<Loan> loans = new ArrayList<Loan>();
@@ -41,11 +44,36 @@ public class LoanType implements Serializable {
     public LoanType() {
     }
 
+    public Double getFixedRate2() {
+        return fixedRate2;
+    }
+
+    public void setFixedRate2(Double fixedRate2) {
+        this.fixedRate2 = fixedRate2;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public LoanType(String type, String name) {
         this.type = type;
         this.name = name;
     }
 
+    public Double getEducationRate() {
+        return educationRate;
+    }
+
+    public void setEducationRate(Double educationRate) {
+        this.educationRate = educationRate;
+    }
+
+    
     public Double getInterestRate() {
         return interestRate;
     }
@@ -74,21 +102,21 @@ public class LoanType implements Serializable {
         this.name = name;
     }
 
-    public Double getFHR18() {
-        return FHR18;
-    }
-
-    public void setFHR18(Double FHR18) {
-        this.FHR18 = FHR18;
-    }
-
-    public Double getFHR18rate() {
-        return FHR18rate;
-    }
-
-    public void setFHR18rate(Double FHR18rate) {
-        this.FHR18rate = FHR18rate;
-    }
+//    public Double getFHR18() {
+//        return FHR18;
+//    }
+//
+//    public void setFHR18(Double FHR18) {
+//        this.FHR18 = FHR18;
+//    }
+//
+//    public Double getFHR18rate() {
+//        return FHR18rate;
+//    }
+//
+//    public void setFHR18rate(Double FHR18rate) {
+//        this.FHR18rate = FHR18rate;
+//    }
 
     public Double getFixedRate() {
         return fixedRate;

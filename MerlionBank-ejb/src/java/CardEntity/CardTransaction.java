@@ -5,6 +5,7 @@
  */
 package CardEntity;
 
+import DepositEntity.SavingAccount;
 import DepositEntity.TransactionRecord;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -17,12 +18,15 @@ import javax.persistence.Entity;
 @Entity
 public class CardTransaction extends TransactionRecord {
     private Long cardNumber;
+    private String emv; // VISA, MASTERCARD, NETS
+
     
     public CardTransaction(){}
     
-    public CardTransaction(String code, BigDecimal amount,String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,Long cardNumber){
-        super(code,amount,status,description,transactionTime,giverAccountNum,recipientAccountNum);
+    public CardTransaction(String code, BigDecimal debit, BigDecimal credit, String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,SavingAccount savingAccount, String giverBank, String recipientBank, Long cardNumber, String emv){
+        super(code,debit,credit,status,description,transactionTime,giverAccountNum,recipientAccountNum,savingAccount, giverBank, recipientBank);
         this.cardNumber = cardNumber;
+        this.emv = emv;
     }
 
     public Long getCardNumber() {
@@ -33,5 +37,12 @@ public class CardTransaction extends TransactionRecord {
         this.cardNumber = cardNumber;
     }
     
+    public String getEmv() {
+        return emv;
+    }
+
+    public void setEmv(String emv) {
+        this.emv = emv;
+    }
     
 }

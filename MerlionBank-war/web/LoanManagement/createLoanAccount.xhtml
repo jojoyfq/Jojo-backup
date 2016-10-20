@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <h:head>
+            <f:facet name="first">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+            </f:facet>
+            <title>Create Loan Account</title>
+        </h:head>
+
+        <h:body styleClass="BlackBack">
+
+            <div class="Wid100 MarAuto">
+                <div class="Wid80 MarAuto WidAutoOnMobile">
+                    <div style="margin-top:10rem;"></div>
+
+                    <div class="Wid60 MarAuto WidAutoOnMobile">
+                        <div class="Container100">
+                            <div class="Card ui-fluid">
+                                <div class="CardBigTopic TexAlCenter Purple">Create New Loan Account</div>
+                                <div class="SeparatorFull"></div>
+
+
+                                <div class="Container100 ui-fluid">
+                                    <div class="Card">
+                                        <h:form>
+                                            <p:panel id="panel" >
+                                                <p:messages id="msgs" />
+
+                                                <h:panelGrid columns="3" id="createLoanAccount" cellpadding="5">                   
+                                                    <h:outputLabel for="ic" value="IC:" />
+                                                    <p:inputText id="ic" value="#{customerLoanManagedBean.customerIc}" label="IC" required="true" requiredMessage="Please input your IC"/>
+                                                    <p:message for="ic" display="icon" />
+
+                                                    <h:outputLabel for="customerName" value="Name:" />
+                                                    <p:inputText id="customerName" value="#{customerLoanManagedBean.customerName}" label="customerName" required="true" requiredMessage="Please input your name"/>
+                                                    <p:message for="customerName" display="icon"/>
+
+                                                    <h:outputLabel for="customerGender" value="Gender:" />
+                                                    <p:inputText id="customerGender" value="#{customerLoanManagedBean.customerGender}" label="customerGender" required="true" requiredMessage="Please input your gender" />
+                                                    <p:message for="customerGender" display="icon" />
+
+                                                    <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
+                                                    <p:calendar id="customerDateOfBirth" value="#{customerLoanManagedBean.customerDateOfBirth}" locale="de" navigator="true" pattern="yyyy-MMM-dd" showOn="button" required="true"  requiredMessage="Please input your birthday"/>
+                                                    <p:message for="customerDateOfBirth" display="icon" />
+
+                                                    <h:outputLabel for="customerAddress" value="Address:" />
+                                                    <p:inputText id="customerAddress" value="#{customerLoanManagedBean.customerAddress}" label="customerAddress" required="true" requiredMessage="Please input your address"/>
+                                                    <p:message for="customerAddress" display="icon" />
+
+
+                                                    <h:outputLabel for="customerEmail" value="Email:" />
+                                                    <p:inputText id="customerEmail" value="#{customerLoanManagedBean.customerEmail}" label="customerEmail" required="true" requiredMessage="Please input your email"/>
+                                                    <p:message for="customerEmail" display="icon" />
+
+
+                                                    <h:outputLabel for="customerPhoneNumber" value="Phone Number:" />
+                                                    <p:inputText id="customerPhoneNumber" value="#{customerLoanManagedBean.customerPhoneNumber}" label="customerPhoneNumber" required="true" requiredMessage="Please input your phone number"/>
+                                                    <p:message for="customerPhoneNumber" display="icon" />
+
+
+                                                    <h:outputLabel for="customerOccupation" value="Occupation:" />
+                                                    <p:inputText id="customerOccupation" value="#{customerLoanManagedBean.customerOccupation}" label="customerOccupation" required="true" requiredMessage="Please input your Occupation"/>
+                                                    <p:message for="customerOccupation" display="icon" />
+
+
+                                                    <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
+                                                    <p:inputText id="customerFamilyInfo" value="#{customerLoanManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" requiredMessage="Please input your family information"/>
+                                                    <p:message for="customerFamilyInfo" display="icon" />
+
+
+                                                 
+                                                </h:panelGrid>
+
+
+                                                <div class="EmptyBox20"></div>   
+                                                
+
+
+
+                                            </p:panel>
+                                            
+                                            <div class="EmptyBox20"></div>
+                                            <div class="Container30"></div>
+                                            <div class="Container40">
+                                                <p:commandButton update="panel" actionListener="#{customerLoanManagedBean.customerCreateLoanAcct}" value="Submit" />
+                                            </div>
+                                            <div class="Container30"></div>
+
+
+                                        </h:form>                                        
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/animate.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-layout.css" library="atlas-layout" />
+            <h:outputStylesheet name="css/atlas-font.css" library="atlas-layout" />
+
+
+        </h:body>
+    </f:view>
+</html>
