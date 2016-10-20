@@ -11,6 +11,8 @@ import CommonEntity.OnlineAccount;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.UserExistException;
+import Exception.UserNotActivatedException;
+import Exception.UserNotExistException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
@@ -101,7 +103,7 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
             throw new EmailNotSendException(ex.getMessage());
         }
 
-        //create saving account
+        //create discretionary account
         long discretionaryAccoutNumber = generateDiscretionaryAccountNumber();
         BigDecimal initialValue = new BigDecimal("0.0000");
 
@@ -296,7 +298,7 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
         long discretionaryAccoutNumber = generateDiscretionaryAccountNumber();
         BigDecimal initialValue = new BigDecimal("0.0000");
 
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "active", customer);
+        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer);
         em.persist(discretionaryAccount);
         List<DiscretionaryAccount> discretionaryAccounts = new ArrayList<DiscretionaryAccount>();
         discretionaryAccounts.add(0, discretionaryAccount);
@@ -309,7 +311,35 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
     }
     
     @Override
-    public void staffCreateDiscretionaryAccountExistingCustomer(Long staffId, Long customerID, String savingAccountName) throws EmailNotSendException {
+    public Long searchCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException {
+        System.out.println("testing: " + customerIc);
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", customerIc);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        System.out.println("testing: " + temp.size());
+        if (temp.isEmpty()) {
+            System.out.println("Username " + customerIc + " does not exist!");
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+        }
+
+        int size = temp.size();
+        Customer customer = temp.get(size - 1);
+        //System.out.println("testing: "+customer.getIc());
+        if (customer.getStatus().equals("terminated")) {
+            System.out.println("Username " + customerIc + " does not exist!");
+            throw new UserNotExistException("Username " + customerIc + " does not exist, please try again");
+        } else if (customer.getStatus().equals("inactive")) {
+            System.out.println("Username " + customerIc + "Customer has not activated his or her account!");
+            throw new UserNotActivatedException("Username " + customerIc + "Customer has not activated his or her account!");
+        } else {
+            System.out.println("Username " + customerIc + " IC check pass!");
+        }
+        return customer.getId();
+
+    }
+    
+    @Override
+    public void staffCreateDiscretionaryAccountExistingCustomer(Long staffId, Long customerID) throws EmailNotSendException {
        
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.id = :customerID");
         q.setParameter("customerID", customerID);
@@ -350,5 +380,24 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
         System.out.println("Discretionary Account successfully created");
 
     }
+    
+    //Activate account - 2nd step verify account balance
+    @Override
+    public String verifyDiscretionaryAccountBalance(String ic) {
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        List<Customer> temp = new ArrayList(q.getResultList());
+        Customer customer = temp.get(temp.size() - 1);
+        BigDecimal amount = customer.getDiscretionaryAccounts().get(0).getBalance();
+        BigDecimal currentAmount = new BigDecimal(200000);
+        int res = amount.compareTo(currentAmount);
+        if (res == 0 || res == 1) {
+            return ic;
+        } else {
+            return "invalid amount";
+        }
+    }
+
+     
 
 }
