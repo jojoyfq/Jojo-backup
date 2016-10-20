@@ -40,5 +40,11 @@ public interface TransferSessionBeanLocal {
     public BigDecimal getTransferLimit(Long customerID);
     
     public List<TransactionRecord> getTransactionRecord(Long savingAccountNumber);
+    
+     public void logAction(String description, Long customerId);
+     
+     public void payeeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException;
+     
+     public boolean checkPayeeValidity (Long payeeAccount);
 
 }
