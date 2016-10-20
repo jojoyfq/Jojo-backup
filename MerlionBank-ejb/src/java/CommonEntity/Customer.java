@@ -94,6 +94,9 @@ public class Customer implements Serializable {
     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<SavingAccount> savingAccounts;
     
+     @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<DiscretionaryAccount> discretionaryAccounts;
+    
     @OneToMany(cascade={CascadeType.PERSIST})
     private List<Payee> payees =new ArrayList<Payee>();
     
@@ -111,6 +114,15 @@ public class Customer implements Serializable {
      @OneToMany (cascade = {CascadeType.ALL}, mappedBy = "customer")
      private List<CreditCard> creditCard = new ArrayList<CreditCard>();
 
+    public List<DiscretionaryAccount> getDiscretionaryAccounts() {
+        return discretionaryAccounts;
+    }
+
+    public void setDiscretionaryAccounts(List<DiscretionaryAccount> discretionaryAccounts) {
+        this.discretionaryAccounts = discretionaryAccounts;
+    }
+
+     
     public List<CreditCard> getCreditCard() {
         return creditCard;
     }
