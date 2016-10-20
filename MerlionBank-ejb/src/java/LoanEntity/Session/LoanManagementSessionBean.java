@@ -358,16 +358,18 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         int income=customer.getMonthlyIncome().intValueExact()-loan.getMonthlyPayment().intValueExact();
         
         int gender=0;
-        if (customer.getGender().equals("female"))
+        if (customer.getGender().equals("Female"))
             gender=0;
-        if (customer.getGender().equals("male"))
+        if (customer.getGender().equals("Male"))
             gender=1;
         
         int status=0;
-        if(customer.getFamilyInfo().equals("single"))
+        if(customer.getFamilyInfo().equals("Single"))
             status=0;
-        if(customer.getFamilyInfo().equals("married"))
-            status=0;
+        if(customer.getFamilyInfo().equals("Married"))
+            status=1;
+        if(customer.getFamilyInfo().equals("Divorced"))
+            status=2;
         
         int[] x = {income,gender,status};
         System.out.println("prob(1|x) = " + classify(x, logistic));

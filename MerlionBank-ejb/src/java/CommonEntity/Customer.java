@@ -13,6 +13,7 @@ import DepositEntity.FixedDepositAccount;
 import DepositEntity.SavingAccount;
 import LoanEntity.Loan;
 import PayMeEntity.PayMe;
+import WealthEntity.DiscretionaryAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -94,7 +95,19 @@ public class Customer implements Serializable {
   
  @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
     private List<UploadedFile> files;
+ 
+ @OneToMany(cascade={CascadeType.ALL},mappedBy="customer")
+    private List<DiscretionaryAccount> discretionaryAccounts;
 
+    public List<DiscretionaryAccount> getDiscretionaryAccounts() {
+        return discretionaryAccounts;
+    }
+
+    public void setDiscretionaryAccounts(List<DiscretionaryAccount> discretionaryAccounts) {
+        this.discretionaryAccounts = discretionaryAccounts;
+    }
+
+ 
     public List<UploadedFile> getFiles() {
         return files;
     }
