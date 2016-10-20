@@ -40,7 +40,7 @@ public class testCustomerManagedBean implements Serializable {
     private Date customerDateOfBirth;
     private String customerAddress = "kent ridge" ;
     private String customerEmail= "ruijiaruijia@mailinator.com";
-    private String customerPhoneNumber = "+6584527086";
+    private String customerPhoneNumber = "81006551";
 
     private String customerOccupation ="student";
     private String customerFamilyInfo = "single";
@@ -71,8 +71,8 @@ public class testCustomerManagedBean implements Serializable {
           System.out.print("******password set****");
           
           //setPayMe
-          String savingAccountNo = customer.getSavingAccounts().get(0).getAccountNumber().toString();
-          pmsbl.createPayMe(ic, savingAccountNo, customerPhoneNumber, "ruijia123");
+//          String savingAccountNo = customer.getSavingAccounts().get(0).getAccountNumber().toString();
+//          pmsbl.createPayMe(ic, savingAccountNo, customerPhoneNumber, "ruijia123");
           
           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
          

@@ -134,18 +134,7 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
                 svcasbl.verifyFixedDepositAccountCustomer(staffId, customerId, result, fixedDepositId);
                         pendingCustomers = svcasbl.viewPendingVerificationList();
 
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerId + " has been " + result+"d");
-                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-
-            }else if(!selectedCustomer.getLoans().isEmpty()){
-                result = "approve";
-           
-                System.out.println("***********Loan account ID is " +  selectedCustomer.getLoans().get(0).getId());
-
-                svcasbl.verifyLoanAccountCustomer(staffId, customerId, result, selectedCustomer.getLoans().get(0).getId());
-                        pendingCustomers = svcasbl.viewPendingVerificationList();
-
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerId + " has been " + result+"d");
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerId + " has been+ " + result);
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
             }

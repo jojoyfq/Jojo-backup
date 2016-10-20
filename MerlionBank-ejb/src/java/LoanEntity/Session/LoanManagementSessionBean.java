@@ -47,11 +47,14 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
     private EntityManager em;
 
     @EJB
+    private LoanSessionBeanLocal lsbl;
+
+    @EJB
     private StaffManagementSessionBeanLocal smsbl;
 
     @EJB
 
-    private LoanApplicationSessionBeanLocal lasb;
+    private LoanApplicationSessionBean lasb;
 
     @Override
     public List<Loan> staffViewPendingLoans() {
@@ -135,7 +138,7 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
     }
 
     @Override
-    public Loan staffUpdateLoan(Long staffId, Long loanId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, Date startDate) throws EmailNotSendException {
+    public List<Loan> staffUpdateLoan(Long staffId, Long loanId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, Date startDate) throws EmailNotSendException {
         Loan loan = em.find(Loan.class, loanId);
         Staff staff = em.find(Staff.class, staffId);
 
@@ -144,12 +147,7 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         BigDecimal monthlyPayment2 = new BigDecimal(0);
         Double temp = 0.0;
         if (loanType.getName().equals("SIBOR Package")) {
-            System.out.println("principal "+principal);
-            System.out.println("downpayment "+downpayment);
-            System.out.println("loanTerm "+loanTerm);
-             System.out.println("loan.getInterestRate1()"+loan.getInterestRate1());
-            System.out.println("loan.getInterestRate2()"+loan.getInterestRate2());
-            monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getSIBOR(), loanType.getSIBORrate1());
+            monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), loan.getInterestRate2());
         } else if (loanType.getName().equals("Fixed Interest Package")) {
             monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
         } else if (loanType.getType().equals("Car")) {
@@ -200,9 +198,9 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
             throw new EmailNotSendException("Error sending email.");
         }
 
-        //List<Loan> loans = staffViewPendingLoans();
+        List<Loan> loans = staffViewPendingLoans();
         smsbl.recordStaffAction(staffId, "Update loan account " + loan.getAccountNumber(), loan.getCustomer().getId());
-        return loan;
+        return loans;
     }
 
     private void sendMofifiedEmail(String name, String email, Long accountNumber) throws MessagingException {
@@ -271,9 +269,9 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
     }
 
     @Override
-    public List<LoanType> updateLoanType(Long loanTypeId, Double interest1, Double interest2) {
-        
+    public LoanType updateLoanType(Long loanTypeId, Double interest1, Double interest2) {
         LoanType loanType = em.find(LoanType.class, loanTypeId);
+
         Query query = em.createQuery("SELECT a FROM Loan a");
         List<Loan> currentLoans = new ArrayList(query.getResultList());
         List<Loan> loans = new ArrayList<Loan>();
@@ -309,10 +307,7 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         } else if (loanType.getName().equals("Education loan")) {
             loanType.setEducationRate(interest1);
         }
-        
-        Query q = em.createQuery("SELECT a FROM LoanType a");
-        List<LoanType> loanTypes = new ArrayList(q.getResultList());
-        return loanTypes;
+        return loanType;
 
     }
 
@@ -353,30 +348,12 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
     }
 
     @Override
-    public double calculateRisk(Long customerId, Long loanId) {
-        Customer customer = em.find(Customer.class, customerId);
-        Loan loan = em.find(Loan.class, loanId);
+    public double calculateRisk(Long customerId, Long longId) {
         Query query = em.createQuery("SELECT a FROM Instance a");
         List<Instance> instances = new ArrayList(query.getResultList());
         Logistic logistic = new Logistic(3);
         train(instances, logistic);
-        int income=customer.getMonthlyIncome().intValueExact()-loan.getMonthlyPayment().intValueExact();
-        
-        int gender=0;
-        if (customer.getGender().equals("Female"))
-            gender=0;
-        if (customer.getGender().equals("Male"))
-            gender=1;
-        
-        int status=0;
-        if(customer.getFamilyInfo().equals("Single"))
-            status=0;
-        if(customer.getFamilyInfo().equals("Married"))
-            status=1;
-        if(customer.getFamilyInfo().equals("Divorced"))
-            status=2;
-        
-        int[] x = {income,gender,status};
+        int[] x = {2, 1, 1, 0, 1};
         System.out.println("prob(1|x) = " + classify(x, logistic));
 
         return classify(x, logistic);

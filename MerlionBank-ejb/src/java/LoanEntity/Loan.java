@@ -6,6 +6,7 @@
 package LoanEntity;
 
 import CommonEntity.Customer;
+import CommonEntity.Staff;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -140,7 +141,7 @@ public class Loan implements Serializable {
    // @ManyToOne
     //private Staff staff;
     @ManyToOne
-    private LoanType loanType;
+    private LoanType loanType = new LoanType();
 
     public Loan() {
     }

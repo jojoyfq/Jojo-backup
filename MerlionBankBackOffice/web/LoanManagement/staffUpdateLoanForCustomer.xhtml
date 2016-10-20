@@ -28,14 +28,14 @@
                               
 
                                 <h:outputText value="Loan ID: " />
-                                <h:outputText value="#{staffLoanManagedBean.selectedLoan.id}" />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.id}" />
                              
 
                                 <h:outputText value="Loan Type" />
-                                <h:outputText value="#{staffLoanManagedBean.selectedLoan.loanType.name}" />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.loanType}" />
 
                                 <h:outputText value="Loan Principal: " />
-                                <h:outputText value="#{staffLoanManagedBean.selectedLoan.principal}" />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.principal}" />
 
                                 <h:outputText value="Loan Downpayament: " />
                                 <p:inputText value="#{staffLoanManagedBean.selectedLoan.downpayment}"  />
@@ -44,8 +44,10 @@
                                 <p:inputText value="#{staffLoanManagedBean.selectedLoan.loanTerm}"  />
 
 
-                               
-                                <p:commandButton icon="fa fa-save" actionListener="#{staffLoanManagedBean.staffUpdateLoan}"  styleClass="Fleft Fs14 White" value="Save"  update=":form " ajax="true"  />
+                                <h:outputText value="Loan Start Date: " />
+                                <p:calendar id="german" value="#{staffLoanManagedBean.selectedLoan.startDate}" locale="de" navigator="true" pattern="yyyy-MMM-dd" />
+
+                                <p:commandButton icon="fa fa-save" actionListener="#{staffLoanManagedBean.satffUpdateLoan}"  styleClass="Fleft Fs14 White" value="Save"  update=":form " ajax="true"  />
 
                             </h:panelGrid>
 

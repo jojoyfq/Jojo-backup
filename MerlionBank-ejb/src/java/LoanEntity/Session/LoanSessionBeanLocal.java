@@ -25,7 +25,7 @@ import javax.ejb.Local;
 public interface LoanSessionBeanLocal {
     
    //customer edit loan
-public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
+    public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal downpayment,Integer loanTerm,Date startDate);
     public List<Loan> customerCancelLoan(Long customerId, Long loanId);
      public List<Loan> customerAcceptLoan(Long customerId, Long loanId) throws EmailNotSendException;
    public Loan customerViewLoan(Long loanId);

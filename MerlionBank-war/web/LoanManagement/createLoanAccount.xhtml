@@ -49,17 +49,12 @@ and open the template in the editor.
                                                     <p:inputText id="customerName" value="#{customerLoanManagedBean.customerName}" label="customerName" required="true" requiredMessage="Please input your name"/>
                                                     <p:message for="customerName" display="icon"/>
 
-
-                                                    <p:outputLabel for="customerGender" value="Gender:" />
-                                                    <p:selectOneRadio id="customerGender" value="#{customerLoanManagedBean.customerGender}">
-                                                        <f:selectItem itemLabel="Female" itemValue="Female" />
-                                                        <f:selectItem itemLabel="Male" itemValue="Male" />
-                                                    </p:selectOneRadio>
+                                                    <h:outputLabel for="customerGender" value="Gender:" />
+                                                    <p:inputText id="customerGender" value="#{customerLoanManagedBean.customerGender}" label="customerGender" required="true" requiredMessage="Please input your gender" />
                                                     <p:message for="customerGender" display="icon" />
 
-
                                                     <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
-                                                    <p:calendar id="customerDateOfBirth" value="#{customerLoanManagedBean.customerDateOfBirth}" locale="de" navigator="true"  showOn="button" required="true"  requiredMessage="Please input your birthday"/>
+                                                    <p:calendar id="customerDateOfBirth" value="#{customerLoanManagedBean.customerDateOfBirth}" locale="de" navigator="true" pattern="yyyy-MMM-dd" showOn="button" required="true"  requiredMessage="Please input your birthday"/>
                                                     <p:message for="customerDateOfBirth" display="icon" />
 
                                                     <h:outputLabel for="customerAddress" value="Address:" />
@@ -82,24 +77,22 @@ and open the template in the editor.
                                                     <p:message for="customerOccupation" display="icon" />
 
 
-                                                    <p:outputLabel for="customerFamilyInfo" value="Family Information:" />
-                                                    <p:selectOneRadio id="customerFamilyInfo" value="#{customerLoanManagedBean.customerFamilyInfo}">
-                                                        <f:selectItem itemLabel="Single" itemValue="Single" />
-                                                        <f:selectItem itemLabel="Married" itemValue="Married" />
-                                                        <f:selectItem itemLabel="Divorced" itemValue="Divorced" />
-                                                    </p:selectOneRadio>
+                                                    <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
+                                                    <p:inputText id="customerFamilyInfo" value="#{customerLoanManagedBean.customerFamilyInfo}" label="customerFamilyInfo" required="true" requiredMessage="Please input your family information"/>
                                                     <p:message for="customerFamilyInfo" display="icon" />
 
+
+                                                 
                                                 </h:panelGrid>
 
 
                                                 <div class="EmptyBox20"></div>   
-
+                                                
 
 
 
                                             </p:panel>
-
+                                            
                                             <div class="EmptyBox20"></div>
                                             <div class="Container30"></div>
                                             <div class="Container40">

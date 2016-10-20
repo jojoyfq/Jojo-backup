@@ -7,10 +7,7 @@ package TellerManagedBean;
 
 import CommonEntity.Customer;
 import CustomerRelationshipEntity.Session.OperationalCRMSessionBeanLocal;
-import Exception.ListEmptyException;
-import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
-import StaffLoanManagement.StaffLoanManagedBean;
 import StaffManagement.staffLogInManagedBean;
 import TellerServeCustomer.Session.ServiceCustomerSessionBeanLocal;
 import java.io.IOException;
@@ -40,8 +37,6 @@ public class ServiceCustomerManagedBean implements Serializable {
     OperationalCRMSessionBeanLocal ocsbl;
     @Inject
     staffLogInManagedBean slimb;
-    @Inject
-    StaffLoanManagedBean slmb;
 
     /**
      * Creates a new instance of serviceCustomerManagedBean
@@ -69,29 +64,6 @@ public class ServiceCustomerManagedBean implements Serializable {
         staffId = slimb.getStaffId();
    //     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
-    }
-    
-      public void goToUpdateCustomerLoanPage1(ActionEvent event) throws IOException, UserNotExistException, UserNotActivatedException, ListEmptyException {
-//        try {
-            slmb.setCustomerIc(customerIc);
-            slmb.goToUpdateCustomerLoanPage1();
-//            slmb.oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
-//            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewCustomerLoan.xhtml");
-//        } catch (IOException | UserNotExistException | UserNotActivatedException | ListEmptyException ex) {
-//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-//            RequestContext.getCurrentInstance().showMessageInDialog(message);
-//        }
-    }
-      public void goToActivateCustomerLoanPage(ActionEvent event) throws IOException, UserNotExistException, UserNotActivatedException, ListEmptyException {
-//        try {
-            slmb.setCustomerIc(customerIc);
-            slmb.goToActivateCustomerLoanPage();
-//            slmb.oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
-//            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewCustomerLoan.xhtml");
-//        } catch (IOException | UserNotExistException | UserNotActivatedException | ListEmptyException ex) {
-//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-//            RequestContext.getCurrentInstance().showMessageInDialog(message);
-//        }
     }
 public void goToModifyCustomerProfile(){
 try {

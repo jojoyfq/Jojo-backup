@@ -37,7 +37,7 @@
                                             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 
                                                 <p:outputLabel for="loanCat" value="Loan Category " />
-                                                <p:selectOneMenu id="loanCat" value="#{customerLoanManagedBean.loanTypeName}" style="width:250px">
+                                                <p:selectOneMenu id="loanCat" value="#{customerLoanManagedBean.loanTypeName}" style="width:150px">
                                                     <p:ajax listener="#{customerLoanManagedBean.onLoanChange()}" update="city" />
                                                     <f:selectItem itemLabel="Select Loan Category" itemValue="" noSelectionOption="true" />
                                                     <f:selectItems value="#{customerLoanManagedBean.loanCategories}" />
@@ -45,7 +45,7 @@
                                                 </p:selectOneMenu>
 
                                                 <p:outputLabel for="city" value="Loan Type: " />
-                                                <p:selectOneMenu id="city" value="#{customerLoanManagedBean.loanName}" style="width:250px">
+                                                <p:selectOneMenu id="city" value="#{customerLoanManagedBean.loanName}" style="width:150px">
                                                     <f:selectItem itemLabel="Select Specific Loan Type" itemValue="" noSelectionOption="true" />
                                                     <f:selectItems value="#{customerLoanManagedBean.loanNames}" />
                                                 </p:selectOneMenu>
@@ -65,15 +65,9 @@
                                         <div class="EmptyBox20"></div>
                                         <div class="Container30"></div>
                                         <div class="Container40">
-                                            <p:commandButton actionListener="#{customerLoanManagedBean.displayLoanPackageDetail}"  onclick="PF('dlg1').show();"  icon="fa fa-info-circle"  styleClass="Fleft Fs14 White" value="View Loan Details" />
+                                            <p:commandButton actionListener="#{customerLoanManagedBean.displayLoanPackageDetail}" onclick="PF('dlg1').show();"  icon="fa fa-info-circle"  type="button" styleClass="Fleft Fs14 White" value="View Loan Details" />
                                             <p:separator/>
-                                        </div>
-                                        <div class="Container10"></div>
-
-                                        <div class="EmptyBox20"></div>
-                                        <div class="Container30"></div>
-                                             <div class="Container40">
-                                            <p:commandButton actionListener="#{customerLoanManagedBean.goToLoanPage}" value="Next" />
+                                            <p:commandButton actionListener="#{customerLoanManagedBean.goToLoanPage}"  icon="fa fa-arrow-right"  type="button" styleClass="Fleft Fs14 White" value="Next" />
 
                                             <p:dialog header="About #{customerLoanManagedBean.loanName}" widgetVar="dlg1" modal="true" height="100">
 

@@ -7,7 +7,6 @@ package CardEntity.Session;
 
 import CardEntity.CardTransaction;
 import CardEntity.DebitCard;
-import CardEntity.DebitChargeback;
 import Exception.ChargebackException;
 import Exception.DebitCardException;
 import Exception.NoTransactionRecordFoundException;
@@ -32,6 +31,4 @@ public interface DebitCardSessionBeanLocal {
     public List<CardTransaction> getEStatement(Long customerID, Long debitCardNo, Date currentTime) throws NoTransactionRecordFoundException;
     public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount);
     public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String debitCardNo) throws ChargebackException;
-    public List<DebitChargeback> getPendingDebitChargeback();
-    public void setChargebackStatus(DebitChargeback chargeback, String status);
 }

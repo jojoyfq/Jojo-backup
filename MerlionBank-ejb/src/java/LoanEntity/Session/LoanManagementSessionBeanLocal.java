@@ -33,7 +33,7 @@ public interface LoanManagementSessionBeanLocal {
 
     public List<Loan> staffApproveLoans(Long staffId, Long loanId) throws EmailNotSendException;
 
-   public Loan staffUpdateLoan(Long staffId, Long loanId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, Date startDate)throws EmailNotSendException;
+   public List<Loan> staffUpdateLoan(Long staffId, Long loanId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, Date startDate)throws EmailNotSendException;
 
     //counter staff activate loan
     //public boolean staffGenerateLoanReport(Long loanId);
@@ -44,7 +44,7 @@ public interface LoanManagementSessionBeanLocal {
 
     public List<LoanType> viewLoanTypeList();
 
-    public List<LoanType> updateLoanType(Long loanTypeId, Double interest1, Double interest2);
+    public LoanType updateLoanType(Long loanTypeId, Double interest1, Double interest2);
     
    public double calculateRisk(Long customerId, Long longId);
 }
