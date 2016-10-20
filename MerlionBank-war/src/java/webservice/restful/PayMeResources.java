@@ -13,8 +13,6 @@ import PayMeEntity.Session.PayMeSessionBeanLocal;
 import com.twilio.sdk.TwilioRestException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.Path;
@@ -38,6 +36,7 @@ public class PayMeResources {
     IsValidOTPResponse isValidOTPResponse;
     GetPhoneNumberResponse getPhoneNumberResponse;
     String merlionBankIC;
+    String phoneNumStr;
 
     public PayMeResources() {
     }
@@ -128,7 +127,7 @@ public class PayMeResources {
     public GetPhoneNumberResponse getPhoneNumberString() {
 
 //        String phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
-        String phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
+        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
         if (phoneNumStr.isEmpty()) {
             return new GetPhoneNumberResponse(1, "Empty Phone Number String", "");
         } else {
@@ -141,15 +140,34 @@ public class PayMeResources {
     @Path(value = "getSavingAccountList")
     @Produces(MediaType.APPLICATION_JSON)
     public GetSavingAccountsResponse getSavingAccountStringList() {
-       
+
         List<String> savingAccountsList;
         try {
 //        List<String> savingAccountsList = payMeSessionBeanLocal.getSavingAccountString(merlionBankIC);
             savingAccountsList = payMeSessionBeanLocal.getSavingAccountString("ruijia");
         } catch (UserHasNoSavingAccountException ex) {
             return new GetSavingAccountsResponse(1, "No Saving Account Found", Arrays.asList(""));
-        }       
+        }
         return new GetSavingAccountsResponse(0, "", savingAccountsList);
+    }
+
+    @POST
+    @Path(value = "createPayMeAccount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CreatePayMeAccountResponse createPayMeAccount(@FormParam("savingAccountStr") String savingAccountStr,
+            @FormParam("payMePassword") String payMePassword) {
+
+        boolean success;
+        String savingAccountNo = savingAccountStr.split("-")[0].trim();
+//        success = payMeSessionBeanLocal.createPayMe(merlionBankIC, savingAccountNo, phoneNumStr, payMePassword);
+        success = payMeSessionBeanLocal.createPayMe("ruijia", savingAccountNo, "+6584527086", payMePassword);
+
+        if (success == true) {
+            return new CreatePayMeAccountResponse(0, "", true);
+        }else{
+            return new CreatePayMeAccountResponse(1, "PayMe account exists", false);
+        }
+
     }
 
 }
