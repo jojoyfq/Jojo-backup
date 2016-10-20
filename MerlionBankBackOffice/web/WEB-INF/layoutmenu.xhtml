@@ -56,7 +56,9 @@
                 </p:submenu>
 
                 <p:submenu id="card_management" label="Card Management">
-
+                    <p:submenu id="debitCard" label="Debit Card" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(5)}">
+                        <p:menuitem id="view_debit_chargeback" value="View Pending Debit Card Chargeback" actionListener="#{debitCardManagedBean.dashboardToViewDebitChargeback}"/>                                              
+                    </p:submenu>
                 </p:submenu>
 
                 <p:menuitem id="loan_management" value="Loan Management" />
