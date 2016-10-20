@@ -46,7 +46,7 @@
                                     <h:outputLabel/>
 
                                     <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
-                                    <p:calendar id="customerDateOfBirth" value="#{serviceCustomerManagedBean.birthDate}" showOn="button" required="true"  requiredMessage="Please input birthday"/>
+                                    <p:calendar id="customerDateOfBirth" value="#{serviceCustomerManagedBean.birthDate}" locale="de" navigator="true" showOn="button" required="true"  requiredMessage="Please input birthday"/>
                                     <p:message for="customerDateOfBirth" display="icon" />
 
                                     <h:outputLabel for="email" value="Email:" /> 
@@ -67,9 +67,13 @@
                                     <p:inputText id="occupation" value="#{serviceCustomerManagedBean.occupation}" label="occupation" required="true" requiredMessage="Please fill in your occupation!"/>
                                     <p:message for="occupation" display="icon"  />
 
-                                    <h:outputLabel for="familyInfo" value="Family Information:" /> 
-                                    <p:inputText id = "familyInfo" value="#{serviceCustomerManagedBean.familyInfo}" label="familyInfo" required="true" requiredMessage="Please fill in your family information!"/>
-                                    <p:message for="familyInfo" display="icon" />
+                                    <h:outputLabel for="customerFamilyInfo" value="Family Information:" />
+                                    <p:selectOneRadio id="customerFamilyInfo" value="#{commonInfraManagedBean.customerFamilyInfo}">
+                                        <f:selectItem itemLabel="Single" itemValue="Single" />
+                                        <f:selectItem itemLabel="Married" itemValue="Married" />
+                                        <f:selectItem itemLabel="Divorced" itemValue="Divorced" />
+                                    </p:selectOneRadio>
+                                    <p:message for="customerFamilyInfo" display="icon" />
 
                                     <p:commandButton   icon="ui-icon-script" actionListener="#{serviceCustomerManagedBean.staffUpdateCustomerProfile}" value="Submit" rendered="true" />
                                 </h:panelGrid>

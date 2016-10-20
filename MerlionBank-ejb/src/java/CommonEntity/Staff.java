@@ -8,7 +8,6 @@ package CommonEntity;
 import CustomerRelationshipEntity.CaseEntity;
 import CustomerRelationshipEntity.Issue;
 import CustomerRelationshipEntity.StaffAction;
-import LoanEntity.Loan;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
