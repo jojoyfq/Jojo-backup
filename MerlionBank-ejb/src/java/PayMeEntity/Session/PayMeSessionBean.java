@@ -83,11 +83,10 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
         if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())) {
 
-//            Long i = Long.parseLong("1");
-            return false;
+            throw new PasswordNotMatchException("password does not match!");
         }
         return true;
-//        return customer.getId();
+
     }
 
     @Override
