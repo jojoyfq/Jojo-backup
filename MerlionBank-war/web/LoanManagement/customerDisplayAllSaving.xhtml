@@ -26,7 +26,7 @@
                     <div class="Container100 NoPadding Responsive50 ui-fluid">
 
                         <h:form id="form">
-                            <p:panel id="panel" header="Choose the saving account that you want to use to pay!" >
+                            <p:panel id="panel" header="Choose the saving account!" >
 
                                 <p:messages id="msgs" />
 
@@ -34,9 +34,9 @@
 
                                     <p:dataTable var="savingAcct" value="#{customerLoanManagedBean.oneCustomerAllSavingAccts}"  editable="true" >
                                         <f:facet name="header">
-                                            My Loans
+                                            My Saving Accounts
                                         </f:facet>
-                                        
+
 
                                         <p:column headerText="Account Number" style="width: 80px;">
 
@@ -47,19 +47,26 @@
 
                                             <h:outputText value="#{savingAcct.availableBalance}" />
                                         </p:column>
-                                        
-                                          <p:column headerText="Balance">
 
-                                              <h:outputText value="#{savingAcct.balance}" />
+                                        <p:column headerText="Balance">
+
+                                            <h:outputText value="#{savingAcct.balance}" />
                                         </p:column>
-                                        
-                                    
+
+
                                         <p:column headerText="Pay By Saving Account" style="width: 80px;" >
                                             <center>
                                                 <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerPayBySaving}" update=":form:panel" ajax="false" type="submit"  onclick="if (!confirm('Are you sure you want to pay now?'))
-                                                                             return false;" >
-                                                    <f:attribute name="selectedLoan" value="#{customerLoanManagedBean.selectedLoan}"   />
-                                             </p:commandButton>
+                                                            return false;" >
+                                                    <f:attribute name="selectedSavingAccout" value="#{savingAcct}"   />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+                                        <p:column headerText="Early Payoff" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplayEarlyPayoffInterest}" onclick="PF('carDialog').show()"  ajax="true"  >
+                                               <f:attribute name="selectedSavingAccout" value="#{savingAcct}"   />
+                                                </p:commandButton>
                                             </center>
                                         </p:column>
                                         <p:column style="width:32px">
@@ -67,13 +74,28 @@
                                         </p:column>
 
                                     </p:dataTable>
-                                    <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/></div>
 
+                                    <p:dialog id="dialogMessage" header="Early Payoff Interest Info" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
+                                        <h:form>
+                                            <p:outputPanel id="carDetail" style="text-align:center;">
+                                                <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
 
+                                                    <h:outputText value="Total Amount" style="font-weight: bold"/>
+                                                    <h:outputText value="#{customerLoanManagedBean.earlyInterest}"/>
+
+                                                    <div class="Container60">
+                                                        <p:commandButton actionListener="#{customerLoanManagedBean.customerEarlyRedemption}" onclick="if (!confirm('Are you sure you want to pay now?'))
+                                                            return false;" value="Submit" update=":form:panel" ajax="false" />
+                                                    </div>
+                                                    <div class="Container30"></div>
+                                                </p:panelGrid>
+                                            </p:outputPanel></h:form>
+                                    </p:dialog>
                                 </h:panelGrid>
 
 
                             </p:panel>
+
                         </h:form>
                     </div>
                 </div>

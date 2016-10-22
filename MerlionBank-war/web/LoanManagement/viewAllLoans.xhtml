@@ -45,7 +45,7 @@
 
                                         <p:column headerText="Loan Type">
 
-                                            <h:outputText value="#{loan.loanType}" />
+                                            <h:outputText value="#{loan.loanType.name}" />
                                         </p:column>
 
                                         <p:column headerText="Loan Account Number">
@@ -80,7 +80,7 @@
 
                                             <h:outputText value="#{loan.outstandingBalance}" />
                                         </p:column>
-                                        
+
                                         <p:column headerText="Loan Monthly Payment ">
 
                                             <h:outputText value="#{loan.monthlyPayment}" />
@@ -90,21 +90,27 @@
                                             <h:outputText value="#{loan.status}" />
                                         </p:column>
 
-                                      
+
+
                                         <p:column headerText="Pay By Saving Account" style="width: 80px;" >
                                             <center>
                                                 <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
-                                                    <f:attribute name="selectedLoan" value="#{customerLoanManagedBean.selectedLoan}"  />
-                                             </p:commandButton>
+                                                    <f:attribute name="selectedLoan" value="#{loan}"  />
+                                                </p:commandButton>
                                             </center>
                                         </p:column>
-                                        <p:column style="width:32px">
-                                            <p:rowEditor />
-                                        </p:column>
 
-                                    </p:dataTable>
+                                        <p:column headerText="Early Payoff" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                    <f:attribute name="selectedLoan" value="#{loan}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
                                     <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/></div>
 
+                                    </p:dataTable>
+                                    
 
                                 </h:panelGrid>
 

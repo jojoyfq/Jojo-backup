@@ -154,7 +154,11 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
             monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
         } else if (loanType.getType().equals("Car")) {
             monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
-        } else if (loanType.getType().equals("Education")) {
+        } else if (loanType.getType().equals("Education")) {  
+            System.out.println("principal "+principal);
+            System.out.println("downpayment "+downpayment);
+            System.out.println("loanTerm "+loanTerm);
+             System.out.println("loan.getEduInterestRate1()"+loan.getInterestRate1());
             monthlyPayment2 = lasb.fixedCalculator(principal.subtract(downpayment), loanTerm, loan.getInterestRate1(), temp);
 
         }
@@ -225,6 +229,8 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         Loan loan = em.find(Loan.class, loanId);
         loan.setStatus("active");
         loan.setLoanDate(loanDate);
+        BigDecimal temp=new BigDecimal(0);
+        loan.setLatePayment(temp);
         em.flush();
         return loan;
 
@@ -304,9 +310,10 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
                     em.flush();
                 }
             }
-        } else if (loanType.getName().equals("Car loan")) {
+        } else if (loanType.getName().equals("Car Loan")) {
+            System.out.println("update car loan with interest"+interest1);
             loanType.setInterestRate(interest1);
-        } else if (loanType.getName().equals("Education loan")) {
+        } else if (loanType.getName().equals("NUS Education Loan")) {
             loanType.setEducationRate(interest1);
         }
         

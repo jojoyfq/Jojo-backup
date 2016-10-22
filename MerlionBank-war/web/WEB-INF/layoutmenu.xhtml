@@ -51,9 +51,10 @@
                 </p:submenu>
                 
                 <p:submenu id="pa_default" label="Loan Management">
-                    <p:menuitem id="Apply_Loan" value="Apply Loan Account" actionListener="#{customerLoanManagedBean.goToViewLoanTypesForApply}"/> 
-                    <p:menuitem id="View_ALL_My_Loan" value="Approve My Loan" actionListener="#{customerLoanManagedBean.goToApproveMyLoanPage}"/> 
+                    <p:menuitem id="Apply_Loan" value="Apply New Loan" actionListener="#{customerLoanManagedBean.goToViewLoanTypesForApply}"/> 
+                    <p:menuitem id="View_ALL_My_Loan" value="Loan Application Management" actionListener="#{customerLoanManagedBean.goToApproveMyLoanPage}"/> 
                     <p:menuitem id="Pay_My_Loan" value="Pay My Loan" actionListener="#{customerLoanManagedBean.goToViewAllMyLoans}"/> 
+                    <p:menuitem id="Early_Payoff" value="Early Payoff" actionListener="#{customerLoanManagedBean.goToViewAllMyLoans}"/> 
 
                 </p:submenu>
                 
