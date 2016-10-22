@@ -45,7 +45,7 @@ private LoanApplicationSessionBean lasb;
        List<Loan>  loans=new ArrayList<Loan>();
        
        for (int i=0;i<currentLoans.size();i++){
-          if (currentLoans.get(i).getStatus().equals("staffVerified") ||currentLoans.get(i).getStatus().equals("customerVerified"))
+          if (currentLoans.get(i).getStatus().equals("staffVerified") ||currentLoans.get(i).getStatus().equals("customerVerified")|| currentLoans.get(i).getStartDate()!=null)
               loans.add(currentLoans.get(i));
       }
        Date todayDate=Calendar.getInstance().getTime();

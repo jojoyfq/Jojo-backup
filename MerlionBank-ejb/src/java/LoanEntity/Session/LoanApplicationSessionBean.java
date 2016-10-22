@@ -51,6 +51,7 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
     private EntityManager em;
     private static final Random RANDOM = new SecureRandom();
 
+    
     public static final int SALT_LENGTH = 8;
 
     
