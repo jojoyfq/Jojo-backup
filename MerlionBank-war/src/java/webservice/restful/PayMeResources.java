@@ -132,10 +132,10 @@ public class PayMeResources {
     @Produces(MediaType.APPLICATION_JSON)
     public GetPhoneNumberResponse getPhoneNumberString() {
 
-        String phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
+        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
 //        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
         if (phoneNumStr.isEmpty()) {
-            return new GetPhoneNumberResponse(1, "Empty Phone Number String", "");
+            return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
         } else {
             return new GetPhoneNumberResponse(0, "", phoneNumStr);
         }
@@ -163,6 +163,9 @@ public class PayMeResources {
     public CreatePayMeAccountResponse createPayMeAccount(@FormParam("savingAccountStr") String savingAccountStr,
             @FormParam("payMePassword") String payMePassword) {
 
+        System.out.println("Saving Account String is " + savingAccountStr);
+        System.out.println("PayMe password is " + payMePassword);
+        
         boolean success;
         String savingAccountNo = savingAccountStr.split("-")[0].trim();
         success = payMeSessionBeanLocal.createPayMe(merlionBankIC, savingAccountNo, phoneNumStr, payMePassword);
