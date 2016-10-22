@@ -35,8 +35,8 @@ public class PayMeResources {
     SendTFAResponse sendTFAResponse;
     IsValidOTPResponse isValidOTPResponse;
     GetPhoneNumberResponse getPhoneNumberResponse;
-    String merlionBankIC;
-    String phoneNumStr;
+    static String merlionBankIC;
+    static String phoneNumStr;
 
     public PayMeResources() {
     }
@@ -97,12 +97,13 @@ public class PayMeResources {
     @Produces(MediaType.APPLICATION_JSON)
     public SendTFAResponse getOneTimePassword() {
         try {
+//            payMeSessionBeanLocal.sendTwoFactorAuthentication(merlionBankIC);
+            System.out.println("merlion bank ic is " + merlionBankIC);
             payMeSessionBeanLocal.sendTwoFactorAuthentication(merlionBankIC);
-//            payMeSessionBeanLocal.sendTwoFactorAuthentication("ruijia");
         } catch (TwilioRestException ex) {
             return new SendTFAResponse(1, "Send OTP failed", false);
         }
-        return new SendTFAResponse(0, "", true);
+        return new SendTFAResponse(0, "Send OTP Successfully", true);
     }
 
     @POST
@@ -112,10 +113,14 @@ public class PayMeResources {
 
         boolean checkOTPValidity;
 
+        System.out.println("IC is " + merlionBankIC);
+        System.out.println("OTP is " + OTPString);
         checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication(merlionBankIC, OTPString);
+        
 //        checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication("ruijia", OTPString);
         if (checkOTPValidity == true) {
-            return new IsValidOTPResponse(0, "", true);
+            System.out.println("Check OTP validity successfully");
+            return new IsValidOTPResponse(0, "", true);            
         } else {
             return new IsValidOTPResponse(1, "Invalid OTP", false);
         }
