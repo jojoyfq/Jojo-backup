@@ -98,7 +98,7 @@
 
                                         <p:column headerText="Cancel" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="ui-icon-times" actionListener="#{customerLoanManagedBean.customerCancelLoan(loanId)}" update=":form:panel" ajax="false" type="submit" 
+                                                <p:commandButton icon="ui-icon-times" actionListener="#{customerLoanManagedBean.customerCancelLoan(loan.id)}" update=":form:panel" ajax="false" type="submit" 
                                                                  onclick="if (!confirm('Are you sure you want to cancel this loan'))
                                                                              return false;"/>
                                             </center>
@@ -106,7 +106,7 @@
 
                                         <p:column headerText="Accept" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="ui-icon-check" actionListener="#{customerLoanManagedBean.customerAcceptLoan(loanId)}" update=":form:panel" ajax="false" type="submit" 
+                                                <p:commandButton icon="ui-icon-check" actionListener="#{customerLoanManagedBean.customerAcceptLoan(loan.id)}" update=":form:panel" ajax="false" type="submit" 
                                                                  onclick="if (!confirm('Are you sure you want to approve this '))
                                                                              return false;"/>
                                             </center>
