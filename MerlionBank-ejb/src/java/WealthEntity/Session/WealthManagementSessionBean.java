@@ -181,7 +181,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         //List<Loan> loans = staffViewPendingLoans();
         smsbl.recordStaffAction(staffId, "Update portfolio id " + portfolio.getId(), discretionaryAccount.getCustomer().getId());
     
-        List<Portfolio> portfolios = viewAllPendingTailoredPlan();
+        List<Portfolio> portfolios = viewAllPendingApproveTailoredPlan();
         return portfolios;
 }
     

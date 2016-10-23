@@ -21,16 +21,28 @@ import javax.ejb.Local;
  */
 @Local
 public interface WealthSessionBeanLocal {
-    public Long existingCustomerActivateAccount(Long customerId,Long accountId)throws NotEnoughAmountException;
+
+    public Long existingCustomerActivateAccount(Long customerId, Long accountId) throws NotEnoughAmountException;
+
     public List<DiscretionaryAccount> displayAvailableDiscretionaryAccounts(Long customerId) throws ListEmptyException;
+
     public List<SavingAccount> displaySavingAccounts(Long customerId) throws ListEmptyException;
+
     public Long topUpBySaving(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException;
-     public Long transferBackToSaving(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException;
-     public List<DiscretionaryAccount> displayAllDiscretionaryAccounts(Long customerId) throws ListEmptyException;
-public Long createPrefefinedPlan(Long customerId, Long accountId,BigDecimal initialAmount,String type, int term) throws NotEnoughAmountException;
- public Long staffCreatePrefefinedPlan(Long staffId,Long customerId, Long accountId,BigDecimal initialAmount,String type, int term) throws NotEnoughAmountException;
- public Long createTailoredPortfolio(Long customerId,Long discretionaryAccountId, BigDecimal investAmount, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double stock,int term)throws NotEnoughAmountException;
- public List<Portfolio> displayAllPortfolios(Long discretionaryAccountId);
- public List<Portfolio> customerCancelPortfolios(Long portfolioId);
- public List<Portfolio> customerAcceptPlan(Long customerId, Long portfolioId) throws EmailNotSendException;
+
+    public Long transferBackToSaving(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException;
+
+    public List<DiscretionaryAccount> displayAllDiscretionaryAccounts(Long customerId) throws ListEmptyException;
+
+    public Long createPrefefinedPlan(Long customerId, Long accountId, BigDecimal initialAmount, String type, int term) throws NotEnoughAmountException;
+
+    public Long staffCreatePrefefinedPlan(Long staffId, Long customerId, Long accountId, BigDecimal initialAmount, String type, int term) throws NotEnoughAmountException;
+
+    public Long createTailoredPortfolio(Long customerId, Long discretionaryAccountId, BigDecimal investAmount, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double stock, int term) throws NotEnoughAmountException;
+
+    public List<Portfolio> displayAllPortfolios(Long discretionaryAccountId);
+
+    public List<Portfolio> customerCancelPortfolios(Long portfolioId);
+
+    public List<Portfolio> customerAcceptPlan(Long customerId, Long portfolioId) throws EmailNotSendException;
 }
