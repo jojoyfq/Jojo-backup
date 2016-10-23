@@ -56,13 +56,11 @@ public class TestCustomerSessionBean implements TestCustomerSessionBeanLocal {
     }
     
         @Override
-    public void setPassword(Long customerId){
+    public void setPassword(Long customerId, String password){
        Customer customer = em.find(Customer.class, customerId);
-       String password = "ruijia9336";
        String password1 = this.passwordHash(password+customer.getOnlineAccount().getSalt());
        customer.getOnlineAccount().setPassword(password1);
-       em.flush();
-        
+       em.flush();       
     }
     
 }
