@@ -6,6 +6,7 @@
 package WealthEntity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,9 +23,65 @@ public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String productName;
+    private BigDecimal purchaseAmount;
+    private BigDecimal currentAmount;
+    private Double percentage;
     
      @ManyToOne
     private Portfolio portfolio;
+
+    public Product() {
+    }
+
+    public Product(String productName, BigDecimal purchaseAmount, Double percentage) {
+        this.productName = productName;
+        this.purchaseAmount = purchaseAmount;
+        this.percentage = percentage;
+    }
+
+     
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public BigDecimal getPurchaseAmount() {
+        return purchaseAmount;
+    }
+
+    public void setPurchaseAmount(BigDecimal purchaseAmount) {
+        this.purchaseAmount = purchaseAmount;
+    }
+
+    public BigDecimal getCurrentAmount() {
+        return currentAmount;
+    }
+
+    public void setCurrentAmount(BigDecimal currentAmount) {
+        this.currentAmount = currentAmount;
+    }
+
+    public Double getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Double percentage) {
+        this.percentage = percentage;
+    }
+
+    public Portfolio getPortfolio() {
+        return portfolio;
+    }
+
+    public void setPortfolio(Portfolio portfolio) {
+        this.portfolio = portfolio;
+    }
+     
+     
 
     public Long getId() {
         return id;
