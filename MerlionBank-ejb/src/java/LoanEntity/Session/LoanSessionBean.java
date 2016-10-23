@@ -180,7 +180,7 @@ public List<Loan> customerCancelLoan(Long customerId, Long loanId){
              throw new NotEnoughAmountException("There is not enough amount of money in this savingAccount");
          
          BigDecimal temp=new BigDecimal("0");
-         loan.setOutstandingBalance(loan.getOutstandingBalance().subtract(temp));
+         loan.setOutstandingBalance(loan.getOutstandingBalance().subtract(loan.getMonthlyPayment()));
          loan.setMonthlyPayment(temp);
          loan.setLatePayment(temp);
          loan.setPaidTerm(loan.getPaidTerm()+1);
@@ -230,6 +230,7 @@ public List<Loan> customerCancelLoan(Long customerId, Long loanId){
          loan.setMonthlyPayment(temp);
          loan.setLatePayment(temp);
          loan.setPaidTerm(loan.getPaidTerm()+1);
+         loan.setOutstandingBalance(temp);
          loan.setStatus("completed");
          
          savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));

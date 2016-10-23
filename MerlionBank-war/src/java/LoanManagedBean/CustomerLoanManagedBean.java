@@ -91,6 +91,7 @@ public class CustomerLoanManagedBean implements Serializable {
     private Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     private Map<String, String> loanCategories;
     private Map<String, String> loanNames;
+    private BigDecimal earlyInterest;
 
     public CustomerLoanManagedBean() {
     }
@@ -287,13 +288,13 @@ public class CustomerLoanManagedBean implements Serializable {
     }
 
     public void customerUpdateLoan(RowEditEvent event) {
-  selectedLoan= (Loan) event.getObject();
-  loanId = selectedLoan.getId();
+        selectedLoan = (Loan) event.getObject();
+        loanId = selectedLoan.getId();
         System.out.println("*************Selected loan to update - loan ID is " + loanId);
         System.out.println("*************Selected loan to update - loan downpayment is " + selectedLoan.getDownpayment());
         System.out.println("*************Selected loan to update - loan loanTerm is " + selectedLoan.getLoanTerm());
 
-        oneCustomerAllLoans = lsbl.customerUpdateLoan(customerId, loanId,selectedLoan.getPrincipal(), selectedLoan.getDownpayment(), selectedLoan.getLoanTerm(), startDate);
+        oneCustomerAllLoans = lsbl.customerUpdateLoan(customerId, loanId, selectedLoan.getPrincipal(), selectedLoan.getDownpayment(), selectedLoan.getLoanTerm(), startDate);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been updated successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
     }
@@ -302,6 +303,7 @@ public class CustomerLoanManagedBean implements Serializable {
         //   selectedLoan =(Loan) event.getComponent().getAttributes().get("selectedLoan");
         System.out.println("*************Selected loan to cancel - loan ID is " + loanId);
         // loanId = selectedLoan.getId();
+        customerId = logInManagedBean.getCustomerId();
         oneCustomerAllLoans = lsbl.customerCancelLoan(customerId, loanId);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been canceled successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -314,6 +316,8 @@ public class CustomerLoanManagedBean implements Serializable {
 
             System.out.println("*************Selected loan to accept - loan ID is " + loanId);
             // loanId = selectedLoan.getId();
+            customerId = logInManagedBean.getCustomerId();
+
             oneCustomerAllLoans = lsbl.customerAcceptLoan(customerId, loanId);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully accepted the loan!  Detailed informaiton has been sent to your email!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -342,8 +346,30 @@ public class CustomerLoanManagedBean implements Serializable {
             customerId = logInManagedBean.getCustomerId();
             selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
             System.out.println("******Selected saving account id " + selectedSavingAccout.getId());
+            System.out.println("******Selected loan account id " + selectedLoan.getId());
+
             paidAmount = lsbl.loanPayBySaving(customerId, selectedSavingAccout.getId(), selectedLoan.getId());
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have paid " + selectedLoan.getMonthlyPayment() + " successfully!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } catch (NotEnoughAmountException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+    public void customerDisplayEarlyPayoffInterest(ActionEvent event){
+        System.out.println("******selected loan to disaply full amount is "+selectedLoan.getId());
+        earlyInterest = lsbl.displayRedemptionInterest(selectedLoan.getId());
+      selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
+    }
+
+    public void customerEarlyRedemption(ActionEvent event) throws NotEnoughAmountException {
+
+        try {
+            System.out.println("******Selected saving account id " + selectedSavingAccout.getId());
+            System.out.println("******Selected loan account id " + selectedLoan.getId());
+            customerId = logInManagedBean.getCustomerId();
+            lsbl.applyEarlyRedemption(customerId, selectedLoan.getId(), selectedSavingAccout.getId());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully paid off your loan "+selectedLoan.getLoanType().getName()+" ("+selectedLoan.getId()+")");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (NotEnoughAmountException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -696,6 +722,14 @@ public class CustomerLoanManagedBean implements Serializable {
 
     public void setSelectedSavingAccout(SavingAccount selectedSavingAccout) {
         this.selectedSavingAccout = selectedSavingAccout;
+    }
+
+    public BigDecimal getEarlyInterest() {
+        return earlyInterest;
+    }
+
+    public void setEarlyInterest(BigDecimal earlyInterest) {
+        this.earlyInterest = earlyInterest;
     }
 
 }

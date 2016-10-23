@@ -23,72 +23,68 @@
 
                     <div class="Container100 ui-fluid">
                         <h:form>
+                            <p:panel id="panel"  >
 
-                            <p:dataTable id="singleDT" var="loan" value="#{staffLoanManagedBean.oneCustomerAllLoans}" selectionMode="single" selection="#{staffLoanManagedBean.selectedLoan}" rowKey="#{loan.id}"
-                                         rows="10" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                         rowsPerPageTemplate="5,10,15" emptyMessage="No cars found with given criteria" reflow="true">
-                                <f:facet name="header">
-                                    Select a loan to activate
-                                </f:facet>
+                                <p:messages id="msgs" />
+                                <p:dataTable id="radioDT" var="loan" value="#{staffLoanManagedBean.oneCustomerAllLoans}" editable="true" selectionMode="single" selection="#{staffLoanManagedBean.selectedLoan}" rowKey="#{loan.id}" >
 
-                                <p:ajax event="rowSelect" oncomplete="PF('carDialog').show()" />
-
-                                <p:column headerText="Id" sortBy="#{loan.id}" footerText="Id">
-                                    <h:outputText value="#{loan.id}" />
-                                </p:column>
-                                <p:column headerText="Loan Amount" sortBy="#{loan.loanAmount}" footerText="Loan Amount">
-                                    <h:outputText value="#{loan.loanAmount}" />
-                                </p:column>
-                                <p:column headerText="Loan Principal" sortBy="#{loan.principal}" footerText="Loan Principal">
-                                    <h:outputText value="#{loan.principal}" />
-                                </p:column>
-                                <p:column headerText="Loan Term" sortBy="#{loan.loanTerm}" footerText="Loan Term">
-                                    <h:outputText value="#{loan.loanTerm}" />
-                                </p:column>
-                                <p:column headerText="Loan Monthly Payment" sortBy="#{loan.monthlyPayment}" footerText="Loan Monthly Payment">
-                                    <h:outputText value="#{loan.monthlyPayment}" />
-                                </p:column>
-                                <p:column headerText="Loan InterestRate1" sortBy="#{loan.interestRate1}" footerText="Loan InterestRate1">
-                                    <h:outputText value="#{loan.interestRate1}" />
-                                </p:column>
-                                <p:column headerText="Loan InterestRate2" sortBy="#{loan.interestRate2}" footerText="Loan InterestRate2">
-                                    <h:outputText value="#{loan.interestRate2}" />
-                                </p:column>
-                                <p:column headerText="Loan Type" sortBy="#{loan.loanType}" footerText="Loan Type">
-                                    <h:outputText value="#{loan.loanType}" />
-                                </p:column>
-                                <p:column headerText="Loan Status" sortBy="#{loan.status}" footerText="Loan Status">
-                                    <h:outputText value="#{loan.status}" />
-                                </p:column>
-
-                                <p:column headerText="Enter Loan Date" style="width: 80px;" >
-                                    <center>
-                                        <p:commandButton icon="ui-icon-mail-open"  onclick="PF('carDialog').show()"  ajax="true" type="submit" >
-                                            <f:attribute name="selectedLoan" value="#{loan}"  />
-                                        </p:commandButton>
-                                    </center>
-                                </p:column>
-                            </p:dataTable>
-
-                            <p:separator />
-
-                            <p:dialog header="Enter the start date" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
-                                <p:outputPanel id="carDetail" style="text-align:center;">
-                                    <p:panelGrid  columns="2" rendered="#{not empty dtSelectionView.selectedCar}" layout="grid" styleClass="ui-panelgrid-blank">
-
-                                        <h:outputText value="Loan ID" style="font-weight: bold"/>
+                                    <f:facet name="header">
+                                        Select a loan to activate
+                                    </f:facet>
+                                    <p:column headerText="Id"  >
                                         <h:outputText value="#{loan.id}" />
+                                    </p:column>
+                                    <p:column headerText="Loan Amount"  >
+                                        <h:outputText value="#{loan.loanAmount}" />
+                                    </p:column>
+                                    <p:column headerText="Loan Principal"  >
+                                        <h:outputText value="#{loan.principal}" />
+                                    </p:column>
+                                    <p:column headerText="Loan Term" >
+                                        <h:outputText value="#{loan.loanTerm}" />
+                                    </p:column>
+                                    <p:column headerText="Loan Monthly Payment"  >
+                                        <h:outputText value="#{loan.monthlyPayment}" />
+                                    </p:column>
+                                    <p:column headerText="Loan InterestRate1"  >
+                                        <h:outputText value="#{loan.interestRate1}" />
+                                    </p:column>
+                                    <p:column headerText="Loan InterestRate2" >
+                                        <h:outputText value="#{loan.interestRate2}" />
+                                    </p:column>
+                                    <p:column headerText="Loan Type" >
+                                        <h:outputText value="#{loan.loanType.name}" />
+                                    </p:column>
+                                    <p:column headerText="Loan Status" >
+                                        <h:outputText value="#{loan.status}" />
+                                    </p:column>
 
-                                        <h:outputText value="Loan Date" style="font-weight: bold"/>
-                                        <p:calendar value="#{staffLoanManagedBean.loanDate}" locale="de" navigator="true"/>
+                                    <p:column headerText="Enter Loan Date" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton icon="ui-icon-mail-open" actionListener="#{staffLoanManagedBean.selecteLoanToActivate}"  onclick="PF('carDialog').show()"  ajax="true" type="submit" >
+                                                <f:attribute name="selectedLoan" value="#{loan}" />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+                                </p:dataTable>
 
-                                        <div class="Container40">
-                                            <p:commandButton actionListener="#{staffLoanManagedBean.staffActivateLoan}" icon = "fa fa-save" styleClass="Fleft Fs14 White"  value="Submit" />
-                                        </div>
-                                        <div class="Container30"></div>
-                                    </p:panelGrid>
-                                </p:outputPanel>
-                            </p:dialog>
+
+                                <p:dialog id="dialogMessage" header="Enter the start date" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
+                                   <h:form>
+                                    <p:outputPanel id="carDetail" style="text-align:center;">
+                                        <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
+
+                                            <h:outputText value="Loan Date" style="font-weight: bold"/>
+                                            <p:calendar value="#{staffLoanManagedBean.loanDate}" locale="de" navigator="true"/>
+
+                                            <div class="Container60">
+                                                <p:commandButton actionListener="#{staffLoanManagedBean.staffActivateLoan}" value="Submit" update=":form:panel" ajax="false" />
+                                            </div>
+                                            <div class="Container30"></div>
+                                        </p:panelGrid>
+                                    </p:outputPanel></h:form>
+                                </p:dialog>
+                            </p:panel>
 
 
                         </h:form>
@@ -100,16 +96,7 @@
 
         <!-- Right Column -->
         <div class="Container20 NoPadding Responsive50">
-            <div class="Card ui-fluid">
-                <i class="fa fa-fw"></i>
-                <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
-                <div class="EmptyBox10"></div>
-                <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
-                <div class="EmptyBox10"></div>
-                <p:commandButton  value="Calculate"  icon="fa fa-calculator"  type="button" styleClass="PurpleButton Fleft Fs14 White" onclick="PF('dlg1').show();"/>
 
-
-            </div>
         </div>
 
     </ui:define>

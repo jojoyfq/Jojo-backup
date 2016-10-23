@@ -156,6 +156,35 @@ public class StaffLoanManagedBean implements Serializable {
         }
     }
 
+    public void staffViewLoanTypeList(ActionEvent event) throws IOException {
+        allLoanTypes = lmsbl.viewLoanTypeList();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffDisplayAllLoanTypes.xhtml");
+    }
+
+   
+    public void staffUpdateLoanType(RowEditEvent event) {
+        selectedLoanType = (LoanType) (event.getObject());
+        System.out.println("********Loan Type selected to be updated: " + selectedLoanType.getName());
+        if(selectedLoanType.getName().equals("SIBOR Package")){
+        interest1 = selectedLoanType.getSIBOR();
+        interest2 = selectedLoanType.getSIBORrate1();
+        }else if(selectedLoanType.getName().equals("NUS Education Loan")){
+        interest1=selectedLoanType.getEducationRate();
+        interest2=null;
+        }else if(selectedLoanType.getName().equals("Fixed Interest Package")){
+        interest1=selectedLoanType.getFixedRate();
+        interest2=selectedLoanType.getFixedRate2();
+        }else{
+         interest1=selectedLoanType.getInterestRate();
+        interest2=null;
+        }
+        //   selectedLoanType = (LoanType) event.getComponent().getAttributes().get("selectedLoanType");
+        allLoanTypes = lmsbl.updateLoanType(selectedLoanType.getId(), interest1, interest2);
+         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message","Interest Rate for "+selectedLoanType.getName()+" has been changed!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        
+    }
+
     public void goToLoanPage(ActionEvent event) throws IOException {
         loanToCal = lasbl.findTypeByName(loanName);
         if (loanName.equals("Fixed Interest Package")) {
@@ -187,7 +216,7 @@ public class StaffLoanManagedBean implements Serializable {
 
     public void goToUpdateCustomerLoanPage1() throws IOException, UserNotExistException, UserNotActivatedException, ListEmptyException {
         try {
-            System.out.println("*****Searched Customer IC: "+customerIc);
+            System.out.println("*****Searched Customer IC: " + customerIc);
             oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewCustomerLoan.xhtml");
         } catch (IOException | UserNotExistException | UserNotActivatedException | ListEmptyException ex) {
@@ -196,9 +225,7 @@ public class StaffLoanManagedBean implements Serializable {
         }
     }
 
-
-
-public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOException {
+    public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffCreateLoanAccountForNewCustomer.xhtml");
 
     }
@@ -212,7 +239,7 @@ public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOExceptio
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
+
     public BigDecimal calculateMonthlyPayment(ActionEvent event) {
         System.out.println("*********Caculator: loan name " + loanName);
 
@@ -231,7 +258,6 @@ public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOExceptio
 //        RequestContext.getCurrentInstance().showMessageInDialog(message);
         return monthlyRepayment;
     }
-
 
     public void staffCreateLoanAcct(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
@@ -268,14 +294,14 @@ public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOExceptio
         try {
 
             loanTypeId = lasbl.findTypeIdByName(loanName);
-            if (customer.getId()==null) {
+            if (customer.getId() == null) {
                 System.out.println("Create loan account for EXISTING customer");
-                lasbl.StaffCreateLoanAccountExisting(staffId,customerId , monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+                lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
             } else {
-                                System.out.println("Create loan account for NEW customer customerID "+customer.getId());
+                System.out.println("Create loan account for NEW customer customerID " + customer.getId());
 
                 lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
-             
+
             }
         } catch (LoanTermInvalidException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -290,9 +316,9 @@ public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOExceptio
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewPendingLoans.xhtml");
 
     }
-    public void staffViewCustomer(ActionEvent event){
-                    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
-                    
+
+    public void staffViewCustomer(ActionEvent event) {
+        selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
 
     }
 
@@ -315,7 +341,7 @@ public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOExceptio
     public void staffApprovePending(ActionEvent event) throws EmailNotSendException {
         try {
             System.out.println("go into approve customer!");
-        //    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+            //    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
             loanId = selectedLoan.getId();
             System.out.println("*************Selected pending loan to view - loan ID is " + selectedLoan.getId());
             System.out.println("**************Selected pending loan to view - customer ic" + selectedLoan.getCustomer().getName());
@@ -331,7 +357,7 @@ public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOExceptio
 
     public void staffUpdateLoan(ActionEvent event) throws EmailNotSendException {
         try {
-          //  selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+            //  selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
             loanId = selectedLoan.getId();
             System.out.println("*************Selected loan to update - loan ID is " + selectedLoan.getId());
             System.out.println("*************Selected loan to update - loan downpayment is " + selectedLoan.getDownpayment());
@@ -347,13 +373,24 @@ public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOExceptio
         }
     }
 
+    public void selecteLoanToActivate(ActionEvent event) {
+        selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+
+        System.out.println("Selected loan to activate is " + selectedLoan.getId());
+
+        loanId = selectedLoan.getId();
+    }
+
     public List<Loan> staffActivateLoan(ActionEvent event) throws UserNotExistException, UserNotActivatedException, ListEmptyException {
         try {
-            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
-            System.out.println("*****Loan ID to activate loan is " + selectedLoan.getId());
-            lmsbl.staffActivateLoan(selectedLoan.getId(), loanDate);
+           // selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+            // selectedLoan= (Loan) event.getObject();
+            System.out.println("*****Loan ID to activate loan is " + loanId);
+            lmsbl.staffActivateLoan(loanId, loanDate);
             System.out.println("*****Customer IC to activate loan is " + customerIc);
             oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been activated successfully!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (UserNotExistException | ListEmptyException | UserNotActivatedException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -377,19 +414,6 @@ public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOExceptio
     public void setSelectedLoanType(LoanType selectedLoanType) {
         this.selectedLoanType = selectedLoanType;
     }
-
-    public void staffViewLoanTypeList(ActionEvent event) throws IOException {
-        allLoanTypes = lmsbl.viewLoanTypeList();
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffViewAllLoanTypes.xhtml");
-    }
-
-    public void staffUpdateLoanType(RowEditEvent event) {
-        selectedLoanType = (LoanType) (event.getObject());
-        System.out.println("********Loan Type selected to be updated: " + selectedLoanType.getName());
-        //   selectedLoanType = (LoanType) event.getComponent().getAttributes().get("selectedLoanType");
-        allLoanTypes = lmsbl.updateLoanType(selectedLoanType.getId(), interest1, interest2);
-    }
- 
 
     public LoanManagementSessionBeanLocal getLmsbl() {
         return lmsbl;
