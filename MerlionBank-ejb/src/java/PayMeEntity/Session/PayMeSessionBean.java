@@ -91,8 +91,9 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public boolean checkPayMeLogin(String phoneNumber, String password) {
+        String phone = "+" + phoneNumber;
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
-        q.setParameter("phoneNumber", phoneNumber);
+        q.setParameter("phoneNumber", phone);
         PayMe payme = (PayMe) q.getSingleResult();
         if (passwordHash(password + payme.getSalt()).equals(payme.getPaymePassword())) {
             return true;
@@ -187,16 +188,16 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             return false;
         }
     }
-    
+
     @Override
-    public boolean topUp(String phoneNumber, String amount){
+    public boolean topUp(String phoneNumber, String amount) {
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
         BigDecimal amountBD = new BigDecimal(amount);
-        if(payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1){
+        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1) {
             return false;
-        }else{
+        } else {
             //update the balance and available balance of saving account
             BigDecimal updatedAvailAmount = payme.getSavingAccount().getAvailableBalance().subtract(amountBD);
             payme.getSavingAccount().setAvailableBalance(updatedAvailAmount);
@@ -209,22 +210,22 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             return true;
         }
     }
-    
+
     @Override
-    public boolean sendToMyAccount(String phoneNumber, String amount){
+    public boolean sendToMyAccount(String phoneNumber, String amount) {
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
         BigDecimal amountBD = new BigDecimal(amount);
-        
+
         Long savingAccountID = payme.getSavingAccount().getId();
         SavingAccount savingAccount = em.find(SavingAccount.class, savingAccountID);
         //if the saving account linked with payme is no longer valid
-        if(savingAccount == null){
+        if (savingAccount == null) {
             return false;
-        }else if(payme.getBalance().compareTo(amountBD) == -1){
+        } else if (payme.getBalance().compareTo(amountBD) == -1) {
             return false;
-        }else{
+        } else {
             //update the balance and available balance of saving account
             BigDecimal updatedAvailAmount = payme.getSavingAccount().getAvailableBalance().add(amountBD);
             payme.getSavingAccount().setAvailableBalance(updatedAvailAmount);
@@ -237,31 +238,31 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             return true;
         }
     }
-    
+
     @Override
-    public boolean payMeSent(String phoneNumber, String otherPhone, String amount){
+    public boolean payMeSent(String phoneNumber, String otherPhone, String amount) {
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
         BigDecimal amountBD = new BigDecimal(amount);
-        
+
         Query m = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :otherPhone");
         m.setParameter("otherPhone", otherPhone);
         PayMe otherPayMe = (PayMe) m.getSingleResult();
-        
+
         //if other payme number is not valid
-        if(otherPayMe == null){
+        if (otherPayMe == null) {
             return false;
-        }else if(payme.getBalance().compareTo(amountBD) == -1){
+        } else if (payme.getBalance().compareTo(amountBD) == -1) {
             return false; //payme account does not have enough balance
-        }else{
+        } else {
             payme.setBalance(payme.getBalance().subtract(amountBD));
             em.persist(payme);
             otherPayMe.setBalance(otherPayMe.getBalance().add(amountBD));
             em.persist(otherPayMe);
             em.flush();
             return true;
-        }       
+        }
     }
 
     @Override
@@ -300,11 +301,12 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public String getBalance(String ic) {
-        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
-        q.setParameter("ic", ic);
-        Customer customer = (Customer) q.getSingleResult();
-        return customer.getPayMe().getBalance().toString();
+    public String getBalance(String phoneNumber) {
+        String phone = "+"+phoneNumber;
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phone");
+        q.setParameter("phone", phone);
+        PayMe payme = (PayMe)q.getSingleResult();
+        return payme.getBalance().toString();
     }
 
     private String passwordHash(String pass) {

@@ -75,14 +75,16 @@ public class PayMeResources {
     @POST
     @Path(value = "isValidPassword")
     @Produces(MediaType.APPLICATION_JSON)
-    public IsValidPasswordResponse isValidPassword(@FormParam("customerpaymepassword") String password) {
+    public IsValidPasswordResponse isValidPassword(@FormParam("customerpaymephonenumber") String phoneNum,
+            @FormParam("customerpaymepassword") String password) {
 
         boolean checkValidity;
 
 //        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber("ruijia");
-        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
-
-        checkValidity = payMeSessionBeanLocal.checkPayMeLogin(phoneNumber, password);
+//        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
+        System.out.println("Phone Number is " + phoneNum);
+        System.out.println("Password is " + password);
+        checkValidity = payMeSessionBeanLocal.checkPayMeLogin(phoneNum, password);
         if (checkValidity == true) {
             isValidPasswordResponse = new IsValidPasswordResponse(0, "", checkValidity);
         } else {
@@ -116,11 +118,11 @@ public class PayMeResources {
         System.out.println("IC is " + merlionBankIC);
         System.out.println("OTP is " + OTPString);
         checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication(merlionBankIC, OTPString);
-        
+
 //        checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication("ruijia", OTPString);
         if (checkOTPValidity == true) {
             System.out.println("Check OTP validity successfully");
-            return new IsValidOTPResponse(0, "", true);            
+            return new IsValidOTPResponse(0, "", true);
         } else {
             return new IsValidOTPResponse(1, "Invalid OTP", false);
         }
@@ -165,7 +167,7 @@ public class PayMeResources {
 
         System.out.println("Saving Account String is " + savingAccountStr);
         System.out.println("PayMe password is " + payMePassword);
-        
+
         boolean success;
         String savingAccountNo = savingAccountStr.split("-")[0].trim();
         success = payMeSessionBeanLocal.createPayMe(merlionBankIC, savingAccountNo, phoneNumStr, payMePassword);
