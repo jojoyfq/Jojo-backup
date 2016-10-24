@@ -37,6 +37,8 @@ public class PayMeResources {
     GetPhoneNumberResponse getPhoneNumberResponse;
     static String merlionBankIC;
     static String phoneNumStr;
+    static String phoneNumLogInStr;
+    static boolean isLoginPage;
 
     public PayMeResources() {
     }
@@ -49,7 +51,8 @@ public class PayMeResources {
 
         boolean checkExisting = false;
 
-        System.err.println("isExistingCustomer: " + customerIC);
+        System.err.println("customer IC is " + customerIC);
+        System.out.println("password is " + password);
 
         try {
 
@@ -84,6 +87,9 @@ public class PayMeResources {
 //        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
         System.out.println("Phone Number is " + phoneNum);
         System.out.println("Password is " + password);
+        phoneNumLogInStr = phoneNum;
+        System.out.println("phoneNumLogInStr is " + phoneNumLogInStr);
+        isLoginPage = true;
         checkValidity = payMeSessionBeanLocal.checkPayMeLogin(phoneNum, password);
         if (checkValidity == true) {
             isValidPasswordResponse = new IsValidPasswordResponse(0, "", checkValidity);
@@ -93,6 +99,7 @@ public class PayMeResources {
 
         return isValidPasswordResponse;
     }
+
 
     @POST
     @Path(value = "getOneTimePassword")
@@ -134,12 +141,23 @@ public class PayMeResources {
     @Produces(MediaType.APPLICATION_JSON)
     public GetPhoneNumberResponse getPhoneNumberString() {
 
-        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
 //        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
-        if (phoneNumStr.isEmpty()) {
-            return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
+        System.out.println("is log in page " + isLoginPage);
+        System.out.println("in the function, phoneNumLogInStr is " + phoneNumLogInStr);
+        if (isLoginPage == false) {
+            phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
+            if (phoneNumStr.isEmpty()) {
+                return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
+            } else {
+                return new GetPhoneNumberResponse(0, "", phoneNumStr);
+            }
         } else {
-            return new GetPhoneNumberResponse(0, "", phoneNumStr);
+            if (phoneNumLogInStr.isEmpty()) {
+                return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
+            } else {
+                System.out.println("come here");
+                return new GetPhoneNumberResponse(0, "", phoneNumLogInStr);
+            }
         }
 
     }
@@ -160,6 +178,27 @@ public class PayMeResources {
     }
 
     @POST
+    @Path(value = "getBalance")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetBalanceResponse getBalanceString() {
+        if (isLoginPage == false) {
+            String balance = payMeSessionBeanLocal.getBalance(phoneNumStr);
+            if (balance.isEmpty()) {
+                return new GetBalanceResponse(1, "No Balance Available", "");
+            } else {
+                return new GetBalanceResponse(0, "", balance);
+            }
+        } else {
+            String balanceLogIn = payMeSessionBeanLocal.getBalance(phoneNumLogInStr);
+            if (phoneNumLogInStr.isEmpty()) {
+                return new GetBalanceResponse(1, "No Balance Available", "");
+            } else {
+                return new GetBalanceResponse(0, "", balanceLogIn);
+            }
+        }
+    }
+
+    @POST
     @Path(value = "createPayMeAccount")
     @Produces(MediaType.APPLICATION_JSON)
     public CreatePayMeAccountResponse createPayMeAccount(@FormParam("savingAccountStr") String savingAccountStr,
@@ -167,7 +206,7 @@ public class PayMeResources {
 
         System.out.println("Saving Account String is " + savingAccountStr);
         System.out.println("PayMe password is " + payMePassword);
-
+        isLoginPage = false;
         boolean success;
         String savingAccountNo = savingAccountStr.split("-")[0].trim();
         success = payMeSessionBeanLocal.createPayMe(merlionBankIC, savingAccountNo, phoneNumStr, payMePassword);
