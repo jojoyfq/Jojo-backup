@@ -25,8 +25,7 @@ public class IsExistingCustomerResponse extends Response implements Serializable
     public IsExistingCustomerResponse() {
         super();
     }
-    
-    
+        
 
     public IsExistingCustomerResponse(int status, String errorMessage, boolean checkExistingCustomer) {
         super(status, errorMessage);

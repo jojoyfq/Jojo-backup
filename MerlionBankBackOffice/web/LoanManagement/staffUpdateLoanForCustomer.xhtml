@@ -28,26 +28,28 @@
                               
 
                                 <h:outputText value="Loan ID: " />
-                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.id}" />
+                                <h:outputText value="#{staffLoanManagedBean.selectedLoan.id}" />
                              
 
                                 <h:outputText value="Loan Type" />
-                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.loanType}" />
+                                <h:outputText value="#{staffLoanManagedBean.selectedLoan.loanType.name}" />
 
                                 <h:outputText value="Loan Principal: " />
-                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.principal}" />
+                                <h:outputText value="#{staffLoanManagedBean.selectedLoan.principal}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
 
                                 <h:outputText value="Loan Downpayament: " />
-                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.downpayment}"  />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.downpayment}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
 
                                 <h:outputText value="Loan Term: " />
                                 <p:inputText value="#{staffLoanManagedBean.selectedLoan.loanTerm}"  />
 
 
-                                <h:outputText value="Loan Start Date: " />
-                                <p:calendar id="german" value="#{staffLoanManagedBean.selectedLoan.startDate}" locale="de" navigator="true" pattern="yyyy-MMM-dd" />
-
-                                <p:commandButton icon="fa fa-save" actionListener="#{staffLoanManagedBean.satffUpdateLoan}"  styleClass="Fleft Fs14 White" value="Save"  update=":form " ajax="true"  />
+                               
+                                <p:commandButton icon="fa fa-save" actionListener="#{staffLoanManagedBean.staffUpdateLoan}"  styleClass="Fleft Fs14 White" value="Save"  update=":form " ajax="true"  />
 
                             </h:panelGrid>
 

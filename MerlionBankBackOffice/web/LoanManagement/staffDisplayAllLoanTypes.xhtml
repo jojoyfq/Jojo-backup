@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+                        <h:form id="form">
+                            <p:dataTable id="singleDT" var="loanType" value="#{staffLoanManagedBean.allLoanTypes}" editable="true">
+
+                                        
+                                <f:facet name="header">
+                                    Select a loan type to update
+                                </f:facet>
+
+                                <p:ajax event="rowEdit" listener="#{staffLoanManagedBean.staffUpdateLoanType}" update=":form" />
+
+                                <p:column headerText="Loan Id" sortBy="#{loanType.id}">
+                                    <h:outputText value="#{loanType.id}" />
+                                </p:column>
+                                <p:column headerText="Loan Name" sortBy="#{loanType.name}">
+                                    <h:outputText value="#{loanType.name}" />
+                                </p:column>
+                                
+                                <p:column headerText="Fixed Interest Rate 1"  >
+                                    <p:cellEditor rendered="#{loanType.fixedRate !=null}">
+                                        <f:facet name="output"><h:outputText value="#{loanType.fixedRate}" /></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{loanType.fixedRate}" style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Fixed Interest Rate 2"  >
+                                    <p:cellEditor rendered="#{loanType.fixedRate2 !=null}">
+                                        <f:facet name="output"><h:outputText value="#{loanType.fixedRate2}" /></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{loanType.fixedRate2}" style="width:96%" /></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="SIBOR Rate 1" sortBy="#{loanType.SIBOR}" >
+                                    <p:cellEditor rendered="#{loanType.SIBOR !=null}">
+                                        <f:facet name="output"><h:outputText value="#{loanType.SIBOR}" />
+                                        </f:facet>
+                                        <f:facet name="input"><p:inputText value="#{loanType.SIBOR}" style="width:96%" /></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="SIBOR Rate 2" sortBy="#{loanType.SIBORrate1}" >
+                                    <p:cellEditor rendered="#{loanType.SIBORrate1 !=null}">
+
+                                        <f:facet name="output"><h:outputText value="#{loanType.SIBORrate1}" />
+                                        </f:facet>
+                                        <f:facet name="input"><p:inputText value="#{loanType.SIBORrate1}" style="width:96%" /></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Education Rate" sortBy="#{loanType.educationRate}">
+                                    <p:cellEditor rendered="#{loanType.educationRate !=null}">
+                                        <f:facet name="output"><h:outputText value="#{loanType.educationRate}" />
+                                        </f:facet>
+                                        <f:facet name="input"><p:inputText value="#{loanType.educationRate}" style="width:96%" /></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Car Loan Interest Rate" sortBy="#{loanType.interestRate}" >
+                                    <p:cellEditor rendered="#{loanType.interestRate != null}">
+                                        <f:facet name="output"><h:outputText value="#{loanType.interestRate}" />
+                                        </f:facet>
+                                        <f:facet name="input"><p:inputText value="#{loanType.interestRate}" style="width:96%" /></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Edit" style="width:32px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+
+
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

@@ -71,9 +71,7 @@ public class testCustomerManagedBean implements Serializable {
         System.out.print("******status set****");
         testl.setPassword(customerId, "ruijia9336");
         System.out.print("******password set****");
-
-        
-
+       
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
 
     }
@@ -104,6 +102,7 @@ public class testCustomerManagedBean implements Serializable {
         
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LogInHome.xhtml");
     }
+
 
     public Customer getCustomer() {
         return customer;

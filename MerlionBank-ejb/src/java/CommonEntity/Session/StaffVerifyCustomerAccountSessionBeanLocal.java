@@ -24,4 +24,6 @@ public boolean verifySavingAccountCustomer (Long staffID, Long customerID, Strin
 //staff verify customer and choose"reject" or "approve"
 public boolean verifyFixedDepositAccountCustomer (Long staffID, Long customerID, String result,Long accountId) throws EmailNotSendException;
 public boolean verifyLoanAccountCustomer (Long staffID, Long customerID, String result,Long accountId) throws EmailNotSendException;
+public boolean verifyDiscretionaryAccountCustomer (Long staffID, Long customerID, String result,Long discretionaryAccountId) throws EmailNotSendException;
+
 }

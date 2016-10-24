@@ -167,10 +167,14 @@ public class StaffCaseManagedBean implements Serializable {
     }
 
     public void staffViewAllCases(ActionEvent event) throws ListEmptyException, IOException {
-
+try{
         allCases = ccsbl.viewAllCase();
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/viewAllCases.xhtml");
+}catch(ListEmptyException| IOException ex ){
+FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
+}
     }
 
     public void onCountryChange() {
@@ -214,7 +218,7 @@ public class StaffCaseManagedBean implements Serializable {
     }
 
     public void goToCreateIssuePage(ActionEvent event) throws IOException, ListEmptyException {
-        selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
+      try{  selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
         allIssues = selectedCase.getIssues();
         System.out.println("********selected case id is " + selectedCase.getId());
         for (int i = 0; i < slimb.getRoleNames().size(); i++) {
@@ -229,7 +233,10 @@ public class StaffCaseManagedBean implements Serializable {
             map = new HashMap<String, String>();
         }
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CaseManagement/createIssues.xhtml");
-
+      }catch(IOException| ListEmptyException ex){
+      FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+      }
     }
 
     public void caseStaffCreateIssue(ActionEvent event) {

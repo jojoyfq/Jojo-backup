@@ -25,7 +25,7 @@ import javax.ejb.Local;
 public interface LoanSessionBeanLocal {
     
    //customer edit loan
-    public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal downpayment,Integer loanTerm,Date startDate);
+public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate);
     public List<Loan> customerCancelLoan(Long customerId, Long loanId);
      public List<Loan> customerAcceptLoan(Long customerId, Long loanId) throws EmailNotSendException;
    public Loan customerViewLoan(Long loanId);
@@ -42,7 +42,7 @@ public interface LoanSessionBeanLocal {
      
      //early redemption-choose redemption method
      //early redemption- choose pay my saving account and display saving account (using function above)
-     public Loan applyEarlyRedemption(Long customerId, Long loanId,Long savingAccountId)throws NotEnoughAmountException;
+    public Loan applyEarlyRedemption(Long customerId, Long loanId,Long savingAccountId)throws NotEnoughAmountException;
    
       //staff and customer create existing account
    //public List<Loan> CreateExistingLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException,EmailNotSendException;
