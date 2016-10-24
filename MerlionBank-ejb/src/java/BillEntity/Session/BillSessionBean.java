@@ -6,9 +6,13 @@
 package BillEntity.Session;
 
 import BillEntity.BillingOrganization;
+import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
+import CommonEntity.Customer;
 import CommonEntity.Staff;
 import CustomerRelationshipEntity.StaffAction;
+import DepositEntity.SavingAccount;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -207,4 +211,41 @@ public class BillSessionBean implements BillSessionBeanLocal {
         em.flush();
     }
     
+        @Override
+    public boolean addGIROArrangement(String customerName, String boName, BigDecimal limit, Long savingAcctNum, String billReference){
+        //check if got existing arrangement with same bo and reference
+        SavingAccount savingAcct = this.findSavingAccount(savingAcctNum);
+        BillingOrganization bo = this.findBO(boName);
+        List<GIROArrangement> existingGIRO = savingAcct.getGiroArrangement();
+        if(!existingGIRO.isEmpty()){
+            for(int i=0;i<existingGIRO.size();i++){
+                if(existingGIRO.get(i).getBillReference().equalsIgnoreCase(billReference) && existingGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)){
+                    System.out.print("same BO and same reference alr exist!");
+                    return false;
+                }
+            }
+        GIROArrangement giroArrangement = new GIROArrangement(customerName,limit,bo,billReference,savingAcct);
+        em.persist(giroArrangement);
+        bo.getGIROArrangement().add(giroArrangement);
+        savingAcct.getGiroArrangement().add(giroArrangement);
+        em.flush();
+        return true;
+        }else{
+        GIROArrangement giroArrangement = new GIROArrangement(customerName, limit,bo,billReference,savingAcct);
+        em.persist(giroArrangement);
+        bo.getGIROArrangement().add(giroArrangement);
+        savingAcct.getGiroArrangement().add(giroArrangement);
+        em.flush(); 
+        return true;
+        }
+    }
+   
+    private SavingAccount findSavingAccount(Long accountNum){
+        SavingAccount account = new SavingAccount();
+        Query m= em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :savingAccountNumber");
+        m.setParameter("savingAccountNumber", accountNum);
+        account = (SavingAccount)m.getResultList().get(0);
+        return account;      
+    }
+
 }

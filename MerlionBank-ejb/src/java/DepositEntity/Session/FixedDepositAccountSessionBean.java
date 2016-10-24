@@ -354,7 +354,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         FixedDepositAccount accountA = new FixedDepositAccount();
         Query m = em.createQuery("SELECT b FROM FixedDepositAccount b WHERE b.accountNumber = :fixedDepositAccountNum");
         m.setParameter("fixedDepositAccountNum", accountNum);
-        accountA = (FixedDepositAccount) m.getResultList().get(0);
+        accountA = (FixedDepositAccount) m.getSingleResult();
         return accountA;
     }
 
@@ -373,7 +373,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         //credit principal and interest to savingaccount
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
         q.setParameter("savingAccountNum", savingAccountNum);
-        SavingAccount savingAccount = (SavingAccount) q.getResultList().get(0);
+        SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
         System.out.print(savingAccount.getAvailableBalance().toString());
         BigDecimal newBalance = savingAccount.getAvailableBalance().add(interest);
         newBalance = newBalance.add(account.getBalance());
@@ -388,9 +388,11 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         String description1 = "Withdraw fixed deposit " + fixedAccountNum;
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+
         TransactionRecord transactionRecord = new TransactionRecord("TFF", null,totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, savingAccount, "MerlionBank", "MerlionBank");
         savingAccount.getTransactionRecord().add(transactionRecord);
         em.persist(transactionRecord);
+
         em.flush();
         System.out.println("Fixed Deposit account transferred successfullly");
         return interest;
