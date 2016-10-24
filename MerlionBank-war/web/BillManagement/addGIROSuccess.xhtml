@@ -1,0 +1,76 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Add GIRO Arrangement </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <div class="Card">
+                                <div class="Container10"></div>
+                                <div class="Container80">
+                                    <h:panelGrid columns="2" id="modifyBank" cellpadding="5"> 
+                                        <h:outputLabel for="bo" value="GIRO Arrangement Added Successfully." />
+                                        <h:outputLabel>
+                                        </h:outputLabel>
+                                          <h:outputLabel for="instruction" value="Request will be send to billing organization immediately." />
+                                             <h:outputLabel>
+                                        </h:outputLabel>
+                                          <h:outputLabel for="instruction2" value="Request will be accessed within 5 working days." />
+                                    </h:panelGrid>
+
+                                </div>
+                                <div class="Container10"></div>
+
+                                <div class="EmptyBox20"></div>
+                                <div class="Container30"></div>
+                                <div class="Container40">
+                                    <p:commandButton actionListener="#{billCustomerManagedBean.goToDashboard(event)}" value="Back" />
+                                </div>
+                                <div class="Container30"></div>
+                                <div class="EmptyBox20"></div>
+
+                            </div>
+                        </h:form>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition> 
+
+
+
