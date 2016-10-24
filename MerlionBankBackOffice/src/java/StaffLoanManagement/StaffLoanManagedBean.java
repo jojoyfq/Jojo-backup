@@ -36,6 +36,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -58,6 +59,7 @@ public class StaffLoanManagedBean implements Serializable {
      */
     public StaffLoanManagedBean() {
     }
+    private String searchedCustomerIc;
     private String customerIc;
     private BigDecimal principal;
     private BigDecimal monthlyIncome;
@@ -148,7 +150,8 @@ public class StaffLoanManagedBean implements Serializable {
 
     public void searchCustomerId(ActionEvent event) throws UserNotExistException, UserNotActivatedException {
         try {
-            searchedCustomer = lasbl.searchCustomer(customerIc);
+                        System.out.println("searched customer is "+searchedCustomerIc);
+            searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
         } catch (UserNotExistException | UserNotActivatedException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -184,7 +187,10 @@ public class StaffLoanManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         
     }
-
+public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
+             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffDisplayLoanTypes.xhtml");
+   
+}   
     public void goToLoanPage(ActionEvent event) throws IOException {
         loanToCal = lasbl.findTypeByName(loanName);
         if (loanName.equals("Fixed Interest Package")) {
@@ -272,7 +278,7 @@ public class StaffLoanManagedBean implements Serializable {
         }
     }
 
-    public String displayLoanPackageDetail(ActionEvent event) {
+    public String displayLoanPackageDetail(String loanName) {
         System.out.println("****************Selected loan name to display " + loanName);
 
         detail = lasbl.displayPackageDetail(loanName);
@@ -296,12 +302,16 @@ public class StaffLoanManagedBean implements Serializable {
             loanTypeId = lasbl.findTypeIdByName(loanName);
             if (customer.getId() == null) {
                 System.out.println("Create loan account for EXISTING customer");
-                lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+                searchedCustomer.getId();
+                customerId=lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message","Loan Account has been created for customer "+searchedCustomer.getIc()+"!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
             } else {
                 System.out.println("Create loan account for NEW customer customerID " + customer.getId());
 
                 lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
-
+ FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been created for customer "+customer.getIc()+"!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
         } catch (LoanTermInvalidException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -309,7 +319,6 @@ public class StaffLoanManagedBean implements Serializable {
         }
 
     }
-
     public void staffViewPendingLoans(ActionEvent event) throws IOException {
         System.out.println("**** go to view pending loans alr!");
         pendingLoans = lmsbl.staffViewPendingLoans();
@@ -317,8 +326,10 @@ public class StaffLoanManagedBean implements Serializable {
 
     }
 
-    public void staffViewCustomer(ActionEvent event) {
-        selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+    public void staffViewCustomer(SelectEvent event) {
+        selectedLoan=(Loan) event.getObject();
+        System.out.println("*****Selected Loan to view customer is "+selectedLoan.getLoanType().getName());
+       // selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
 
     }
 
@@ -741,6 +752,14 @@ public class StaffLoanManagedBean implements Serializable {
 
     public void setCalLoanTerm(Integer calLoanTerm) {
         this.calLoanTerm = calLoanTerm;
+    }
+
+    public String getSearchedCustomerIc() {
+        return searchedCustomerIc;
+    }
+
+    public void setSearchedCustomerIc(String searchedCustomerIc) {
+        this.searchedCustomerIc = searchedCustomerIc;
     }
 
 }

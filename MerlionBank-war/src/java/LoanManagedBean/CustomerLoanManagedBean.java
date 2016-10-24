@@ -226,7 +226,7 @@ public class CustomerLoanManagedBean implements Serializable {
         }
     }
 
-    public String displayLoanPackageDetail(ActionEvent event) {
+    public String displayLoanPackageDetail(String loanName) {
         System.out.println("****************Selected loan name to display " + loanName);
 
         detail = lasbl.displayPackageDetail(loanName);
@@ -349,7 +349,7 @@ public class CustomerLoanManagedBean implements Serializable {
             System.out.println("******Selected loan account id " + selectedLoan.getId());
 
             paidAmount = lsbl.loanPayBySaving(customerId, selectedSavingAccout.getId(), selectedLoan.getId());
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have paid " + selectedLoan.getMonthlyPayment() + " successfully!");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have paid S$" + selectedLoan.getMonthlyPayment() + " successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (NotEnoughAmountException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());

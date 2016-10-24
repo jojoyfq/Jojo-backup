@@ -62,28 +62,38 @@
                                         </p:column>
 
                                         <p:column headerText="Loan Principal">
-                                            <h:outputText value="#{loan.principal}" />
+                                            <h:outputText value="#{loan.principal}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Loan Downpayment">
                                             <p:cellEditor>
-                                                <f:facet name="output"><h:outputText value="#{loan.downpayment}" /></f:facet>
+                                                <f:facet name="output"><h:outputText value="#{loan.downpayment}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText></f:facet>
                                                 <f:facet name="input"><p:inputText id="downpayment" value="#{loan.downpayment}" style="width:100%"/></f:facet>
                                             </p:cellEditor>
                                         </p:column>
 
                                         <p:column headerText="Loan Monthly Payment">
-                                            <h:outputText value="#{loan.monthlyPayment}" />
+                                            <h:outputText value="#{loan.monthlyPayment}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Loan Outstanding Balance ">
 
-                                            <h:outputText value="#{loan.outstandingBalance}" />
+                                            <h:outputText value="#{loan.outstandingBalance}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Loan Monthly Payment ">
 
-                                            <h:outputText value="#{loan.monthlyPayment}" />
+                                            <h:outputText value="#{loan.monthlyPayment}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Loan Status ">

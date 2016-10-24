@@ -59,22 +59,30 @@
                                     </p:column>
 
                                     <p:column headerText="Loan Principal">
-                                        <h:outputText value="#{pendingLoan.principal}" />
+                                        <h:outputText value="#{pendingLoan.principal}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                     </p:column>
 
                                     <p:column headerText="Loan Downpayment">
                                         <p:cellEditor>
-                                            <f:facet name="output"><h:outputText value="#{pendingLoan.downpayment}" /></f:facet>
+                                            <f:facet name="output"><h:outputText value="#{pendingLoan.downpayment}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText></f:facet>
                                             <f:facet name="input"><p:inputText id="downpayment" value="#{pendingLoan.downpayment}" style="width:100%"/></f:facet>
                                         </p:cellEditor>
                                     </p:column>
 
                                     <p:column headerText="Loan Monthly Payment">
-                                        <h:outputText value="#{pendingLoan.monthlyPayment}" />
+                                        <h:outputText value="#{pendingLoan.monthlyPayment}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                     </p:column>
 
                                     <p:column headerText="Loan Outstanding Balance ">
-                                        <h:outputText value="#{pendingLoan.outstandingBalance}" />
+                                        <h:outputText value="#{pendingLoan.outstandingBalance}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                     </p:column>
 
                                     <p:column headerText="Loan Status ">
@@ -83,11 +91,13 @@
 
                                     <p:column headerText="Customer Detail" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton icon="ui-icon-mail-open" actionListener="#{staffLoanManagedBean.staffViewCustomer}" onclick="PF('msgDialog').show()"  ajax="true" type="submit" >
-                                                <f:attribute name="selectedLoan" value="#{pendingLoan}"  />
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail" oncomplete="PF('msgDialog').show()"  ajax="true" type="submit" >
+                                              <f:setPropertyActionListener value="#{pendingLoan}" target="#{staffLoanManagedBean.selectedLoan}" />
+<!--                                                <f:attribute name="selectedLoan" value="{pendingLoan}"  />-->
                                             </p:commandButton>
                                         </center>
                                     </p:column>
+                                  
 
                                     <f:facet name="footer">
                                         <p:commandButton process="radioDT"  update=":form"  value="Approve" actionListener="#{staffLoanManagedBean.staffApprovePending}" oncomplete="PF('carDialog').show()" />
@@ -102,7 +112,7 @@
                             </h:panelGrid>
 
 
-                            <p:dialog id="dialogMessage"  appendTo="@(body)" header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
+                            <p:dialog id="dialogMessage"   header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
                                 <p:outputPanel id="msgDetail" style="text-align:center;">
                                     <p:panelGrid  columns="2"  >
 
@@ -130,7 +140,14 @@
 
                                         <h:outputText value="Customer Financial Asset: " />
                                         <h:outputText value="#{staffLoanManagedBean.selectedLoan.customer.financialAsset}"  />
-
+ 
+                                         
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" actionListener="#{staffVerifyCustomerManagedBean.openDocs}" ajax="true" value ="View" >
+                                                
+                                            </p:commandButton>
+                                        </center>
+                                    
 
 
                                     </p:panelGrid>

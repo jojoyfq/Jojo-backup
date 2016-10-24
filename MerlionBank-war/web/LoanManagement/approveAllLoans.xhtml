@@ -64,7 +64,7 @@
                                         <p:column headerText="Loan Principal">
                                             <p:cellEditor>
                                                 <f:facet name="output"><h:outputText value="#{loan.principal}" >
-                                                        <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                                        <f:convertNumber pattern="#0.00" locale="en-US"/>
                                                     </h:outputText></f:facet>
                                                 <f:facet name="input"><p:inputText id="principal" value="#{loan.principal}" style="width:100%"/></f:facet>
                                             </p:cellEditor>
@@ -73,7 +73,7 @@
                                         <p:column headerText="Loan Downpayment">
                                             <p:cellEditor>
                                                 <f:facet name="output"><h:outputText value="#{loan.downpayment}" >
-                                                        <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                                        <f:convertNumber pattern="#0.00" locale="en-US"/>
                                                     </h:outputText></f:facet>
                                                 <f:facet name="input"><p:inputText id="downpayment" value="#{loan.downpayment}" style="width:100%"/></f:facet>
                                             </p:cellEditor>
@@ -81,14 +81,14 @@
 
                                         <p:column headerText="Loan Monthly Payment">
                                             <h:outputText value="#{loan.monthlyPayment}" >
-                                                <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                                <f:convertNumber pattern="#0.00" locale="en-US"/>
                                             </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Loan Outstanding Balance ">
 
                                             <h:outputText value="#{loan.outstandingBalance}" >
-                                                <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                                <f:convertNumber pattern="#0.00" locale="en-US""/>
                                             </h:outputText>
                                         </p:column>
 
@@ -111,7 +111,7 @@
                                                                              return false;"/>
                                             </center>
                                         </p:column>
-                                        <p:column style="width:32px">
+                                        <p:column headerText="Edit" style="width:32px">
                                             <p:rowEditor />
                                         </p:column>
 

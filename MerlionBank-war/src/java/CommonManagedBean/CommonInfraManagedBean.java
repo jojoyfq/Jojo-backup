@@ -16,6 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -148,6 +152,8 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
                 //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
+                customer = amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);
+
                 svcasbl.viewPendingVerificationList().add(amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType));//throws UserExistException;
 
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
@@ -155,16 +161,16 @@ public class CommonInfraManagedBean implements Serializable {
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
 //            
 //            ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-                FacesContext facesContext = FacesContext.getCurrentInstance();
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Account created Successfully"));
-                Flash flash = facesContext.getExternalContext().getFlash();
-                flash.setKeepMessages(true);
-                flash.setRedirect(true);
+//                FacesContext facesContext = FacesContext.getCurrentInstance();
+//                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Account created Successfully"));
+//                Flash flash = facesContext.getExternalContext().getFlash();
+//                flash.setKeepMessages(true);
+//                flash.setRedirect(true);
 
 //                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 //
 //                RequestContext.getCurrentInstance().showMessageInDialog(message);
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/uploadFile.xhtml");
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -185,21 +191,38 @@ public class CommonInfraManagedBean implements Serializable {
   
  // Get uploaded file from the FileUploadEvent
          this.file = e.getFile();
-         InputStream input = e.getFile().getInputstream();
+     //    InputStream input = e.getFile().getInputstream();
+         
+      //   File inputFile = new File(e.getFile().getFileName());
  
          // Get uploaded file from the FileUploadEvent
-         this.file = e.getFile();
+    //     this.file = e.getFile();
  //                customer.
  //                System.out.println("");
          // Print out the information of the file
          System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
          System.out.println("Uploade file Customer Ic: "+ic);
-        String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + ic + file.getFileName();
-        // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "Sxiaojing" ;
+       // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
+        String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" +customer.getIc() +"\\"+file.getFileName();
+       // String savedFileName = path + "/" + uploadedFile.getFileName();
+    //    File fileToSave = new File(savedFileName);
+        File fileToSave = new File(destPath);
+        fileToSave.getParentFile().mkdirs();
+        fileToSave.delete();
+        //Generate path file to copy file
+        Path folder = Paths.get(destPath);
+        Path fileToSavePath = Files.createFile(folder);
+        //Copy file to server
+        InputStream input = e.getFile().getInputstream();
+        Files.copy(input, fileToSavePath, StandardCopyOption.REPLACE_EXISTING);
+// String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "Sxiaojing" ;d
  
-         File destFile = new File(destPath);
-         //FileUtils.forceMkdir(destFile);
-         FileUtils.copyInputStreamToFile(input, destFile);
+//         File destFile = new File(destPath);
+//         FileUtils.forceMkdir(destFile);
+//         FileUtils.copyInputStreamToFile(input, destFile);
+        //FileUtils.copyFileToDirectory(inputFile, destFile);
+         System.out.println("File uploaded successfully!");
+         amsbl.setFileDestination(customer.getId(),  fileToSave.getParentFile().getName());
            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
  
      }

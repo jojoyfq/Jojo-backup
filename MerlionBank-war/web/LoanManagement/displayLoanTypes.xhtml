@@ -17,7 +17,7 @@
     </h:head>
 
     <h:body>
-        <h:form>
+        <h:form id="form">
             <div class="Wid100 MarAuto">
                 <div class="Wid80 MarAuto WidAutoOnMobile">
                     <div style="margin-top:10rem;"></div>
@@ -65,14 +65,20 @@
                                         <div class="EmptyBox20"></div>
                                         <div class="Container30"></div>
                                         <div class="Container40">
-                                            <p:commandButton actionListener="#{customerLoanManagedBean.displayLoanPackageDetail}"  onclick="PF('dlg1').show();"  icon="fa fa-info-circle"  styleClass="Fleft Fs14 White" value="View Loan Details" />
-                                            <p:separator/>
+                                            <p:commandButton actionListener="#{customerLoanManagedBean.displayLoanPackageDetail(customerLoanManagedBean.loanName)}" update=":form:msgDetail" onclick="PF('dlg1').show();"  icon="fa fa-info-circle"  styleClass="Fleft Fs14 White" value="View Loan Details" />
+
                                         </div>
+                                        <p:dialog header="About" widgetVar="dlg1" modal="true" height="100">
+                                            <p:outputPanel id="msgDetail" style="text-align:center;">
+                                                <h:outputText value="#{customerLoanManagedBean.detail}" />
+                                            </p:outputPanel>
+                                        </p:dialog>
+                                        <p:separator/>
                                         <div class="Container10"></div>
 
                                         <div class="EmptyBox20"></div>
                                         <div class="Container30"></div>
-                                             <div class="Container40">
+                                        <div class="Container40">
                                             <p:commandButton actionListener="#{customerLoanManagedBean.goToLoanPage}" value="Next" />
 
                                             <p:dialog header="About #{customerLoanManagedBean.loanName}" widgetVar="dlg1" modal="true" height="100">
