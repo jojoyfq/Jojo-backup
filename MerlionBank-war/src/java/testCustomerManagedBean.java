@@ -93,7 +93,7 @@ public class testCustomerManagedBean implements Serializable {
         Long customerId2 = customer2.getId();
         testl.setStatus(customerId2, balance);
         System.out.print("******status set****");
-        testl.setPassword(customerId, "yanmeng0906");
+        testl.setPassword(customerId2, "yanmeng0906");
         System.out.print("******password set****");
         
         //setPayMe
