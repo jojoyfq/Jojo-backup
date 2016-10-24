@@ -52,7 +52,9 @@
                 </p:submenu>
 
                 <p:submenu id="pa_default" label="Loan Management">
-                    <p:menuitem id="Apply_Loan" value="Apply Loan Account" actionListener="#{creditCardManagedBean.dashboardToCreateLoanAccount}"/> 
+                    <p:menuitem id="Apply_Loan" value="Apply Loan Account" actionListener="#{customerLoanManagedBean.goToViewLoanTypesForApply}"/> 
+                    <p:menuitem id="View_ALL_My_Loan" value="Approve My Loan" actionListener="#{customerLoanManagedBean.goToApproveMyLoanPage}"/> 
+                    <p:menuitem id="Pay_My_Loan" value="Pay My Loan" actionListener="#{customerLoanManagedBean.goToViewAllMyLoans}"/> 
 
 
                 </p:submenu>

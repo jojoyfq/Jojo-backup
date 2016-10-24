@@ -44,8 +44,12 @@ public interface LoanApplicationSessionBeanLocal {
 
     //Teller Create Loan Account - 3nd page - configure loan
     public Long StaffCreateLoanAccount(Long staffId, Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws LoanTermInvalidException;
+public Long createLoanAccountExisting(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException;
+ public Long StaffCreateLoanAccountExisting(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws LoanTermInvalidException;    
 
-public Long findTypeIdByName(String name);
+ public Long findTypeIdByName(String name);
 public LoanType findTypeByName(String name);
  public Customer searchCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
+ 
+ 
 }

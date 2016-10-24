@@ -95,15 +95,15 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
-        if(passwordHash(password + payme.getSalt()).equals(payme.getPaymePassword())){
+        if (passwordHash(password + payme.getSalt()).equals(payme.getPaymePassword())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     @Override
-    public String sendTwoFactorAuthentication(String ic) throws TwilioRestException {
+    public boolean sendTwoFactorAuthentication(String ic) throws TwilioRestException {
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         List<Customer> temp = new ArrayList(q.getResultList());
@@ -130,7 +130,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             System.out.println(e.getErrorMessage());
         }
         //Message sms = messageFactory.create(params);
-        return ic;
+        return true;
     }
 
     @Override
@@ -147,49 +147,60 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public PayMe createPayMe(String ic, String savingAccountNo, String phoneNumber, String paymePassword) {
+    public boolean createPayMe(String ic, String savingAccountNo, String phoneNumber, String paymePassword) {
         //get Customer Entity      
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         Customer customer = (Customer) q.getSingleResult();
 
-        //get Saving Account Entity
-        Long savingAccount = Long.valueOf(savingAccountNo);
-        Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccount");
-        m.setParameter("savingAccount", savingAccount);
-        SavingAccount temp = (SavingAccount) m.getSingleResult();
+        if (customer.getPayMe() == null) {
 
-        //password salt and hash
-        String salt = "";
-        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$%^&*!?+-";
-        for (int i = 0; i < SALT_LENGTH; i++) {
-            int index = (int) (RANDOM.nextDouble() * letters.length());
-            salt += letters.substring(index, index + 1);
+            //get Saving Account Entity
+            Long savingAccount = Long.valueOf(savingAccountNo);
+            System.out.println("Saving Account No is " + savingAccount);
+            Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccount");
+            m.setParameter("savingAccount", savingAccount);
+            SavingAccount temp = (SavingAccount) m.getSingleResult();
+
+            //password salt and hash
+            String salt = "";
+            String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$%^&*!?+-";
+            for (int i = 0; i < SALT_LENGTH; i++) {
+                int index = (int) (RANDOM.nextDouble() * letters.length());
+                salt += letters.substring(index, index + 1);
+            }
+            String passwordDatabase = passwordHash(paymePassword + salt);
+            System.out.println("PayMePassword after hash&salt:" + passwordDatabase);
+            //set initial balance to 0
+            BigDecimal balance = new BigDecimal("0.00");
+
+            //Create New PayMe Account
+            PayMe payMe = new PayMe(phoneNumber, customer, temp, balance, passwordDatabase, salt);
+            em.persist(payMe);
+            customer.setPayMe(payMe);
+            em.persist(customer);
+            temp.setPayMe(payMe);
+            em.persist(temp);
+            em.flush();
+
+            return true;
+        } else {
+            return false;
         }
-        String passwordDatabase = passwordHash(paymePassword + salt);
-        System.out.println("PayMePassword after hash&salt:" + passwordDatabase);
-        //set initial balance to 0
-        BigDecimal balance = new BigDecimal("0.00");
-
-        //Create New PayMe Account
-        PayMe payMe = new PayMe(phoneNumber, customer, temp, balance, passwordDatabase,salt);
-        em.persist(payMe);
-        customer.setPayMe(payMe);
-        em.persist(customer);
-        temp.setPayMe(payMe);
-        em.persist(temp);
-        em.flush();
-
-        return payMe;
     }
 
     @Override
-    public List<String> getSavingAccountString(Long customerID) throws UserHasNoSavingAccountException {
+    public List<String> getSavingAccountString(String ic) throws UserHasNoSavingAccountException {
         List<String> savingAccountString = new ArrayList<String>();
         String savingAccountNo;
         String accountType;
 
-        Customer customer = em.find(Customer.class, customerID);
+        System.out.println("Customer ic is: " + ic + "******");
+
+        Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
+        q.setParameter("ic", ic);
+        Customer customer = (Customer) q.getSingleResult();
+
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
         if (savingAccounts.isEmpty()) {
             throw new UserHasNoSavingAccountException("No Saving Account Found!");
@@ -197,7 +208,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             for (int i = 0; i < savingAccounts.size(); i++) {
                 savingAccountNo = Long.toString(savingAccounts.get(i).getAccountNumber());
                 accountType = savingAccounts.get(i).getSavingAccountType().getAccountType();
-                savingAccountString.set(i, savingAccountNo + "," + accountType);
+                savingAccountString.add(savingAccountNo + " - " + accountType);
             }
             return savingAccountString;
         }
@@ -205,7 +216,8 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public String getPhoneNumber(String ic) {
-        
+        System.err.println("get phone number: ic = " + ic);
+
         Query q = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :ic");
         q.setParameter("ic", ic);
         Customer customer = (Customer) q.getSingleResult();

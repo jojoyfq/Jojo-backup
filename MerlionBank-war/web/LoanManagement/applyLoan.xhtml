@@ -39,7 +39,7 @@
 
 
                                                 <h:outputLabel for="principal" value="Principal Amount(S$):" />
-                                                <p:inputNumber id="principal" value="#{customerLoanManagedBean.downpayment}" label="principal" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter your downpayment!" />
+                                                <p:inputNumber id="principal" value="#{customerLoanManagedBean.principal}" label="principal" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter your downpayment!" />
                                                 <p:message for="principal" display="icon"/>
                                                 <h:outputLabel />
 
@@ -129,8 +129,14 @@
                     </h:outputText>
                     <h:outputLabel />
 
-                    <p:commandButton value="Calculate"  actionListener="#{customerLoanManagedBean.calculateMonthlyPayment}" icon="ui-icon-check" />
+                    <p:commandButton value="calculate"  actionListener="#{customerLoanManagedBean.calculateMonthlyPayment}" icon="ui-icon-check" oncomplete="PF('carPanelWDG').loadContents();" />
                 </p:panelGrid>
+                      <p:overlayPanel  widgetVar="carPanelWDG" showCloseIcon="true">
+                                    <h:outputLabel value="Monthly Repayment(S$): "/>
+                                    <h:outputText value="#{customerLoanManagedBean.monthlyRepayment}"  >
+                                         <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                    </h:outputText>
+                                 </p:overlayPanel>
             </p:dialog>
         </h:form>
     </h:body>
