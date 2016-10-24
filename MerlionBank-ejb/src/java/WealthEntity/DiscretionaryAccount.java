@@ -35,6 +35,7 @@ public class DiscretionaryAccount implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
     private BigDecimal balance;
+    private BigDecimal totalBalance;
     private BigDecimal accumDailyInterest;
     private String status;
     
@@ -55,6 +56,14 @@ public class DiscretionaryAccount implements Serializable {
         this.accumDailyInterest = accumDailyInterest;
         this.status = status;
         this.customer = customer;
+    }
+
+    public BigDecimal getTotalBalance() {
+        return totalBalance;
+    }
+
+    public void setTotalBalance(BigDecimal totalBalance) {
+        this.totalBalance = totalBalance;
     }
 
     public Customer getCustomer() {

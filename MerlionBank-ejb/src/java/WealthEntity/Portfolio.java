@@ -28,6 +28,7 @@ public class Portfolio implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String type;
     private BigDecimal investAmount;
     private BigDecimal presentValue;
     private Double monthlyInterestRate;
@@ -36,6 +37,8 @@ public class Portfolio implements Serializable {
     private Date startDate;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
+    private String status;
+  
     
     
     @ManyToOne
@@ -47,6 +50,44 @@ public class Portfolio implements Serializable {
     @OneToMany(cascade={CascadeType.ALL},mappedBy="portfolio")
     private List<Product> products;
 
+    public Portfolio() {
+    }
+
+    public Portfolio(String type, BigDecimal investAmount, BigDecimal presentValue, Double monthlyInterestRate, Double expectedRateOfReturn, Date startDate, Date endDate, DiscretionaryAccount discretionaryAccount, List<PortfolioTransaction> portfolioTransactions, List<Product> products,String status) {
+        this.type = type;
+        this.investAmount = investAmount;
+        this.presentValue = presentValue;
+        this.monthlyInterestRate = monthlyInterestRate;
+        this.expectedRateOfReturn = expectedRateOfReturn;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.discretionaryAccount = discretionaryAccount;
+        this.portfolioTransactions = portfolioTransactions;
+        this.products = products;
+        this.status=status;
+    }
+
+
+ 
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    
     public Double getExpectedRateOfReturn() {
         return expectedRateOfReturn;
     }
