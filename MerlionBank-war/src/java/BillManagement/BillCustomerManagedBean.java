@@ -6,6 +6,7 @@
 package BillManagement;
 
 import BillEntity.Session.BillSessionBeanLocal;
+import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import DepositManagedBean.SavingAccountManagedBean;
@@ -46,7 +47,9 @@ public class BillCustomerManagedBean implements Serializable {
     private String customerName;
     private String customerIc;
     private String input2FA;
-
+    private String otpSuccessRedirect;
+    private Customer customer;
+    
     @Inject
     private LogInManagedBean logInManagedBean;
     @Inject
@@ -58,19 +61,21 @@ public class BillCustomerManagedBean implements Serializable {
     }
 
     public void dashboardAddGIROArrangement(ActionEvent event) throws IOException {
-        customerName = logInManagedBean.getCustomerName();
+        customer = logInManagedBean.getSelectedCustomer();
+        customerName = customer.getName();
         customerId = logInManagedBean.getCustomerId();
         customerIc = logInManagedBean.getIc();
         boNames = bsbl.viewBOName();
         savingAccountManagedBean.init();
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/BillManagement/addGIRO.xhtml");
+        otpSuccessRedirect = "/MerlionBank-war/BillManagement/addGIROSuccess.xhtml" ;
     }
 
-    public void invoke2FAAddGIRO(ActionEvent event) throws IOException, TwilioRestException {
+    public void invokeOTP(ActionEvent event) throws IOException, TwilioRestException {
         amsbl.sendTwoFactorAuthentication(customerIc);
         System.out.print("2FA SMS sent!!!!!!!");
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/SubmitTwoFAAddGIRO.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/OTP.xhtml");
     }
 
     private boolean verify2FA(String input2FA) {
@@ -90,7 +95,7 @@ public class BillCustomerManagedBean implements Serializable {
         if (this.verify2FA(input2FA) == true) {
             if (bsbl.addGIROArrangement(customerName, boName, limit, savingAcctNum, billReference) == true) {
                 System.out.print("add giro success");
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/addGIROSuccess.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
             } else {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Unsuccessful! You have an existing GIRO arrangement with same BO and same reference.");
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -212,6 +217,14 @@ public class BillCustomerManagedBean implements Serializable {
 
     public void setSavingAccountManagedBean(SavingAccountManagedBean savingAccountManagedBean) {
         this.savingAccountManagedBean = savingAccountManagedBean;
+    }
+
+    public String getOtpSuccessRedirect() {
+        return otpSuccessRedirect;
+    }
+
+    public void setOtpSuccessRedirect(String otpSuccessRedirect) {
+        this.otpSuccessRedirect = otpSuccessRedirect;
     }
 
 }
