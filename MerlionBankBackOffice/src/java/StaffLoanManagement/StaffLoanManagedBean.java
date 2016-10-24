@@ -103,6 +103,7 @@ public class StaffLoanManagedBean implements Serializable {
 
     private String password;
     private LoanType selectedLoanType;
+    private double risk;
 
     @PostConstruct
     public void init() {
@@ -230,6 +231,32 @@ public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
+public void openDocs(ActionEvent event) throws IOException {
+       try{
+           selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+
+           System.out.println("********Selected customer to view documents is " + selectedLoan.getCustomer().getIc());
+        //File openFile = new File(selectedCustomer.getFileDestination());
+        System.out.println("File Path is "+selectedLoan.getCustomer().getFileDestination());
+//         if(!Desktop.isDesktopSupported()){
+//            System.out.println("Desktop is not supported");
+//            return;
+//        }
+//        
+//        Desktop desktop = Desktop.getDesktop();
+//        if(openFile.exists()) desktop.open(openFile);
+//        
+        
+            String path = selectedLoan.getCustomer().getFileDestination();
+            Runtime runtime = Runtime.getRuntime();
+            runtime.exec("explorer.exe C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\"+path);
+            System.out.println("open");
+   
+       }catch(IOException ex){
+      FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        } 
+       }
 
     public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffCreateLoanAccountForNewCustomer.xhtml");
@@ -409,7 +436,14 @@ public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
         return oneCustomerAllLoans;
 
     }
+public void calculateRisk(ActionEvent event){
+    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+System.out.println("************Selected customer ID to calculate risk is "+selectedLoan.getCustomer().getId());
+System.out.println("************Selected loan ID to calculate risk is "+selectedLoan.getId());
 
+  risk=  lmsbl.calculateRisk(selectedLoan.getCustomer().getId(), selectedLoan.getId());
+
+}
     public List<LoanType> getAllLoanTypes() {
         return allLoanTypes;
     }
@@ -760,6 +794,14 @@ public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
 
     public void setSearchedCustomerIc(String searchedCustomerIc) {
         this.searchedCustomerIc = searchedCustomerIc;
+    }
+
+    public double getRisk() {
+        return risk;
+    }
+
+    public void setRisk(double risk) {
+        this.risk = risk;
     }
 
 }
