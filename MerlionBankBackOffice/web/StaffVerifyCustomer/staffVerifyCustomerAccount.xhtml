@@ -56,8 +56,15 @@
                                         </h:outputText>
 
                                     </p:column>
-                                    
 
+                                    <p:column headerText="Document" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" actionListener="#{staffVerifyCustomerManagedBean.openDocs}" ajax="true" value ="View" >
+                                                <f:attribute name="selectedCustomer" value="#{pendingCustomer}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+                                     
                                     <f:facet name="footer">
                                         <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}"  />
                                         <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}"  />

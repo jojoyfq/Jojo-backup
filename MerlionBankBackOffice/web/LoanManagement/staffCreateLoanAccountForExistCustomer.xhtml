@@ -19,12 +19,27 @@
                 <div class="EmptyBox10"></div>
                 <span class="BoldLeaden Fs14 FontDosisMedium">Please key in customer IC to find out customer ID</span>
                 <div class="EmptyBox10"></div>
+                <h:form>
                 <h:outputLabel for="customerIc" value="Cusotmer IC:" />
-                <p:inputText id="customerIc" value="#{staffLoanManagedBean.customerId}" label="customerIc" />
+                <h:inputText id="customerIc" value="#{staffLoanManagedBean.searchedCustomerIc}" />
                 <p:separator/>
-                <p:commandButton  value="Search" icon="fa fa-search"  type="button" styleClass="GreenButton Fleft Fs14 White"  onclick="PF('dlg1').show();"/>
-
-
+                <p:commandButton  value="Search" icon="fa fa-search"  actionListener="#{staffLoanManagedBean.searchCustomerId}" styleClass="GreenButton Fleft Fs14 White"  oncomplete="PF('dlg2').show();"/>
+            </h:form>
+                 <p:dialog header="Search Result" widgetVar="dlg2" modal="true" height="100">
+                                <h:panelGrid  columns="2" cellpadding="5" >
+                                    <h:outputLabel for="customerId" value="Customer ID " /> 
+                                    <h:outputText value="#{staffLoanManagedBean.searchedCustomer.id}" />
+                                     
+                                    
+                                    <h:outputLabel for="customerName" value="Customer Name: " /> 
+                                    <h:outputText value="#{staffLoanManagedBean.searchedCustomer.name}" />
+                                    
+                                     <h:outputLabel for="customerId" value="Customer Date Of Birth " /> 
+                                     <h:outputText value="#{staffLoanManagedBean.searchedCustomer.dateOfBirth}" >
+                                     <f:convertDateTime type="date" pattern="dd.MM.yyyy"/>
+                                     </h:outputText>
+                                </h:panelGrid>
+                            </p:dialog>
             </div>
         </div>
 
@@ -40,7 +55,7 @@
 
                             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
                                 <h:outputLabel for="customerId" value="Cusotmer ID:" />
-                                <p:inputNumber id="customerId" value="#{staffLoanManagedBean.customerId}" label="customerId" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter monthly income!" />
+                                <p:inputText id="customerId" value="#{staffLoanManagedBean.customerId}" label="customerId"  required="true" requiredMessage="Please enter monthly income!" />
                                 <p:message for="customerId" display="icon"/>
                                 <p:watermark for="customerId" value="Please search customer ID on the left" />
 
@@ -91,29 +106,37 @@
                             <p:dialog header="Calculator" widgetVar="dlg1" modal="true" height="100">
                                 <h:panelGrid  columns="3" cellpadding="5" >
                                     <h:outputLabel for="amount" value="Amount " /> 
-                                    <p:inputText id="amount" value="#{customerLoanManagedBean.loanAmount}"  required="true" requiredMessage="Please enter your loan amount!" />
+                                    <p:inputText id="amount" value="#{staffLoanManagedBean.loanAmount}"  required="true" requiredMessage="Please enter your loan amount!" />
                                     <h:message class="Red" for="amount"  />
 
                                     <h:outputLabel for="loanTerm" value="Loan Term: " /> 
-                                    <p:inputText id="loanTerm" value="#{customerLoanManagedBean.calLoanTerm}"  required="true" requiredMessage="Please enter your loan term" />
+                                    <p:inputText id="loanTerm" value="#{staffLoanManagedBean.calLoanTerm}"  required="true" requiredMessage="Please enter your loan term" />
                                     <h:message class="Red" for="loanTerm"  />
 
                                     <h:outputLabel for="rate1" value="Interest1:  " /> 
-                                    <h:outputText id="rate1" value="#{customerLoanManagedBean.interest1}"   >
+                                    <h:outputText id="rate1" value="#{staffLoanManagedBean.interest1}"   >
                                         <f:convertNumber type="percent" minFractionDigits="4" />
                                     </h:outputText>
                                     <h:outputLabel />
 
                                     <h:outputLabel for="rate2" value="Interest2:  " /> 
-                                    <h:outputText id="rate2" value="#{customerLoanManagedBean.interest2}"   >
+                                    <h:outputText id="rate2" value="#{staffLoanManagedBean.interest2}"   >
                                         <f:convertNumber type="percent" minFractionDigits="4" />
                                     </h:outputText>
                                     <h:outputLabel />
 
-                                    <p:commandButton value="Calculate"  actionListener="#{customerLoanManagedBean.calculateMonthlyPayment}" icon="ui-icon-check" />
+                                    <p:commandButton value="Calculate"  actionListener="#{staffLoanManagedBean.calculateMonthlyPayment}" icon="ui-icon-check" oncomplete="PF('carPanelWDG').loadContents();" />
                                 </h:panelGrid>
+                                <p:overlayPanel  widgetVar="carPanelWDG" showCloseIcon="true">
+                                    <h:outputLabel value="Monthly Repayment(S$): "/>
+                                    <h:outputText value="#{staffLoanManagedBean.monthlyRepayment}"  >
+                                         <f:convertNumber pattern="#0.00" locale="pt_BR"/>
+                                    </h:outputText>
+                                 </p:overlayPanel>
                             </p:dialog>
+                            
                         </h:form>
+                      
                     </div>
                 </div>
             </div> 

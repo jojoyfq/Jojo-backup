@@ -35,10 +35,14 @@
                                 <h:outputText value="#{staffLoanManagedBean.selectedLoan.loanType.name}" />
 
                                 <h:outputText value="Loan Principal: " />
-                                <h:outputText value="#{staffLoanManagedBean.selectedLoan.principal}" />
+                                <h:outputText value="#{staffLoanManagedBean.selectedLoan.principal}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
 
                                 <h:outputText value="Loan Downpayament: " />
-                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.downpayment}"  />
+                                <p:inputText value="#{staffLoanManagedBean.selectedLoan.downpayment}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
 
                                 <h:outputText value="Loan Term: " />
                                 <p:inputText value="#{staffLoanManagedBean.selectedLoan.loanTerm}"  />
