@@ -18,7 +18,7 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Select your debit card </div>
+                    <div class="CardBigTopic"> Select the debit card you want to cancel</div>
                     <div class="Separator"></div>
 
 
@@ -29,15 +29,20 @@
                                     <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
                                     <f:selectItems value="#{debitCardManagedBean.debitCardList}" />
                                 </p:selectOneMenu>  
+
+                                <p:selectOneMenu id="cancelReason" value="#{debitCardManagedBean.cancelReason}">
+                                    <f:selectItem itemLabel="lost" itemValue="Debit Card is lost" />
+                                    <f:selectItem itemLabel="stolen" itemValue="Debit Card is stolen" />
+                                    <f:selectItem itemLabel="fradulent" itemValue="fradulent Transaction" />
+                                    <f:selectItem itemLabel="unsatisficcation" itemValue="Don't satisfy with the card service" />
+                                </p:selectOneMenu>
                             </div>
                             <div class="Container30 Responsive50">
-                                <p:commandButton value="Submit" id="goToCloseSavingAccount"
-                                                 actionListener="#{debitCardManagedBean.viewDebitCardSummary}"/>    
+                                <p:commandButton value="Submit" id="goToCancelDebitCard"
+                                                 actionListener="#{debitCardManagedBean.cancelDebitCard}"/>    
                             </div>
                         </h:form>
                     </div>
-
-
                 </div>
             </div> 
 
