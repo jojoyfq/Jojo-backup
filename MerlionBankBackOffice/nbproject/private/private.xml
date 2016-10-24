@@ -2,7 +2,9 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+
         <group>
+
             <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/web/BillManagement/deleteBankSelect.xhtml</file>
             <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/nbproject/private/private.xml</file>
             <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/FixedDeposit/FixedDepositNonTellerManagedBean.java</file>
@@ -10,6 +12,8 @@
             <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/DepositManagedBean/SavingAccountManagedBean.java</file>
             <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/BillManagement/BillStaffManagedBean.java</file>
             <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/TransferManagement/TransferManagedBean.java</file>
+
         </group>
+
     </open-files>
 </project-private>

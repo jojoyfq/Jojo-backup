@@ -70,6 +70,8 @@ public class DebitCardManagedBean implements Serializable {
     private String transactionAmount;
     private String chargebackDescription;
     private String debitCardNo;
+    //cancel debit card
+    private String cancelReason;
 
     
 
@@ -220,6 +222,12 @@ public class DebitCardManagedBean implements Serializable {
         } catch (UserHasNoSavingAccountException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+    
+    public void cancelDebitCard(ActionEvent event){
+        if(debitCardSelected!=null && cancelReason!=null){
+            
         }
     }
     
@@ -392,6 +400,14 @@ public class DebitCardManagedBean implements Serializable {
 
     public void setDebitCardNo(String debitCardNo) {
         this.debitCardNo = debitCardNo;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
     
     

@@ -35,8 +35,8 @@ public class PayMeResources {
     SendTFAResponse sendTFAResponse;
     IsValidOTPResponse isValidOTPResponse;
     GetPhoneNumberResponse getPhoneNumberResponse;
-    String merlionBankIC;
-    String phoneNumStr;
+    static String merlionBankIC;
+    static String phoneNumStr;
 
     public PayMeResources() {
     }
@@ -75,14 +75,16 @@ public class PayMeResources {
     @POST
     @Path(value = "isValidPassword")
     @Produces(MediaType.APPLICATION_JSON)
-    public IsValidPasswordResponse isValidPassword(@FormParam("customerpaymepassword") String password) {
+    public IsValidPasswordResponse isValidPassword(@FormParam("customerpaymephonenumber") String phoneNum,
+            @FormParam("customerpaymepassword") String password) {
 
         boolean checkValidity;
 
-        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber("ruijia");
+//        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber("ruijia");
 //        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
-
-        checkValidity = payMeSessionBeanLocal.checkPayMeLogin(phoneNumber, password);
+        System.out.println("Phone Number is " + phoneNum);
+        System.out.println("Password is " + password);
+        checkValidity = payMeSessionBeanLocal.checkPayMeLogin(phoneNum, password);
         if (checkValidity == true) {
             isValidPasswordResponse = new IsValidPasswordResponse(0, "", checkValidity);
         } else {
@@ -97,23 +99,29 @@ public class PayMeResources {
     @Produces(MediaType.APPLICATION_JSON)
     public SendTFAResponse getOneTimePassword() {
         try {
-            //        payMeSessionBeanLocal.sendTwoFactorAuthentication(merlionBankIC);
-            payMeSessionBeanLocal.sendTwoFactorAuthentication("ruijia");
+//            payMeSessionBeanLocal.sendTwoFactorAuthentication(merlionBankIC);
+            System.out.println("merlion bank ic is " + merlionBankIC);
+            payMeSessionBeanLocal.sendTwoFactorAuthentication(merlionBankIC);
         } catch (TwilioRestException ex) {
             return new SendTFAResponse(1, "Send OTP failed", false);
         }
-        return new SendTFAResponse(0, "", true);
+        return new SendTFAResponse(0, "Send OTP Successfully", true);
     }
 
     @POST
     @Path(value = "isValidOTP")
     @Produces(MediaType.APPLICATION_JSON)
     public IsValidOTPResponse isValidOTP(@FormParam("OneTimePassword") String OTPString) {
-//        payMeSessionBeanLocal.verifyTwoFactorAuthentication(merlionBankIC, OTPString);
+
         boolean checkOTPValidity;
 
-        checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication("ruijia", OTPString);
+        System.out.println("IC is " + merlionBankIC);
+        System.out.println("OTP is " + OTPString);
+        checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication(merlionBankIC, OTPString);
+
+//        checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication("ruijia", OTPString);
         if (checkOTPValidity == true) {
+            System.out.println("Check OTP validity successfully");
             return new IsValidOTPResponse(0, "", true);
         } else {
             return new IsValidOTPResponse(1, "Invalid OTP", false);
@@ -126,10 +134,10 @@ public class PayMeResources {
     @Produces(MediaType.APPLICATION_JSON)
     public GetPhoneNumberResponse getPhoneNumberString() {
 
-//        String phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
-        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
+        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
+//        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
         if (phoneNumStr.isEmpty()) {
-            return new GetPhoneNumberResponse(1, "Empty Phone Number String", "");
+            return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
         } else {
             return new GetPhoneNumberResponse(0, "", phoneNumStr);
         }
@@ -143,8 +151,8 @@ public class PayMeResources {
 
         List<String> savingAccountsList;
         try {
-//        List<String> savingAccountsList = payMeSessionBeanLocal.getSavingAccountString(merlionBankIC);
-            savingAccountsList = payMeSessionBeanLocal.getSavingAccountString("ruijia");
+            savingAccountsList = payMeSessionBeanLocal.getSavingAccountString(merlionBankIC);
+//            savingAccountsList = payMeSessionBeanLocal.getSavingAccountString("ruijia");
         } catch (UserHasNoSavingAccountException ex) {
             return new GetSavingAccountsResponse(1, "No Saving Account Found", Arrays.asList(""));
         }
@@ -157,14 +165,17 @@ public class PayMeResources {
     public CreatePayMeAccountResponse createPayMeAccount(@FormParam("savingAccountStr") String savingAccountStr,
             @FormParam("payMePassword") String payMePassword) {
 
+        System.out.println("Saving Account String is " + savingAccountStr);
+        System.out.println("PayMe password is " + payMePassword);
+
         boolean success;
         String savingAccountNo = savingAccountStr.split("-")[0].trim();
-//        success = payMeSessionBeanLocal.createPayMe(merlionBankIC, savingAccountNo, phoneNumStr, payMePassword);
-        success = payMeSessionBeanLocal.createPayMe("ruijia", savingAccountNo, "+6584527086", payMePassword);
+        success = payMeSessionBeanLocal.createPayMe(merlionBankIC, savingAccountNo, phoneNumStr, payMePassword);
+//        success = payMeSessionBeanLocal.createPayMe("ruijia", savingAccountNo, "+6584527086", payMePassword);
 
         if (success == true) {
             return new CreatePayMeAccountResponse(0, "", true);
-        }else{
+        } else {
             return new CreatePayMeAccountResponse(1, "PayMe account exists", false);
         }
 

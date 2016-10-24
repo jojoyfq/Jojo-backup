@@ -42,7 +42,7 @@ public List<Loan> customerUpdateLoan(Long customerId,Long loanId, BigDecimal pri
      
      //early redemption-choose redemption method
      //early redemption- choose pay my saving account and display saving account (using function above)
-     public Loan applyEarlyRedemption(Long customerId, Long loanId,Long savingAccountId)throws NotEnoughAmountException;
+    public Loan applyEarlyRedemption(Long customerId, Long loanId,Long savingAccountId)throws NotEnoughAmountException;
    
       //staff and customer create existing account
    //public List<Loan> CreateExistingLoanAccount(Long customerId,BigDecimal monthlyIncome,Long loanTypeId,BigDecimal principal,BigDecimal downpayment,Integer loanTerm,Date startDate )throws LoanTermInvalidException,EmailNotSendException;

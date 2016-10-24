@@ -6,6 +6,7 @@
 package LoanManagedBean;
 
 import CommonEntity.Customer;
+import CommonEntity.Session.AccountManagementSessionBeanLocal;
 //import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.SavingAccount;
@@ -18,9 +19,15 @@ import LoanEntity.Loan;
 import LoanEntity.LoanType;
 import LoanEntity.Session.LoanApplicationSessionBeanLocal;
 import LoanEntity.Session.LoanSessionBeanLocal;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +42,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -49,6 +58,9 @@ public class CustomerLoanManagedBean implements Serializable {
     private LoanSessionBeanLocal lsbl;
     @EJB
     private LoanApplicationSessionBeanLocal lasbl;
+     @EJB
+    AccountManagementSessionBeanLocal amsbl;
+
     @Inject
     private LogInManagedBean logInManagedBean;
     /**
@@ -91,7 +103,10 @@ public class CustomerLoanManagedBean implements Serializable {
     private Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
     private Map<String, String> loanCategories;
     private Map<String, String> loanNames;
+    private BigDecimal earlyInterest;
+ UploadedFile file;
 
+	
     public CustomerLoanManagedBean() {
     }
 
@@ -225,7 +240,7 @@ public class CustomerLoanManagedBean implements Serializable {
         }
     }
 
-    public String displayLoanPackageDetail(ActionEvent event) {
+    public String displayLoanPackageDetail(String loanName) {
         System.out.println("****************Selected loan name to display " + loanName);
 
         detail = lasbl.displayPackageDetail(loanName);
@@ -233,6 +248,7 @@ public class CustomerLoanManagedBean implements Serializable {
 
         return detail;
     }
+    
 
     public void customerApplyLoan(ActionEvent event) throws EmailNotSendException, LoanTermInvalidException {
 
@@ -266,6 +282,50 @@ public class CustomerLoanManagedBean implements Serializable {
         }
 
     }
+    
+       public void fileUploadListener(FileUploadEvent e) throws IOException {
+  
+ // Get uploaded file from the FileUploadEvent
+         this.file = e.getFile();
+     //    InputStream input = e.getFile().getInputstream();
+         
+      //   File inputFile = new File(e.getFile().getFileName());
+ 
+         // Get uploaded file from the FileUploadEvent
+    //     this.file = e.getFile();
+ //                customer.
+ //                System.out.println("");
+         // Print out the information of the file
+         System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
+         System.out.println("Uploade file Customer Ic: "+customer.getIc());
+       // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
+        String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" +customer.getIc() +"\\"+file.getFileName();
+       // String savedFileName = path + "/" + uploadedFile.getFileName();
+    //    File fileToSave = new File(savedFileName);
+        File fileToSave = new File(destPath);
+        fileToSave.getParentFile().mkdirs();
+        fileToSave.delete();
+        //Generate path file to copy file
+        Path folder = Paths.get(destPath);
+        Path fileToSavePath = Files.createFile(folder);
+        //Copy file to server
+        InputStream input = e.getFile().getInputstream();
+        Files.copy(input, fileToSavePath, StandardCopyOption.REPLACE_EXISTING);
+// String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "Sxiaojing" ;d
+ 
+//         File destFile = new File(destPath);
+//         FileUtils.forceMkdir(destFile);
+//         FileUtils.copyInputStreamToFile(input, destFile);
+        //FileUtils.copyFileToDirectory(inputFile, destFile);
+         System.out.println("File uploaded successfully!");
+         amsbl.setFileDestination(customer.getId(),  fileToSave.getParentFile().getName());
+          FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+ 
+     }
+
+
 
     public List<Loan> customerViewAllLoans(Long id) throws ListEmptyException {
         try {
@@ -287,13 +347,13 @@ public class CustomerLoanManagedBean implements Serializable {
     }
 
     public void customerUpdateLoan(RowEditEvent event) {
-  selectedLoan= (Loan) event.getObject();
-  loanId = selectedLoan.getId();
+        selectedLoan = (Loan) event.getObject();
+        loanId = selectedLoan.getId();
         System.out.println("*************Selected loan to update - loan ID is " + loanId);
         System.out.println("*************Selected loan to update - loan downpayment is " + selectedLoan.getDownpayment());
         System.out.println("*************Selected loan to update - loan loanTerm is " + selectedLoan.getLoanTerm());
 
-        oneCustomerAllLoans = lsbl.customerUpdateLoan(customerId, loanId,selectedLoan.getPrincipal(), selectedLoan.getDownpayment(), selectedLoan.getLoanTerm(), startDate);
+        oneCustomerAllLoans = lsbl.customerUpdateLoan(customerId, loanId, selectedLoan.getPrincipal(), selectedLoan.getDownpayment(), selectedLoan.getLoanTerm(), startDate);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been updated successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
     }
@@ -302,6 +362,7 @@ public class CustomerLoanManagedBean implements Serializable {
         //   selectedLoan =(Loan) event.getComponent().getAttributes().get("selectedLoan");
         System.out.println("*************Selected loan to cancel - loan ID is " + loanId);
         // loanId = selectedLoan.getId();
+        customerId = logInManagedBean.getCustomerId();
         oneCustomerAllLoans = lsbl.customerCancelLoan(customerId, loanId);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been canceled successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -314,6 +375,8 @@ public class CustomerLoanManagedBean implements Serializable {
 
             System.out.println("*************Selected loan to accept - loan ID is " + loanId);
             // loanId = selectedLoan.getId();
+            customerId = logInManagedBean.getCustomerId();
+
             oneCustomerAllLoans = lsbl.customerAcceptLoan(customerId, loanId);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully accepted the loan!  Detailed informaiton has been sent to your email!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -342,8 +405,30 @@ public class CustomerLoanManagedBean implements Serializable {
             customerId = logInManagedBean.getCustomerId();
             selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
             System.out.println("******Selected saving account id " + selectedSavingAccout.getId());
+            System.out.println("******Selected loan account id " + selectedLoan.getId());
+
             paidAmount = lsbl.loanPayBySaving(customerId, selectedSavingAccout.getId(), selectedLoan.getId());
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have paid " + selectedLoan.getMonthlyPayment() + " successfully!");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have paid S$" + selectedLoan.getMonthlyPayment() + " successfully!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } catch (NotEnoughAmountException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+    public void customerDisplayEarlyPayoffInterest(ActionEvent event){
+        System.out.println("******selected loan to disaply full amount is "+selectedLoan.getId());
+        earlyInterest = lsbl.displayRedemptionInterest(selectedLoan.getId());
+      selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
+    }
+
+    public void customerEarlyRedemption(ActionEvent event) throws NotEnoughAmountException {
+
+        try {
+            System.out.println("******Selected saving account id " + selectedSavingAccout.getId());
+            System.out.println("******Selected loan account id " + selectedLoan.getId());
+            customerId = logInManagedBean.getCustomerId();
+            lsbl.applyEarlyRedemption(customerId, selectedLoan.getId(), selectedSavingAccout.getId());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully paid off your loan "+selectedLoan.getLoanType().getName()+" ("+selectedLoan.getId()+")");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (NotEnoughAmountException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -698,4 +783,18 @@ public class CustomerLoanManagedBean implements Serializable {
         this.selectedSavingAccout = selectedSavingAccout;
     }
 
+    public BigDecimal getEarlyInterest() {
+        return earlyInterest;
+    }
+
+    public void setEarlyInterest(BigDecimal earlyInterest) {
+        this.earlyInterest = earlyInterest;
+    }
+public UploadedFile getFile() {
+		return file;
+	}
+
+	public void setFile(UploadedFile file) {
+		this.file = file;
+	}
 }

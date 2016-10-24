@@ -21,10 +21,16 @@ import javax.ejb.Local;
 public interface WealthApplicationSessionBeanLocal {
 
     public Customer createDiscretionaryAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException;
-  public void createDiscretionaryAccountExistingCustomer(Long customerID) throws EmailNotSendException;
-  public Customer tellerCreateDiscretionaryAccount(Long staffId,String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String enterPassword) throws UserExistException, EmailNotSendException;
-public Long searchCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
-public void staffCreateDiscretionaryAccountExistingCustomer(Long staffId, Long customerID) throws EmailNotSendException;
-public String verifyDiscretionaryAccountBalance(String ic);
+
+    public void createDiscretionaryAccountExistingCustomer(Long customerID) throws EmailNotSendException;
+
+    public Customer tellerCreateDiscretionaryAccount(Long staffId, String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String enterPassword) throws UserExistException, EmailNotSendException;
+
+    public Long searchCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
+
+    public void staffCreateDiscretionaryAccountExistingCustomer(Long staffId, Long customerID) throws EmailNotSendException;
+
+    //Customer activate account 2nd step, same as saving account, need to verify balance before update password
+    public String verifyDiscretionaryAccountBalance(String ic);
 
 }

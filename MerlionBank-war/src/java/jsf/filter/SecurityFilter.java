@@ -48,7 +48,7 @@ public class SecurityFilter implements Filter {
                     && (!requestServletPath.equals("/CustomerManagement/ResetPasswordVerifyCustomerDetails.xhtml")) && (!requestServletPath.equals("/CustomerManagement/SubmitTwoFA.xhtml"))
                     && (!requestServletPath.equals("/CustomerManagement/ResetPassword.xhtml")) && (!requestServletPath.equals("/CustomerManagement/createFixedDepositAccount.xhtml"))
                     && (!requestServletPath.equals("/CustomerManagement/configureFixedDepositAccount.xhtml")) && (!requestServletPath.equals("/CustomerManagement/CustomerAccountActivation.xhtml"))
-                    && (!requestServletPath.equals("/CustomerManagement/ResetInitialPassword.xhtml")) && (!requestServletPath.equals("/customerSuccessPageWOLogIn.xhtml"))) {
+                    && (!requestServletPath.equals("/CustomerManagement/ResetInitialPassword.xhtml")) && (!requestServletPath.equals("/customerSuccessPageWOLogIn.xhtml"))&& (!requestServletPath.equals("/CustomerManagement/uploadFile.xhtml"))) {
                 System.out.println("Check Security Filter");
 
                 Boolean isLogin = (httpSession.getAttribute("isLogin") != null) ? ((Boolean) httpSession.getAttribute("isLogin")) : (false);
