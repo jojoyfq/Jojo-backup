@@ -200,7 +200,7 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
     }
 
     @Override
-    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount) {
+    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount, String merchant) {
 
         BigDecimal posAmount = new BigDecimal(amount);
         Long cardNoL = Long.parseLong(cardNo);
@@ -226,13 +226,14 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
                     BigDecimal updatedBalance = debitCard.getSavingAccount().getBalance().subtract(posAmount);
                     debitCard.getSavingAccount().setAvailableBalance(updatedAvailable);
                     debitCard.getSavingAccount().setBalance(updatedBalance);
+                    em.persist(debitCard);
 
                     Date currentTime = Calendar.getInstance().getTime();
                     java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-                    TransactionRecord transactionRecord = new TransactionRecord("POS", posAmount, null, "settled", cardNo + ", Cold Storage", currentTimestamp, debitCard.getSavingAccount().getAccountNumber(), null, debitCard.getSavingAccount(), "MerlionBank", null);
-                    debitCard.getSavingAccount().getTransactionRecord().add(transactionRecord);
+                    DebitCardTransaction transactionRecord = new DebitCardTransaction("POS", posAmount, null, "settled", cardNo + "," +merchant, currentTimestamp, debitCard.getSavingAccount().getAccountNumber(), null, debitCard.getSavingAccount(), "MerlionBank", null,cardNoL,"VISA");
                     em.persist(transactionRecord);
+                    debitCard.getDebitCardTransaction().add(transactionRecord);
                     em.flush();
                     return true;
                 } else {
