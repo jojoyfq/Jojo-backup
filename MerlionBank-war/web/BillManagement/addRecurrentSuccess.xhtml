@@ -21,7 +21,7 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Add a GIRO Arrangement </div>
+                    <div class="CardBigTopic"> Add Recurrent Bill Success </div>
                     <div class="Separator"></div>
 
                     <div class="Container100 ui-fluid">
@@ -29,33 +29,31 @@
                             <div class="Card">
                                 <div class="Container10"></div>
                                 <div class="Container80">
-                                    <p:panel id="panel" header="Add GIRO">
+                                    <p:panel id="panel" header="Add Recurrent">
                                         <p:messages id="msgs" />                      
-                                        <h:panelGrid columns="2" id="addGIROPanel" cellpadding="5"> 
+                                        <h:panelGrid columns="2" id="addRecurrentPanel" cellpadding="5"> 
 
                                             <h:outputLabel for="bo" value="Billing Organization:" />
-                                            <p:selectOneMenu id="boSelect" value="#{billCustomerManagedBean.boName}" >
-                                                <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="false"  />
-                                                <f:selectItems value="#{billCustomerManagedBean.boNames}" />
-                                            </p:selectOneMenu>
-
+                                            <h:outputLabel for="boName" value ="#{billCustomerManagedBean.boName}" />
                                             <h:outputLabel for="billReference" value="Bill Referrence:" />
-                                            <p:inputText id="billReference" value="#{billCustomerManagedBean.billReference}" label="billReference" required="true" >
-                                            </p:inputText>
+                                            <h:outputLabel value="#{billCustomerManagedBean.billReference}" />
 
-                                            <h:outputLabel for="limit" value="Deduction limit(S$):" />
-                                            <p:inputText id="limit" value="#{billCustomerManagedBean.limit}" label="name" required="true" >
-                                                <p:keyFilter regEx="/[\d\-\.]/"/>
-                                            </p:inputText>
+                                            <h:outputLabel for="amount" value="Amount(S$):" />
+                                            <h:outputLabel value="#{billCustomerManagedBean.amount}" />
 
-                                            <h:outputLabel for="name" value="Name: " />
-                                            <h:outputLabel value="#{billCustomerManagedBean.customerName}" />
+                                            <h:outputLabel for="Frequency" value="Frequency(in weeks):" />
+                                            <h:outputLabel value="#{billCustomerManagedBean.frequency}" />
+                                            <h:outputLabel for="times" value="Number of total payments:" />
+                                            <h:outputLabel id="times" value="#{billCustomerManagedBean.times}" />
+
+                                           <h:outputLabel for="startDate" value="Start Date:" />
+                                            <h:outputLabel value="#{billCustomerManagedBean.startDate}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputLabel>
 
                                             <h:outputLabel for="savingAccount" value="Saving Account:" />
-                                            <p:selectOneMenu id="savingAccount" value="#{billCustomerManagedBean.savingAcctNum}" >
-                                                <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="false"  />
-                                                <f:selectItems value="#{savingAccountManagedBean.savingAccountNumberList}" />
-                                            </p:selectOneMenu>
+                                            <h:outputLabel id="savingAccount" value="#{billCustomerManagedBean.savingAcctNum}" />
+                                       
 
                                         </h:panelGrid>
                                     </p:panel>
@@ -65,7 +63,7 @@
                                 <div class="EmptyBox20"></div>
                                 <div class="Container30"></div>
                                 <div class="Container40">
-                                    <p:commandButton update = "panel" actionListener="#{billCustomerManagedBean.invokeOTP}" value="Submit" />
+                                    <p:commandButton actionListener="#{billCustomerManagedBean.goToDashboard(event)}" value="Back" />
                                 </div>
                                 <div class="Container30"></div>
                                 <div class="EmptyBox20"></div>

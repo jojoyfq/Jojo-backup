@@ -8,6 +8,7 @@ package BillEntity.Session;
 import BillEntity.BillingOrganization;
 import BillEntity.OtherBank;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -47,6 +48,8 @@ public interface BillSessionBeanLocal {
     public int deleteBank(String bankName);
 
     public boolean addGIROArrangement(String customerName, String boName, BigDecimal limit, Long savingAcctNum, String billReference);
+
+    public boolean addRecurrentArrangement(String boName, BigDecimal amount, Long savingAccountNumber, String billReference, Integer times, Integer interval, Date StartDate);
 
     
 }
