@@ -7,6 +7,7 @@ package CardManagedBean;
 
 import CardEntity.DebitChargeback;
 import CardEntity.DebitCard;
+import CardEntity.DebitCardTransaction;
 import CardEntity.Session.DebitCardSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
@@ -18,6 +19,7 @@ import Exception.UserHasNoSavingAccountException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -70,8 +72,11 @@ public class DebitCardManagedBean implements Serializable {
     private String transactionAmount;
     private String chargebackDescription;
     private String debitCardNo;
-
-    
+    //cancel debit card
+    private String cancelReason;
+    private DebitCard debitCardForClose;
+    //get debitcard transaction record
+    List<DebitCardTransaction> debitCardTransaction = new ArrayList();
 
     @PostConstruct
     public void init() {
@@ -103,9 +108,10 @@ public class DebitCardManagedBean implements Serializable {
             System.out.print("dashboard to activate debit card encounter error!");
         }
     }
-    
-    public void dashboardToViewDebitSummary(ActionEvent event){
+
+    public void dashboardToViewDebitSummary(ActionEvent event) {
         try {
+//            dcsb.insertDebitCardTransactionForTesting(customerID);
             debitCardList = dcsb.getDebitCardString(customerID);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/viewDebitCardSummary_selectCard.xhtml");
@@ -113,8 +119,8 @@ public class DebitCardManagedBean implements Serializable {
             System.out.print("dashboard to view Debit Card Summary encounter error!");
         }
     }
-    
-    public void dashboardToViewDebitCard(ActionEvent event){
+
+    public void dashboardToViewDebitCard(ActionEvent event) {
         try {
             debitCards = dcsb.getDebitCard(customerID);
             FacesContext.getCurrentInstance().getExternalContext()
@@ -123,13 +129,23 @@ public class DebitCardManagedBean implements Serializable {
             System.out.print("dashboard to view Debit Card encounter error!");
         }
     }
-    
-    public void dashboardToChargeback(ActionEvent event){
+
+    public void dashboardToChargeback(ActionEvent event) {
         try {
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/debitCardChargeback.xhtml");
         } catch (Exception e) {
             System.out.print("dashboard to Debit Card Chargeback encounter error!");
+        }
+    }
+
+    public void dashboardToCancelDebitCard(ActionEvent event) {
+        try {
+            debitCardList = dcsb.getDebitCardStringForClose(customerID);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/debitCardCancel_selectCard.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to Cancel Debit Card encounter error!");
         }
     }
 
@@ -162,14 +178,18 @@ public class DebitCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/debitCardActivateSuccess.xhtml");
         }
     }
-    
-    public void viewDebitCardSummary(ActionEvent event){
-        if(debitCardSelected==null){
+
+    public void viewDebitCardSummary(ActionEvent event) throws IOException {
+        if (debitCardSelected != null) {
+            String[] split = debitCardSelected.split(",");
+            Long debitCardNo = Long.parseLong(split[0]);
+            debitCardTransaction = dcsb.getDebitCardTransaction(debitCardNo);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/viewDebitCardSummary.xhtml");
+            
+        } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a debit card!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }else{
-            String[] split = debitCardSelected.split(",");
-            Long debitCardNo = Long.parseLong(split[0]); 
         }
     }
 
@@ -178,21 +198,21 @@ public class DebitCardManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/CardManagement/debitCardApply.xhtml");
     }
-    
-    public void chargeback(ActionEvent event) throws ChargebackException, IOException{
-        if((merchantName!=null) && (transactionDate!=null) && (transactionAmount!=null) && (chargebackDescription!=null) &&(debitCardNo !=null)){
+
+    public void chargeback(ActionEvent event) throws ChargebackException, IOException {
+        if ((merchantName != null) && (transactionDate != null) && (transactionAmount != null) && (chargebackDescription != null) && (debitCardNo != null)) {
             BigDecimal amount = new BigDecimal(transactionAmount);
-            try{
-            dcsb.createChargeback(merchantName, transactionDate, amount, chargebackDescription, debitCardNo);
-            FacesContext.getCurrentInstance().getExternalContext()
-                .redirect("/MerlionBank-war/CardManagement/debitCardChargebackSuccess.xhtml");
-            }catch(ChargebackException e){
+            try {
+                dcsb.createChargeback(merchantName, transactionDate, amount, chargebackDescription, debitCardNo);
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/CardManagement/debitCardChargebackSuccess.xhtml");
+            } catch (ChargebackException e) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", e.getMessage());
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
-        }else{
+        } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in the blank box!");
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
 
@@ -222,8 +242,28 @@ public class DebitCardManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
-    
+
+    public void showDebitCardDetail(ActionEvent event) throws IOException {
+        if (debitCardSelected != null && cancelReason != null) {
+            debitCardForClose = dcsb.getDebitCardForClose(debitCardSelected);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/debitCardCancel_showDetail.xhtml");
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select the required field!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void cancelDebitCard(ActionEvent event) throws DebitCardException, IOException {
+        try {
+            dcsb.cancelDebitCard(debitCardSelected);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/debitCardCancelSuccess.xhtml");
+        } catch (DebitCardException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
 
     public void goBackToHomePage(ActionEvent event) {
         try {
@@ -329,7 +369,7 @@ public class DebitCardManagedBean implements Serializable {
     public void setConfirmedPassword(String confirmedPassword) {
         this.confirmedPassword = confirmedPassword;
     }
-    
+
     public List<String> getDebitCardList() {
         return debitCardList;
     }
@@ -345,7 +385,7 @@ public class DebitCardManagedBean implements Serializable {
     public void setDebitCardSelected(String debitCardSelected) {
         this.debitCardSelected = debitCardSelected;
     }
-    
+
     public List<DebitCard> getDebitCards() {
         return debitCards;
     }
@@ -353,7 +393,7 @@ public class DebitCardManagedBean implements Serializable {
     public void setDebitCards(List<DebitCard> debitCards) {
         this.debitCards = debitCards;
     }
-    
+
     public String getMerchantName() {
         return merchantName;
     }
@@ -392,6 +432,30 @@ public class DebitCardManagedBean implements Serializable {
 
     public void setDebitCardNo(String debitCardNo) {
         this.debitCardNo = debitCardNo;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public DebitCard getDebitCardForClose() {
+        return debitCardForClose;
+    }
+
+    public void setDebitCardForClose(DebitCard debitCardForClose) {
+        this.debitCardForClose = debitCardForClose;
+    }
+
+    public List<DebitCardTransaction> getDebitCardTransaction() {
+        return debitCardTransaction;
+    }
+
+    public void setDebitCardTransaction(List<DebitCardTransaction> debitCardTransaction) {
+        this.debitCardTransaction = debitCardTransaction;
     }
     
     

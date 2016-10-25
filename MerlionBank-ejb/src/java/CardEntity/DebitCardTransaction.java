@@ -16,14 +16,14 @@ import javax.persistence.Entity;
  * @author Bella
  */
 @Entity
-public class CardTransaction extends TransactionRecord {
+public class DebitCardTransaction extends TransactionRecord {
     private Long cardNumber;
     private String emv; // VISA, MASTERCARD, NETS
 
     
-    public CardTransaction(){}
+    public DebitCardTransaction(){}
     
-    public CardTransaction(String code, BigDecimal debit, BigDecimal credit, String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,SavingAccount savingAccount, String giverBank, String recipientBank, Long cardNumber, String emv){
+    public DebitCardTransaction(String code, BigDecimal debit, BigDecimal credit, String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,SavingAccount savingAccount, String giverBank, String recipientBank, Long cardNumber, String emv){
         super(code,debit,credit,status,description,transactionTime,giverAccountNum,recipientAccountNum,savingAccount, giverBank, recipientBank);
         this.cardNumber = cardNumber;
         this.emv = emv;

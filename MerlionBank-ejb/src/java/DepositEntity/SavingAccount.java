@@ -98,6 +98,8 @@ public class SavingAccount implements Serializable {
         this.status = status;
         this.customer = customer;
         this.savingAccountType = savingAccountType;
+        this.giroArrangement = new ArrayList<>();
+        this.recurrentBillArrangement = new ArrayList<>();
     }
 
     public DebitCard getDebitCard() {

@@ -17,6 +17,6 @@ public interface TestCustomerSessionBeanLocal {
 
     public void setStatus(Long customerId, BigDecimal balance);
 
-    public void setPassword(Long customerId);
+    public void setPassword(Long customerId, String password);
     
 }

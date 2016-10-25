@@ -9,12 +9,19 @@
             <title>insert customer and PayMe</title>
         </h:head>
         <h:body>
-            <h1>insert customer and PayMe new</h1>
+            <h1>Insert Customer</h1>
             <h:outputLabel value="Customer-->ruijia,ruijia9336" />
-            
             <h:form>  
 
-                <p:commandButton value="insert customer" actionListener="#{testCustomerManagedBean.insertTest(event)}" />
+                <p:commandButton value="insert customer" actionListener="#{testCustomerManagedBean.insertTestCustomer}" />
+            </h:form>
+            
+            <h1>Insert Customer and PayMe</h1>
+            <h:outputLabel value="Customer-->yanmeng,yanmeng0906" />
+            <h:outputLabel value="PayMe-->+6586552808,yanmeng0906" />
+            <h:form>  
+
+                <p:commandButton value="insert customer and payme" actionListener="#{testCustomerManagedBean.insertTestCustomerPayMe}" />
             </h:form>
                
 

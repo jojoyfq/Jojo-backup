@@ -41,7 +41,7 @@
                         <p:menuitem id="viewDebitCard" value="View My Debit Card" actionListener="#{debitCardManagedBean.dashboardToViewDebitCard}"/> 
                         <p:menuitem id="view_CardSummary" value="View Card Summary" actionListener="#{debitCardManagedBean.dashboardToViewDebitSummary}"/> 
                         <p:menuitem id="view_eStatement" value="View eStatement" /> 
-                        <p:menuitem id="Cancel_Debit_Card" value="Cancel Debit Card" /> 
+                        <p:menuitem id="Cancel_Debit_Card" value="Cancel Debit Card" actionListener="#{debitCardManagedBean.dashboardToCancelDebitCard}"/> 
                         <p:menuitem id="submit_Chargeback" value="Submit Chargeback Request" actionListener="#{debitCardManagedBean.dashboardToChargeback}" /> 
                     </p:submenu>
 
@@ -56,6 +56,7 @@
                     <p:menuitem id="Pay_My_Loan" value="Pay My Loan" actionListener="#{customerLoanManagedBean.goToViewAllMyLoans}"/> 
                     <p:menuitem id="Early_Payoff" value="Early Payoff" actionListener="#{customerLoanManagedBean.goToViewAllMyLoans}"/> 
 
+
                 </p:submenu>
 
                 <p:submenu id="pa_hierarchy" label="Bill and Payment">
@@ -64,6 +65,12 @@
 
                         <p:menuitem id="intraTransfer" value="To Merlion Account" actionListener="#{transferManagedBean.dashboardIntraTransfer}" /> 
                         <p:menuitem id="changeLimit" value="Change Transfer Limit" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />           
+
+                    </p:submenu>
+                    <p:submenu id="bill" label="Bill" icon="icon-plus">
+
+                        <p:menuitem id="addGIRO" value="Add GIRO Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddGIROArrangement(event)}" /> 
+                        <p:menuitem id="deleteGIRO" value="Delete GIRO Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />           
 
                     </p:submenu>
                 </p:submenu>

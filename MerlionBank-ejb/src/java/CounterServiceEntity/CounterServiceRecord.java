@@ -28,25 +28,16 @@ public class CounterServiceRecord implements Serializable {
     private String serviceType;
     private BigDecimal serviceCharge;
     private String description;
+    private Boolean isCredit; //received cash or hand out cash
+    private Timestamp time;
+    private BigDecimal cashTransction;
     
     @ManyToOne
-    private Teller teller;
+    private Staff staff;
     @ManyToOne
     private Customer customer;
 
-    public CounterServiceRecord(String serviceType, String description, Teller teller, Customer customer) {
-        this.serviceType = serviceType;
-        this.description = description;
-        this.teller = teller;
-        this.customer = customer;
-        BigDecimal temp = new BigDecimal("5.00");
-        this.serviceCharge = temp;
-          
-    }
- 
-    
-    
-    
+   
     public Long getId() {
         return id;
     }
