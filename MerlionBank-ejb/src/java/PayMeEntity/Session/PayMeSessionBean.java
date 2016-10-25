@@ -91,7 +91,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public boolean checkPayMeLogin(String phoneNumber, String password) {        
+    public boolean checkPayMeLogin(String phoneNumber, String password) {
         String phone;
         if (phoneNumber.substring(0, 1).equals("+")) {
             phone = phoneNumber;
@@ -294,6 +294,22 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             }
             return savingAccountString;
         }
+    }
+
+    @Override
+    public String getSavingAccountStringByPhone(String phone) {
+        if (phone.substring(0, 1).equals("+") == false) {
+            phone = "+" + phone;
+        }
+        System.out.println("Customer phoneNumber is: " + phone + "******");
+
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phone");
+        q.setParameter("phone", phone);
+        PayMe payme = (PayMe) q.getSingleResult();
+
+        String accountNo = payme.getSavingAccount().getAccountNumber().toString();
+        accountNo = accountNo + " - " +payme.getSavingAccount().getSavingAccountType().getAccountType();
+        return accountNo;
     }
 
     @Override
