@@ -80,6 +80,7 @@ public class BillCustomerManagedBean implements Serializable {
 
     public void dashboardAddRecurrentArrangement(ActionEvent event) throws IOException {
         customerId = logInManagedBean.getCustomerId();
+        customerIc = logInManagedBean.getIc();
         boNames = bsbl.viewBOName();
         savingAccountManagedBean.init();
         FacesContext.getCurrentInstance().getExternalContext()
@@ -93,7 +94,9 @@ public class BillCustomerManagedBean implements Serializable {
             DateTime today = new DateTime().withTimeAtStartOfDay();
             System.out.print("today time ..." + today);
             DateTime chosenDate = new DateTime(startDate);
-            if (chosenDate.isAfter(today)) {
+            System.out.print("start date ..."+startDate);
+            System.out.print("chosenDate ..."+chosenDate);
+            if (!chosenDate.isBefore(today)) {
                 System.out.print("start date checked");
                 amsbl.sendTwoFactorAuthentication(customerIc);
                 System.out.print("2FA SMS sent!!!!!!!");
