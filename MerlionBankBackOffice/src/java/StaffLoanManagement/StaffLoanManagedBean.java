@@ -231,6 +231,7 @@ public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
+    
 public void openDocs(ActionEvent event) throws IOException {
        try{
            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
@@ -427,6 +428,7 @@ public void openDocs(ActionEvent event) throws IOException {
             lmsbl.staffActivateLoan(loanId, loanDate);
             System.out.println("*****Customer IC to activate loan is " + customerIc);
             oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
+            
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been activated successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (UserNotExistException | ListEmptyException | UserNotActivatedException ex) {
