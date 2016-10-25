@@ -194,11 +194,11 @@ public class CustomerWealthManagedBean implements Serializable {
 
     public void customerDisplaySavingAccounts(ActionEvent event) throws ListEmptyException, IOException {
         try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/customerDisplayAllSaving.xhtml");
+           
             selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
             // customerId = logInManagedBean.getCustomerId();
             oneCustomerAllSavingAccts = wsbl.displaySavingAccounts(logInManagedBean.getCustomerId());
-
+ FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/customerDisplayAllSaving.xhtml");
         } catch (ListEmptyException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);

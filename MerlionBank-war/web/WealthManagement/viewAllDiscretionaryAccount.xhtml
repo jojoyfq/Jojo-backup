@@ -82,9 +82,9 @@
 
 
 
-                                        <p:column headerText="Pay By Saving Account" style="width: 80px;" >
+                                        <p:column headerText="Transfer by Saving Account" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
                                                     <f:attribute name="selectedLoan" value="#{loan}"  />
                                                 </p:commandButton>
                                             </center>
