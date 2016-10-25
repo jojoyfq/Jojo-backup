@@ -362,7 +362,7 @@ public void openDocs(ActionEvent event) throws IOException {
 
     public void staffRejectPending(ActionEvent event) throws EmailNotSendException {
         try {
-            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+        //    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
             loanId = selectedLoan.getId();
             System.out.println("*************Selected pending loan to view - loan ID is " + selectedLoan.getId());
             System.out.println("**************Selected pending loan to view - customer ic" + selectedLoan.getCustomer().getName());
