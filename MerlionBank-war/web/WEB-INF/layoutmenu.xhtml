@@ -70,7 +70,9 @@
                     <p:submenu id="bill" label="Bill" icon="icon-plus">
 
                         <p:menuitem id="addGIRO" value="Add GIRO Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddGIROArrangement(event)}" /> 
-                        <p:menuitem id="deleteGIRO" value="Delete GIRO Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />           
+                        <p:menuitem id="deleteGIRO" value="Delete GIRO Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />     
+                        <p:menuitem id="addRecurrent" value="Add Recurrent Bill Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddRecurrentArrangement(event)}" /> 
+                        <p:menuitem id="deleteRecurrent" value="Delete Recurrent Bill Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />     
 
                     </p:submenu>
                 </p:submenu>

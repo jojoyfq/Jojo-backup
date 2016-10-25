@@ -16,6 +16,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -23,6 +24,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
+import org.joda.time.DateTime;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -49,7 +51,11 @@ public class BillCustomerManagedBean implements Serializable {
     private String input2FA;
     private String otpSuccessRedirect;
     private Customer customer;
-    
+    private BigDecimal amount;
+    private Date startDate;
+    private Integer times;
+    private Integer frequency;
+
     @Inject
     private LogInManagedBean logInManagedBean;
     @Inject
@@ -69,13 +75,40 @@ public class BillCustomerManagedBean implements Serializable {
         savingAccountManagedBean.init();
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/BillManagement/addGIRO.xhtml");
-        otpSuccessRedirect = "/MerlionBank-war/BillManagement/addGIROSuccess.xhtml" ;
+        otpSuccessRedirect = "/MerlionBank-war/BillManagement/addGIROSuccess.xhtml";
+    }
+
+    public void dashboardAddRecurrentArrangement(ActionEvent event) throws IOException {
+        customerId = logInManagedBean.getCustomerId();
+        boNames = bsbl.viewBOName();
+        savingAccountManagedBean.init();
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/MerlionBank-war/BillManagement/addRecurrent.xhtml");
+        otpSuccessRedirect = "/MerlionBank-war/BillManagement/addRecurrentSuccess.xhtml";
     }
 
     public void invokeOTP(ActionEvent event) throws IOException, TwilioRestException {
-        amsbl.sendTwoFactorAuthentication(customerIc);
-        System.out.print("2FA SMS sent!!!!!!!");
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/OTP.xhtml");
+        //check recurrent date before proceed
+        if (otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/addRecurrentSuccess.xhtml")) {
+            DateTime today = new DateTime().withTimeAtStartOfDay();
+            System.out.print("today time ..." + today);
+            DateTime chosenDate = new DateTime(startDate);
+            if (chosenDate.isAfter(today)) {
+                System.out.print("start date checked");
+                amsbl.sendTwoFactorAuthentication(customerIc);
+                System.out.print("2FA SMS sent!!!!!!!");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/OTP.xhtml");
+            } else {
+                System.out.print("start date cannot be before today");
+                  FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Start date cannot be before today. Please try again.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+
+        } else {
+            amsbl.sendTwoFactorAuthentication(customerIc);
+            System.out.print("2FA SMS sent!!!!!!!");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/OTP.xhtml");
+        }
     }
 
     private boolean verify2FA(String input2FA) {
@@ -91,18 +124,33 @@ public class BillCustomerManagedBean implements Serializable {
         }
     }
 
-    public void addGIRO(ActionEvent event) throws IOException {
+    public void submitOTP(ActionEvent event) throws IOException {
         if (this.verify2FA(input2FA) == true) {
-            if (bsbl.addGIROArrangement(customerName, boName, limit, savingAcctNum, billReference) == true) {
-                System.out.print("add giro success");
-                FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
-            } else {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Unsuccessful! You have an existing GIRO arrangement with same BO and same reference.");
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
-
+            if (otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/addGIROSuccess.xhtml")) {
+                this.addGIRO();
+            }else if(otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/addRecurrentSuccess.xhtml")){
+                this.addRecurrent();
             }
+
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Security code is wrong, please try again.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        }
+    }
+
+    private void addRecurrent() throws IOException {
+        bsbl.addRecurrentArrangement(boName, amount, savingAcctNum, billReference, times, frequency, startDate);
+        System.out.print("add recurrent success");
+        FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
+    }
+
+    private void addGIRO() throws IOException {
+        if (bsbl.addGIROArrangement(customerName, boName, limit, savingAcctNum, billReference) == true) {
+            System.out.print("add giro success");
+            FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Unsuccessful! You have an existing GIRO arrangement with same BO and same reference.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         }
@@ -117,9 +165,49 @@ public class BillCustomerManagedBean implements Serializable {
         }
     }
 
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Integer getTimes() {
+        return times;
+    }
+
+    public void setTimes(Integer times) {
+        this.times = times;
+    }
+
+    public Integer getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(Integer frequency) {
+        this.frequency = frequency;
+    }
+
     /**
      * Creates a new instance of BillCustomerManagedBean
      */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
     public BillCustomerManagedBean() {
     }
 
