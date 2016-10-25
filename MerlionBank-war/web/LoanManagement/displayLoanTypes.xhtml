@@ -65,7 +65,7 @@
                                         <div class="EmptyBox20"></div>
                                         <div class="Container30"></div>
                                         <div class="Container40">
-                                            <p:commandButton actionListener="#{customerLoanManagedBean.displayLoanPackageDetail(customerLoanManagedBean.loanName)}" update=":form:msgDetail" onclick="PF('dlg1').show();"  icon="fa fa-info-circle"  styleClass="Fleft Fs14 White" value="View Loan Details" />
+                                            <p:commandButton actionListener="#{customerLoanManagedBean.displayLoanPackageDetail(customerLoanManagedBean.loanName)}" update=":form:msgDetail" oncomplete="PF('dlg1').show();"  icon="fa fa-info-circle"  styleClass="Fleft Fs14 White" value="View Loan Details" />
 
                                         </div>
                                         <p:dialog header="About" widgetVar="dlg1" modal="true" height="100">

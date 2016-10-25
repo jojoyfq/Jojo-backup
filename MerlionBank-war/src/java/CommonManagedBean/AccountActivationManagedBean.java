@@ -10,18 +10,16 @@ import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import Exception.PasswordTooSimpleException;
 import Exception.UserAlreadyActivatedException;
 import Exception.UserNotExistException;
+import WealthEntity.Session.WealthApplicationSessionBeanLocal;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -34,6 +32,8 @@ public class AccountActivationManagedBean implements Serializable {
 
     @EJB
     AccountManagementSessionBeanLocal amsbl;
+    @EJB
+    WealthApplicationSessionBeanLocal wasbl;
 
     private Customer customer;
     private Date dateOfBirth;
@@ -100,6 +100,8 @@ public class AccountActivationManagedBean implements Serializable {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
 
                 }
+                }else if(!customer.getDiscretionaryAccounts().isEmpty()){
+                wasbl.verifyDiscretionaryAccountBalance(customerIc);
                 }else{
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
