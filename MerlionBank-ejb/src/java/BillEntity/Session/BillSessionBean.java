@@ -8,6 +8,7 @@ package BillEntity.Session;
 import BillEntity.BillingOrganization;
 import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
+import BillEntity.RecurrentBillArrangement;
 import CommonEntity.Customer;
 import CommonEntity.Staff;
 import CustomerRelationshipEntity.StaffAction;
@@ -15,6 +16,7 @@ import DepositEntity.SavingAccount;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -238,6 +240,18 @@ public class BillSessionBean implements BillSessionBeanLocal {
         em.flush(); 
         return true;
         }
+    }
+    
+        @Override
+    public boolean addRecurrentArrangement(String boName, BigDecimal amount, Long savingAccountNumber, String billReference, Integer times, Integer interval, Date StartDate){
+        SavingAccount savingAcct = this.findSavingAccount(savingAccountNumber);
+        BillingOrganization bo = this.findBO(boName);
+        RecurrentBillArrangement recurrent = new RecurrentBillArrangement(amount,bo,billReference,savingAcct,times,StartDate,interval,times);
+        em.persist(recurrent);
+        savingAcct.getRecurrentBillArrangement().add(recurrent);
+        bo.getRecurrentBillArrangement().add(recurrent);
+        em.flush();
+        return true;
     }
    
     private SavingAccount findSavingAccount(Long accountNum){

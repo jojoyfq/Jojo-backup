@@ -40,7 +40,6 @@
                                             <div class="EmptyBox20"></div>
                                             
                                             <h:panelGrid columns="2" id="ResetPasswordVerifyCustomerDetails" cellpadding="5">                   
-]
 
                                                 <h:outputLabel for="twofa" value="Enter your code: " /> 
                                                 <p:inputText id="twofa" value="#{billCustomerManagedBean.input2FA}"  required="true" requiredMessage="Please fill in your code sent to your phone!" />
@@ -56,7 +55,7 @@
                                         <div class="EmptyBox20"></div>
                                         <div class="Container30"></div>
                                         <div class="Container40">
-                                            <p:commandButton update="ResetPasswordVerifyCustomerDetails" actionListener="#{billCustomerManagedBean.addGIRO(event)}" value="Submit" />
+                                            <p:commandButton update="ResetPasswordVerifyCustomerDetails" actionListener="#{billCustomerManagedBean.submitOTP(event)}" value="Submit" />
                                         </div>
                                         <div class="Container30"></div>
                                     </div>
