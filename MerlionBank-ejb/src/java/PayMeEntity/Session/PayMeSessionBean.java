@@ -81,8 +81,9 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             System.out.println("Username " + ic + " IC check pass!");
         }
 
+        System.out.println("inside session bean: " + password);
         if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())) {
-
+            System.out.println("Go in password not match");
             throw new PasswordNotMatchException("password does not match!");
         }
         return true;
@@ -90,8 +91,13 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public boolean checkPayMeLogin(String phoneNumber, String password) {
-        String phone = "+" + phoneNumber;
+    public boolean checkPayMeLogin(String phoneNumber, String password) {        
+        String phone;
+        if (phoneNumber.substring(0, 1).equals("+")) {
+            phone = phoneNumber;
+        } else {
+            phone = "+" + phoneNumber;
+        }
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phone);
         PayMe payme = (PayMe) q.getSingleResult();
@@ -302,10 +308,16 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public String getBalance(String phoneNumber) {
-        String phone = "+"+phoneNumber;
+
+        String phone;
+        if (phoneNumber.substring(0, 1).equals("+")) {
+            phone = phoneNumber;
+        } else {
+            phone = "+" + phoneNumber;
+        }
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phone");
         q.setParameter("phone", phone);
-        PayMe payme = (PayMe)q.getSingleResult();
+        PayMe payme = (PayMe) q.getSingleResult();
         return payme.getBalance().toString();
     }
 

@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive50">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <p:panel id="panel" >
+                                <p:messages id="msgs" />
+
+                                <h:panelGrid columns="3" id="createLoanAccount" cellpadding="5">                   
+                                    <h:outputLabel for="ic" value="IC:" />
+                                    <p:inputText id="ic" value="#{staffWealthManagedBean.customerIc}" label="IC" required="true" requiredMessage="Please input IC"/>
+                                    <p:message for="ic" display="icon" />
+
+                                    <h:outputLabel for="customerName" value="Name:" />
+                                    <p:inputText id="customerName" value="#{staffWealthManagedBean.customerName}" label="customerName" required="true" requiredMessage="Please input  name"/>
+                                    <p:message for="customerName" display="icon"/>
+
+                                    <p:outputLabel for="customerGender" value="Gender:" />
+                                    <p:selectOneRadio id="customerGender" value="#{staffWealthManagedBean.customerGender}">
+                                        <f:selectItem itemLabel="Female" itemValue="Female" />
+                                        <f:selectItem itemLabel="Male" itemValue="Male" />
+                                    </p:selectOneRadio>
+                                    <p:message for="customerGender" display="icon" />
+
+
+                                    <h:outputLabel for="customerDateOfBirth" value="Date of Birth:" />
+                                    <p:calendar id="customerDateOfBirth" value="#{staffWealthManagedBean.customerDateOfBirth}" locale="de" navigator="true"  required="true"  requiredMessage="Please input birthday"/>
+                                    <p:message for="customerDateOfBirth" display="icon" />
+
+                                    <h:outputLabel for="customerAddress" value="Address:" />
+                                    <p:inputText id="customerAddress" value="#{staffWealthManagedBean.customerAddress}" label="customerAddress" required="true" requiredMessage="Please input address"/>
+                                    <p:message for="customerAddress" display="icon" />
+
+
+                                    <h:outputLabel for="customerEmail" value="Email:" />
+                                    <p:inputText id="customerEmail" value="#{staffWealthManagedBean.customerEmail}" label="customerEmail" required="true" requiredMessage="Please input email"/>
+                                    <p:message for="customerEmail" display="icon" />
+
+
+                                    <h:outputLabel for="customerPhoneNumber" value="Phone Number:" />
+                                    <p:inputText id="customerPhoneNumber" value="#{staffWealthManagedBean.customerPhoneNumber}" label="customerPhoneNumber" required="true" requiredMessage="Please input phone number"/>
+                                    <p:message for="customerPhoneNumber" display="icon" />
+
+
+                                    <h:outputLabel for="customerOccupation" value="Occupation:" />
+                                    <p:inputText id="customerOccupation" value="#{staffWealthManagedBean.customerOccupation}" label="customerOccupation" required="true" requiredMessage="Please input Occupation"/>
+                                    <p:message for="customerOccupation" display="icon" />
+
+
+                                    <p:outputLabel for="customerFamilyInfo" value="Family Information:" />
+                                    <p:selectOneRadio id="customerFamilyInfo" value="#{staffWealthManagedBean.customerFamilyInfo}">
+                                        <f:selectItem itemLabel="Single" itemValue="Single" />
+                                        <f:selectItem itemLabel="Married" itemValue="Married" />
+                                        <f:selectItem itemLabel="Divorced" itemValue="Divorced" />
+                                    </p:selectOneRadio>
+                                    <p:message for="customerFamilyInfo" display="icon" />
+
+
+
+                                </h:panelGrid>
+
+
+                                <div class="EmptyBox20"></div>   
+
+
+
+
+                            </p:panel>
+
+                            <div class="EmptyBox20"></div>
+                            <div class="Container30"></div>
+                            <div class="Container40">
+                                <p:commandButton update="panel" actionListener="#{staffWealthManagedBean.staffCreateWealthForNewCustomer}" value="Submit" />
+                            </div>
+                            <div class="Container30"></div>
+
+
+                        </h:form>                                        
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

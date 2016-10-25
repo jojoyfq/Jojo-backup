@@ -18,30 +18,22 @@
         <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Select the debit card you want to cancel</div>
+                    <div class="CardBigTopic"> Select the debit card Type you want to make changes</div>
                     <div class="Separator"></div>
 
 
                     <div class="Container100 NoPadding Responsive50 ui-fluid">
                         <h:form>
                             <div class="Container70 Responsive50">
-                                <p:selectOneMenu id="debitCardList" value="#{debitCardManagedBean.debitCardSelected}">
+                                <p:selectOneMenu id="debitCardList" value="#{debitCardManagedBean.debitCardTypeSelected}">
                                     <f:selectItem itemLabel="Select Debit Card You Want To Cancel ..." itemValue="" noSelectionOption="true" />
-                                    <f:selectItems value="#{debitCardManagedBean.debitCardList}" />
+                                    <f:selectItems value="#{debitCardManagedBean.debitCardTypeList}" />
                                 </p:selectOneMenu>  
 
-
-                                <p:selectOneMenu id="cancelReason" value="#{debitCardManagedBean.cancelReason}">
-                                    <f:selectItem itemLabel="Select The reason you want to cancel debit card ..." itemValue="" noSelectionOption="true" />
-                                    <f:selectItem itemLabel="lost" itemValue="Debit Card is lost" />
-                                    <f:selectItem itemLabel="stolen" itemValue="Debit Card is stolen" />
-                                    <f:selectItem itemLabel="fradulent" itemValue="fradulent Transaction" />
-                                    <f:selectItem itemLabel="unsatisficcation" itemValue="Don't satisfy with the card service" />
-                                </p:selectOneMenu>
                             </div>
                             <div class="Container30 Responsive50">
-                                <p:commandButton value="Submit" id="goToCancelDebitCard"
-                                                 actionListener="#{debitCardManagedBean.showDebitCardDetail}"/>    
+                                <p:commandButton value="Submit" id="goToChangeDebitScheme"
+                                                 actionListener="#{debitCardManagedBean.showDebitCardTypeDetail}"/>    
                             </div>
                         </h:form>
                     </div>
