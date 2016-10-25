@@ -100,7 +100,6 @@ public class PayMeResources {
         return isValidPasswordResponse;
     }
 
-
     @POST
     @Path(value = "getOneTimePassword")
     @Produces(MediaType.APPLICATION_JSON)
@@ -175,6 +174,28 @@ public class PayMeResources {
             return new GetSavingAccountsResponse(1, "No Saving Account Found", Arrays.asList(""));
         }
         return new GetSavingAccountsResponse(0, "", savingAccountsList);
+    }
+
+    @POST
+    @Path(value = "getSavingAccountByPhoneNumber")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetSavingAccountByPhoneResponse getSavingAccountNoByPhoneNumber() {
+        String savingAccountNo;
+        if (isLoginPage == false) {
+            savingAccountNo = payMeSessionBeanLocal.getSavingAccountStringByPhone(phoneNumStr);
+            if (savingAccountNo.isEmpty()) {
+                return new GetSavingAccountByPhoneResponse(1, "No Saving Account Found", "");
+            } else {
+                return new GetSavingAccountByPhoneResponse(0, "", savingAccountNo);
+            }
+        } else {
+            savingAccountNo = payMeSessionBeanLocal.getSavingAccountStringByPhone(phoneNumLogInStr);
+            if (savingAccountNo.isEmpty()) {
+                return new GetSavingAccountByPhoneResponse(1, "No Saving Account Found", "");
+            } else {
+                return new GetSavingAccountByPhoneResponse(0, "", savingAccountNo);
+            }
+        }
     }
 
     @POST
