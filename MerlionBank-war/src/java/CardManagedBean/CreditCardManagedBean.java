@@ -91,10 +91,14 @@ public class CreditCardManagedBean implements Serializable {
         }
     }
     
-    public void sendCreditCardApplication(ActionEvent event){
+    public void sendCreditCardApplication(ActionEvent event) throws IOException{
         if(creditCardTypeSelected != null){
-            
-        }
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardApplySuccess.xhtml");
+        }else{
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a credit card type!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+                }
     }
 
     public void dashboardToCreateLoanAccount(ActionEvent event) {
