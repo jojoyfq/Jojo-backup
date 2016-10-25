@@ -13,10 +13,13 @@ import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import LoanEntity.Session.LoanApplicationSessionBeanLocal;
 import StaffManagement.staffLogInManagedBean;
+import WealthEntity.DiscretionaryAccount;
 import WealthEntity.Session.WealthApplicationSessionBeanLocal;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -57,7 +60,8 @@ public class StaffWealthManagedBean implements Serializable{
     private Long staffId;
     private Long customerId;
     UploadedFile file;
-
+    private List<DiscretionaryAccount> pendingDisAccount;
+    
     public UploadedFile getFile() {
         return file;
     }
@@ -78,6 +82,7 @@ public class StaffWealthManagedBean implements Serializable{
     @PostConstruct
     public void init() {
         staffId = slimb.getStaffId();
+        pendingDisAccount = new ArrayList<>();
     }
 
     public void goToApplyWealthAccountExistCustomer(ActionEvent event) throws IOException {
@@ -123,6 +128,12 @@ public class StaffWealthManagedBean implements Serializable{
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
+// public void staffViewPendingWealthApplications(ActionEvent event) throws IOException {
+//        System.out.println("**** go to view pending loans alr!");
+//        pendingDisAccount = wasbl.();
+//        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewPendingLoans.xhtml");
+//
+//    }
 
     public Customer getCustomer() {
         return customer;

@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container5 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container90 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Wealth Management System </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 NoPadding Responsive50 ui-fluid">
+
+                        <h:form id="form">
+                            <p:panel id="panel" header="Wealth Management Payment System - My Dicretionary Accounts" >
+
+                                <p:messages id="msgs" />
+
+                                <h:panelGrid columns="4" cellpadding="5">
+
+                                    <p:dataTable var="Wealth" value="#{customerWealthManagedBean.allWealthAccounts}"  editable="true" >
+                                        <f:facet name="header">
+                                            My Discretionary Accounts
+                                        </f:facet>
+                                        <p:ajax event="rowEdit" listener="#{customerLoanManagedBean.customerUpdateLoan}"  />
+
+                                        <p:column headerText="Wealth ID" style="width: 80px;">
+
+                                            <h:outputText value="#{Wealth.id}" />
+                                        </p:column>
+
+                                        <p:column headerText="Discretionary Account Number">
+
+                                            <h:outputText value="#{Wealth.accountNumber}" />
+                                        </p:column>
+
+                                        <p:column headerText="Balance">
+                                            <h:outputText value="#{Wealth.balance}" >
+                                                <f:convertNumber locale="en-US" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Interest">
+                                            <h:outputText value="#{Wealth.accumDailyInterest}" >
+                                                <f:convertNumber type="percent" minFractionDigits="2" />
+                                            </h:outputText>
+                                        </p:column>
+
+
+                                        <p:column headerText="Start Date">
+                                            <h:outputText value="#{Wealth.startDate}" > 
+                                                <f:convertDateTime pattern="MM/dd/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="End Date">
+                                            <h:outputText value="#{Wealth.endDate}" > 
+                                                <f:convertDateTime pattern="MM/dd/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Status ">
+                                            <h:outputText value="#{Wealth.status}" />
+                                        </p:column>
+
+
+
+
+
+
+                                        <p:column headerText="Pay By Saving Account" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                    <f:attribute name="selectedLoan" value="#{loan}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+
+                                        <p:column headerText="Early Payoff" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                    <f:attribute name="selectedLoan" value="#{loan}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+                                        <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/></div>
+
+                                    </p:dataTable>
+
+
+                                </h:panelGrid>
+
+
+                            </p:panel>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container5 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>
