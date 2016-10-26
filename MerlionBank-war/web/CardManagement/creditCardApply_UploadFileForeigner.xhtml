@@ -25,18 +25,18 @@
 
                             <p:panel style="margin-bottom:10px;" id="panel">
                                 <p:messages id="msgs" />
-                                <h:panelGrid columns="3" cellpadding="5">
+                                <h:panelGrid columns="2" cellpadding="5">
 
-                                    <h:outputLabel for="employmentPass" value="Upload the scanned version of your employment pass (PDF format): " /> 
-                                    <p:fileUpload value="#{creditCardManagedBean.employmentPass}" mode="simple" skinSimple="true"/>
-                                    <p:message for="employmentPass" display="icon" />
+                                    <h:outputLabel for="employmentPass" value="Upload your employeement pass scanned version (PDF format): " />                                 
+                                    <p:fileUpload fileUploadListener="#{creditCardManagedBean.handleEPUpload}" mode="advanced" dragDropSupport="false"
+                                  multiple="true" update="msgs" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/" />
                                     
-                                    <h:outputLabel for="salaryApprove" value="Upload your company letter certifying employment and salary in Singapore Dollar currency (PDF format): " /> 
-                                    <p:fileUpload value="#{creditCardManagedBean.salaryApprove}" mode="simple" skinSimple="true"/>
-                                    <p:message for="salaryApprove" display="icon" />
-                                   
-
-                                    <p:commandButton  update ="panel" icon="ui-icon-script"  value="Upload" actionListener="#{creditCardManagedBean.uploadFileForeigner}" rendered="true" />
+                                    <h:outputLabel for="salaryApprove" value="Upload your salary approve document (PDF format): " />                                 
+                                    <p:fileUpload fileUploadListener="#{creditCardManagedBean.handleSAUpload}" mode="advanced" dragDropSupport="false"
+                                  multiple="true" update="msgs" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/" />
+                                    
+                                                                   
+                                    <p:commandButton  update ="panel" icon="ui-icon-script"  value="Next" actionListener="#{creditCardManagedBean.uploadFileForeigner}" rendered="true" />
                                 </h:panelGrid>
                             </p:panel>
 

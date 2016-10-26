@@ -12,12 +12,12 @@
     <ui:define name="content">
 
         <!-- Left Column -->
-        <div class="Container5 NoPadding Responsive100">
+        <div class="Container20 NoPadding Responsive100">
 
         </div>
 
         <!-- Center Column -->
-        <div class="Container90 NoPadding Responsive50">
+        <div class="Container60 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
                     <div class="CardBigTopic"> Loan Management System </div>
@@ -55,6 +55,20 @@
 
                             </p:panelGrid>
                             <p:separator />
+   <div class="Container100">
+                                            <div class="Card">
+
+                                                <h1 class="CardBigTopic">Upload Documents </h1>
+                                                <h:form>
+                                                    <p:fileUpload id="file" value="#{customerLoanManagedBean.file}"  fileUploadListener="#{customerLoanManagedBean.fileUploadListener}" mode="advanced" dragDropSupport="false"
+                                                                  multiple="true" update="messages" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" required="true" requiredMessage="Please choose a document to upload!"/>
+                                                    <p:message for="file" display="icon"/>
+
+                                                    <p:growl id="messages" showDetail="true" />
+                                                </h:form>
+
+                                            </div>
+                                        </div>
 
 
                             <div class="Container10"></div>
@@ -66,23 +80,7 @@
                             </div>
 
 
-                            <div class="Container100 ui-fluid">
-                                <div class="Container20"></div>
-                                <div class="Container60 Responsive50">
-                                    <div class="Card ui-fluid">
-                                        <i class="fa fa-fw"></i>
-                                        <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
-                                        <div class="EmptyBox10"></div>
-                                        <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
-                                        <div class="EmptyBox10"></div>
-
-                                        <p:commandButton  value="Calculate" type="button" icon="fa fa-calculator"   styleClass="Fleft Fs14 White" onclick="PF('dlg1').show();"/>
-
-
-                                    </div>
-                                </div>
-                                <div class="Container20"></div>
-                            </div>
+                           
 
                         </h:form>
                         <h:form>  
@@ -119,8 +117,24 @@
         </div>
 
         <!-- Right Column -->
-        <div class="Container5 NoPadding Responsive50">
-        </div>
+        <div class="Container20 NoPadding Responsive50">
+           
+                              
+                                    <div class="Card ui-fluid">
+                                        <i class="fa fa-fw"></i>
+                                        <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
+                                        <div class="EmptyBox10"></div>
+                                        <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
+                                        <div class="EmptyBox10"></div>
+
+                                        <p:commandButton  value="Calculate" type="button" icon="fa fa-calculator"   styleClass="PurpleButton Fleft Fs14 White" onclick="PF('dlg1').show();"/>
+
+
+                                    </div>
+                                </div>
+                                <div class="Container20"></div>
+                      
+   
 
     </ui:define>
 

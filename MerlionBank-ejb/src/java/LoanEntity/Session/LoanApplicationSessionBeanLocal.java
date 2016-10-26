@@ -50,6 +50,5 @@ public Long createLoanAccountExisting(Long customerId, BigDecimal monthlyIncome,
  public Long findTypeIdByName(String name);
 public LoanType findTypeByName(String name);
  public Customer searchCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
- 
- 
+
 }

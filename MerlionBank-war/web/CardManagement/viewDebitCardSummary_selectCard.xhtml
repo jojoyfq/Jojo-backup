@@ -11,22 +11,22 @@
     <ui:define name="content">
 
         <!-- Left Column -->
-        <div class="Container25 NoPadding Responsive100">
+        <div class="Container10 NoPadding Responsive100">
         </div>
 
         <!-- Center Column -->
-        <div class="Container50 NoPadding Responsive50">
+        <div class="Container80 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
                     <div class="CardBigTopic"> Select your debit card </div>
                     <div class="Separator"></div>
 
 
-                    <div class="Container80 NoPadding Responsive50 ui-fluid">
+                    <div class="Container100 NoPadding Responsive50 ui-fluid">
                         <h:form>
                             <div class="Container70 Responsive50">
-                                <p:selectOneMenu id="savingAccountList" value="#{debitCardManagedBean.debitCardSelected}">
-                                    <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
+                                <p:selectOneMenu id="debitCardList" value="#{debitCardManagedBean.debitCardSelected}">
+                                    <f:selectItem itemLabel="Select Debit Card ..." itemValue="" noSelectionOption="true" />
                                     <f:selectItems value="#{debitCardManagedBean.debitCardList}" />
                                 </p:selectOneMenu>  
                             </div>
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Right Column -->
-        <div class="Container25 NoPadding Responsive50">
+        <div class="Container10 NoPadding Responsive50">
 
 
         </div>

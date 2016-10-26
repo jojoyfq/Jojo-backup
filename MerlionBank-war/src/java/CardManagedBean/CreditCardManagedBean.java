@@ -8,7 +8,9 @@ package CardManagedBean;
 import CardEntity.CreditCard;
 import CardEntity.Session.CreditCardSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,25 +90,41 @@ public class CreditCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileForeigner.xhtml");
         }
     }
-public void dashboardToCreateLoanAccount (ActionEvent event) {
- try {
+    
+    public void sendCreditCardApplication(ActionEvent event) throws IOException{
+        if(creditCardTypeSelected != null){
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardApplySuccess.xhtml");
+        }else{
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a credit card type!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+                }
+    }
+
+    public void dashboardToCreateLoanAccount(ActionEvent event) {
+        try {
 
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/LoanManagement/createLoanAccount.xhtml");
         } catch (Exception e) {
             System.out.print("dashboard to loan page error!");
         }
-    
-}
-    public void handleCPFUpload(FileUploadEvent event) {
+
+    }
+
+    public void handleCPFUpload(FileUploadEvent event) throws IOException {
         cpfContribution = event.getFile();
+        InputStream input = event.getFile().getInputstream();
         System.out.print(cpfContribution.getFileName());
+        System.out.println("Uploade file Customer ID: "+customerID);
         String fileName = cpfContribution.getFileName();
         String contentType = cpfContribution.getContentType();
 //        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
 //        RequestContext.getCurrentInstance().showMessageInDialog(message);
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType)));
+        //specify the storage path
+        
     }
 
     public void handlePaySlipUpload(FileUploadEvent event) {
@@ -120,21 +138,47 @@ public void dashboardToCreateLoanAccount (ActionEvent event) {
                 new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType)));
 
     }
+    
+    public void handleSAUpload(FileUploadEvent event){
+        salaryApprove = event.getFile();
+        System.out.print(salaryApprove.getFileName());
+        String fileName = salaryApprove.getFileName();
+        String contentType = salaryApprove.getContentType();
+        
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType)));       
+    }
+    
+    public void handleEPUpload(FileUploadEvent event){
+        employmentPass = event.getFile();
+        System.out.print(employmentPass.getFileName());
+        String fileName = employmentPass.getFileName();
+        String contentType = employmentPass.getContentType();
+        
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType))); 
+    }
 
-    public void uploadFileForeigner(ActionEvent event) {
+    public void uploadFileForeigner(ActionEvent event) throws IOException {
         if (employmentPass != null && salaryApprove != null) {
             FacesMessage message = new FacesMessage("Succesful", employmentPass.getFileName() + " and " + salaryApprove.getFileName() + " is uploaded.");
             FacesContext.getCurrentInstance().addMessage(null, message);
+            creditCardTypeList = ccsb.getCreditCardType();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_selectCard.xhtml");
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please upload all the file!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
 
-    public void uploadFileSingaporean(ActionEvent event) {
-        if (cpfContribution != null) {
+    public void uploadFileSingaporean(ActionEvent event) throws IOException {
+        if ((cpfContribution != null) && (paySlip != null)) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "CPF Contribution uploaded!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+            creditCardTypeList = ccsb.getCreditCardType();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_selectCard.xhtml");
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please upload all the file!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);

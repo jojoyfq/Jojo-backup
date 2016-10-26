@@ -5,8 +5,9 @@
  */
 package CardEntity.Session;
 
-import CardEntity.CardTransaction;
+import CardEntity.DebitCardTransaction;
 import CardEntity.DebitCard;
+import CardEntity.DebitCardType;
 import CardEntity.DebitChargeback;
 import Exception.ChargebackException;
 import Exception.DebitCardException;
@@ -29,9 +30,18 @@ public interface DebitCardSessionBeanLocal {
     public void setPassword(Long cardNo, String password);
     public List<String> getDebitCardString(Long customerID)throws DebitCardException;
     public List<DebitCard> getDebitCard(Long customerID)throws DebitCardException;
-    public List<CardTransaction> getEStatement(Long customerID, Long debitCardNo, Date currentTime) throws NoTransactionRecordFoundException;
-    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount);
+    public List<DebitCardTransaction> getEStatement(Long customerID, Long debitCardNo, Date currentTime) throws NoTransactionRecordFoundException;
+    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount,String merchant);
     public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String debitCardNo) throws ChargebackException;
     public List<DebitChargeback> getPendingDebitChargeback();
     public void setChargebackStatus(DebitChargeback chargeback, String status);
+    public boolean cancelDebitCard(String cardNo) throws DebitCardException;
+    public DebitCard getDebitCardForClose(String cardNo);
+    public List<String> getDebitCardStringForClose(Long customerID) throws DebitCardException;
+    public List<DebitCardTransaction> getDebitCardTransaction(Long cardNo);
+    public void insertDebitCardTransactionForTesting(Long customerID);
+    public List<DebitCardType> getDebitCardTypes();
+    public List<String> getDebitCardTypeList();
+    public double getRebateRate(String type);
+    public void changeRebateRate(String type,double rate);
 }

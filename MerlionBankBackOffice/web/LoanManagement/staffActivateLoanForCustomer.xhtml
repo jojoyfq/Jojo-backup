@@ -35,22 +35,34 @@
                                         <h:outputText value="#{loan.id}" />
                                     </p:column>
                                     <p:column headerText="Loan Amount"  >
-                                        <h:outputText value="#{loan.loanAmount}" />
+                                        <h:outputText value="#{loan.loanAmount}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                     </p:column>
                                     <p:column headerText="Loan Principal"  >
-                                        <h:outputText value="#{loan.principal}" />
+                                        <h:outputText value="#{loan.principal}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                     </p:column>
                                     <p:column headerText="Loan Term" >
-                                        <h:outputText value="#{loan.loanTerm}" />
+                                        <h:outputText value="#{loan.loanTerm}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                     </p:column>
                                     <p:column headerText="Loan Monthly Payment"  >
-                                        <h:outputText value="#{loan.monthlyPayment}" />
+                                        <h:outputText value="#{loan.monthlyPayment}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                     </p:column>
                                     <p:column headerText="Loan InterestRate1"  >
-                                        <h:outputText value="#{loan.interestRate1}" />
+                                        <h:outputText value="#{loan.interestRate1}" >
+                                        <f:convertNumber type="percent" minFractionDigits="4" />
+                                        </h:outputText>
                                     </p:column>
                                     <p:column headerText="Loan InterestRate2" >
-                                        <h:outputText value="#{loan.interestRate2}" />
+                                        <h:outputText value="#{loan.interestRate2}"  >
+                                        <f:convertNumber type="percent" minFractionDigits="4" />
+                                        </h:outputText>
                                     </p:column>
                                     <p:column headerText="Loan Type" >
                                         <h:outputText value="#{loan.loanType.name}" />

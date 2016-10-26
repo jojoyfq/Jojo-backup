@@ -45,12 +45,16 @@
 
                                         <p:column headerText="Available Balance">
 
-                                            <h:outputText value="#{savingAcct.availableBalance}" />
+                                            <h:outputText value="#{savingAcct.availableBalance}" >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                         </p:column>
 
                                         <p:column headerText="Balance">
 
-                                            <h:outputText value="#{savingAcct.balance}" />
+                                            <h:outputText value="#{savingAcct.balance}"  >
+                                            <f:convertNumber locale="en-US" />
+                                            </h:outputText>
                                         </p:column>
 
 
@@ -69,10 +73,7 @@
                                                 </p:commandButton>
                                             </center>
                                         </p:column>
-                                        <p:column style="width:32px">
-                                            <p:rowEditor />
-                                        </p:column>
-
+                                       
                                     </p:dataTable>
 
                                     <p:dialog id="dialogMessage" header="Early Payoff Interest Info" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
