@@ -15,6 +15,7 @@ import Exception.LoanTermInvalidException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import LoanEntity.Instance;
+import LoanEntity.InstanceValue;
 import LoanEntity.Loan;
 import LoanEntity.LoanType;
 import LoanEntity.Logistic;
@@ -33,6 +34,7 @@ import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.apache.commons.lang3.ArrayUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -335,7 +337,12 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         for (int n = 0; n < 3000; n++) {
             double lik = 0.0;
             for (int i = 0; i < instances.size(); i++) {
-                int[] x = instances.get(i).getX();
+                List <InstanceValue> trainingData=instances.get(i).getInstanceValues();
+                int first=trainingData.get(0).getTrainVariable().intValue();
+                 int second=trainingData.get(1).getTrainVariable().intValue();
+                 int third=trainingData.get(2).getTrainVariable().intValue();
+                int[] x={first,second,third};
+               
                 double predicted = classify(x, logistic);
                 int label = instances.get(i).getLabel();
                 for (int j = 0; j < 3; j++) {
