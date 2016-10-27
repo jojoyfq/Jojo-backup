@@ -141,7 +141,7 @@ public class PayMeResources {
     public GetPhoneNumberResponse getPhoneNumberString() {
 
 //        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
-        System.out.println("is log in page " + isLoginPage);       
+        System.out.println("is log in page " + isLoginPage);
         if (isLoginPage == false) {
             phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
             System.out.println("phoneNumStr is " + phoneNumStr);
@@ -240,6 +240,52 @@ public class PayMeResources {
             return new CreatePayMeAccountResponse(1, "PayMe account exists", false);
         }
 
+    }
+
+    @POST
+    @Path(value = "isValidTopUpAmount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IsValidTopUpAmountResponse isValidTopUpAmount(@FormParam("topupamount") String amount) {
+
+        boolean checkTopUpAmountValidity;
+        if (isLoginPage == false) {
+            checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumStr, amount);
+            if(checkTopUpAmountValidity == true){
+                return new IsValidTopUpAmountResponse(0, "", true);
+            }else{
+                return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
+            }
+        }else{
+            checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumLogInStr, amount);
+            if(checkTopUpAmountValidity == true){
+                return new IsValidTopUpAmountResponse(0, "", true);
+            }else{
+                return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
+            }
+        }      
+    }
+    
+    @POST
+    @Path(value = "topUp")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TopUpResponse payMeTopUp(@FormParam("topup") String amount){
+        
+        boolean topUpSuccess;
+        if(isLoginPage == false){
+            topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumStr, amount);
+            if(topUpSuccess == true){
+                return new TopUpResponse(0, "", true);
+            }else{
+                return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
+            }           
+        }else{
+            topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumLogInStr, amount);
+            if(topUpSuccess == true){
+                return new TopUpResponse(0, "", true);
+            }else{
+                return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
+            }
+        }
     }
 
 }
