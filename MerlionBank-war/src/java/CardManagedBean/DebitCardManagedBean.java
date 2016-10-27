@@ -183,6 +183,7 @@ public class DebitCardManagedBean implements Serializable {
         if (debitCardSelected != null) {
             String[] split = debitCardSelected.split(",");
             Long debitCardNo = Long.parseLong(split[0]);
+//            dcsb.insertDebitCardTransactionForTesting(customerID);
             debitCardTransaction = dcsb.getDebitCardTransaction(debitCardNo);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/viewDebitCardSummary.xhtml");

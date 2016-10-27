@@ -10,6 +10,7 @@ import CommonEntity.StaffRole;
 import CustomerRelationshipEntity.CaseEntity;
 import CustomerRelationshipEntity.Issue;
 import Exception.EmailNotSendException;
+import Exception.IssueSolvedException;
 import Exception.ListEmptyException;
 import Exception.UserNotExistException;
 import java.util.Date;
@@ -30,7 +31,7 @@ public interface CollaborativeCRMSessionBeanLocal {
     public List<Issue> viewAssignedCase(Long staffId) throws ListEmptyException;
     public List<Issue> deleteIssue(Long staffId,Long issueId);
     public List<CaseEntity> deleteCase(Long staffId,Long caseId);
-    public List<Issue> staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException;
+    public List<Issue> staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException,IssueSolvedException;
     public Issue staffSolveIssue(Long staffId, Long issueId,String solution);
     public void closeCase() throws EmailNotSendException;
     

@@ -100,9 +100,11 @@
 
                                     <p:column headerText="Document" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton  icon="ui-icon-mail-open" actionListener="#{staffLoanManagedBean.openDocs}" ajax="true"  >
+                                            <p:commandButton  icon="ui-icon-mail-open" oncomplete="PF('msgDialog2').show()"  update=":form:msgDetail2" actionListener="#{staffLoanManagedBean.openDocs}" ajax="true"  >
                                                 <f:attribute name="selectedLoan" value="#{pendingLoan}"  />
                                             </p:commandButton>
+                                            
+                                          
                                         </center>
                                     </p:column>
                                     <p:column headerText="Risk" style="width: 80px;" >
@@ -169,6 +171,18 @@
 
                                         <h:outputText value="Estimated Risk Level: " />
                                         <h:outputText value="#{staffLoanManagedBean.risk}" />
+
+                                      
+
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+                            <p:dialog id="dialogMessage2"   header="Document" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail2" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+
+                                        <h:graphicImage value="#{staffLoanManagedBean.path}" />
+                                            
 
                                       
 
