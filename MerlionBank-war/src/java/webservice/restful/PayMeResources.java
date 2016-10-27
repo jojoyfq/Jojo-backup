@@ -50,7 +50,7 @@ public class PayMeResources {
             @FormParam("password") String password) {
 
         boolean checkExisting = false;
-
+        isLoginPage = false;
         System.err.println("customer IC is " + customerIC);
         System.out.println("password is " + password);
 
@@ -120,7 +120,7 @@ public class PayMeResources {
     public IsValidOTPResponse isValidOTP(@FormParam("OneTimePassword") String OTPString) {
 
         boolean checkOTPValidity;
-
+        isLoginPage = false;
         System.out.println("IC is " + merlionBankIC);
         System.out.println("OTP is " + OTPString);
         checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication(merlionBankIC, OTPString);
@@ -141,16 +141,17 @@ public class PayMeResources {
     public GetPhoneNumberResponse getPhoneNumberString() {
 
 //        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
-        System.out.println("is log in page " + isLoginPage);
-        System.out.println("in the function, phoneNumLogInStr is " + phoneNumLogInStr);
+        System.out.println("is log in page " + isLoginPage);       
         if (isLoginPage == false) {
             phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
+            System.out.println("phoneNumStr is " + phoneNumStr);
             if (phoneNumStr.isEmpty()) {
                 return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
             } else {
                 return new GetPhoneNumberResponse(0, "", phoneNumStr);
             }
         } else {
+            System.out.println("phoneNumLogInStr is " + phoneNumLogInStr);
             if (phoneNumLogInStr.isEmpty()) {
                 return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
             } else {
