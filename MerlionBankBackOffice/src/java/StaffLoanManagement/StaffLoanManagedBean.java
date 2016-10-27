@@ -104,6 +104,7 @@ public class StaffLoanManagedBean implements Serializable {
     private String password;
     private LoanType selectedLoanType;
     private double risk;
+    private String path;
 
     @PostConstruct
     public void init() {
@@ -232,13 +233,12 @@ public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
         }
     }
     
-public void openDocs(ActionEvent event) throws IOException {
-       try{
+public void openDocs(ActionEvent event) {
+
            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
 
            System.out.println("********Selected customer to view documents is " + selectedLoan.getCustomer().getIc());
         //File openFile = new File(selectedCustomer.getFileDestination());
-        System.out.println("File Path is "+selectedLoan.getCustomer().getFileDestination());
 //         if(!Desktop.isDesktopSupported()){
 //            System.out.println("Desktop is not supported");
 //            return;
@@ -248,15 +248,14 @@ public void openDocs(ActionEvent event) throws IOException {
 //        if(openFile.exists()) desktop.open(openFile);
 //        
         
-            String path = selectedLoan.getCustomer().getFileDestination();
-            Runtime runtime = Runtime.getRuntime();
-            runtime.exec("explorer.exe C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\"+path);
-            System.out.println("open");
+             path = "http://localhost:8080/"+selectedLoan.getCustomer().getFileDestination();
+                    System.out.println("File Path From customer is "+selectedLoan.getCustomer().getFileDestination());
+        System.out.println("File Path is "+path);
+
+//            Runtime runtime = Runtime.getRuntime();
+//            runtime.exec("explorer.exe C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\"+path);
+//            System.out.println("open");
    
-       }catch(IOException ex){
-      FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        } 
        }
 
     public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOException {
@@ -805,5 +804,14 @@ System.out.println("************Selected loan ID to calculate risk is "+selected
     public void setRisk(double risk) {
         this.risk = risk;
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
 
 }
