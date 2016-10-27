@@ -128,7 +128,6 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
                 BigDecimal temp = latePayment.add(monthlyPayment).multiply(lateRate);
                 latePayment.add(temp);
                 loan.setLatePayment(latePayment);
-                loan.setLatePayment(latePayment);
                 try {
                     sendLatePaymentNotificationEmail(loan.getCustomer().getName(), loan.getCustomer().getEmail(), loan.getAccountNumber());
                 } catch (MessagingException ex) {

@@ -71,15 +71,45 @@
                     </h:panelGrid>
 
                     <h:panelGrid columns="3">
-                        <p:outputLabel value="Loan Account Status checking: " />
+                        <p:outputLabel value="Loan Account Closure checking: " />
                         <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
-                            <f:attribute name="timerName" value="LoanStatus-TIMER" />
+                            <f:attribute name="timerName" value="LoanAccountStatus-TIMER" />
                         </p:commandButton>
                         <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
-                            <f:attribute name ="timerName" value="LoanStatus-TIMER" />
+                            <f:attribute name="timerName" value="LoanAccountStatus-TIMER" />
                         </p:commandButton> 
                     </h:panelGrid>
 
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="Loan auto bad debt checking: " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="LoanAutoBadDebt-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name ="timerName" value="LoanAutoBadDebt-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="Loan late payment calculate checking: " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="LoanLatePayment-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="LoanLatePayment-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="Loan update monthly payment checking: " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="LoanUpdateMonthlyPayment-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="LoanUpdateMonthlyPayment-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+                    
                 </p:panel>
             </h:form>
         </h:body>
