@@ -14,6 +14,7 @@ import CustomerRelationshipEntity.CaseEntity;
 import CustomerRelationshipEntity.Issue;
 import CustomerRelationshipEntity.Session.CollaborativeCRMSessionBeanLocal;
 import Exception.EmailNotSendException;
+import Exception.IssueSolvedException;
 import Exception.ListEmptyException;
 import Exception.UserNotExistException;
 import java.io.IOException;
@@ -293,7 +294,7 @@ FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System M
         return oneBankStaffAllIssues;
     }
 
-    public Issue staffRequireMoreInfo(ActionEvent event) throws EmailNotSendException {
+    public Issue staffRequireMoreInfo(ActionEvent event) throws EmailNotSendException, IssueSolvedException {
         try {
             selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
             Long issueId = selectedIssue.getId();
@@ -304,7 +305,7 @@ FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System M
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message sent successfully!!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
-        } catch (EmailNotSendException ex) {
+        } catch (EmailNotSendException|IssueSolvedException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }

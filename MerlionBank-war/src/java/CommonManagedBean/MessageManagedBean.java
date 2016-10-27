@@ -15,8 +15,6 @@ import CustomerRelationshipEntity.Issue;
 import CustomerRelationshipEntity.Session.CollaborativeCRMSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
-import Exception.UserNotActivatedException;
-import Exception.UserNotExistException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,6 +28,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.RateEvent;
 
 /**
  *
@@ -81,128 +80,9 @@ public class MessageManagedBean implements Serializable {
     private Issue selectedIssue;
     private String issueContent;
     private boolean checkStatus;
-
-    public boolean isCheckStatus() {
-        return checkStatus;
-    }
-
-    public void setCheckStatus(boolean checkStatus) {
-        this.checkStatus = checkStatus;
-    }
-
-    public String getIssueContent() {
-        return issueContent;
-    }
-
-    public void setIssueContent(String issueContent) {
-        this.issueContent = issueContent;
-    }
-
-    public Issue getSelectedIssue() {
-        return selectedIssue;
-    }
-
-    public void setSelectedIssue(Issue selectedIssue) {
-        this.selectedIssue = selectedIssue;
-    }
-
-    public CaseEntity getSelectedCase() {
-        return selectedCase;
-    }
-
-    public void setSelectedCase(CaseEntity selectedCase) {
-        this.selectedCase = selectedCase;
-    }
-
-    public List<Issue> getOneCaseAllIssues() {
-        return oneCaseAllIssues;
-    }
-
-    public void setOneCaseAllIssues(List<Issue> oneCaseAllIssues) {
-        this.oneCaseAllIssues = oneCaseAllIssues;
-    }
-
-    public List<CaseEntity> getAllCases() {
-        return allCases;
-    }
-
-    public void setAllCases(List<CaseEntity> allCases) {
-        this.allCases = allCases;
-    }
-
-    public String getCaseSubject() {
-        return caseSubject;
-    }
-
-    public void setCaseSubject(String caseSubject) {
-        this.caseSubject = caseSubject;
-    }
-
-    public String getCaseContent() {
-        return caseContent;
-    }
-
-    public void setCaseContent(String caseContent) {
-        this.caseContent = caseContent;
-    }
-
-    public String getCaseStatus() {
-        return caseStatus;
-    }
-
-    public void setCaseStatus(String caseStatus) {
-        this.caseStatus = caseStatus;
-    }
     private String caseStatus;
     private CustomerMessage caseMessage;
-
-    public CustomerMessage getCaseMessage() {
-        return caseMessage;
-    }
-
-    public void setCaseMessage(CustomerMessage caseMessage) {
-        this.caseMessage = caseMessage;
-    }
-
-    public CustomerMessage getMsgAddToStaff() {
-        return msgAddToStaff;
-    }
-
-    public void setMsgAddToStaff(CustomerMessage msgAddTostaff) {
-        this.msgAddToStaff = msgAddTostaff;
-    }
-
-    public int getCustomerUnreadMsg() {
-        return customerUnreadMsg;
-    }
-
-    public void setCustomerUnreadMsg(int customerUnreadMsg) {
-        this.customerUnreadMsg = customerUnreadMsg;
-    }
-
-    public String getCustomerReplyMsgStatus() {
-        return customerReplyMsgStatus;
-    }
-
-    public void setCustomerReplyMsgStatus(String customerReplyMsgStatus) {
-        this.customerReplyMsgStatus = customerReplyMsgStatus;
-    }
-
-    public String getCustomerReplyContent() {
-        return customerReplyContent;
-    }
-
-    public void setCustomerReplyContent(String customerReplyContent) {
-        this.customerReplyContent = customerReplyContent;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    private Integer rating;
 
 //    public List getMessages() {
 //        return messages;
@@ -253,7 +133,7 @@ public class MessageManagedBean implements Serializable {
         selectedCase = (CaseEntity) event.getComponent().getAttributes().get("selectedCase");
         System.out.println("**********Selected case to view all the issues, selectedCase.getId()" + selectedCase.getId());
         oneCaseAllIssues = ccsbl.retrieveIssues(selectedCase.getId());
-        System.out.println("********issue size is "+oneCaseAllIssues.size());
+        System.out.println("********issue size is " + oneCaseAllIssues.size());
         if (selectedCase.getStatus().equals("moreInfo")) {
             checkStatus = true;
         } else {
@@ -351,7 +231,6 @@ public class MessageManagedBean implements Serializable {
             System.out.println("*************Customer id " + customerId);
             allCases = ccsbl.customerViewCases(customerId);
             System.out.println("*************Case size is " + allCases.size());
-           
 
         } catch (ListEmptyException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -379,6 +258,16 @@ public class MessageManagedBean implements Serializable {
         ccsbl.customerModifyIssue(customerId, selectedIssue.getId(), selectedIssue.getContent());
 
     }
+
+    public void customerRate(RateEvent  event) {
+        System.out.println("*********Customer ID to rate issue " + customerId);
+                selectedIssue = (Issue) event.getComponent().getAttributes().get("selectedIssue");
+
+        System.out.println("*********Issue ID to be rated  " + selectedIssue.getId());
+        ccsbl.customerRateIssue(customerId, selectedIssue.getId(), rating);
+
+    }
+
 //    public void customerViewAllMessage(ActionEvent event){
 //       //customerId = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id");
 //       
@@ -395,7 +284,6 @@ public class MessageManagedBean implements Serializable {
 //         }
 //         
 //    }
-
     public String getCustomerIc() {
         return customerIc;
     }
@@ -483,4 +371,149 @@ public class MessageManagedBean implements Serializable {
     public void setMessageId(Long messageId) {
         this.messageId = messageId;
     }
+
+    public boolean isCheckStatus() {
+        return checkStatus;
+    }
+
+    public void setCheckStatus(boolean checkStatus) {
+        this.checkStatus = checkStatus;
+    }
+
+    public String getIssueContent() {
+        return issueContent;
+    }
+
+    public void setIssueContent(String issueContent) {
+        this.issueContent = issueContent;
+    }
+
+    public Issue getSelectedIssue() {
+        return selectedIssue;
+    }
+
+    public void setSelectedIssue(Issue selectedIssue) {
+        this.selectedIssue = selectedIssue;
+    }
+
+    public CaseEntity getSelectedCase() {
+        return selectedCase;
+    }
+
+    public void setSelectedCase(CaseEntity selectedCase) {
+        this.selectedCase = selectedCase;
+    }
+
+    public List<Issue> getOneCaseAllIssues() {
+        return oneCaseAllIssues;
+    }
+
+    public void setOneCaseAllIssues(List<Issue> oneCaseAllIssues) {
+        this.oneCaseAllIssues = oneCaseAllIssues;
+    }
+
+    public List<CaseEntity> getAllCases() {
+        return allCases;
+    }
+
+    public void setAllCases(List<CaseEntity> allCases) {
+        this.allCases = allCases;
+    }
+
+    public String getCaseSubject() {
+        return caseSubject;
+    }
+
+    public void setCaseSubject(String caseSubject) {
+        this.caseSubject = caseSubject;
+    }
+
+    public String getCaseContent() {
+        return caseContent;
+    }
+
+    public void setCaseContent(String caseContent) {
+        this.caseContent = caseContent;
+    }
+
+    public String getCaseStatus() {
+        return caseStatus;
+    }
+
+    public void setCaseStatus(String caseStatus) {
+        this.caseStatus = caseStatus;
+    }
+
+    public CustomerMessage getCaseMessage() {
+        return caseMessage;
+    }
+
+    public void setCaseMessage(CustomerMessage caseMessage) {
+        this.caseMessage = caseMessage;
+    }
+
+    public CustomerMessage getMsgAddToStaff() {
+        return msgAddToStaff;
+    }
+
+    public void setMsgAddToStaff(CustomerMessage msgAddTostaff) {
+        this.msgAddToStaff = msgAddTostaff;
+    }
+
+    public int getCustomerUnreadMsg() {
+        return customerUnreadMsg;
+    }
+
+    public void setCustomerUnreadMsg(int customerUnreadMsg) {
+        this.customerUnreadMsg = customerUnreadMsg;
+    }
+
+    public String getCustomerReplyMsgStatus() {
+        return customerReplyMsgStatus;
+    }
+
+    public void setCustomerReplyMsgStatus(String customerReplyMsgStatus) {
+        this.customerReplyMsgStatus = customerReplyMsgStatus;
+    }
+
+    public String getCustomerReplyContent() {
+        return customerReplyContent;
+    }
+
+    public void setCustomerReplyContent(String customerReplyContent) {
+        this.customerReplyContent = customerReplyContent;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public InboxManagementSessionBeanLocal getImsbl() {
+        return imsbl;
+    }
+
+    public void setImsbl(InboxManagementSessionBeanLocal imsbl) {
+        this.imsbl = imsbl;
+    }
+
+    public CollaborativeCRMSessionBeanLocal getCcsbl() {
+        return ccsbl;
+    }
+
+    public void setCcsbl(CollaborativeCRMSessionBeanLocal ccsbl) {
+        this.ccsbl = ccsbl;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
 }

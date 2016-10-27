@@ -88,7 +88,7 @@
                                         <p:column headerText="Loan Outstanding Balance ">
 
                                             <h:outputText value="#{loan.outstandingBalance}" >
-                                                <f:convertNumber pattern="#0.00" locale="en-US""/>
+                                                <f:convertNumber pattern="#0.00" locale="en-US"/>
                                             </h:outputText>
                                         </p:column>
 
@@ -106,7 +106,7 @@
 
                                         <p:column headerText="Accept" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="ui-icon-check" actionListener="#{customerLoanManagedBean.customerAcceptLoan(loan.id)}" update=":form:panel" ajax="false" type="submit" 
+                                                <p:commandButton icon="ui-icon-check" rendered="#{loan.status eq 'staffVerified'}" actionListener="#{customerLoanManagedBean.customerAcceptLoan(loan.id)}" update=":form:panel" ajax="false" type="submit" 
                                                                  onclick="if (!confirm('Are you sure you want to approve this '))
                                                                              return false;"/>
                                             </center>

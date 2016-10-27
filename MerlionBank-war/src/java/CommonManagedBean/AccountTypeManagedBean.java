@@ -61,7 +61,7 @@ public class AccountTypeManagedBean implements Serializable {
             accountTypes.add("Fixed Deposit Account");
             accountTypes.add("Credit Account");
             accountTypes.add("Loan Account");
-            accountTypes.add("Wealth Managment Account");
+            accountTypes.add("Wealth Management Account");
             System.out.println(accountTypes);
 
             //    System.out.println("Account Type chosen is " + accountType);
