@@ -66,12 +66,21 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
         } else if (timerInfo.equals("MonthlyInterest-TIMER")) {
             Timer monthlyInterest = timerService.createTimer(startTime, 1 * 60 * 1000, "MonthlyInterest-TIMER");
             System.err.println("********** MonthlyInterest-TIMER TIMER CREATED");
-        } else if (timerInfo.equals("LoanStatus-TIMER")) {
-            Timer loanStatusTimer = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanStatus-TIMER");
-            System.err.println("********** LoanStatus-TIMER TIMER CREATED");
-        } else if (timerInfo.equals("checkCustomerAge-TIMER")) {
+        }  else if (timerInfo.equals("checkCustomerAge-TIMER")) {
             Timer loanStatusTimer = timerService.createTimer(startTime, 1 * 60 * 1000, "checkCustomerAge-TIMER");
             System.err.println("********** checkCustomerAge-TIMER TIMER CREATED");
+        }else if (timerInfo.equals("LoanAccountStatus-TIMER")) {
+            Timer loanAccountTimer = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanAccountStatus-TIMER");
+            System.err.println("********** LoanAccountStatus-TIMER");
+        }else if (timerInfo.equals("LoanAutoBadDebt-TIMER")){
+            Timer loanAutoBadDebt = timerService.createTimer(startTime, 1 * 60 * 10000, "LoanAutoBadDebt-TIMER");
+            System.err.println("********** LoanAutoBadDebt-TIMER");
+        }else if(timerInfo.equals("LoanLatePayment-TIMER")){
+            Timer loanLatePayment = timerService.createTimer(startTime, 1* 60 * 10000, "LoanLatePayment-TIMER");
+            System.err.println("********** LoanLatePayment-TIMER");
+        }else if(timerInfo.equals("LoanUpdateMonthlyPayment-TIMER")){
+            Timer loanUpdateMonthlyPayment = timerService.createTimer(startTime, 1 * 60 * 10000, "LoanUpdateMonthlyPayment-TIMER");
+            System.out.println("********** LoanUpdateMonthlyPayment-TIMER");
         }
     }
 
@@ -105,11 +114,7 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             System.err.println("********** checkCustomerAge-TIMER go to saving account session bean here!!!!");
             sasbl.checkCustomerAge();
         } else if (timer.getInfo().toString().equals("LoanAccountStatus-TIMER")) {
-
-//            ltsbl.autoBadDebt();
-//            ltsbl.calculateLatePayment();
             ltsbl.closeAccounts();
-//ok            ltsbl.updateMonthlyPayment();
         } else if (timer.getInfo().toString().equals("LoanAutoBadDebt-TIMER")) {
             ltsbl.autoBadDebt();
         } else if (timer.getInfo().toString().equals("LoanLatePayment-TIMER")) {
