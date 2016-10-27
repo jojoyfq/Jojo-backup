@@ -190,6 +190,7 @@ public List<Loan> customerCancelLoan(Long customerId, Long loanId){
          savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
          
            Date currentTime = Calendar.getInstance().getTime();
+           loan.setLoanDate(currentTime);
                 java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
                 TransactionRecord transactionRecord = new TransactionRecord("LP",amount,null,"settled", "Loan Payment",currentTimestamp,savingAccount.getAccountNumber(),loan.getAccountNumber(),savingAccount,"MerlionBank","MerlionBank");

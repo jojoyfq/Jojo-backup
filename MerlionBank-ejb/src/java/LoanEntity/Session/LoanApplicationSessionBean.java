@@ -170,12 +170,14 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
 
     //Create Loan Account - 3rd page - configure home loan 
     @Override
-    public Long createLoanAccount(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException {
+    public Long createLoanAccount(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, String homeType,String homeAddress,Long postCode,String carModel,BigDecimal existingDebit,Long postalCode,String carMode,String institution,String major,Date graduationDate) throws EmailNotSendException, LoanTermInvalidException {
         Customer customer=em.find(Customer.class,customerId);
         LoanType loanType = em.find(LoanType.class, loanTypeId);
         BigDecimal monthlyPayment = new BigDecimal("0");
         Double temp = 0.0;
         Long accountNum = this.generateLoanAccountNumber();
+        BigDecimal TDSR=new BigDecimal(0);
+        BigDecimal MSR=new BigDecimal(0);
 
         if (loanType.getType().equals("Home")) {
             if (loanTerm > 420) {
@@ -185,11 +187,30 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
             if (principal.multiply(new BigDecimal("0.2")).compareTo(downpayment) == 1) {
                 throw new LoanTermInvalidException("Down Payment must be greater than 20% of your total asset value");
             }
-
+            
+            
             if (loanType.getName().equals("SIBOR Package")) {
                 monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getSIBOR(), loanType.getSIBORrate1());
+               
             } else if (loanType.getName().equals("Fixed Interest Package")) {
                 monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getFixedRate(), temp);
+            }
+            
+             if (homeType.equals("HDB flat")){
+                TDSR=calculateTDSR(monthlyIncome,existingDebit);
+                MSR=calculateMSR(monthlyIncome,existingDebit);
+                if (monthlyIncome.compareTo(TDSR)==-1){
+                    throw new LoanTermInvalidException("Does not fulfill TDSR requirement");
+                }
+                if (monthlyIncome.compareTo(MSR)==-1){
+                    throw new LoanTermInvalidException("Does not fulfill MSR requirement");
+                }
+                
+            }else if (homeType.equals("Executive Condominium")){
+                TDSR=calculateTDSR(monthlyIncome,existingDebit);
+                if (monthlyIncome.compareTo(TDSR)==-1){
+                    throw new LoanTermInvalidException("Does not fulfill MSR requirement");
+                }
             }
         } else if (loanType.getType().equals("Car")) {
             if (loanTerm > 84) {
@@ -197,6 +218,18 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
             }
 
             monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getInterestRate(), temp);
+            BigDecimal temp2=new BigDecimal(20000);
+            BigDecimal temp3=new BigDecimal(0.7);
+            BigDecimal temp4=new BigDecimal(0.6);
+            
+            if (principal.compareTo(temp2)==-1){
+                if (principal.compareTo(principal.multiply(temp3))==1)
+                        throw new LoanTermInvalidException("According to MAS,for cars with an open market value (OMV) of $20,000 or less, buyers can borrow up to 70 per cent of the purchase price");
+
+            }else {
+                if (principal.compareTo(principal.multiply(temp4))==1)
+                        throw new LoanTermInvalidException("According to MAS,for cars with an open market value (OMV) more than $20,000 , buyers can borrow up to 60 per cent of the purchase price");
+            }
         } else if (loanType.getType().equals("Education")) {
             if (loanTerm > 96) {
                 throw new LoanTermInvalidException("Education repayment period can only be max 8 years");
@@ -208,6 +241,13 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
         Loan loan = new Loan(accountNum, principal, downpayment, loanTerm, "inactive", monthlyPayment, 0, principal.subtract(downpayment), customer);
         em.persist(loan);
         em.flush();
+loan.setHomeType(homeType);
+loan.setHomeAddress(homeAddress);
+loan.setPostalCode(postalCode);
+loan.setCarMode(carMode);
+loan.setInstitution(institution);
+loan.setMajor(major);
+loan.setGraduationDate(graduationDate);
 
         loan.setLoanType(loanType);
 
@@ -269,6 +309,22 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
         customer.setCustomerActions(customerActions);
 
         return accountNum;
+    }
+    
+    @Override
+    public BigDecimal calculateTDSR(BigDecimal monthlyIncome,BigDecimal existingDebit){
+        BigDecimal temp=new BigDecimal(0.6);
+        BigDecimal returningValue=monthlyIncome.subtract(existingDebit);
+        returningValue=returningValue.multiply(temp);
+        return returningValue;
+    }
+    
+    @Override
+     public BigDecimal calculateMSR(BigDecimal monthlyIncome,BigDecimal existingDebit){
+        BigDecimal temp=new BigDecimal(0.3);
+        BigDecimal returningValue=monthlyIncome.subtract(existingDebit);
+        returningValue=returningValue.multiply(temp);
+        return returningValue;
     }
 
     private void SendPendingVerificationEmail(String name, String email, String password) throws MessagingException {
@@ -358,13 +414,13 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
 
     //Teller Create Loan Account - 3nd page - configure loan
     @Override
-    public Long StaffCreateLoanAccount(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws LoanTermInvalidException {
+    public Long StaffCreateLoanAccount(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm,String homeType,String homeAddress,Long postCode,String carModel,BigDecimal existingDebit,Long postalCode,String carMode,String institution,String major,Date graduationDate) throws LoanTermInvalidException {
         Staff staff=em.find(Staff.class,staffId);
         Customer customer = em.find(Customer.class, customerId);
         Long accountNum=0L;
        
         try{
-        accountNum=createLoanAccount(customer.getId(),monthlyIncome,loanTypeId,principal,downpayment,loanTerm);
+        accountNum=createLoanAccount(customer.getId(),monthlyIncome,loanTypeId,principal,downpayment,loanTerm,homeType,homeAddress,postCode,carModel,existingDebit,postalCode,carMode,institution,major,graduationDate);
         }catch (LoanTermInvalidException|EmailNotSendException ex){
             throw new LoanTermInvalidException(ex.getMessage());
         }
@@ -418,12 +474,14 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
     
     //Create Loan Account - 3rd page - configure home loan 
     @Override
-    public Long createLoanAccountExisting(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException {
+    public Long createLoanAccountExisting(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm,String homeType,String homeAddress,Long postCode,String carModel,BigDecimal existingDebit,Long postalCode,String carMode,String institution,String major,Date graduationDate) throws EmailNotSendException, LoanTermInvalidException {
         Customer customer=em.find(Customer.class,customerId);
         LoanType loanType = em.find(LoanType.class, loanTypeId);
         BigDecimal monthlyPayment = new BigDecimal("0");
         Double temp = 0.0;
         Long accountNum = this.generateLoanAccountNumber();
+         BigDecimal TDSR=new BigDecimal(0);
+        BigDecimal MSR=new BigDecimal(0);
 
         if (loanType.getType().equals("Home")) {
             if (loanTerm > 420) {
@@ -439,12 +497,41 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
             } else if (loanType.getName().equals("Fixed Interest Package")) {
                 monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getFixedRate(), temp);
             }
+             if (homeType.equals("HDB flat")){
+                TDSR=calculateTDSR(monthlyIncome,existingDebit);
+                MSR=calculateMSR(monthlyIncome,existingDebit);
+                if (monthlyIncome.compareTo(TDSR)==-1){
+                    throw new LoanTermInvalidException("Does not fulfill TDSR requirement");
+                }
+                if (monthlyIncome.compareTo(MSR)==-1){
+                    throw new LoanTermInvalidException("Does not fulfill MSR requirement");
+                }
+                
+            }else if (homeType.equals("Executive Condominium")){
+                TDSR=calculateTDSR(monthlyIncome,existingDebit);
+                if (monthlyIncome.compareTo(TDSR)==-1){
+                    throw new LoanTermInvalidException("Does not fulfill MSR requirement");
+                }
+            }
         } else if (loanType.getType().equals("Car")) {
             if (loanTerm > 84) {
                 throw new LoanTermInvalidException("Car repayment period can only be max 7 years");
             }
 
             monthlyPayment = fixedCalculator(principal.subtract(downpayment), loanTerm, loanType.getInterestRate(), temp);
+        
+         BigDecimal temp2=new BigDecimal(20000);
+            BigDecimal temp3=new BigDecimal(0.7);
+            BigDecimal temp4=new BigDecimal(0.6);
+            
+            if (principal.compareTo(temp2)==-1){
+                if (principal.compareTo(principal.multiply(temp3))==1)
+                        throw new LoanTermInvalidException("According to MAS,for cars with an open market value (OMV) of $20,000 or less, buyers can borrow up to 70 per cent of the purchase price");
+
+            }else {
+                if (principal.compareTo(principal.multiply(temp4))==1)
+                        throw new LoanTermInvalidException("According to MAS,for cars with an open market value (OMV) more than $20,000 , buyers can borrow up to 60 per cent of the purchase price");
+            }
         } else if (loanType.getType().equals("Education")) {
             if (loanTerm > 96) {
                 throw new LoanTermInvalidException("Education repayment period can only be max 8 years");
@@ -457,6 +544,13 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
         em.persist(loan);
         em.flush();
 
+        loan.setHomeType(homeType);
+loan.setHomeAddress(homeAddress);
+loan.setPostalCode(postalCode);
+loan.setCarMode(carMode);
+loan.setInstitution(institution);
+loan.setMajor(major);
+loan.setGraduationDate(graduationDate);
         loan.setLoanType(loanType);
 
         if (loanType.getName().equals("SIBOR Package")) {
@@ -507,13 +601,13 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
     
      //Teller Create Loan Account - 3nd page - configure loan
     @Override
-    public Long StaffCreateLoanAccountExisting(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws LoanTermInvalidException {
+    public Long StaffCreateLoanAccountExisting(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm,String homeType,String homeAddress,Long postCode,String carModel,BigDecimal existingDebit,Long postalCode,String carMode,String institution,String major,Date graduationDate) throws LoanTermInvalidException {
         Staff staff=em.find(Staff.class,staffId);
         Customer customer = em.find(Customer.class, customerId);
         Long accountNum=0L;
        
         try{
-        accountNum=createLoanAccountExisting(customer.getId(),monthlyIncome,loanTypeId,principal,downpayment,loanTerm);
+        accountNum=createLoanAccountExisting(customer.getId(),monthlyIncome,loanTypeId,principal,downpayment,loanTerm,homeType,homeAddress,postCode,carModel,existingDebit,postalCode,carMode,institution,major,graduationDate);
         }catch (LoanTermInvalidException|EmailNotSendException ex){
             throw new LoanTermInvalidException(ex.getMessage());
         }

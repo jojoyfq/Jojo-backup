@@ -103,7 +103,7 @@ private LoanApplicationSessionBean lasb;
               
               BigDecimal temp=latePayment.add(monthlyPayment).multiply(lateRate);
               latePayment.add(temp);
-              
+              loan.setLatePayment(latePayment);
               try{
                sendLatePaymentNotificationEmail(loan.getCustomer().getName(),loan.getCustomer().getEmail(),loan.getAccountNumber());
               }catch (MessagingException ex) {
