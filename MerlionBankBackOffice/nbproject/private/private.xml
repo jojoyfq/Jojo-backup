@@ -4,17 +4,7 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/src/java/WealthManagedBean/StaffWealthManagedBean.java</file>
-            <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/src/java/TellerManagedBean/ServiceCustomerManagedBean.java</file>
-            <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/web/WEB-INF/layoutmenu.xhtml</file>
-
-            <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/web/BillManagement/deleteBankSelect.xhtml</file>
-            <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/nbproject/private/private.xml</file>
-            <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/FixedDeposit/FixedDepositNonTellerManagedBean.java</file>
-            <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/FixedDeposit/FixedDepositStaffManagedBean.java</file>
-            <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/DepositManagedBean/SavingAccountManagedBean.java</file>
-            <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/BillManagement/BillStaffManagedBean.java</file>
-            <file>file:/C:/Users/ruijia/Documents/NetBeansProjects/HiMaLongCode/MerlionBankBackOffice/src/java/TransferManagement/TransferManagedBean.java</file>
-
+            <file>file:/C:/Users/apple/Documents/GitHub/HiMaLongCode/MerlionBankBackOffice/src/java/StaffLoanManagement/StaffLoanManagedBean.java</file>
         </group>
     </open-files>
 </project-private>

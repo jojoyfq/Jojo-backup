@@ -28,10 +28,10 @@ public class POSwebservice {
     @WebMethod(operationName = "authorizeDebitCard")
     public String authorizeDebitCard(@WebParam(name = "cardNumber") String cardNumber, @WebParam(name = "cardHolder") String cardHolder, @WebParam(name = "cvv") String cvv, @WebParam(name = "merchant") String merchant, @WebParam(name = "amount") String amount) {
         //TODO write your implementation code here:
-        boolean checkBalance = dcsbl.checkDebitCardBalance(cardNumber, cvv, cardHolder, amount);
+        boolean checkBalance = dcsbl.checkDebitCardBalance(cardNumber, cvv, cardHolder, amount,merchant);
         String message;
         if(checkBalance){
-            message = "Debit Card"+cardNumber+"is authorized!";
+            message = "Debit Card "+cardNumber+" is authorized!";
             return message;
         }else{
             message = "Debit Card"+cardNumber+"is not valid!";

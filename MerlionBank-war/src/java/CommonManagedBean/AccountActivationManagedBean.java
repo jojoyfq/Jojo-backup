@@ -84,29 +84,38 @@ public class AccountActivationManagedBean implements Serializable {
                 // System.out.println("GAO MEI REN:" + msg);
 
                 System.out.println("lala");
-                
-                if(!customer.getSavingAccounts().isEmpty()){
 
-                String msg2 = amsbl.verifyAccountBalance(customerIc);
-                System.out.print("verifyAccountBalance status is" + msg2);
-                
-                if (msg2.equals("invalid amount")) {
-                    System.out.print("inside the if statement!.......");
-                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have not reached the minimum top up amount!!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                if (!customer.getSavingAccounts().isEmpty()) {
+
+                    String msg2 = amsbl.verifyAccountBalance(customerIc);
+                    System.out.print("verify Saving account Balance status is" + msg2);
+
+                    if (msg2.equals("invalid amount")) {
+                        System.out.print("inside the if statement!.......");
+                        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have not reached the minimum top up amount!!");
+                        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                    } else {
+                        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Saving Account Activated Successfully!");
+                        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
+
+                    }
+                } else if (!customer.getDiscretionaryAccounts().isEmpty()) {
+                    String msg3 = wasbl.verifyDiscretionaryAccountBalance(customerIc);
+                    System.out.print("verify wealth Account Balance status is" + msg3);
+                    if (msg3.equals("invalid amount")) {
+                        System.out.print("inside the if statement!.......");
+                        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have not reached the minimum top up amount!!");
+                        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                    } else {
+                        FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Discretionary Account Activated Successfully!");
+                        RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
+                    }
                 } else {
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
-
-                }
-                }else if(!customer.getDiscretionaryAccounts().isEmpty()){
-                wasbl.verifyDiscretionaryAccountBalance(customerIc);
-                }else{
-                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account Activated Successfully!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/ResetInitialPassword.xhtml");
-
                 }
 
             } else {
@@ -136,7 +145,7 @@ public class AccountActivationManagedBean implements Serializable {
 //                    Flash flash = facesContext.getExternalContext().getFlash();
 //                    flash.setKeepMessages(true);
 //                    flash.setRedirect(true);
-                                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
 
                     boolean msg2 = amsbl.updateAccountStatus(msg);
                     if (msg2 == true) {
@@ -162,7 +171,7 @@ public class AccountActivationManagedBean implements Serializable {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
-    //    return "LogInHome";
+        //    return "LogInHome";
 
     }
 
