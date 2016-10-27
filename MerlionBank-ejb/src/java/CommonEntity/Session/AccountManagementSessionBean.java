@@ -513,8 +513,7 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
         } else if (!customer.getFixedDepositeAccounts().isEmpty()) {
             customer.getFixedDepositeAccounts().get(0).setStatus("active");
         }else if (!customer.getLoans().isEmpty()) {
-            customer.getLoans().get(0).setStatus("active");
-
+            //customer.getLoans().get(0).setStatus("active");
         }else if (!customer.getDiscretionaryAccounts().isEmpty()) {
             customer.getDiscretionaryAccounts().get(0).setStatus("active");
         }

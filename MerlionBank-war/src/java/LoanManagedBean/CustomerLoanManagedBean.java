@@ -297,12 +297,14 @@ public class CustomerLoanManagedBean implements Serializable {
  //                System.out.println("");
          // Print out the information of the file
          System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
+ 
          System.out.println("Uploade file Customer Ic: "+customer.getIc());
        // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
         String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" +customer.getIc() +"\\"+file.getFileName();
        // String savedFileName = path + "/" + uploadedFile.getFileName();
     //    File fileToSave = new File(savedFileName);
         File fileToSave = new File(destPath);
+      
         fileToSave.getParentFile().mkdirs();
         fileToSave.delete();
         //Generate path file to copy file
@@ -318,7 +320,10 @@ public class CustomerLoanManagedBean implements Serializable {
 //         FileUtils.copyInputStreamToFile(input, destFile);
         //FileUtils.copyFileToDirectory(inputFile, destFile);
          System.out.println("File uploaded successfully!");
-         amsbl.setFileDestination(customer.getId(),  fileToSave.getParentFile().getName());
+                  System.out.println("File path: "+fileToSave.getAbsoluteFile().getName());
+                  System.out.println("File path: "+fileToSave.getCanonicalFile().getName());
+
+         amsbl.setFileDestination(customer.getId(),  fileToSave.getParentFile().getName()+"/"+fileToSave.getAbsoluteFile().getName());
           FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 //           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
