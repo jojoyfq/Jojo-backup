@@ -38,17 +38,22 @@ public interface LoanApplicationSessionBeanLocal {
     public BigDecimal fixedCalculator(BigDecimal amount, Integer loanTerm, Double rate1, Double rate2);
 
     //Create Loan Account - 3rd page - configure home loan 
-    public Long createLoanAccount(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException;
+    public Long createLoanAccount(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm, String homeType,String homeAddress,Long postCode,String carModel,BigDecimal existingDebit,Long postalCode,String carMode,String institution,String major,Date graduationDate) throws EmailNotSendException, LoanTermInvalidException;
 
     public Customer tellerCreateLoanAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo, String enterPassword) throws UserExistException, EmailNotSendException;
 
     //Teller Create Loan Account - 3nd page - configure loan
-    public Long StaffCreateLoanAccount(Long staffId, Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws LoanTermInvalidException;
-public Long createLoanAccountExisting(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws EmailNotSendException, LoanTermInvalidException;
- public Long StaffCreateLoanAccountExisting(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm) throws LoanTermInvalidException;    
+    public Long StaffCreateLoanAccount(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm,String homeType,String homeAddress,Long postCode,String carModel,BigDecimal existingDebit,Long postalCode,String carMode,String institution,String major,Date graduationDate) throws LoanTermInvalidException;
+public Long createLoanAccountExisting(Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm,String homeType,String homeAddress,Long postCode,String carModel,BigDecimal existingDebit,Long postalCode,String carMode,String institution,String major,Date graduationDate) throws EmailNotSendException, LoanTermInvalidException;
+ public Long StaffCreateLoanAccountExisting(Long staffId,Long customerId, BigDecimal monthlyIncome, Long loanTypeId, BigDecimal principal, BigDecimal downpayment, Integer loanTerm,String homeType,String homeAddress,Long postCode,String carModel,BigDecimal existingDebit,Long postalCode,String carMode,String institution,String major,Date graduationDate) throws LoanTermInvalidException;   
 
  public Long findTypeIdByName(String name);
 public LoanType findTypeByName(String name);
  public Customer searchCustomer(String customerIc) throws UserNotExistException, UserNotActivatedException;
 
+ //ask customer to fill in other loans monthly payment: property,car,education, personal
+    public BigDecimal calculateTDSR(BigDecimal monthlyIncome,BigDecimal existingDebit);
+  //ask customer to fill in other loans monthly payment: property,car,education, personal
+     public BigDecimal calculateMSR(BigDecimal monthlyIncome,BigDecimal existingDebit);
+            
 }

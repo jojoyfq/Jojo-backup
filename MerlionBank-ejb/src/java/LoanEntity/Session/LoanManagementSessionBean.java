@@ -234,6 +234,7 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         loan.setLoanDate(loanDate);
         BigDecimal temp=new BigDecimal(0);
         loan.setLatePayment(temp);
+        loan.setLoanDate(Calendar.getInstance().getTime());
         em.flush();
         return loan;
 
