@@ -14,6 +14,7 @@ import CommonEntity.StaffRole;
 import CustomerRelationshipEntity.CaseEntity;
 import CustomerRelationshipEntity.Issue;
 import Exception.EmailNotSendException;
+import Exception.IssueSolvedException;
 import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
@@ -201,7 +202,7 @@ public List<CaseEntity> deleteCase(Long staffId,Long caseId){
 
 //Staff request for more information from customer
 @Override
-public List<Issue> staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException{
+public List<Issue> staffModifyIssue(Long staffId, Long issueId,String solution)throws EmailNotSendException,IssueSolvedException{
    
      Query q = em.createQuery("SELECT a FROM Staff a WHERE a.id = :id");
         q.setParameter("id", staffId);
@@ -210,6 +211,10 @@ public List<Issue> staffModifyIssue(Long staffId, Long issueId,String solution)t
     Query query = em.createQuery("SELECT a FROM Issue a WHERE a.id = :id");
         query.setParameter("id", issueId);
         Issue issue = (Issue) query.getSingleResult();
+        
+        if (issue.getStatus().equals("solved")){
+            throw new IssueSolvedException("This issue has been solved. Cannot require more information");
+        }
         
         issue.setStatus("moreInfo");
         issue.setSolution(solution);

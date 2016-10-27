@@ -91,7 +91,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public boolean checkPayMeLogin(String phoneNumber, String password) {        
+    public boolean checkPayMeLogin(String phoneNumber, String password) {
         String phone;
         if (phoneNumber.substring(0, 1).equals("+")) {
             phone = phoneNumber;
@@ -197,11 +197,20 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public boolean topUp(String phoneNumber, String amount) {
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
+        
+        System.out.println("the amount string is: "+amount+"*************");
+       
         BigDecimal amountBD = new BigDecimal(amount);
-        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1) {
+        System.out.println("the BigDecimal amount string is: "+amountBD+"*********");
+        
+        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1 
+                || (!payme.getSavingAccount().getStatus().equals("active"))) {
             return false;
         } else {
             //update the balance and available balance of saving account
@@ -297,6 +306,22 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
+    public String getSavingAccountStringByPhone(String phone) {
+        if (phone.substring(0, 1).equals("+") == false) {
+            phone = "+" + phone;
+        }
+        System.out.println("Customer phoneNumber is: " + phone + "******");
+
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phone");
+        q.setParameter("phone", phone);
+        PayMe payme = (PayMe) q.getSingleResult();
+
+        String accountNo = payme.getSavingAccount().getAccountNumber().toString();
+        accountNo = accountNo + " - " + payme.getSavingAccount().getSavingAccountType().getAccountType();
+        return accountNo;
+    }
+
+    @Override
     public String getPhoneNumber(String ic) {
         System.err.println("get phone number: ic = " + ic);
 
@@ -319,6 +344,26 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
         q.setParameter("phone", phone);
         PayMe payme = (PayMe) q.getSingleResult();
         return payme.getBalance().toString();
+    }
+
+    @Override
+    public boolean checkTopUpLimit(String phoneNumber, String amount) {
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
+        q.setParameter("phoneNumber", phoneNumber);
+        PayMe payme = (PayMe) q.getSingleResult();
+
+        BigDecimal amountBD = new BigDecimal(amount);
+        BigDecimal totalAmount = amountBD.add(payme.getBalance());
+        BigDecimal limit = new BigDecimal("999");
+
+        if (totalAmount.compareTo(limit) == 1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private String passwordHash(String pass) {

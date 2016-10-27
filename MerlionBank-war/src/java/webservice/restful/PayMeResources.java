@@ -50,7 +50,7 @@ public class PayMeResources {
             @FormParam("password") String password) {
 
         boolean checkExisting = false;
-
+        isLoginPage = false;
         System.err.println("customer IC is " + customerIC);
         System.out.println("password is " + password);
 
@@ -100,7 +100,6 @@ public class PayMeResources {
         return isValidPasswordResponse;
     }
 
-
     @POST
     @Path(value = "getOneTimePassword")
     @Produces(MediaType.APPLICATION_JSON)
@@ -121,7 +120,7 @@ public class PayMeResources {
     public IsValidOTPResponse isValidOTP(@FormParam("OneTimePassword") String OTPString) {
 
         boolean checkOTPValidity;
-
+        isLoginPage = false;
         System.out.println("IC is " + merlionBankIC);
         System.out.println("OTP is " + OTPString);
         checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication(merlionBankIC, OTPString);
@@ -143,15 +142,16 @@ public class PayMeResources {
 
 //        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
         System.out.println("is log in page " + isLoginPage);
-        System.out.println("in the function, phoneNumLogInStr is " + phoneNumLogInStr);
         if (isLoginPage == false) {
             phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
+            System.out.println("phoneNumStr is " + phoneNumStr);
             if (phoneNumStr.isEmpty()) {
                 return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
             } else {
                 return new GetPhoneNumberResponse(0, "", phoneNumStr);
             }
         } else {
+            System.out.println("phoneNumLogInStr is " + phoneNumLogInStr);
             if (phoneNumLogInStr.isEmpty()) {
                 return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
             } else {
@@ -175,6 +175,28 @@ public class PayMeResources {
             return new GetSavingAccountsResponse(1, "No Saving Account Found", Arrays.asList(""));
         }
         return new GetSavingAccountsResponse(0, "", savingAccountsList);
+    }
+
+    @POST
+    @Path(value = "getSavingAccountByPhoneNumber")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetSavingAccountByPhoneResponse getSavingAccountNoByPhoneNumber() {
+        String savingAccountNo;
+        if (isLoginPage == false) {
+            savingAccountNo = payMeSessionBeanLocal.getSavingAccountStringByPhone(phoneNumStr);
+            if (savingAccountNo.isEmpty()) {
+                return new GetSavingAccountByPhoneResponse(1, "No Saving Account Found", "");
+            } else {
+                return new GetSavingAccountByPhoneResponse(0, "", savingAccountNo);
+            }
+        } else {
+            savingAccountNo = payMeSessionBeanLocal.getSavingAccountStringByPhone(phoneNumLogInStr);
+            if (savingAccountNo.isEmpty()) {
+                return new GetSavingAccountByPhoneResponse(1, "No Saving Account Found", "");
+            } else {
+                return new GetSavingAccountByPhoneResponse(0, "", savingAccountNo);
+            }
+        }
     }
 
     @POST
@@ -218,6 +240,52 @@ public class PayMeResources {
             return new CreatePayMeAccountResponse(1, "PayMe account exists", false);
         }
 
+    }
+
+    @POST
+    @Path(value = "isValidTopUpAmount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IsValidTopUpAmountResponse isValidTopUpAmount(@FormParam("topupamount") String amount) {
+
+        boolean checkTopUpAmountValidity;
+        if (isLoginPage == false) {
+            checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumStr, amount);
+            if(checkTopUpAmountValidity == true){
+                return new IsValidTopUpAmountResponse(0, "", true);
+            }else{
+                return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
+            }
+        }else{
+            checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumLogInStr, amount);
+            if(checkTopUpAmountValidity == true){
+                return new IsValidTopUpAmountResponse(0, "", true);
+            }else{
+                return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
+            }
+        }      
+    }
+    
+    @POST
+    @Path(value = "topUp")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TopUpResponse payMeTopUp(@FormParam("topup") String amount){
+        
+        boolean topUpSuccess;
+        if(isLoginPage == false){
+            topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumStr, amount);
+            if(topUpSuccess == true){
+                return new TopUpResponse(0, "", true);
+            }else{
+                return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
+            }           
+        }else{
+            topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumLogInStr, amount);
+            if(topUpSuccess == true){
+                return new TopUpResponse(0, "", true);
+            }else{
+                return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
+            }
+        }
     }
 
 }

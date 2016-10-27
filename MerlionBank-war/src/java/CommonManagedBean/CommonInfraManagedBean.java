@@ -59,14 +59,12 @@ public class CommonInfraManagedBean implements Serializable {
     private String customerAddress;
     private String customerEmail;
     private String customerPhoneNumber;
-
     private String customerOccupation;
     private String customerFamilyInfo;
     private String customerFinancialAsset;
     private String customerFinancialGoal;
     //private Customer selectedCustomer;
     private List savingAccountTypes;
-
     private String savingAccountType;
     private Long savingAccountID;
     private BigDecimal amount;
@@ -74,16 +72,16 @@ public class CommonInfraManagedBean implements Serializable {
     private Date dateOfEnd;
     private String duration;
     private Long depositAccountNumber;
-    
+
     UploadedFile file;
 
-	public UploadedFile getFile() {
-		return file;
-	}
+    public UploadedFile getFile() {
+        return file;
+    }
 
-	public void setFile(UploadedFile file) {
-		this.file = file;
-	}
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
 
 //	public void fileUploadListener(FileUploadEvent e){
 //		// Get uploaded file from the FileUploadEvent
@@ -93,7 +91,6 @@ public class CommonInfraManagedBean implements Serializable {
 //		// Print out the information of the file
 //		System.out.println("Uploaded File Name Is :: "+file.getFileName()+" :: Uploaded File Size :: "+file.getSize());
 //	}
-
     public Long getDepositAccountNumber() {
         return depositAccountNumber;
 
@@ -166,11 +163,11 @@ public class CommonInfraManagedBean implements Serializable {
 //                Flash flash = facesContext.getExternalContext().getFlash();
 //                flash.setKeepMessages(true);
 //                flash.setRedirect(true);
-
 //                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Account created Successfully");
 //
 //                RequestContext.getCurrentInstance().showMessageInDialog(message);
-           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/uploadFile.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/uploadFile.xhtml");
+
             } catch (UserExistException ex) {
                 System.out.println(ex.getMessage());
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -180,14 +177,26 @@ public class CommonInfraManagedBean implements Serializable {
             } catch (EmailNotSendException ex1) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex1.getMessage());
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
+            } finally {
+                ic = null;
+                customerName = null;
+                customerGender = null;
+                customerDateOfBirth = null;
+                customerAddress = null;
+                customerEmail = null;
+                customerPhoneNumber = null;
+                customerOccupation = null;
+                customerFamilyInfo = null;
+                savingAccountType = null;
             }
         } else {
             System.out.println("Message from managed bean: please do not leave blanks!");
         }
 
-      //  return "../LogInHome";
+        //  return "../LogInHome";
     }
-      public void fileUploadListener(FileUploadEvent e) throws IOException {
+
+    public void fileUploadListener(FileUploadEvent e) throws IOException {
   
  // Get uploaded file from the FileUploadEvent
          this.file = e.getFile();
@@ -201,12 +210,14 @@ public class CommonInfraManagedBean implements Serializable {
  //                System.out.println("");
          // Print out the information of the file
          System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
-         System.out.println("Uploade file Customer Ic: "+ic);
+ 
+         System.out.println("Uploade file Customer Ic: "+customer.getIc());
        // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
         String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" +customer.getIc() +"\\"+file.getFileName();
        // String savedFileName = path + "/" + uploadedFile.getFileName();
     //    File fileToSave = new File(savedFileName);
         File fileToSave = new File(destPath);
+      
         fileToSave.getParentFile().mkdirs();
         fileToSave.delete();
         //Generate path file to copy file
@@ -222,11 +233,15 @@ public class CommonInfraManagedBean implements Serializable {
 //         FileUtils.copyInputStreamToFile(input, destFile);
         //FileUtils.copyFileToDirectory(inputFile, destFile);
          System.out.println("File uploaded successfully!");
-         amsbl.setFileDestination(customer.getId(),  fileToSave.getParentFile().getName());
-           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
- 
-     }
+                  System.out.println("File path: "+fileToSave.getAbsoluteFile().getName());
+                  System.out.println("File path: "+fileToSave.getCanonicalFile().getName());
 
+         amsbl.setFileDestination(customer.getId(),  fileToSave.getParentFile().getName()+"/"+fileToSave.getAbsoluteFile().getName());
+          FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
+
+    }
 
     public void createFixedDepositAccount(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {

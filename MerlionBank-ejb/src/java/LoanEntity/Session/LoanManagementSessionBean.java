@@ -5,6 +5,7 @@
  */
 package LoanEntity.Session;
 
+import BillEntity.GIROArrangement;
 import CommonEntity.Customer;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
@@ -15,6 +16,7 @@ import Exception.LoanTermInvalidException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import LoanEntity.Instance;
+import LoanEntity.InstanceValue;
 import LoanEntity.Loan;
 import LoanEntity.LoanType;
 import LoanEntity.Logistic;
@@ -33,6 +35,7 @@ import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.apache.commons.lang3.ArrayUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -232,6 +235,7 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         loan.setLoanDate(loanDate);
         BigDecimal temp=new BigDecimal(0);
         loan.setLatePayment(temp);
+        loan.setLoanDate(Calendar.getInstance().getTime());
         em.flush();
         return loan;
 
@@ -335,7 +339,12 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         for (int n = 0; n < 3000; n++) {
             double lik = 0.0;
             for (int i = 0; i < instances.size(); i++) {
-                int[] x = instances.get(i).getX();
+                List <InstanceValue> trainingData=instances.get(i).getInstanceValues();
+                int first=trainingData.get(0).getTrainVariable().intValue();
+                 int second=trainingData.get(1).getTrainVariable().intValue();
+                 int third=trainingData.get(2).getTrainVariable().intValue();
+                int[] x={first,second,third};
+               
                 double predicted = classify(x, logistic);
                 int label = instances.get(i).getLabel();
                 for (int j = 0; j < 3; j++) {
@@ -390,5 +399,80 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         return classify(x, logistic);
 
     }
+    
+    @Override
+    public List<GIROArrangement> displayGIROArrangement()throws EmailNotSendException{
+        Query query = em.createQuery("SELECT a FROM GIROArrangement a");
+        List<GIROArrangement> GIROArrangements = new ArrayList(query.getResultList());
+        List<GIROArrangement> temp=new ArrayList<GIROArrangement>();
+        
+        for (int i=0;i<GIROArrangements.size();i++){
+            if (GIROArrangements.get(i).equals("Merlion Bank Loan") && GIROArrangements.get(i).getStatus().equals("pending"))
+                temp.add(GIROArrangements.get(i));
+        }
+        
+        return temp;
+    }
+    
+    @Override
+    public List<GIROArrangement> manageGIROArrangement(Long staffId,Long GIROArrangementId,String decision)throws EmailNotSendException{
+      GIROArrangement giroArrangement = em.find(GIROArrangement.class, GIROArrangementId);  
+      Long loanAccountNum=Long.valueOf(giroArrangement.getBillReference());
+      
+      Query query = em.createQuery("SELECT a FROM Loan a WHERE a.accountNumber = :accountNumber");
+        query.setParameter("accountNumber", loanAccountNum);
+        Loan loan = (Loan) query.getSingleResult();
+        Date payDate=loan.getStartDate();
+        DateTime startDate=new DateTime(payDate);
+        
+      if (decision.equals("approve")){
+        giroArrangement.setStatus("active");
+        giroArrangement.setDeductionDay(startDate);
+         try {
+            sendGIROApproveEmail(loan.getCustomer().getName(), loan.getCustomer().getEmail(), loan.getAccountNumber());
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+      }else if (decision.equals("reject")){
+         giroArrangement.setStatus("terminated"); 
+          try {
+            sendGIRORejectEmail(loan.getCustomer().getName(), loan.getCustomer().getEmail(), loan.getAccountNumber());
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+      }
+    return displayGIROArrangement();
+    }
+    
+     private void sendGIROApproveEmail(String name, String email, Long accountNumber) throws MessagingException {
+        String subject = "Merlion Bank - GIRO Application Approved";
+        System.out.println("Inside send email");
 
+        String content = "<h2>Dear " + name
+                + ",</h2><br /><h1>  Your loan GIRO application has been approved by our bank staff.</h1><br />"
+                + "<h1>Welcome to Merlion Bank.</h1>"
+                + "<h2 align=\"center\">Loan Account Number: " + accountNumber
+                + "<p style=\"color: #ff0000;\">Please noted that that you are required to go to our counter to sign the loan contract. Thank you.</p>"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
+    }
+
+    private void sendGIRORejectEmail(String name, String email, Long accountNumber) throws MessagingException {
+        String subject = "Merlion Bank - GIRO Application Rejected";
+        System.out.println("Inside send email");
+
+        String content = "<h2>Dear " + name
+                + ",</h2><br /><h1>  Sorry! You application of GIRO for loan account " + accountNumber + "has been rejected.</h1><br />"
+                + "<p style=\"color: #ff0000;\">For more enquiries, please kindly contact +65 8888 8888. Thank you.</p>"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please log in and use case management page and submit your enquiry there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
+    }
+    
+    
 }

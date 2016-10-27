@@ -45,6 +45,7 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
     private Long customerId;
     private boolean check;
     private Customer selectedCustomer;
+    private String path;
 
     public Customer getSelectedCustomer() {
         return selectedCustomer;
@@ -217,12 +218,10 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
     }
 
     public void openDocs(ActionEvent event) throws IOException {
-       try{
-           selectedCustomer = (Customer) event.getComponent().getAttributes().get("selectedCustomer");
+         selectedCustomer = (Customer) event.getComponent().getAttributes().get("selectedCustomer");
 
            System.out.println("********Selected customer to view documents is " + selectedCustomer.getIc());
         //File openFile = new File(selectedCustomer.getFileDestination());
-        System.out.println("File Path is "+selectedCustomer.getFileDestination());
 //         if(!Desktop.isDesktopSupported()){
 //            System.out.println("Desktop is not supported");
 //            return;
@@ -232,15 +231,14 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
 //        if(openFile.exists()) desktop.open(openFile);
 //        
         
-            String path = selectedCustomer.getFileDestination();
-            Runtime runtime = Runtime.getRuntime();
-            runtime.exec("explorer.exe C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\"+path);
-            System.out.println("open");
+             path = "http://localhost:8080/"+selectedCustomer.getFileDestination();
+                    System.out.println("File Path From customer is "+selectedCustomer.getFileDestination());
+        System.out.println("File Path is "+path);
+
+//            Runtime runtime = Runtime.getRuntime();
+//            runtime.exec("explorer.exe C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\"+path);
+//            System.out.println("open");
    
-       }catch(IOException ex){
-      FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        } 
        }
 
     public Staff getStaff() {
@@ -261,6 +259,22 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
 
     public Long getStaffId() {
         return staffId;
+    }
+
+    public StaffVerifyCustomerAccountSessionBeanLocal getSvcasbl() {
+        return svcasbl;
+    }
+
+    public void setSvcasbl(StaffVerifyCustomerAccountSessionBeanLocal svcasbl) {
+        this.svcasbl = svcasbl;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public void setStaffId(Long staffId) {
