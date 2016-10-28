@@ -11,11 +11,13 @@ import CommonEntity.CustomerAction;
 import CommonEntity.OnlineAccount;
 import DepositEntity.SavingAccount;
 import DepositEntity.Session.TransferSessionBeanLocal;
+import DepositEntity.TransactionRecord;
 import Exception.PasswordNotMatchException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.PayMe;
+import PayMeEntity.PayMeTransaction;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.TwilioRestException;
 import com.twilio.sdk.resource.factory.MessageFactory;
@@ -28,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import javax.ejb.Stateless;
@@ -220,6 +223,15 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             payme.getSavingAccount().setBalance(updatedBalance);
             //update the payme balance
             payme.setBalance(payme.getBalance().add(amountBD));
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction = new PayMeTransaction("TopUp PayMe Account",null,amountBD,currentTime,null,
+                    payme.getSavingAccount().getAccountNumber(),payme);
+            TransactionRecord transactionRecord = new TransactionRecord("PayMe",amountBD,null, 
+            "settled", "TopUp PayMe Account",currentTime,payme.getSavingAccount().getAccountNumber() ,null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
+            
+            em.persist(paymeTransaction);
+            em.persist(transactionRecord);
             em.persist(payme);
             em.flush();
             return true;
@@ -248,6 +260,15 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             payme.getSavingAccount().setBalance(updatedBalance);
             //update the payme balance
             payme.setBalance(payme.getBalance().subtract(amountBD));
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction = new PayMeTransaction("PayMe Send to Account",amountBD,null,currentTime,null,
+                    payme.getSavingAccount().getAccountNumber(),payme);
+            TransactionRecord transactionRecord = new TransactionRecord("PayMe",null,amountBD, 
+            "settled", "PayMe Send to Account",currentTime,payme.getSavingAccount().getAccountNumber() ,null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
+            
+            em.persist(paymeTransaction);
+            em.persist(transactionRecord);
             em.persist(payme);
             em.flush();
             return true;
@@ -275,6 +296,15 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             em.persist(payme);
             otherPayMe.setBalance(otherPayMe.getBalance().add(amountBD));
             em.persist(otherPayMe);
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction1 = new PayMeTransaction("PayMe Sent",amountBD,null,currentTime,otherPayMe.getPhoneNumber(),
+                    null,payme);
+            PayMeTransaction paymeTransaction2 = new PayMeTransaction("PayMe Receive",null,amountBD,currentTime,payme.getPhoneNumber(),
+                    null,otherPayMe);
+            em.persist(paymeTransaction1);
+            em.persist(paymeTransaction2);
+            
             em.flush();
             return true;
         }
