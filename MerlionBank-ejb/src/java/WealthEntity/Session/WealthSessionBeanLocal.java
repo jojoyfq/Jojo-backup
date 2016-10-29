@@ -30,7 +30,9 @@ public interface WealthSessionBeanLocal {
 
     public Long topUpBySaving(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException;
 
-    public Long transferBackToSaving(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException;
+    public Boolean compareAmount(Long customerId,long discretionaryAccountId, BigDecimal amount);
+    public Long transferBackToSavingWithEnoughBalance(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException;
+     public Long transferBackToSavingWithNotEnoughBalance(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException ;
 
     public List<DiscretionaryAccount> displayAllDiscretionaryAccounts(Long customerId) throws ListEmptyException;
 
@@ -45,4 +47,8 @@ public interface WealthSessionBeanLocal {
     public List<Portfolio> customerCancelPortfolios(Long portfolioId);
 
     public List<Portfolio> customerAcceptPlan(Long customerId, Long portfolioId) throws EmailNotSendException;
+
+public List<Portfolio> ModifyPortfolios(Long portfolioId, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double stock,int term) throws EmailNotSendException;
+
+public List<Portfolio> portfolioEarlyWithdraw(Long portfolioId);
 }

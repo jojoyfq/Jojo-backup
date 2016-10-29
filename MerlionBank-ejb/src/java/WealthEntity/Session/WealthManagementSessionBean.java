@@ -5,6 +5,7 @@
  */
 package WealthEntity.Session;
 
+import CommonEntity.Customer;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import Exception.EmailNotSendException;
@@ -170,6 +171,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         products.add(stockProduct);
         
         portfolio.setProducts(products);
+        portfolio.setStatus("staffVefified");
         
         try {
             sendMofifiedEmail(discretionaryAccount.getCustomer().getName(), discretionaryAccount.getCustomer().getEmail(), portfolio.getId());
@@ -200,28 +202,41 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         sendEmail.run(email, subject, content);
     }
     
-  @Override
- public List<Portfolio> viewAllPendingAcivationTailoredPlan(){
-    Query query = em.createQuery("SELECT a FROM Portfolio a");
-        List<Portfolio> portfolios = new ArrayList(query.getResultList());
-        List<Portfolio> activationPortfolios = new ArrayList<Portfolio>();
-        for (int i = 0; i < portfolios.size(); i++) {
-            if (portfolios.get(i).getStatus().equals("customerVerified") && portfolios.get(i).getType().equals("Tailored plan") ) {
-                activationPortfolios.add(portfolios.get(i));
-            }
+   @Override 
+   public List<Portfolio> viewAllPendingAcivationTailoredPlan(Long customerId){
+    Customer customer=em.find(Customer.class,customerId);
+    List<DiscretionaryAccount> discretionaryAccounts=customer.getDiscretionaryAccounts();
+    List<Portfolio> portfolios=new ArrayList<Portfolio>();
+    for (int i=0;i<discretionaryAccounts.size();i++){
+        DiscretionaryAccount discretionaryAccount=discretionaryAccounts.get(i);
+        List<Portfolio> temp=discretionaryAccount.getPortfolios();
+        for (int j=0;j<temp.size();j++){
+            portfolios.add(temp.get(j));
         }
-        return activationPortfolios; 
- }
+    }
+    return portfolios;
+   }
+    
+    @Override
+    public Portfolio staffActivateLoan(Long staffId, Long portfolioId, Date startDate) {
+       
+        Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+        portfolio.setStatus("active");
+        Date currentTime = startDate;
+        DateTime start = new DateTime(currentTime);
+        DateTime currentTime1 = start.plusMonths(portfolio.getTerm());
+        Date currentTimestamp = currentTime1.toDate();
+        
+        portfolio.setStartDate(startDate);
+        portfolio.setEndDate(currentTimestamp);
+      
+        em.flush();
+         smsbl.recordStaffAction(staffId, "Activate portfolio id " + portfolio.getId(), portfolio.getDiscretionaryAccount().getCustomer().getId());
+        return portfolio;
+
+    }
+
  
-//    @Override
-//    public Loan staffActivatePortfolio(Long portfolioId, Date portfolioDate) {
-//        Loan loan = em.find(Loan.class, loanId);
-//        loan.setStatus("active");
-//        loan.setStartDate(null);
-//        loan.setLoanDate(loanDate);
-//        em.flush();
-//        return loan;
-//
-//    }
+
  
 }
