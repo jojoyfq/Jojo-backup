@@ -8,6 +8,7 @@ package WealthEntity.Session;
 import Exception.EmailNotSendException;
 import WealthEntity.Portfolio;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -33,6 +34,8 @@ public interface WealthManagementSessionBeanLocal {
     public List<Portfolio> staffModifyPortfolios(Long staffId, Long portfolioId, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double stock, int term) throws EmailNotSendException;
 
     //View pending Activation plan, haven't finished staff activate plan function
-    public List<Portfolio> viewAllPendingAcivationTailoredPlan();
+    public List<Portfolio> viewAllPendingAcivationTailoredPlan(Long customerId);
+    
+    public Portfolio staffActivateLoan(Long staffId, Long portfolioId, Date startDate);
 
 }

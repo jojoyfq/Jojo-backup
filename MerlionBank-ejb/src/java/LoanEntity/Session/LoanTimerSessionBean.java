@@ -49,7 +49,7 @@ private LoanApplicationSessionBean lasb;
        List<Loan>  loans=new ArrayList<Loan>();
        
        for (int i=0;i<currentLoans.size();i++){
-          if (currentLoans.get(i).getStatus().equals("staffVerified") ||currentLoans.get(i).getStatus().equals("customerVerified")|| currentLoans.get(i).getStartDate()!=null)
+          if ((currentLoans.get(i).getStatus().equals("staffVerified") ||currentLoans.get(i).getStatus().equals("customerVerified"))&& currentLoans.get(i).getStartDate()!=null)
               loans.add(currentLoans.get(i));
       }
        Date todayDate=Calendar.getInstance().getTime();
@@ -118,7 +118,7 @@ private LoanApplicationSessionBean lasb;
               BigDecimal monthlyPayment= loan.getMonthlyPayment();
               
               BigDecimal temp=latePayment.add(monthlyPayment).multiply(lateRate);
-              latePayment.add(temp);
+              latePayment=latePayment.add(temp);
               loan.setLatePayment(latePayment);
               try{
                sendLatePaymentNotificationEmail(loan.getCustomer().getName(),loan.getCustomer().getEmail(),loan.getAccountNumber());
