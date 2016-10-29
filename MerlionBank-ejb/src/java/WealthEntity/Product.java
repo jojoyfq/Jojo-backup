@@ -24,7 +24,7 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String productName;
-    private BigDecimal purchaseAmount;
+    private BigDecimal expectedAmount;
     private BigDecimal currentAmount;
     private Double percentage;
     
@@ -34,9 +34,9 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public Product(String productName, BigDecimal purchaseAmount, Double percentage) {
+    public Product(String productName, BigDecimal expectedAmount, Double percentage) {
         this.productName = productName;
-        this.purchaseAmount = purchaseAmount;
+        this.expectedAmount = expectedAmount;
         this.percentage = percentage;
     }
 
@@ -49,12 +49,12 @@ public class Product implements Serializable {
         this.productName = productName;
     }
 
-    public BigDecimal getPurchaseAmount() {
-        return purchaseAmount;
+    public BigDecimal getExpectedAmount() {
+        return expectedAmount;
     }
 
-    public void setPurchaseAmount(BigDecimal purchaseAmount) {
-        this.purchaseAmount = purchaseAmount;
+    public void setExpectedAmount(BigDecimal expectedAmount) {
+        this.expectedAmount = expectedAmount;
     }
 
     public BigDecimal getCurrentAmount() {
