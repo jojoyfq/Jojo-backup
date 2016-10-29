@@ -5,8 +5,12 @@
  */
 package LoanEntity.Session;
 
+import BillEntity.GIROArrangement;
+import DepositEntity.SavingAccount;
+import DepositEntity.TransactionRecord;
 import Exception.EmailNotSendException;
 import Exception.LoanTermInvalidException;
+import Exception.NotEnoughAmountException;
 import LoanEntity.Loan;
 import LoanEntity.LoanType;
 import Other.Session.sendEmail;
@@ -44,6 +48,7 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
     //Timer
 
     @Override
+<<<<<<< HEAD
     public void closeAccounts() {
         System.out.println("inside the close account method ********** ");
         Query query = em.createQuery("SELECT a FROM Loan a");
@@ -77,6 +82,44 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
 
     private void sendLoanTerminationEmail(String name, String email, Long accountNumber) throws MessagingException {
         String subject = "Merlion Bank - Loan Application Closed";
+=======
+      public void closeAccounts(){
+         Query query = em.createQuery("SELECT a FROM Loan a");
+        List<Loan> currentLoans = new ArrayList(query.getResultList()); 
+       List<Loan>  loans=new ArrayList<Loan>();
+       
+       for (int i=0;i<currentLoans.size();i++){
+          if ((currentLoans.get(i).getStatus().equals("staffVerified") ||currentLoans.get(i).getStatus().equals("customerVerified"))&& currentLoans.get(i).getStartDate()!=null)
+              loans.add(currentLoans.get(i));
+      }
+       Date todayDate=Calendar.getInstance().getTime();
+       for (int j=0;j<loans.size();j++){
+           if (todayDate.after(loans.get(j).getStartDate())){
+               loans.get(j).setStatus("terminated");
+               
+               //Close GIRO
+               Query q = em.createQuery("SELECT a FROM GIROArrangement a");
+        List<GIROArrangement> GIROArrangements = new ArrayList(q.getResultList());
+        
+        for (int i=0;i<GIROArrangements.size();i++){
+            if (GIROArrangements.get(i).equals("Merlion Bank Loan") && GIROArrangements.get(i).getStatus().equals("active") && GIROArrangements.get(i).getBillingOrganization().equals(loans.get(j).getAccountNumber().toString()))
+               GIROArrangements.get(i).setStatus("terminated");
+        } 
+             
+               try{
+     sendLoanTerminationEmail(loans.get(j).getCustomer().getName(),loans.get(j).getCustomer().getEmail(),loans.get(j).getAccountNumber());
+     
+              } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+        }
+           }
+       }
+           
+      }
+      
+      private void sendLoanTerminationEmail(String name, String email,Long accountNumber) throws MessagingException {
+      String subject = "Merlion Bank - Loan Application Closed";
+>>>>>>> master
         System.out.println("Inside send email");
 
         String content = "<h2>Dear " + name
@@ -95,6 +138,7 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
         List<Loan> currentLoans = new ArrayList(query.getResultList());
         System.out.println("********** the size of currentloans is " + currentLoans.size());
         
+<<<<<<< HEAD
         List<Loan> loans = new ArrayList<Loan>();
         BigDecimal lateRate = new BigDecimal("0.02");
 
@@ -104,6 +148,20 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
                 loans.add(currentLoans.get(i));
                 System.out.println("********** the size of loans is " + loans.size());
             }
+=======
+          if (current2.isAfter(compareDate)){
+             BigDecimal latePayment=loan.getLatePayment();
+              BigDecimal monthlyPayment= loan.getMonthlyPayment();
+              
+              BigDecimal temp=latePayment.add(monthlyPayment).multiply(lateRate);
+              latePayment=latePayment.add(temp);
+              loan.setLatePayment(latePayment);
+              try{
+               sendLatePaymentNotificationEmail(loan.getCustomer().getName(),loan.getCustomer().getEmail(),loan.getAccountNumber());
+              }catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+>>>>>>> master
         }
 
         Loan loan = new Loan();
@@ -292,6 +350,7 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
         sendEmail.run(email, subject, content);
+<<<<<<< HEAD
     }
 
     public void autoBadDebt(Date currentDate) throws EmailNotSendException {
@@ -302,4 +361,56 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
     public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+=======
+    }  
+     
+    
+     public void loanPayByGIRO()throws NotEnoughAmountException{
+         Query query = em.createQuery("SELECT a FROM GIROArrangement a");
+        List<GIROArrangement> GIROArrangements = new ArrayList(query.getResultList());
+        List<GIROArrangement> temp=new ArrayList<GIROArrangement>();
+        
+        for (int i=0;i<GIROArrangements.size();i++){
+            if (GIROArrangements.get(i).equals("Merlion Bank Loan") && GIROArrangements.get(i).getStatus().equals("active"))
+                temp.add(GIROArrangements.get(i));
+        }
+        
+        for (int i=0;i<temp.size();i++){
+            GIROArrangement giroArrangement=temp.get(i);
+            Long loanAccountNum=Long.valueOf(giroArrangement.getBillReference());
+            SavingAccount savingAccount= giroArrangement.getSavingAccount();
+      
+      Query q = em.createQuery("SELECT a FROM Loan a WHERE a.accountNumber = :accountNumber");
+        q.setParameter("accountNumber", loanAccountNum);
+        Loan loan = (Loan) q.getSingleResult();
+        
+      BigDecimal amount=loan.getMonthlyPayment().add(loan.getLatePayment());
+         if (amount.compareTo(savingAccount.getAvailableBalance())== 1)
+             throw new NotEnoughAmountException("There is not enough amount of money in this savingAccount");
+         
+         BigDecimal temp1=new BigDecimal("0");
+         loan.setOutstandingBalance(loan.getOutstandingBalance().subtract(loan.getMonthlyPayment()));
+         loan.setMonthlyPayment(temp1);
+         loan.setLatePayment(temp1);
+         loan.setPaidTerm(loan.getPaidTerm()+1);
+         
+         
+         savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
+         savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
+         
+           Date currentTime = Calendar.getInstance().getTime();
+           loan.setLoanDate(currentTime);
+                java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+
+                TransactionRecord transactionRecord = new TransactionRecord("LP",amount,null,"settled", "GIRO Loan Payment",currentTimestamp,savingAccount.getAccountNumber(),loan.getAccountNumber(),savingAccount,"MerlionBank","MerlionBank");
+                savingAccount.getTransactionRecord().add(transactionRecord);
+                em.persist(transactionRecord);
+                em.flush();
+        
+        }
+        
+        
+        
+      }
+>>>>>>> master
 }

@@ -114,6 +114,8 @@ public class SavingAccount implements Serializable {
         this.savingAccountType = savingAccountType;
         this.dailyBalance = new ArrayList<BigDecimal> ();
         this.accumDailyInterest = BigDecimal.valueOf(0);
+        this.giroArrangement = new ArrayList<>();
+        this.recurrentBillArrangement = new ArrayList<>();
     }
 
     public DebitCard getDebitCard() {
