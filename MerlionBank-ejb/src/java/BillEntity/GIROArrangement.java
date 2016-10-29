@@ -32,18 +32,20 @@ public class GIROArrangement implements Serializable {
     @ManyToOne
     private SavingAccount savingAccount;
     
-    private String status;//active, terminated
+    private String status;//pending,active, terminated
     private DateTime deductionDay;
+    private String customerName;
     
 
     public GIROArrangement(){}
 
-    public GIROArrangement(BigDecimal deductionLimit, BillingOrganization billingOrganization, String billReference, SavingAccount savingAccount) {
+    public GIROArrangement(String name,BigDecimal deductionLimit, BillingOrganization billingOrganization, String billReference, SavingAccount savingAccount) {
         this.deductionLimit = deductionLimit;
         this.billingOrganization = billingOrganization;
         this.billReference = billReference;
         this.savingAccount = savingAccount;
-        this.status = "active";
+        this.status = "pending";
+        this.customerName = name;
     }
 
     public String getStatus() {
@@ -52,6 +54,14 @@ public class GIROArrangement implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
     
     
@@ -125,5 +135,14 @@ public class GIROArrangement implements Serializable {
     public String toString() {
         return "BillEntity.GIROArrangement[ id=" + id + " ]";
     }
+
+    public DateTime getDeductionDay() {
+        return deductionDay;
+    }
+
+    public void setDeductionDay(DateTime deductionDay) {
+        this.deductionDay = deductionDay;
+    }
+    
     
 }

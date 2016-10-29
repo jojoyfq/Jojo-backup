@@ -52,19 +52,19 @@
 
                                     <p:column headerText="Customer Date Of Birth" >
                                         <h:outputText value="#{pendingCustomer.dateOfBirth}" >
-                                          <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
                                         </h:outputText>
 
                                     </p:column>
 
                                     <p:column headerText="Document" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton  icon="ui-icon-mail-open" actionListener="#{staffVerifyCustomerManagedBean.openDocs}" ajax="true" value ="View" >
+                                            <p:commandButton  icon="ui-icon-mail-open"  oncomplete="PF('msgDialog2').show()"  update=":form:msgDetail2" actionListener="#{staffVerifyCustomerManagedBean.openDocs}" ajax="true" value ="View" >
                                                 <f:attribute name="selectedCustomer" value="#{pendingCustomer}"  />
                                             </p:commandButton>
                                         </center>
                                     </p:column>
-                                     
+
                                     <f:facet name="footer">
                                         <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}"  />
                                         <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}"  />
@@ -72,7 +72,18 @@
                                 </p:dataTable>
 
                             </h:panelGrid>
+                            <p:dialog id="dialogMessage2"   header="Document" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail2" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
 
+                                        <h:graphicImage value="#{staffVerifyCustomerManagedBean.path}" />
+
+
+
+
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
 
 
                         </h:form>

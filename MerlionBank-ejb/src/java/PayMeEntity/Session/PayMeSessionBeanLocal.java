@@ -30,4 +30,6 @@ public interface PayMeSessionBeanLocal {
     public boolean topUp(String phoneNumber, String amount);
     public boolean sendToMyAccount(String phoneNumber, String amount);   
     public boolean payMeSent(String phoneNumber, String otherPhone, String amount);
+    public String getSavingAccountStringByPhone(String phone);
+    public boolean checkTopUpLimit(String phoneNumber, String amount);
 }

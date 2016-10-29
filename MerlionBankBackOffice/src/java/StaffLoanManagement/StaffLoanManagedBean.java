@@ -104,6 +104,7 @@ public class StaffLoanManagedBean implements Serializable {
     private String password;
     private LoanType selectedLoanType;
     private double risk;
+    private String path;
 
     @PostConstruct
     public void init() {
@@ -124,7 +125,7 @@ public class StaffLoanManagedBean implements Serializable {
         loanCategories.put("Car", "Car");
         loanCategories.put("Education", "Education");
 
-        Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<String, String>();
         map.put("SIBOR Package", "SIBOR Package");
         map.put("Fixed Interest Package", "Fixed Interest Package");
         data.put("Home", map);
@@ -133,7 +134,6 @@ public class StaffLoanManagedBean implements Serializable {
         map.put("Car Loan", "Car Loan");
 
         data.put("Car", map);
-
         map = new HashMap<String, String>();
         map.put("NUS Education Loan", "NUS Education Loan");
 
@@ -149,11 +149,15 @@ public class StaffLoanManagedBean implements Serializable {
         }
     }
 
-    public void searchCustomerId(ActionEvent event) throws UserNotExistException, UserNotActivatedException {
+    public void searchCustomerId(ActionEvent event) throws UserNotExistException, UserNotActivatedException, ListEmptyException, IOException {
         try {
                         System.out.println("searched customer is "+searchedCustomerIc);
             searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
-        } catch (UserNotExistException | UserNotActivatedException ex) {
+            oneCustomerAllLoans = lmsbl.searchLoan(searchedCustomerIc);
+            
+                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffActivateLoanForCustomer.xhtml");
+
+        } catch (UserNotExistException | UserNotActivatedException|ListEmptyException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
@@ -231,13 +235,13 @@ public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-public void openDocs(ActionEvent event) throws IOException {
-       try{
+    
+public void openDocs(ActionEvent event) {
+
            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
 
            System.out.println("********Selected customer to view documents is " + selectedLoan.getCustomer().getIc());
         //File openFile = new File(selectedCustomer.getFileDestination());
-        System.out.println("File Path is "+selectedLoan.getCustomer().getFileDestination());
 //         if(!Desktop.isDesktopSupported()){
 //            System.out.println("Desktop is not supported");
 //            return;
@@ -247,15 +251,14 @@ public void openDocs(ActionEvent event) throws IOException {
 //        if(openFile.exists()) desktop.open(openFile);
 //        
         
-            String path = selectedLoan.getCustomer().getFileDestination();
-            Runtime runtime = Runtime.getRuntime();
-            runtime.exec("explorer.exe C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\"+path);
-            System.out.println("open");
+             path = "http://localhost:8080/"+selectedLoan.getCustomer().getFileDestination();
+                    System.out.println("File Path From customer is "+selectedLoan.getCustomer().getFileDestination());
+        System.out.println("File Path is "+path);
+
+//            Runtime runtime = Runtime.getRuntime();
+//            runtime.exec("explorer.exe C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\"+path);
+//            System.out.println("open");
    
-       }catch(IOException ex){
-      FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        } 
        }
 
     public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOException {
@@ -362,7 +365,7 @@ public void openDocs(ActionEvent event) throws IOException {
 
     public void staffRejectPending(ActionEvent event) throws EmailNotSendException {
         try {
-            selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+        //    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
             loanId = selectedLoan.getId();
             System.out.println("*************Selected pending loan to view - loan ID is " + selectedLoan.getId());
             System.out.println("**************Selected pending loan to view - customer ic" + selectedLoan.getCustomer().getName());
@@ -427,6 +430,7 @@ public void openDocs(ActionEvent event) throws IOException {
             lmsbl.staffActivateLoan(loanId, loanDate);
             System.out.println("*****Customer IC to activate loan is " + customerIc);
             oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
+            
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been activated successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (UserNotExistException | ListEmptyException | UserNotActivatedException ex) {
@@ -803,5 +807,14 @@ System.out.println("************Selected loan ID to calculate risk is "+selected
     public void setRisk(double risk) {
         this.risk = risk;
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
 
 }

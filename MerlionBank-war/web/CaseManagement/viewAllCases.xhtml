@@ -57,7 +57,7 @@
                                             <h:outputText value="#{caseEntity.status}" />
                                         </p:column>
 
-                                        <p:column headerText="View Issues">
+                                        <p:column headerText="View Issues" style="width: 80px;">
                                             <p:commandButton icon="ui-icon-mail-open"  actionListener="#{messageManagedBean.issuesUnderOneCase}"  update=":form:panel :form1:dialogMessage" ajax="true" oncomplete="PF('dlg2').show()" >
                                                 <f:attribute  name ="selectedCase" value="#{caseEntity}"  />
                                             </p:commandButton>
@@ -65,9 +65,7 @@
 
 
                                     </p:dataTable>
-                                    <div class="Container100 Responsive50"><p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/></div>
-
-
+                                    
                                 </h:panelGrid>
 
 
@@ -122,18 +120,18 @@
                                     </p:column>
 
                                     <p:column headerText="Issue Rating">
-                                        <p:rating value="#{messageManagedBean.rating1}">
+                                        <p:rating value="#{messageManagedBean.rating}">
                                             <f:attribute name="selectedIssue" value="#{issue}"  />
-                                            <p:ajax event="rate" listener="#{messageManagedBean.customerRateIssue}" />
-                                           
+                                            <p:ajax event="rate" listener="#{messageManagedBean.customerRate}" />
+
                                         </p:rating>
-                                       
+
                                     </p:column>
 
 
                                     <p:column headerText="Submit" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton icon="ui-icon-mail-open" actionListener="#{messageManagedBean.customerModifyIssue}"  disabled="#{!(messageManagedBean.checkStatus)}" update=":form:panel " ajax="true"  >
+                                            <p:commandButton icon="ui-icon-mail-open"  rendered="#{issue.status eq 'moreInfo'}"  actionListener="#{messageManagedBean.customerModifyIssue}"   update=":form:panel " ajax="true"  >
                                                 <f:attribute name="selectedIssue" value="#{issue}"  />
                                             </p:commandButton>
                                         </center>
@@ -147,6 +145,12 @@
                         </h:form>
                     </div>
                 </div>
+                <div class="Container50 Responsive100">
+                                        <div class="Card SoftGrayBack">
+                                          <p:button value="Back To Dashboard" styleClass="White Fs16" outcome="/dashboard"/>
+
+                                        </div>
+                                    </div>
             </div> 
         </div>
 

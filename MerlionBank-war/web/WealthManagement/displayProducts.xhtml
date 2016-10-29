@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+        </div>
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+
+            <div class="Container100">
+                <div class="Card">
+                    <div class="CardBigTopic"><i class="icon-stopwatch Fleft MarRight10 Fs28"></i> Merlion Bank Wealth Advisory</div>
+                    <div class="Separator"></div>
+                    <h:graphicImage name="images/wealth.jpg" library="atlas-layout" styleClass="Wid100"/>
+
+
+
+                </div>
+            </div>       
+            <div class="Container50">
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+
+                    <p:outputLabel for="category" value="Product Category" />
+                    <p:selectOneMenu id="category" value="#{customerWealthManagedBean.typeName}" style="width:250px">
+                        <p:ajax listener="#{customerWealthManagedBean.onLoanChange}" update="city" />
+                        <f:selectItem itemLabel="Select Product Category" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{customerWealthManagedBean.wealthProducts}" />
+
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="city" value="Product Name: " />
+                    <p:selectOneMenu id="city" value="#{customerWealthManagedBean.type}" style="width:250px">
+                        <f:selectItem itemLabel="Select Specific Product Name" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{customerWealthManagedBean.wealthTypes}" />
+                    </p:selectOneMenu>
+
+
+
+
+
+
+                </p:panelGrid>
+                <p:separator />
+
+            </div>
+
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"><i class="icon-shareable Fleft MarRight10 Fs28"></i>Products Information</div>
+                    <div class="Separator"></div>
+                    <div class="Container50 Responsive50 Flex">
+                        <div class="Card PurpleBack SoftGray TexAlCenter HoverEffect ui-fluid">
+                            <i class="icon-dropbox Fs40 DispBlock"></i>
+                            <div class="EmptyBox10"></div>
+                            Pre-Defined Wealth Product<br/>-Education Planning<br/>- Retirement Planning
+                            <div class="EmptyBox10"></div>
+
+                            <h:outputLink id="content" value="#">
+                                <h:outputText value="More Info" />
+                            </h:outputLink>
+                            <p:tooltip id="toolTipContent" for="content" position="bottom">
+                                <span class="BoldLeaden Fs14 FontDosisMedium">Retirement Planning</span>
+                                <br/>                             <span class="BoldLeaden Fs14 FontDosisMedium">Education Planning</span>
+
+                            </p:tooltip>
+                        </div>
+                    </div>
+                    <div class="Container50 Responsive50 Flex">
+                        <div class="Card GreenBack SoftGray TexAlCenter HoverEffect ui-fluid">
+                            <i class="icon-evernote Fs40 DispBlock"></i>
+                            <div class="EmptyBox10"></div>
+                            Tailored Wealth Product <br/>Take every investment decision yourself – with our advice
+                            <div class="EmptyBox10"></div>
+                            <p:commandButton value="More Info" styleClass="GrayButton"/>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container30 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

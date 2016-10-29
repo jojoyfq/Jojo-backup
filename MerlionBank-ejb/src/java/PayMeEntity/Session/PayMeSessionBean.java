@@ -11,11 +11,13 @@ import CommonEntity.CustomerAction;
 import CommonEntity.OnlineAccount;
 import DepositEntity.SavingAccount;
 import DepositEntity.Session.TransferSessionBeanLocal;
+import DepositEntity.TransactionRecord;
 import Exception.PasswordNotMatchException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.PayMe;
+import PayMeEntity.PayMeTransaction;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.TwilioRestException;
 import com.twilio.sdk.resource.factory.MessageFactory;
@@ -28,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import javax.ejb.Stateless;
@@ -81,8 +84,9 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             System.out.println("Username " + ic + " IC check pass!");
         }
 
+        System.out.println("inside session bean: " + password);
         if (!passwordHash(password + customer.getOnlineAccount().getSalt()).equals(customer.getOnlineAccount().getPassword())) {
-
+            System.out.println("Go in password not match");
             throw new PasswordNotMatchException("password does not match!");
         }
         return true;
@@ -91,7 +95,12 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public boolean checkPayMeLogin(String phoneNumber, String password) {
-        String phone = "+" + phoneNumber;
+        String phone;
+        if (phoneNumber.substring(0, 1).equals("+")) {
+            phone = phoneNumber;
+        } else {
+            phone = "+" + phoneNumber;
+        }
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phone);
         PayMe payme = (PayMe) q.getSingleResult();
@@ -191,11 +200,20 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public boolean topUp(String phoneNumber, String amount) {
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
+        
+        System.out.println("the amount string is: "+amount+"*************");
+       
         BigDecimal amountBD = new BigDecimal(amount);
-        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1) {
+        System.out.println("the BigDecimal amount string is: "+amountBD+"*********");
+        
+        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1 
+                || (!payme.getSavingAccount().getStatus().equals("active"))) {
             return false;
         } else {
             //update the balance and available balance of saving account
@@ -205,6 +223,15 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             payme.getSavingAccount().setBalance(updatedBalance);
             //update the payme balance
             payme.setBalance(payme.getBalance().add(amountBD));
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction = new PayMeTransaction("TopUp PayMe Account",null,amountBD,currentTime,null,
+                    payme.getSavingAccount().getAccountNumber(),payme);
+            TransactionRecord transactionRecord = new TransactionRecord("PayMe",amountBD,null, 
+            "settled", "TopUp PayMe Account",currentTime,payme.getSavingAccount().getAccountNumber() ,null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
+            
+            em.persist(paymeTransaction);
+            em.persist(transactionRecord);
             em.persist(payme);
             em.flush();
             return true;
@@ -233,6 +260,15 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             payme.getSavingAccount().setBalance(updatedBalance);
             //update the payme balance
             payme.setBalance(payme.getBalance().subtract(amountBD));
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction = new PayMeTransaction("PayMe Send to Account",amountBD,null,currentTime,null,
+                    payme.getSavingAccount().getAccountNumber(),payme);
+            TransactionRecord transactionRecord = new TransactionRecord("PayMe",null,amountBD, 
+            "settled", "PayMe Send to Account",currentTime,payme.getSavingAccount().getAccountNumber() ,null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
+            
+            em.persist(paymeTransaction);
+            em.persist(transactionRecord);
             em.persist(payme);
             em.flush();
             return true;
@@ -260,6 +296,15 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             em.persist(payme);
             otherPayMe.setBalance(otherPayMe.getBalance().add(amountBD));
             em.persist(otherPayMe);
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction1 = new PayMeTransaction("PayMe Sent",amountBD,null,currentTime,otherPayMe.getPhoneNumber(),
+                    null,payme);
+            PayMeTransaction paymeTransaction2 = new PayMeTransaction("PayMe Receive",null,amountBD,currentTime,payme.getPhoneNumber(),
+                    null,otherPayMe);
+            em.persist(paymeTransaction1);
+            em.persist(paymeTransaction2);
+            
             em.flush();
             return true;
         }
@@ -291,6 +336,22 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
+    public String getSavingAccountStringByPhone(String phone) {
+        if (phone.substring(0, 1).equals("+") == false) {
+            phone = "+" + phone;
+        }
+        System.out.println("Customer phoneNumber is: " + phone + "******");
+
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phone");
+        q.setParameter("phone", phone);
+        PayMe payme = (PayMe) q.getSingleResult();
+
+        String accountNo = payme.getSavingAccount().getAccountNumber().toString();
+        accountNo = accountNo + " - " + payme.getSavingAccount().getSavingAccountType().getAccountType();
+        return accountNo;
+    }
+
+    @Override
     public String getPhoneNumber(String ic) {
         System.err.println("get phone number: ic = " + ic);
 
@@ -302,11 +363,37 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public String getBalance(String phoneNumber) {
-        String phone = "+"+phoneNumber;
+
+        String phone;
+        if (phoneNumber.substring(0, 1).equals("+")) {
+            phone = phoneNumber;
+        } else {
+            phone = "+" + phoneNumber;
+        }
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phone");
         q.setParameter("phone", phone);
-        PayMe payme = (PayMe)q.getSingleResult();
+        PayMe payme = (PayMe) q.getSingleResult();
         return payme.getBalance().toString();
+    }
+
+    @Override
+    public boolean checkTopUpLimit(String phoneNumber, String amount) {
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
+        q.setParameter("phoneNumber", phoneNumber);
+        PayMe payme = (PayMe) q.getSingleResult();
+
+        BigDecimal amountBD = new BigDecimal(amount);
+        BigDecimal totalAmount = amountBD.add(payme.getBalance());
+        BigDecimal limit = new BigDecimal("999");
+
+        if (totalAmount.compareTo(limit) == 1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private String passwordHash(String pass) {

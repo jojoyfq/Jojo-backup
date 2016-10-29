@@ -38,7 +38,7 @@ public class Portfolio implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
     private String status;
-  
+  private Integer term;
     
     
     @ManyToOne
@@ -65,6 +65,14 @@ public class Portfolio implements Serializable {
         this.portfolioTransactions = portfolioTransactions;
         this.products = products;
         this.status=status;
+    }
+
+    public Integer getTerm() {
+        return term;
+    }
+
+    public void setTerm(Integer term) {
+        this.term = term;
     }
 
 

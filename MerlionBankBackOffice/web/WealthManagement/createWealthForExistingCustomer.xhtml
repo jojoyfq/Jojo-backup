@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive50">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Card ui-fluid">
+                <i class="fa fa-fw"></i>
+                <span class="Blue Fs20 FontDosisSemiBold">Search Customer ID</span>
+                <div class="EmptyBox10"></div>
+                <span class="BoldLeaden Fs14 FontDosisMedium">Please key in customer IC to find out customer ID</span>
+                <div class="EmptyBox10"></div>
+                <h:form id="form">
+                      <h:panelGrid  columns="2" cellpadding="5" >
+                    <h:outputLabel for="customerIc" value="Cusotmer IC: " />
+                    <h:inputText id="customerIc" value="#{staffWealthManagedBean.customerIc}" />
+                      </h:panelGrid>
+                    <p:separator/>
+                    <p:commandButton  value="Search" icon="fa fa-search"  style="width:300px; height:40px" actionListener="#{staffWealthManagedBean.searchCustomerByIc}" update=":form:msgDetail" styleClass="GreenButton Fleft Fs14 White"  oncomplete="PF('dlg2').show();"/>
+
+                    <p:dialog header="Search Result" widgetVar="dlg2" modal="true" height="100">
+                        <p:outputPanel id="msgDetail" style="text-align:center;">
+                            <h:panelGrid  columns="2" cellpadding="5" >
+                                <h:outputLabel  for="customerId" value="Customer ID " /> 
+                                <h:outputText value="#{staffWealthManagedBean.searchedCustomer.id}" />
+
+
+                                <h:outputLabel for="customerName" value="Customer Name: " /> 
+                                <h:outputText value="#{staffWealthManagedBean.searchedCustomer.name}" />
+
+                                <h:outputLabel for="customerId" value="Customer Date Of Birth " /> 
+                                <h:outputText value="#{staffWealthManagedBean.searchedCustomer.dateOfBirth}" >
+                                    <f:convertDateTime type="date" pattern="dd.MM.yyyy"/>
+                                </h:outputText>
+
+                            </h:panelGrid>
+                        </p:outputPanel>
+                    </p:dialog>
+                </h:form>
+            </div>
+
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+                <span class="Blue Fs20 FontDosisSemiBold">Click the button to create discretionary account!</span>
+                <br/><span class="BoldLeaden Fs14 FontDosisMedium">*This could only be done after your searched customer ID</span>
+
+
+
+                        <h:form>
+                            <div class="Container10"></div>
+
+                            <div class="EmptyBox20"></div>
+                            <div class="Container30"></div>
+                            <div class="EmptyBox10"></div>
+                            <p:commandButton value="Create Discretionary Account" actionListener="#{staffWealthManagedBean.existingCustomerCreateWealthAcct}" style="width:300px; height:40px" icon="fa fa-envelope" styleClass=" Fleft Fs14 White"/>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

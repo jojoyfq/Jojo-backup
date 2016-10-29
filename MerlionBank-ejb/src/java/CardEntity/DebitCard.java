@@ -40,10 +40,7 @@ public class DebitCard implements Serializable {
     private Date expiryDate;
     private Long cvv;
     private String password;
-    private String salt;
-
-    
-   
+    private String salt;  
     private String status;
     @OneToOne(mappedBy="debitCard")
     private SavingAccount savingAccount;//debit card is link to one saving account
@@ -51,6 +48,8 @@ public class DebitCard implements Serializable {
     private DebitCardType debitCardType = new DebitCardType();
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "debitCard")
     List<DebitChargeback> chargeback = new ArrayList();
+    @OneToMany
+    List<DebitCardTransaction> debitCardTransaction = new ArrayList();
     
     public DebitCard(){
     }
@@ -148,6 +147,15 @@ public class DebitCard implements Serializable {
     public void setChargeback(List<DebitChargeback> chargeback) {
         this.chargeback = chargeback;
     }
+
+    public List<DebitCardTransaction> getDebitCardTransaction() {
+        return debitCardTransaction;
+    }
+
+    public void setDebitCardTransaction(List<DebitCardTransaction> debitCardTransaction) {
+        this.debitCardTransaction = debitCardTransaction;
+    }
+    
     
     
 

@@ -203,6 +203,9 @@ public void goIntoStaffVerifyCustomerBeforeSendingMsg(ActionEvent event){
 
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
                 System.out.println(ex.getMessage());
+            }finally{
+            messageSubject=null;
+            content = null;
             }
         }
     }

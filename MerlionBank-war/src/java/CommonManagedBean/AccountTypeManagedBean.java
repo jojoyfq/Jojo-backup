@@ -61,7 +61,7 @@ public class AccountTypeManagedBean implements Serializable {
             accountTypes.add("Fixed Deposit Account");
             accountTypes.add("Credit Account");
             accountTypes.add("Loan Account");
-            accountTypes.add("Wealth Managment Account");
+            accountTypes.add("Wealth Management Account");
             System.out.println(accountTypes);
 
             //    System.out.println("Account Type chosen is " + accountType);
@@ -93,7 +93,7 @@ public class AccountTypeManagedBean implements Serializable {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/createLoanAccount.xhtml");
                     break;
                 case "Wealth Management Account":
-                    System.out.println("This service is currently not available!");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/newCustomerCreateWealthAccount.xhtml");
                     break;
                 default:
                     System.out.println("Please indicate one choice");

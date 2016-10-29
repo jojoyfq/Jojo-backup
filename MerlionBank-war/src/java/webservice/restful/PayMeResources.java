@@ -37,6 +37,8 @@ public class PayMeResources {
     GetPhoneNumberResponse getPhoneNumberResponse;
     static String merlionBankIC;
     static String phoneNumStr;
+    static String phoneNumLogInStr;
+    static boolean isLoginPage;
 
     public PayMeResources() {
     }
@@ -48,8 +50,9 @@ public class PayMeResources {
             @FormParam("password") String password) {
 
         boolean checkExisting = false;
-
-        System.err.println("isExistingCustomer: " + customerIC);
+        isLoginPage = false;
+        System.err.println("customer IC is " + customerIC);
+        System.out.println("password is " + password);
 
         try {
 
@@ -84,6 +87,9 @@ public class PayMeResources {
 //        String phoneNumber = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
         System.out.println("Phone Number is " + phoneNum);
         System.out.println("Password is " + password);
+        phoneNumLogInStr = phoneNum;
+        System.out.println("phoneNumLogInStr is " + phoneNumLogInStr);
+        isLoginPage = true;
         checkValidity = payMeSessionBeanLocal.checkPayMeLogin(phoneNum, password);
         if (checkValidity == true) {
             isValidPasswordResponse = new IsValidPasswordResponse(0, "", checkValidity);
@@ -114,7 +120,7 @@ public class PayMeResources {
     public IsValidOTPResponse isValidOTP(@FormParam("OneTimePassword") String OTPString) {
 
         boolean checkOTPValidity;
-
+        isLoginPage = false;
         System.out.println("IC is " + merlionBankIC);
         System.out.println("OTP is " + OTPString);
         checkOTPValidity = payMeSessionBeanLocal.verifyTwoFactorAuthentication(merlionBankIC, OTPString);
@@ -134,12 +140,24 @@ public class PayMeResources {
     @Produces(MediaType.APPLICATION_JSON)
     public GetPhoneNumberResponse getPhoneNumberString() {
 
-        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
 //        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
-        if (phoneNumStr.isEmpty()) {
-            return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
+        System.out.println("is log in page " + isLoginPage);
+        if (isLoginPage == false) {
+            phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
+            System.out.println("phoneNumStr is " + phoneNumStr);
+            if (phoneNumStr.isEmpty()) {
+                return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
+            } else {
+                return new GetPhoneNumberResponse(0, "", phoneNumStr);
+            }
         } else {
-            return new GetPhoneNumberResponse(0, "", phoneNumStr);
+            System.out.println("phoneNumLogInStr is " + phoneNumLogInStr);
+            if (phoneNumLogInStr.isEmpty()) {
+                return new GetPhoneNumberResponse(1, "No Phone Number Available", "");
+            } else {
+                System.out.println("come here");
+                return new GetPhoneNumberResponse(0, "", phoneNumLogInStr);
+            }
         }
 
     }
@@ -160,6 +178,49 @@ public class PayMeResources {
     }
 
     @POST
+    @Path(value = "getSavingAccountByPhoneNumber")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetSavingAccountByPhoneResponse getSavingAccountNoByPhoneNumber() {
+        String savingAccountNo;
+        if (isLoginPage == false) {
+            savingAccountNo = payMeSessionBeanLocal.getSavingAccountStringByPhone(phoneNumStr);
+            if (savingAccountNo.isEmpty()) {
+                return new GetSavingAccountByPhoneResponse(1, "No Saving Account Found", "");
+            } else {
+                return new GetSavingAccountByPhoneResponse(0, "", savingAccountNo);
+            }
+        } else {
+            savingAccountNo = payMeSessionBeanLocal.getSavingAccountStringByPhone(phoneNumLogInStr);
+            if (savingAccountNo.isEmpty()) {
+                return new GetSavingAccountByPhoneResponse(1, "No Saving Account Found", "");
+            } else {
+                return new GetSavingAccountByPhoneResponse(0, "", savingAccountNo);
+            }
+        }
+    }
+
+    @POST
+    @Path(value = "getBalance")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetBalanceResponse getBalanceString() {
+        if (isLoginPage == false) {
+            String balance = payMeSessionBeanLocal.getBalance(phoneNumStr);
+            if (balance.isEmpty()) {
+                return new GetBalanceResponse(1, "No Balance Available", "");
+            } else {
+                return new GetBalanceResponse(0, "", balance);
+            }
+        } else {
+            String balanceLogIn = payMeSessionBeanLocal.getBalance(phoneNumLogInStr);
+            if (phoneNumLogInStr.isEmpty()) {
+                return new GetBalanceResponse(1, "No Balance Available", "");
+            } else {
+                return new GetBalanceResponse(0, "", balanceLogIn);
+            }
+        }
+    }
+
+    @POST
     @Path(value = "createPayMeAccount")
     @Produces(MediaType.APPLICATION_JSON)
     public CreatePayMeAccountResponse createPayMeAccount(@FormParam("savingAccountStr") String savingAccountStr,
@@ -167,7 +228,7 @@ public class PayMeResources {
 
         System.out.println("Saving Account String is " + savingAccountStr);
         System.out.println("PayMe password is " + payMePassword);
-
+        isLoginPage = false;
         boolean success;
         String savingAccountNo = savingAccountStr.split("-")[0].trim();
         success = payMeSessionBeanLocal.createPayMe(merlionBankIC, savingAccountNo, phoneNumStr, payMePassword);
@@ -179,6 +240,52 @@ public class PayMeResources {
             return new CreatePayMeAccountResponse(1, "PayMe account exists", false);
         }
 
+    }
+
+    @POST
+    @Path(value = "isValidTopUpAmount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IsValidTopUpAmountResponse isValidTopUpAmount(@FormParam("topupamount") String amount) {
+
+        boolean checkTopUpAmountValidity;
+        if (isLoginPage == false) {
+            checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumStr, amount);
+            if(checkTopUpAmountValidity == true){
+                return new IsValidTopUpAmountResponse(0, "", true);
+            }else{
+                return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
+            }
+        }else{
+            checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumLogInStr, amount);
+            if(checkTopUpAmountValidity == true){
+                return new IsValidTopUpAmountResponse(0, "", true);
+            }else{
+                return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
+            }
+        }      
+    }
+    
+    @POST
+    @Path(value = "topUp")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TopUpResponse payMeTopUp(@FormParam("topup") String amount){
+        
+        boolean topUpSuccess;
+        if(isLoginPage == false){
+            topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumStr, amount);
+            if(topUpSuccess == true){
+                return new TopUpResponse(0, "", true);
+            }else{
+                return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
+            }           
+        }else{
+            topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumLogInStr, amount);
+            if(topUpSuccess == true){
+                return new TopUpResponse(0, "", true);
+            }else{
+                return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
+            }
+        }
     }
 
 }

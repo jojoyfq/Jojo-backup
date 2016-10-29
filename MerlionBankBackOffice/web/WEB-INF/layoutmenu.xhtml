@@ -26,6 +26,7 @@
                     <p:submenu id="saving_accountNC" label="Operational CRM" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(2)}">
                         <p:menuitem id="create_saving_accountNC" value="Create Saving Account For New Customer" outcome="/CustomerManagement/createSavingAccountNC"/>
                         <p:menuitem id="create_Loan_for_new_customer" value="Create Loan Account For New Customer" actionListener="#{staffLoanManagedBean.goToApplyLoanForNewCustomerPage}"/> 
+                        <p:menuitem id="create_wealth_accountNC" value="Create Discreationary Account For New Customer" outcome="/WealthManagement/createWealthForNewCustomer"/>
 
                         <p:menuitem id="staffVerifyCustomer" value="Staff Verify Pending Customer" outcome="/StaffVerifyCustomer/staffVerifyCustomerAccount"/>
                     </p:submenu>
@@ -60,12 +61,15 @@
                 <p:submenu id="card_management" label="Card Management">
                     <p:submenu id="debitCard" label="Debit Card" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(5)}">
                         <p:menuitem id="view_debit_chargeback" value="View Pending Debit Card Chargeback" actionListener="#{debitCardManagedBean.dashboardToViewDebitChargeback}"/>                                              
+                        <p:menuitem id="view_debit_card_scheme" value="View Debit Card Scheme" actionListener="#{debitCardManagedBean.dashboardToViewDebitCardScheme}"/>   
+                        <p:menuitem id="chanage_debit_card_scheme" value="Change Debit Card Scheme" actionListener="#{debitCardManagedBean.dashboardToChangeDebitScheme}"/> 
                     </p:submenu>
                 </p:submenu>
                 <p:submenu id="loan_management" label="Loan Management">
                     <p:menuitem id="view_pending_loans" value="View All Pending Loan Applications" actionListener="#{staffLoanManagedBean.staffViewPendingLoans}"/> 
                     <p:menuitem id="create_Loan_for_old_customer" value="Create Loan Account For Existing Customer" actionListener="#{staffLoanManagedBean.goToDisplayLoanTypes}"/> 
                     <p:menuitem id="change_loan_types" value="Loan Management" actionListener="#{staffLoanManagedBean.staffViewLoanTypeList}"/> 
+                    <p:menuitem id="activateLoan" value="Activate Loan For Customer" outcome="/LoanManagement/searchCustomer"/> 
 
                 </p:submenu>
 
@@ -90,6 +94,10 @@
                 </p:submenu>
 
                 <p:submenu id="wealth_management" label="Wealth Management">
+                    <p:menuitem id="createWealthForExistingCustomer" value="Create Discretionary Account For existing Customer" actionListener="#{staffWealthManagedBean.goToApplyWealthAccountExistCustomer}"/>
+                    <p:menuitem id="viewPendingPlans" value="View All Pending Plans" outcome="/WealthManagement/viewPendingPlans"/>
+                    <p:menuitem id="discretionaryAccountManagmement" value="Customer Discretionary Account Management" outcome="/WealthManagement/searchCustomer"/>
+
                 </p:submenu>
 
                 <p:submenu id="portfolio_management" label="Portfolio Management">

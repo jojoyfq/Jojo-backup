@@ -5,12 +5,15 @@
  */
 package LoanEntity;
 
+
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -22,7 +25,34 @@ public class Instance implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+     private int label;
+   
+    
+     @OneToMany(cascade={CascadeType.ALL},mappedBy="instance")
+    private List<InstanceValue> instanceValues;
 
+    public Instance() {
+    }
+
+    public Instance(int label, List<InstanceValue> instanceValues) {
+        this.label = label;
+        this.instanceValues = instanceValues;
+    }
+
+    
+    public List<InstanceValue> getInstanceValues() {
+        return instanceValues;
+    }
+
+    public void setInstanceValues(List<InstanceValue> instanceValues) {
+        this.instanceValues = instanceValues;
+    }
+
+    
+   
+   
+
+   
     public Long getId() {
         return id;
     }
@@ -30,18 +60,7 @@ public class Instance implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    private int label;
-    private int[] x;
-
-    public Instance() {
-    }
-
-    public Instance(int label, int[] x) {
-        this.label = label;
-        this.x = x;
-    }
-
+      
     public int getLabel() {
         return label;
     }
@@ -49,19 +68,7 @@ public class Instance implements Serializable {
     public void setLabel(int label) {
         this.label = label;
     }
-
-    public int[] getX() {
-        return x;
-    }
-
-    public void setX(int[] x) {
-        this.x = x;
-    }
-
-
-		
-                
-
+              
     @Override
     public int hashCode() {
         int hash = 0;

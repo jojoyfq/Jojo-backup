@@ -22,6 +22,9 @@ public class GetPhoneNumberResponse extends Response implements Serializable {
 
     public String phoneNumber;
 
+
+    
+
     public GetPhoneNumberResponse() {
         super();
     }
@@ -29,6 +32,7 @@ public class GetPhoneNumberResponse extends Response implements Serializable {
     public GetPhoneNumberResponse(int status, String errorMessage, String phoneNumber) {
         super(status, errorMessage);
         this.phoneNumber = phoneNumber;
+
     }
 
     public String getPhoneNumber() {
@@ -38,5 +42,6 @@ public class GetPhoneNumberResponse extends Response implements Serializable {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
 
 }
