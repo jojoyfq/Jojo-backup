@@ -1,0 +1,186 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container100 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{staffWealthManagedBean.pendingApprovedTailoredPlans}" editable="true" selectionMode="single" selection="#{staffLoanManagedBean.selectedLoan}" rowKey="#{pendingLoan.id}">
+                                    <f:facet name="header">
+                                        Pending Tailored Plans
+                                    </f:facet>
+                                    <p:ajax event="rowEdit" listener="#{staffWealthManagedBean.staffModifyPortfolio}"  />
+
+                                    <p:column selectionMode="single"/>
+
+
+                                    <p:column headerText="Plan ID" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Plan Type">
+                                        <h:outputText value="#{pendingLoan.type}" />
+                                    </p:column>
+
+                                    <p:column headerText="Loan Account Number">
+                                        <h:outputText value="#{pendingLoan.investAmount}" >
+                                            <f:convertNumber locale="en-US" /> 
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Expected Rate of Return"> 
+                                        <p:cellEditor rendered="#{pendingLoan.type eq "Tailored Product" }">
+                                            <f:facet name="output"><h:outputText value="#{pendingLoan.expectedRateOfReturn}" >
+                                                    <f:convertNumber type="percent" minFractionDigits="2" /> 
+                                                </h:outputText></f:facet>
+                                            <f:facet name="input"><p:inputText  value="#{pendingLoan.expectedRateOfReturn}" style="width:100%"/></f:facet>
+
+                                        </p:cellEditor>
+                                    </p:column>
+
+                                    <p:column headerText="FX Proportion">
+                                        <p:cellEditor rendered="#{pendingLoan.type eq "Tailored Product" }">
+                                            <f:facet name="output"><h:outputText value="#{staffWealthManagedBean.foreignExchange}" >
+                                                    <f:convertNumber type="percent" minFractionDigits="2" />
+                                                </h:outputText></f:facet>
+                                            <f:facet name="input"><p:inputText  value="#{staffWealthManagedBean.foreignExchange}" style="width:100%"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+
+
+                                    <p:column headerText="Equity Proportion">
+                                        <p:cellEditor rendered="#{pendingLoan.type eq "Tailored Product" }">
+                                            <f:facet name="output"><h:outputText value="#{staffWealthManagedBean.equity}" >
+                                                    <f:convertNumber type="percent" minFractionDigits="2" />
+                                                </h:outputText></f:facet>
+                                            <f:facet name="input"><p:inputText  value="#{staffWealthManagedBean.equity}" style="width:100%"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+
+
+                                    <p:column headerText="Bond Proportion">
+                                        <p:cellEditor rendered="#{pendingLoan.type eq "Tailored Product" }">
+                                            <f:facet name="output"><h:outputText value="#{staffWealthManagedBean.bond}" >
+                                                    <f:convertNumber type="percent" minFractionDigits="2" />
+                                                </h:outputText></f:facet>
+                                            <f:facet name="input"><p:inputText  value="#{staffWealthManagedBean.vond}" style="width:100%"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+
+                                    <p:column headerText="Start Date">
+                                        <h:outputText value="#{pendingLoan.startDate}"  >
+                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+
+
+                                    <p:column headerText="Term">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText  /></f:facet>
+
+                                            <f:facet name="input"><p:inputText id="loanTerm" value="#{staffWealthManagedBean.term}" style="width:100%"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+
+
+
+                                    <p:column headerText="Loan Status ">
+                                        <h:outputText value="#{pendingLoan.status}" />
+                                    </p:column>
+
+                                     <p:column headerText="Customer Detail" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail" oncomplete="PF('msgDialog').show()"  ajax="true" type="submit" >
+                                                <f:setPropertyActionListener value="#{pendingLoan}" target="#{staffWealthManagedBean.selectedPort}" />
+                                                <!--                                                <f:attribute name="selectedLoan" value="{pendingLoan}"  />-->
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Edit" style="width:32px">
+                                        <p:rowEditor />
+                                    </p:column>
+                                    <p:separator />
+                                    <f:facet name="footer">
+
+                                        <div class="Card">
+                                            <p:commandButton process="radioDT"  update=":form"  value="Approve" actionListener="#{staffWealthManagedBean.staffAcceptPlan}"  style="width:100px;height:40px" />
+                                            <p:separator/>
+                                            <p:commandButton process="radioDT"  update=":form"  value="Reject" actionListener="#{staffWealthManagedBean.staffCancelPlan}"  style="width:100px;height:40px"  styleClass="RedButton"/>
+                                        </div>
+
+                                    </f:facet>
+                                </p:dataTable>
+
+                            </h:panelGrid>
+<p:dialog id="dialogMessage"   header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+
+                                        <h:outputText value="Customer ID: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.id}" />
+
+                                        <h:outputText value="Customer IC:" />
+                                        <h:outputText value="#{stastaffWealthManagedBean.selectedPort.discretionaryAccount.customer.ic}" />
+
+                                        <h:outputText value="Customer Name: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.name}" />
+                                        <h:outputText value="Customer Gender: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.gender}" />
+
+                                        <h:outputText value="Customer Email: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.email}"  />
+
+                                        <h:outputText value="Customer Date of Birth: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.dateOfBirth}"  >
+                                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+
+                                        <h:outputText value="Customer Family Information: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.familyInfo}"  />
+
+                                        <h:outputText value="Customer Financial Asset: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.financialAsset}"  />
+
+
+
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
+
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

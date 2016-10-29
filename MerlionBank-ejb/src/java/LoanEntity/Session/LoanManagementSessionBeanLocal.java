@@ -5,6 +5,7 @@
  */
 package LoanEntity.Session;
 
+import BillEntity.GIROArrangement;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Exception.UserNotActivatedException;
@@ -47,4 +48,7 @@ public interface LoanManagementSessionBeanLocal {
     public List<LoanType> updateLoanType(Long loanTypeId, Double interest1, Double interest2);
     
    public double calculateRisk(Long customerId, Long longId);
+   
+   public List<GIROArrangement> displayGIROArrangement()throws EmailNotSendException;
+   public List<GIROArrangement> manageGIROArrangement(Long staffId,Long GIROArrangementId,String decision)throws EmailNotSendException;
 }

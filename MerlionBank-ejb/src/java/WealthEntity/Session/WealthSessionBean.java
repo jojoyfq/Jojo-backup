@@ -121,8 +121,19 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         return discretionaryAccountId;
     }
     
+    @Override 
+    public Boolean compareAmount(Long customerId,long discretionaryAccountId, BigDecimal amount){
+       DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, discretionaryAccountId);
+      BigDecimal totalBalance=discretionaryAccount.getTotalBalance();
+      BigDecimal temp = new BigDecimal(200000);
+      if ((totalBalance.subtract(amount)).compareTo(temp)==-1)
+          return false;
+                  else 
+          return true;
+    }
+    
     @Override
-    public Long transferBackToSaving(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException {
+    public Long transferBackToSavingWithEnoughBalance(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException {
         Customer customer = em.find(Customer.class, customerId);
         SavingAccount savingAccount = em.find(SavingAccount.class, savingAccountId);
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, discretionaryAccountId);
@@ -133,6 +144,46 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
 
         savingAccount.setBalance(savingAccount.getBalance().add(amount));
         savingAccount.setBalance(savingAccount.getAvailableBalance().add(amount));
+
+        discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
+       discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));
+
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+
+        TransactionRecord transactionRecord = new TransactionRecord("WT", amount, null, "settled", "Discretionary Account Transfer Back", currentTimestamp, discretionaryAccount.getAccountNumber(), savingAccount.getAccountNumber(), savingAccount, "MerlionBank", "MerlionBank");
+        savingAccount.getTransactionRecord().add(transactionRecord);
+        em.persist(transactionRecord);
+        em.flush();
+
+        return discretionaryAccountId;
+    }
+    
+     @Override
+    public Long transferBackToSavingWithNotEnoughBalance(Long customerId, Long savingAccountId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException {
+        Customer customer = em.find(Customer.class, customerId);
+        SavingAccount savingAccount = em.find(SavingAccount.class, savingAccountId);
+        DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, discretionaryAccountId);
+
+        if (amount.compareTo(discretionaryAccount.getBalance()) == 1) {
+            throw new NotEnoughAmountException("There is not enough amount of money in this Discretionary Account");
+        }
+        BigDecimal cutline=new BigDecimal(200000);
+        BigDecimal processingFee=new BigDecimal(1.15);
+        
+        savingAccount.setBalance(savingAccount.getBalance().add(amount));
+        savingAccount.setBalance(savingAccount.getAvailableBalance().add(amount));
+        
+        if (discretionaryAccount.getTotalBalance().compareTo(cutline)==1 ||discretionaryAccount.getTotalBalance().compareTo(cutline)==0 ){       
+        BigDecimal totalBalance=discretionaryAccount.getTotalBalance().subtract(amount);
+        BigDecimal tier1=cutline.subtract(totalBalance);
+        amount=amount.subtract(tier1);
+        amount=amount.add(tier1.multiply(processingFee));
+    }else{
+        amount=amount.multiply(processingFee);    
+        }
+
+       
 
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
        discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));
@@ -165,7 +216,7 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, accountId);
         BigDecimal minAmount=new BigDecimal(250000);
         if (initialAmount.compareTo(minAmount)==-1)
-            throw new NotEnoughAmountException("Minimum amount for "+type+" is SGD$250000");
+            throw new NotEnoughAmountException("Minimum amount for "+type+" is SGD$250,000");
         if (initialAmount.compareTo(discretionaryAccount.getBalance())==1)
             throw new NotEnoughAmountException("There is not enough money in the selected discretionary account. Please top up or choose another discretionary account.");
         List<PortfolioTransaction>portfolioTransactions=new ArrayList<PortfolioTransaction>();
@@ -179,6 +230,8 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
     Portfolio portfolio=new Portfolio(type, initialAmount, initialAmount, 3.25, 3.25, Calendar.getInstance().getTime(), currentTimestamp, discretionaryAccount, portfolioTransactions, products,"active");
     em.persist(portfolio);
     em.flush();
+    
+    portfolio.setTerm(term);
     
     List<Portfolio> portfolios=new ArrayList<Portfolio>();
      if (discretionaryAccount.getPortfolios() == null) {
@@ -254,9 +307,11 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         DateTime currentTime1 = start.plusMonths(term);
         Date currentTimestamp = currentTime1.toDate();
         
-      Portfolio portfolio=new Portfolio("Tailored plan", investAmount, temp, 0.0, expectedRateOfReturn, currentTime,currentTimestamp, discretionaryAccount, portfolioTransactions, products,"inactive"); 
+      Portfolio portfolio=new Portfolio("Tailored plan", investAmount, investAmount, 0.0, expectedRateOfReturn, currentTime,currentTimestamp, discretionaryAccount, portfolioTransactions, products,"inactive"); 
      em.persist(portfolio);
     em.flush();
+    
+    portfolio.setTerm(term);
     
     foreignExchangeProduct.setPortfolio(portfolio);
    equityProduct.setPortfolio(portfolio);         
@@ -315,6 +370,16 @@ public List<Portfolio> customerCancelPortfolios(Long portfolioId){
             System.out.println("Error sending email.");
             throw new EmailNotSendException("Error sending email.");
         }
+     
+     
+     //log an action
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Accept staff modified Wealth Tailored Plan", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
      return portfolio.getDiscretionaryAccount().getPortfolios();
     }
     
@@ -332,6 +397,67 @@ public List<Portfolio> customerCancelPortfolios(Long portfolioId){
         System.out.println(content);
         sendEmail.run(email, subject, content);
     }
+     
+     @Override
+    public List<Portfolio> ModifyPortfolios(Long portfolioId, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double stock,int term) throws EmailNotSendException{
+Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+BigDecimal investAmount=portfolio.getInvestAmount();
+DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
+
+    List<Product> products=new ArrayList<Product>();
+        
+        BigDecimal rate=new BigDecimal(foreignExchange);
+        BigDecimal purchaseAmount=investAmount.multiply(rate);
+        Product foreignExchangeProduct=new Product("Foreign Exchange", purchaseAmount, foreignExchange);
+        em.persist(foreignExchangeProduct);
+        
+        rate=new BigDecimal(equity);
+        purchaseAmount=investAmount.multiply(rate);
+        Product equityProduct=new Product("Equity", purchaseAmount, equity);
+        em.persist(equityProduct);
+        
+        rate=new BigDecimal(stock);
+        purchaseAmount=investAmount.multiply(rate);
+        Product stockProduct=new Product("Stock", purchaseAmount, stock);
+        em.persist(equityProduct);
+        
+         products.add(foreignExchangeProduct);
+        products.add(equityProduct);
+        products.add(stockProduct);
+        
+        portfolio.setProducts(products);
+        
+        portfolio.setTerm(term);
+             
+   Date currentTime = portfolio.getStartDate();
+        DateTime start = new DateTime(currentTime);
+        DateTime currentTime1 = start.plusMonths(term);
+        Date currentTimestamp = currentTime1.toDate();
+        
+        portfolio.setEndDate(currentTimestamp);
+        
+        
+        
+        portfolio.setStatus("inactive");
+        
+       
     
-  
+        List<Portfolio> portfolios = portfolio.getDiscretionaryAccount().getPortfolios();
+        
+        return portfolios;
+}
+    
+ @Override
+ public List<Portfolio> portfolioEarlyWithdraw(Long portfolioId){
+    Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+BigDecimal presentValue=portfolio.getPresentValue();
+BigDecimal temp=new BigDecimal(0.85);
+presentValue=presentValue.multiply(temp);
+portfolio.setStatus("Early Withdraw");
+
+DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount(); 
+discretionaryAccount.setBalance(discretionaryAccount.getBalance().add(presentValue));
+em.flush();
+return discretionaryAccount.getPortfolios();
+ }
 }
