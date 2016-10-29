@@ -216,7 +216,7 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, accountId);
         BigDecimal minAmount=new BigDecimal(250000);
         if (initialAmount.compareTo(minAmount)==-1)
-            throw new NotEnoughAmountException("Minimum amount for "+type+" is SGD$250000");
+            throw new NotEnoughAmountException("Minimum amount for "+type+" is SGD$250,000");
         if (initialAmount.compareTo(discretionaryAccount.getBalance())==1)
             throw new NotEnoughAmountException("There is not enough money in the selected discretionary account. Please top up or choose another discretionary account.");
         List<PortfolioTransaction>portfolioTransactions=new ArrayList<PortfolioTransaction>();

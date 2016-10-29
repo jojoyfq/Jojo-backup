@@ -305,7 +305,7 @@ FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System M
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message sent successfully!!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
-        } catch (EmailNotSendException|IssueSolvedException ex) {
+        } catch (EmailNotSendException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }

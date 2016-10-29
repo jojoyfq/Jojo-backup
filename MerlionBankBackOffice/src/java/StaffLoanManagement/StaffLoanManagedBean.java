@@ -125,7 +125,7 @@ public class StaffLoanManagedBean implements Serializable {
         loanCategories.put("Car", "Car");
         loanCategories.put("Education", "Education");
 
-        Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<String, String>();
         map.put("SIBOR Package", "SIBOR Package");
         map.put("Fixed Interest Package", "Fixed Interest Package");
         data.put("Home", map);
@@ -134,7 +134,6 @@ public class StaffLoanManagedBean implements Serializable {
         map.put("Car Loan", "Car Loan");
 
         data.put("Car", map);
-
         map = new HashMap<String, String>();
         map.put("NUS Education Loan", "NUS Education Loan");
 
@@ -150,11 +149,15 @@ public class StaffLoanManagedBean implements Serializable {
         }
     }
 
-    public void searchCustomerId(ActionEvent event) throws UserNotExistException, UserNotActivatedException {
+    public void searchCustomerId(ActionEvent event) throws UserNotExistException, UserNotActivatedException, ListEmptyException, IOException {
         try {
                         System.out.println("searched customer is "+searchedCustomerIc);
             searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
-        } catch (UserNotExistException | UserNotActivatedException ex) {
+            oneCustomerAllLoans = lmsbl.searchLoan(searchedCustomerIc);
+            
+                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffActivateLoanForCustomer.xhtml");
+
+        } catch (UserNotExistException | UserNotActivatedException|ListEmptyException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
