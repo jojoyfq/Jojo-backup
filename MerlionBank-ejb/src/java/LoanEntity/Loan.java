@@ -42,6 +42,14 @@ public class Loan implements Serializable {
     private Date loanDate;
     private Double interestRate1;
     private Double interestRate2;
+    private String homeType;
+    private String homeAddress;
+    private Long postalCode;
+    private String carMode;
+    private String institution;
+    private String major;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date graduationDate;
     //private Integer payTime;
 
 //    public Integer getPayTime() {
@@ -52,6 +60,63 @@ public class Loan implements Serializable {
 //        this.payTime = payTime;
 //    }
 //    
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public Date getGraduationDate() {
+        return graduationDate;
+    }
+
+    public void setGraduationDate(Date graduationDate) {
+        this.graduationDate = graduationDate;
+    }
+
+    
+    public String getHomeType() {
+        return homeType;
+    }
+
+    public void setHomeType(String homeType) {
+        this.homeType = homeType;
+    }
+
+    public String getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public Long getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(Long postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCarMode() {
+        return carMode;
+    }
+
+    public void setCarMode(String carMode) {
+        this.carMode = carMode;
+    }
 
 
     
