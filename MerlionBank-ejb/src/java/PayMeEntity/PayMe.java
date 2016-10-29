@@ -10,10 +10,14 @@ import DepositEntity.SavingAccount;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -31,6 +35,8 @@ public class PayMe implements Serializable {
     private Customer customer;
     @OneToOne(mappedBy="payMe")
     private SavingAccount savingAccount;
+    @OneToMany(cascade={CascadeType.ALL},mappedBy="payme")
+    private List<PayMeTransaction> paymeTransaction = new ArrayList();
     
     private BigDecimal balance;
     private String paymePassword;
@@ -86,6 +92,16 @@ public class PayMe implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public List<PayMeTransaction> getPaymeTransaction() {
+        return paymeTransaction;
+    }
+
+    public void setPaymeTransaction(List<PayMeTransaction> paymeTransaction) {
+        this.paymeTransaction = paymeTransaction;
+    }
+    
+    
 
     @Override
     public int hashCode() {

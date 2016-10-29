@@ -70,15 +70,18 @@
                     <p:submenu id="bill" label="Bill" icon="icon-plus">
 
                         <p:menuitem id="addGIRO" value="Add GIRO Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddGIROArrangement(event)}" /> 
-                        <p:menuitem id="deleteGIRO" value="Delete GIRO Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />     
+                        <p:menuitem id="viewGIRO" value="View GIRO Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />     
                         <p:menuitem id="addRecurrent" value="Add Recurrent Bill Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddRecurrentArrangement(event)}" /> 
-                        <p:menuitem id="deleteRecurrent" value="Delete Recurrent Bill Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />     
+                        <p:menuitem id="viewRecurrent" value="View Recurrent Bill Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" /> 
+                        <p:menuitem id="payAdhoc" value="Pay Bill" actionListener="#{billCustomerManagedBean.dashoboardAdhocBill(event)}" />    
 
                     </p:submenu>
                 </p:submenu>
 
                 <p:submenu id="wealth_management" label="Wealth Management">
                     <p:menuitem id="create_wealthForExisting" value="Apply Discretionary Account" actionListener="#{customerWealthManagedBean.goToApplyWealthAccountExistCustomer}" /> 
+                    <p:menuitem id="buy" value="Buy Wealth Product" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForBuyProduct}" /> 
+
                     <p:menuitem id="view_wealth_account" value="View My Discreationary Account" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccounts}"/>
 
                 </p:submenu>

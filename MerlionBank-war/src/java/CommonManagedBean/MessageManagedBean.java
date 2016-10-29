@@ -243,10 +243,13 @@ public class MessageManagedBean implements Serializable {
     public CustomerMessage createCaseMessage(ActionEvent event) {
         caseStatus = null;
         caseMessage = imsbl.customerSendCaseMessage(caseSubject, caseContent, caseStatus, customerId);
+        caseSubject = null;
+        caseContent = null;
 
         System.out.println("Message Created Successfully!");
         FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Message Created Successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        
         return caseMessage;
     }
 

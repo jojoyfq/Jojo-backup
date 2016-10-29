@@ -11,6 +11,7 @@ import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.Session.PayMeSessionBeanLocal;
 import com.twilio.sdk.TwilioRestException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.ejb.EJB;
@@ -141,7 +142,7 @@ public class PayMeResources {
     public GetPhoneNumberResponse getPhoneNumberString() {
 
 //        phoneNumStr = payMeSessionBeanLocal.getPhoneNumber("ruijia");
-        System.out.println("is log in page " + isLoginPage);       
+        System.out.println("is log in page " + isLoginPage);
         if (isLoginPage == false) {
             phoneNumStr = payMeSessionBeanLocal.getPhoneNumber(merlionBankIC);
             System.out.println("phoneNumStr is " + phoneNumStr);
@@ -240,6 +241,91 @@ public class PayMeResources {
             return new CreatePayMeAccountResponse(1, "PayMe account exists", false);
         }
 
+    }
+
+    @POST
+    @Path(value = "isValidTopUpAmount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IsValidTopUpAmountResponse isValidTopUpAmount(@FormParam("topupamount") String amount) {
+
+        boolean checkTopUpAmountValidity;
+        if (isLoginPage == false) {
+            checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumStr, amount);
+            if (checkTopUpAmountValidity == true) {
+                return new IsValidTopUpAmountResponse(0, "", true);
+            } else {
+                return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
+            }
+        } else {
+            checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumLogInStr, amount);
+            if (checkTopUpAmountValidity == true) {
+                return new IsValidTopUpAmountResponse(0, "", true);
+            } else {
+                return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
+            }
+        }
+    }
+
+    @POST
+    @Path(value = "topUp")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TopUpResponse payMeTopUp(@FormParam("topup") String amount) {
+
+        boolean topUpSuccess;
+        if (isLoginPage == false) {
+            topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumStr, amount);
+            if (topUpSuccess == true) {
+                return new TopUpResponse(0, "", true);
+            } else {
+                return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
+            }
+        } else {
+            topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumLogInStr, amount);
+            if (topUpSuccess == true) {
+                return new TopUpResponse(0, "", true);
+            } else {
+                return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
+            }
+        }
+    }
+
+    @POST
+    @Path(value = "getTransactionRecords")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetTransactionRecordsResponse getPayMeTransactionRecords() {
+
+        List<List<String>> transactionRecords = new ArrayList<List<String>>();
+
+        if (isLoginPage == false) {
+            transactionRecords = payMeSessionBeanLocal.getPayMeTransaction(phoneNumStr);
+            return new GetTransactionRecordsResponse(0, "", transactionRecords);
+        } else {
+            transactionRecords = payMeSessionBeanLocal.getPayMeTransaction(phoneNumLogInStr);
+            return new GetTransactionRecordsResponse(0, "", transactionRecords);
+        }
+
+    }
+    
+    @POST
+    @Path(value = "isValidSendBackAmount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IsValidSendBackAmountResponse sendToMySavingAccount(@FormParam("sendbackamount") String amount){
+        boolean sendBackSuccess;
+        if (isLoginPage == false) {
+            sendBackSuccess = payMeSessionBeanLocal.sendToMyAccount(phoneNumStr, amount);
+            if(sendBackSuccess == false){
+                return new IsValidSendBackAmountResponse(1, "Saving Account is no longer valid or not enough available PayMe balance", false);
+            }else{
+                return new IsValidSendBackAmountResponse(0, "", true);
+            }
+        }else{
+            sendBackSuccess = payMeSessionBeanLocal.sendToMyAccount(phoneNumLogInStr, amount);
+            if(sendBackSuccess == false){
+                return new IsValidSendBackAmountResponse(1, "Saving Account is no longer valid or not enough available PayMe balance", false);
+            }else{
+                return new IsValidSendBackAmountResponse(0, "", true);
+            }
+        }      
     }
 
 }

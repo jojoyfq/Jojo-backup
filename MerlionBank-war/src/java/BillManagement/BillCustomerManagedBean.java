@@ -67,6 +67,11 @@ public class BillCustomerManagedBean implements Serializable {
     }
 
     public void dashboardAddGIROArrangement(ActionEvent event) throws IOException {
+        customerName = null; 
+        boName = null;
+        limit = null;
+        savingAcctNum = null;
+        billReference = null;
         customer = logInManagedBean.getSelectedCustomer();
         customerName = customer.getName();
         customerId = logInManagedBean.getCustomerId();
@@ -76,9 +81,17 @@ public class BillCustomerManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/BillManagement/addGIRO.xhtml");
         otpSuccessRedirect = "/MerlionBank-war/BillManagement/addGIROSuccess.xhtml";
+        
     }
 
     public void dashboardAddRecurrentArrangement(ActionEvent event) throws IOException {
+        boName = null;
+        amount = null;
+        savingAcctNum = null;
+        billReference = null;
+        times = null;
+        frequency = null;
+        startDate = null;
         customerId = logInManagedBean.getCustomerId();
         customerIc = logInManagedBean.getIc();
         boNames = bsbl.viewBOName();
@@ -86,6 +99,20 @@ public class BillCustomerManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/BillManagement/addRecurrent.xhtml");
         otpSuccessRedirect = "/MerlionBank-war/BillManagement/addRecurrentSuccess.xhtml";
+    }
+    
+    public void dashoboardAdhocBill(ActionEvent event)throws IOException{
+        boName = null;
+        amount = null;
+        savingAcctNum = null;
+        billReference = null;
+        customerId = logInManagedBean.getCustomerId();
+        customerIc = logInManagedBean.getIc();
+        boNames = bsbl.viewBOName();
+        savingAccountManagedBean.init();
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/MerlionBank-war/BillManagement/adhocBill.xhtml");  
+        otpSuccessRedirect = "/MerlionBank-war/BillManagement/adhocBillSuccess.xhtml";
     }
 
     public void invokeOTP(ActionEvent event) throws IOException, TwilioRestException {
@@ -119,10 +146,11 @@ public class BillCustomerManagedBean implements Serializable {
         String result = amsbl.verifyTwoFactorAuthentication(customerIc, input2FA);
         if (result.equalsIgnoreCase(customerIc)) {
             System.out.print("2FA entered correct");
+            input2FA = null;
             return true;
-
         } else {
             System.out.print("2FA wrong");
+            input2FA = null;
             return false;
         }
     }
@@ -133,6 +161,8 @@ public class BillCustomerManagedBean implements Serializable {
                 this.addGIRO();
             }else if(otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/addRecurrentSuccess.xhtml")){
                 this.addRecurrent();
+            }else if(otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/adhocBillSuccess.xhtml")){
+                this.adhocBill();
             }
 
         } else {
@@ -146,6 +176,17 @@ public class BillCustomerManagedBean implements Serializable {
         bsbl.addRecurrentArrangement(boName, amount, savingAcctNum, billReference, times, frequency, startDate);
         System.out.print("add recurrent success");
         FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
+    }
+    
+    private void adhocBill() throws IOException {
+       if(bsbl.adHocBill(boName, savingAcctNum, billReference, amount)==true){
+          FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);  
+       }
+       else{
+          FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Saving account does not have enough balance.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);  
+       }
+       
     }
 
     private void addGIRO() throws IOException {

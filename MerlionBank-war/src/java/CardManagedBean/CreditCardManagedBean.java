@@ -163,7 +163,7 @@ public class CreditCardManagedBean implements Serializable {
         if (employmentPass != null && salaryApprove != null) {
             FacesMessage message = new FacesMessage("Succesful", employmentPass.getFileName() + " and " + salaryApprove.getFileName() + " is uploaded.");
             FacesContext.getCurrentInstance().addMessage(null, message);
-            creditCardTypeList = ccsb.getCreditCardType();
+            //creditCardTypeList = ccsb.getCreditCardType();
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_selectCard.xhtml");
         } else {
@@ -176,7 +176,7 @@ public class CreditCardManagedBean implements Serializable {
         if ((cpfContribution != null) && (paySlip != null)) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "CPF Contribution uploaded!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
-            creditCardTypeList = ccsb.getCreditCardType();
+           // creditCardTypeList = ccsb.getCreditCardType();
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_selectCard.xhtml");
         } else {

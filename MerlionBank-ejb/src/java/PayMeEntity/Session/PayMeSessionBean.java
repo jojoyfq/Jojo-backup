@@ -5,17 +5,15 @@
  */
 package PayMeEntity.Session;
 
-import static CardEntity.Session.DebitCardSessionBean.SALT_LENGTH;
 import CommonEntity.Customer;
-import CommonEntity.CustomerAction;
-import CommonEntity.OnlineAccount;
 import DepositEntity.SavingAccount;
-import DepositEntity.Session.TransferSessionBeanLocal;
+import DepositEntity.TransactionRecord;
 import Exception.PasswordNotMatchException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.PayMe;
+import PayMeEntity.PayMeTransaction;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.TwilioRestException;
 import com.twilio.sdk.resource.factory.MessageFactory;
@@ -26,8 +24,11 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import javax.ejb.Stateless;
@@ -197,11 +198,20 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public boolean topUp(String phoneNumber, String amount) {
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
+
+        System.out.println("the amount string is: " + amount + "*************");
+
         BigDecimal amountBD = new BigDecimal(amount);
-        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1) {
+        System.out.println("the BigDecimal amount string is: " + amountBD + "*********");
+
+        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1
+                || (!payme.getSavingAccount().getStatus().equals("active"))) {
             return false;
         } else {
             //update the balance and available balance of saving account
@@ -211,6 +221,16 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             payme.getSavingAccount().setBalance(updatedBalance);
             //update the payme balance
             payme.setBalance(payme.getBalance().add(amountBD));
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction = new PayMeTransaction("TopUp", null, amountBD, currentTime, null,
+                    payme.getSavingAccount().getAccountNumber(), payme);
+            TransactionRecord transactionRecord = new TransactionRecord("PayMe", amountBD, null,
+                    "settled", "TopUp PayMe Account", currentTime, payme.getSavingAccount().getAccountNumber(), null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
+            payme.getPaymeTransaction().add(paymeTransaction);
+
+            em.persist(paymeTransaction);
+            em.persist(transactionRecord);
             em.persist(payme);
             em.flush();
             return true;
@@ -219,6 +239,12 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public boolean sendToMyAccount(String phoneNumber, String amount) {
+        System.out.println("amount is: " + amount + "**********************");
+        System.out.println("phoneNumber is: " + phoneNumber + "**********************");
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
+
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
@@ -239,6 +265,15 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             payme.getSavingAccount().setBalance(updatedBalance);
             //update the payme balance
             payme.setBalance(payme.getBalance().subtract(amountBD));
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction = new PayMeTransaction("Send to My A/C", amountBD, null, currentTime, null,
+                    payme.getSavingAccount().getAccountNumber(), payme);
+            TransactionRecord transactionRecord = new TransactionRecord("PayMe", null, amountBD,
+                    "settled", "PayMe Send to Account", currentTime, payme.getSavingAccount().getAccountNumber(), null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
+            payme.getPaymeTransaction().add(paymeTransaction);
+            em.persist(paymeTransaction);
+            em.persist(transactionRecord);
             em.persist(payme);
             em.flush();
             return true;
@@ -266,9 +301,76 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             em.persist(payme);
             otherPayMe.setBalance(otherPayMe.getBalance().add(amountBD));
             em.persist(otherPayMe);
+            //get current time
+            Date currentTime = Calendar.getInstance().getTime();
+            PayMeTransaction paymeTransaction1 = new PayMeTransaction("Sent", amountBD, null, currentTime, otherPayMe.getPhoneNumber(),
+                    null, payme);
+            PayMeTransaction paymeTransaction2 = new PayMeTransaction("Received", null, amountBD, currentTime, payme.getPhoneNumber(),
+                    null, otherPayMe);
+            payme.getPaymeTransaction().add(paymeTransaction1);
+            otherPayMe.getPaymeTransaction().add(paymeTransaction2);
+            em.persist(paymeTransaction1);
+            em.persist(paymeTransaction2);
+
             em.flush();
             return true;
         }
+    }
+
+    @Override
+    public List<List<String>> getPayMeTransaction(String phoneNumber) {
+        List<List<String>> transactionRecords = new ArrayList<List<String>>();
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        String date;
+        List<String> list = new ArrayList();
+
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
+
+        //find the corresponding payme from database
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
+        q.setParameter("phoneNumber", phoneNumber);
+        PayMe payme = (PayMe) q.getSingleResult();
+        List<PayMeTransaction> transactions = payme.getPaymeTransaction();
+
+        if (transactions == null) {
+            return null;
+        }
+
+        for (int i = 0; i < transactions.size(); i++) {
+            if (transactions.get(i).getDescription().equals("TopUp")) {
+                list.add("TopUp,");
+                date = df.format(transactions.get(i).getTransactionTime());
+                list.add(date + ",");
+                list.add(payme.getPhoneNumber() + ",");
+                list.add(transactions.get(i).getCredit().toString());
+            } else if (transactions.get(i).getDescription().equals("Send to My A/C")) {
+                list.add("Send to My A/C,");
+                date = df.format(transactions.get(i).getTransactionTime());
+                list.add(date + ",");
+                list.add(payme.getPhoneNumber() + ",");
+                list.add(transactions.get(i).getDebit().toString());
+            } else if (transactions.get(i).getDescription().equals("Sent")) {
+                list.add("Sent,");
+                date = df.format(transactions.get(i).getTransactionTime());
+                list.add(date + ",");
+                list.add(transactions.get(i).getPhoneNumber() + ",");
+                list.add(transactions.get(i).getDebit().toString());
+            } else if (transactions.get(i).getDescription().equals("Received")) {
+                list.add("Received,");
+                date = df.format(transactions.get(i).getTransactionTime());
+                list.add(date + ",");
+                list.add(transactions.get(i).getPhoneNumber() + ",");
+                list.add(transactions.get(i).getCredit().toString());
+            } else {
+                System.out.println("Error");
+            }
+            transactionRecords.add(list);
+            list = new ArrayList();
+        }
+        System.out.print("How many Records: " + transactionRecords.size());
+        return transactionRecords;
     }
 
     @Override
@@ -308,7 +410,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
         PayMe payme = (PayMe) q.getSingleResult();
 
         String accountNo = payme.getSavingAccount().getAccountNumber().toString();
-        accountNo = accountNo + " - " +payme.getSavingAccount().getSavingAccountType().getAccountType();
+        accountNo = accountNo + " - " + payme.getSavingAccount().getSavingAccountType().getAccountType();
         return accountNo;
     }
 
@@ -335,6 +437,26 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
         q.setParameter("phone", phone);
         PayMe payme = (PayMe) q.getSingleResult();
         return payme.getBalance().toString();
+    }
+
+    @Override
+    public boolean checkTopUpLimit(String phoneNumber, String amount) {
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
+        Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
+        q.setParameter("phoneNumber", phoneNumber);
+        PayMe payme = (PayMe) q.getSingleResult();
+
+        BigDecimal amountBD = new BigDecimal(amount);
+        BigDecimal totalAmount = amountBD.add(payme.getBalance());
+        BigDecimal limit = new BigDecimal("999");
+
+        if (totalAmount.compareTo(limit) == 1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private String passwordHash(String pass) {
