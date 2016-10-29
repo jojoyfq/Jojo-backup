@@ -11,6 +11,7 @@ import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.Session.PayMeSessionBeanLocal;
 import com.twilio.sdk.TwilioRestException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.ejb.EJB;
@@ -250,42 +251,59 @@ public class PayMeResources {
         boolean checkTopUpAmountValidity;
         if (isLoginPage == false) {
             checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumStr, amount);
-            if(checkTopUpAmountValidity == true){
+            if (checkTopUpAmountValidity == true) {
                 return new IsValidTopUpAmountResponse(0, "", true);
-            }else{
+            } else {
                 return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
             }
-        }else{
+        } else {
             checkTopUpAmountValidity = payMeSessionBeanLocal.checkTopUpLimit(phoneNumLogInStr, amount);
-            if(checkTopUpAmountValidity == true){
+            if (checkTopUpAmountValidity == true) {
                 return new IsValidTopUpAmountResponse(0, "", true);
-            }else{
+            } else {
                 return new IsValidTopUpAmountResponse(1, "The maximum PayMe limit is SGD 999.00", false);
             }
-        }      
+        }
     }
-    
+
     @POST
     @Path(value = "topUp")
     @Produces(MediaType.APPLICATION_JSON)
-    public TopUpResponse payMeTopUp(@FormParam("topup") String amount){
-        
+    public TopUpResponse payMeTopUp(@FormParam("topup") String amount) {
+
         boolean topUpSuccess;
-        if(isLoginPage == false){
+        if (isLoginPage == false) {
             topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumStr, amount);
-            if(topUpSuccess == true){
+            if (topUpSuccess == true) {
                 return new TopUpResponse(0, "", true);
-            }else{
+            } else {
                 return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
-            }           
-        }else{
+            }
+        } else {
             topUpSuccess = payMeSessionBeanLocal.topUp(phoneNumLogInStr, amount);
-            if(topUpSuccess == true){
+            if (topUpSuccess == true) {
                 return new TopUpResponse(0, "", true);
-            }else{
+            } else {
                 return new TopUpResponse(1, "Your saving account does not have enough balance or get terminated", false);
             }
         }
+    }
+
+    @POST
+    @Path(value = "getTransactionRecords")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GetTransactionRecordsResponse getPayMeTransactionRecords() {
+
+        List<List<String>> transactionRecords = new ArrayList<List<String>>();
+
+        if (isLoginPage == false) {
+            transactionRecords = payMeSessionBeanLocal.getPayMeTransaction(phoneNumStr);
+            return new GetTransactionRecordsResponse(0, "", transactionRecords);
+        } else {
+            transactionRecords = payMeSessionBeanLocal.getPayMeTransaction(phoneNumLogInStr);
+            return new GetTransactionRecordsResponse(0, "", transactionRecords);
+        }
+
     }
 
 }
