@@ -8,7 +8,9 @@ package WealthEntity.Session;
 import CommonEntity.Customer;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
+import CommonEntity.StaffRole;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
 import Exception.NotEnoughAmountException;
 import LoanEntity.Loan;
 import Other.Session.sendEmail;
@@ -108,6 +110,38 @@ public class WealthManagementSessionBean implements WealthManagementSessionBeanL
         List<Portfolio> portfolios = viewAllPendingApproveTailoredPlan();
         return portfolios;
     }
+    
+    @Override
+public List<Staff> retrieveStaffsAccordingToRole(String roleName)throws ListEmptyException{
+     Query q = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :roleName");
+        q.setParameter("roleName", roleName);
+        StaffRole staffRole=(StaffRole)q.getSingleResult();
+        List<Staff> staffList = staffRole.getStaffList();
+        
+        if (staffList.isEmpty()){
+            throw new ListEmptyException("There are no available staff. Please choose another department.");
+         }
+        
+        List<Staff> newStaffList=new ArrayList<Staff>();
+        for (int i=0;i<staffList.size();i++){
+            if (!staffList.get(i).getStatus().equals("terminated") || !staffList.get(i).getStatus().equals("inactive"))
+                newStaffList.add(staffList.get(i));
+        }
+       return staffList; 
+    
+    
+}
+    @Override
+    public Long assignRM(Long portfolioId,Long staffId){
+        Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+        Staff staff=em.find(Staff.class,portfolioId);
+        portfolio.setStaff(staff);
+        List<Portfolio> portfolios=staff.getPortfolios();
+        portfolios.add(portfolio);
+        staff.setPortfolios(portfolios);
+        return portfolio.getId();
+        
+    }
 
     private void sendApproveEmail(String name, String email, Long accountNumber) throws MessagingException {
         String subject = "Merlion Bank - Loan Application Approved";
@@ -144,7 +178,7 @@ public class WealthManagementSessionBean implements WealthManagementSessionBeanL
     }
     
      @Override
-    public List<Portfolio> staffModifyPortfolios(Long staffId, Long portfolioId, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double stock,int term) throws EmailNotSendException{
+    public List<Portfolio> staffModifyPortfolios(Long staffId, Long portfolioId, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double bond,int term) throws EmailNotSendException{
 Portfolio portfolio = em.find(Portfolio.class, portfolioId);
 BigDecimal investAmount=portfolio.getInvestAmount();
 DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
@@ -161,9 +195,9 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         Product equityProduct=new Product("Equity", purchaseAmount, equity);
         em.persist(equityProduct);
         
-        rate=new BigDecimal(stock);
+        rate=new BigDecimal(bond);
         purchaseAmount=investAmount.multiply(rate);
-        Product stockProduct=new Product("Stock", purchaseAmount, stock);
+        Product stockProduct=new Product("Bond", purchaseAmount, bond);
         em.persist(equityProduct);
         
          products.add(foreignExchangeProduct);
@@ -236,7 +270,63 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
 
     }
 
- 
+ @Override 
+    public Boolean compareAmount(long discretionaryAccountId, BigDecimal amount){
+       DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, discretionaryAccountId);
+      BigDecimal totalBalance=discretionaryAccount.getTotalBalance();
+      BigDecimal temp = new BigDecimal(200000);
+      if ((totalBalance.subtract(amount)).compareTo(temp)==-1)
+          return false;
+                  else 
+          return true;
+    }
+    
+    @Override
+    public Long discreationaryAccountMoneyWithdrawWithEnoughBalance(Long staffId, Long customerId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException {
+        Customer customer = em.find(Customer.class, customerId);
+        DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, discretionaryAccountId);
+
+        if (amount.compareTo(discretionaryAccount.getBalance()) == 1) {
+            throw new NotEnoughAmountException("There is not enough amount of money in this Discretionary Account");
+        }
+
+        discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
+       discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));
+
+        smsbl.recordStaffAction(staffId, "Perform cash withdraw SGD$ "+amount+" for Discretionary Account Id " + discretionaryAccount.getId(), discretionaryAccount.getCustomer().getId());
+        return discretionaryAccountId;
+    }
+    
+     @Override
+    public Long transferBackToSavingWithNotEnoughBalance(Long staffId, Long customerId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException {
+        Customer customer = em.find(Customer.class, customerId);
+        DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, discretionaryAccountId);
+
+        if (amount.compareTo(discretionaryAccount.getBalance()) == 1) {
+            throw new NotEnoughAmountException("There is not enough amount of money in this Discretionary Account");
+        }
+        BigDecimal cutline=new BigDecimal(200000);
+        BigDecimal processingFee=new BigDecimal(1.15);
+        
+      
+        
+        if (discretionaryAccount.getTotalBalance().compareTo(cutline)==1 ||discretionaryAccount.getTotalBalance().compareTo(cutline)==0 ){       
+        BigDecimal totalBalance=discretionaryAccount.getTotalBalance().subtract(amount);
+        BigDecimal tier1=cutline.subtract(totalBalance);
+        amount=amount.subtract(tier1);
+        amount=amount.add(tier1.multiply(processingFee));
+    }else{
+        amount=amount.multiply(processingFee);    
+        }
+
+       
+
+        discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
+       discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));
+
+       smsbl.recordStaffAction(staffId, "Perform cash withdraw SGD$ "+amount+" for Discretionary Account Id " + discretionaryAccount.getId(), discretionaryAccount.getCustomer().getId());
+        return discretionaryAccountId;
+    }
 
  
 }
