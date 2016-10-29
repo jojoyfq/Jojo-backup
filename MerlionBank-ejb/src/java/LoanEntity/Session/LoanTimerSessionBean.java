@@ -48,41 +48,6 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
     //Timer
 
     @Override
-<<<<<<< HEAD
-    public void closeAccounts() {
-        System.out.println("inside the close account method ********** ");
-        Query query = em.createQuery("SELECT a FROM Loan a");
-        List<Loan> currentLoans = new ArrayList(query.getResultList());
-        List<Loan> loans = new ArrayList<Loan>();
-        
-        System.out.println("********** loan isze: " + currentLoans.size());
-        
-        for (int i = 0; i < currentLoans.size(); i++) {
-            System.out.println("********** inside the for loop");
-            if ((currentLoans.get(i).getStatus().equals("staffVerified") || currentLoans.get(i).getStatus().equals("customerVerified")) && currentLoans.get(i).getStartDate() != null) {
-                loans.add(currentLoans.get(i));
-                System.out.println("the size of loan is " + loans.size());
-                System.out.println("********** inside if loop for checking");
-            }
-        }
-        Date todayDate = Calendar.getInstance().getTime();
-        System.out.println("********** the date today is " + todayDate);
-        for (int j = 0; j < loans.size(); j++) {
-            if (todayDate.after(loans.get(j).getStartDate())) {
-                System.out.println("********** to terminaet the account here");
-                loans.get(j).setStatus("terminated");
-                try {
-                    sendLoanTerminationEmail(loans.get(j).getCustomer().getName(), loans.get(j).getCustomer().getEmail(), loans.get(j).getAccountNumber());
-                } catch (MessagingException ex) {
-                    System.out.println("Error sending email.");
-                }
-            }
-        }
-    }
-
-    private void sendLoanTerminationEmail(String name, String email, Long accountNumber) throws MessagingException {
-        String subject = "Merlion Bank - Loan Application Closed";
-=======
       public void closeAccounts(){
          Query query = em.createQuery("SELECT a FROM Loan a");
         List<Loan> currentLoans = new ArrayList(query.getResultList()); 
@@ -119,7 +84,6 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
       
       private void sendLoanTerminationEmail(String name, String email,Long accountNumber) throws MessagingException {
       String subject = "Merlion Bank - Loan Application Closed";
->>>>>>> master
         System.out.println("Inside send email");
 
         String content = "<h2>Dear " + name
@@ -138,7 +102,6 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
         List<Loan> currentLoans = new ArrayList(query.getResultList());
         System.out.println("********** the size of currentloans is " + currentLoans.size());
         
-<<<<<<< HEAD
         List<Loan> loans = new ArrayList<Loan>();
         BigDecimal lateRate = new BigDecimal("0.02");
 
@@ -148,20 +111,6 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
                 loans.add(currentLoans.get(i));
                 System.out.println("********** the size of loans is " + loans.size());
             }
-=======
-          if (current2.isAfter(compareDate)){
-             BigDecimal latePayment=loan.getLatePayment();
-              BigDecimal monthlyPayment= loan.getMonthlyPayment();
-              
-              BigDecimal temp=latePayment.add(monthlyPayment).multiply(lateRate);
-              latePayment=latePayment.add(temp);
-              loan.setLatePayment(latePayment);
-              try{
-               sendLatePaymentNotificationEmail(loan.getCustomer().getName(),loan.getCustomer().getEmail(),loan.getAccountNumber());
-              }catch (MessagingException ex) {
-            System.out.println("Error sending email.");
-            throw new EmailNotSendException("Error sending email.");
->>>>>>> master
         }
 
         Loan loan = new Loan();
@@ -350,7 +299,6 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
         sendEmail.run(email, subject, content);
-<<<<<<< HEAD
     }
 
     public void autoBadDebt(Date currentDate) throws EmailNotSendException {
@@ -361,10 +309,7 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
     public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-=======
-    }  
-     
-    
+      
      public void loanPayByGIRO()throws NotEnoughAmountException{
          Query query = em.createQuery("SELECT a FROM GIROArrangement a");
         List<GIROArrangement> GIROArrangements = new ArrayList(query.getResultList());
@@ -412,5 +357,4 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
         
         
       }
->>>>>>> master
 }
