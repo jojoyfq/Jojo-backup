@@ -204,13 +204,13 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
-        
-        System.out.println("the amount string is: "+amount+"*************");
-       
+
+        System.out.println("the amount string is: " + amount + "*************");
+
         BigDecimal amountBD = new BigDecimal(amount);
-        System.out.println("the BigDecimal amount string is: "+amountBD+"*********");
-        
-        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1 
+        System.out.println("the BigDecimal amount string is: " + amountBD + "*********");
+
+        if (payme.getSavingAccount().getAvailableBalance().compareTo(amountBD) == -1
                 || (!payme.getSavingAccount().getStatus().equals("active"))) {
             return false;
         } else {
@@ -223,12 +223,12 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             payme.setBalance(payme.getBalance().add(amountBD));
             //get current time
             Date currentTime = Calendar.getInstance().getTime();
-            PayMeTransaction paymeTransaction = new PayMeTransaction("TopUp",null,amountBD,currentTime,null,
-                    payme.getSavingAccount().getAccountNumber(),payme);
-            TransactionRecord transactionRecord = new TransactionRecord("PayMe",amountBD,null, 
-            "settled", "TopUp PayMe Account",currentTime,payme.getSavingAccount().getAccountNumber() ,null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
+            PayMeTransaction paymeTransaction = new PayMeTransaction("TopUp", null, amountBD, currentTime, null,
+                    payme.getSavingAccount().getAccountNumber(), payme);
+            TransactionRecord transactionRecord = new TransactionRecord("PayMe", amountBD, null,
+                    "settled", "TopUp PayMe Account", currentTime, payme.getSavingAccount().getAccountNumber(), null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
             payme.getPaymeTransaction().add(paymeTransaction);
-            
+
             em.persist(paymeTransaction);
             em.persist(transactionRecord);
             em.persist(payme);
@@ -239,6 +239,12 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
     @Override
     public boolean sendToMyAccount(String phoneNumber, String amount) {
+        System.out.println("amount is: " + amount + "**********************");
+        System.out.println("phoneNumber is: " + phoneNumber + "**********************");
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
+
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
@@ -261,11 +267,11 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             payme.setBalance(payme.getBalance().subtract(amountBD));
             //get current time
             Date currentTime = Calendar.getInstance().getTime();
-            PayMeTransaction paymeTransaction = new PayMeTransaction("Send to My A/C",amountBD,null,currentTime,null,
-                    payme.getSavingAccount().getAccountNumber(),payme);
-            TransactionRecord transactionRecord = new TransactionRecord("PayMe",null,amountBD, 
-            "settled", "PayMe Send to Account",currentTime,payme.getSavingAccount().getAccountNumber() ,null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
-           payme.getPaymeTransaction().add(paymeTransaction);
+            PayMeTransaction paymeTransaction = new PayMeTransaction("Send to My A/C", amountBD, null, currentTime, null,
+                    payme.getSavingAccount().getAccountNumber(), payme);
+            TransactionRecord transactionRecord = new TransactionRecord("PayMe", null, amountBD,
+                    "settled", "PayMe Send to Account", currentTime, payme.getSavingAccount().getAccountNumber(), null, payme.getSavingAccount(), "MerlionBank", "MerlionBank");
+            payme.getPaymeTransaction().add(paymeTransaction);
             em.persist(paymeTransaction);
             em.persist(transactionRecord);
             em.persist(payme);
@@ -297,74 +303,74 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             em.persist(otherPayMe);
             //get current time
             Date currentTime = Calendar.getInstance().getTime();
-            PayMeTransaction paymeTransaction1 = new PayMeTransaction("Sent",amountBD,null,currentTime,otherPayMe.getPhoneNumber(),
-                    null,payme);
-            PayMeTransaction paymeTransaction2 = new PayMeTransaction("Received",null,amountBD,currentTime,payme.getPhoneNumber(),
-                    null,otherPayMe);
+            PayMeTransaction paymeTransaction1 = new PayMeTransaction("Sent", amountBD, null, currentTime, otherPayMe.getPhoneNumber(),
+                    null, payme);
+            PayMeTransaction paymeTransaction2 = new PayMeTransaction("Received", null, amountBD, currentTime, payme.getPhoneNumber(),
+                    null, otherPayMe);
             payme.getPaymeTransaction().add(paymeTransaction1);
             otherPayMe.getPaymeTransaction().add(paymeTransaction2);
             em.persist(paymeTransaction1);
             em.persist(paymeTransaction2);
-            
+
             em.flush();
             return true;
         }
     }
-    
+
     @Override
-    public List<List<String>> getPayMeTransaction(String phoneNumber){
+    public List<List<String>> getPayMeTransaction(String phoneNumber) {
         List<List<String>> transactionRecords = new ArrayList<List<String>>();
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         String date;
         List<String> list = new ArrayList();
-        
+
         if (phoneNumber.substring(0, 1).equals("+") == false) {
             phoneNumber = "+" + phoneNumber;
         }
-        
+
         //find the corresponding payme from database
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
         List<PayMeTransaction> transactions = payme.getPaymeTransaction();
-        
-        if(transactions == null)  {     
+
+        if (transactions == null) {
             return null;
         }
-        
-        for(int i=0; i<transactions.size();i++){
-            if(transactions.get(i).getDescription().equals("TopUp")){
-                list.add("TopUp");
+
+        for (int i = 0; i < transactions.size(); i++) {
+            if (transactions.get(i).getDescription().equals("TopUp")) {
+                list.add("TopUp,");
                 date = df.format(transactions.get(i).getTransactionTime());
-                list.add(date);
-                list.add(payme.getPhoneNumber());
+                list.add(date + ",");
+                list.add(payme.getPhoneNumber() + ",");
                 list.add(transactions.get(i).getCredit().toString());
-            }else if(transactions.get(i).getDescription().equals("Send to My A/C")){
-                list.add("Send to My A/C");
+            } else if (transactions.get(i).getDescription().equals("Send to My A/C")) {
+                list.add("Send to My A/C,");
                 date = df.format(transactions.get(i).getTransactionTime());
-                list.add(date);
-                list.add(payme.getPhoneNumber());
+                list.add(date + ",");
+                list.add(payme.getPhoneNumber() + ",");
                 list.add(transactions.get(i).getDebit().toString());
-            }else if(transactions.get(i).getDescription().equals("Sent")){
-                list.add("Sent");
+            } else if (transactions.get(i).getDescription().equals("Sent")) {
+                list.add("Sent,");
                 date = df.format(transactions.get(i).getTransactionTime());
-                list.add(date);
-                list.add(transactions.get(i).getPhoneNumber());
+                list.add(date + ",");
+                list.add(transactions.get(i).getPhoneNumber() + ",");
                 list.add(transactions.get(i).getDebit().toString());
-            }else if(transactions.get(i).getDescription().equals("Received")){
-                list.add("Received");
+            } else if (transactions.get(i).getDescription().equals("Received")) {
+                list.add("Received,");
                 date = df.format(transactions.get(i).getTransactionTime());
-                list.add(date);
-                list.add(transactions.get(i).getPhoneNumber());
+                list.add(date + ",");
+                list.add(transactions.get(i).getPhoneNumber() + ",");
                 list.add(transactions.get(i).getCredit().toString());
-            }else{
+            } else {
                 System.out.println("Error");
             }
             transactionRecords.add(list);
             list = new ArrayList();
         }
-        System.out.print("How many Records: "+transactionRecords.size());
-        return transactionRecords; 
+        System.out.print("How many Records: " + transactionRecords.size());
+        return transactionRecords;
     }
 
     @Override

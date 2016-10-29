@@ -305,5 +305,27 @@ public class PayMeResources {
         }
 
     }
+    
+    @POST
+    @Path(value = "isValidSendBackAmount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IsValidSendBackAmountResponse sendToMySavingAccount(@FormParam("sendbackamount") String amount){
+        boolean sendBackSuccess;
+        if (isLoginPage == false) {
+            sendBackSuccess = payMeSessionBeanLocal.sendToMyAccount(phoneNumStr, amount);
+            if(sendBackSuccess == false){
+                return new IsValidSendBackAmountResponse(1, "Saving Account is no longer valid or not enough available PayMe balance", false);
+            }else{
+                return new IsValidSendBackAmountResponse(0, "", true);
+            }
+        }else{
+            sendBackSuccess = payMeSessionBeanLocal.sendToMyAccount(phoneNumLogInStr, amount);
+            if(sendBackSuccess == false){
+                return new IsValidSendBackAmountResponse(1, "Saving Account is no longer valid or not enough available PayMe balance", false);
+            }else{
+                return new IsValidSendBackAmountResponse(0, "", true);
+            }
+        }      
+    }
 
 }
