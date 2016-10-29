@@ -54,7 +54,7 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
         
         for (int i = 0; i < currentLoans.size(); i++) {
             System.out.println("********** inside the for loop");
-            if (currentLoans.get(i).getStatus().equals("staffVerified") || currentLoans.get(i).getStatus().equals("customerVerified") || currentLoans.get(i).getStartDate() != null) {
+            if ((currentLoans.get(i).getStatus().equals("staffVerified") || currentLoans.get(i).getStatus().equals("customerVerified")) && currentLoans.get(i).getStartDate() != null) {
                 loans.add(currentLoans.get(i));
                 System.out.println("the size of loan is " + loans.size());
                 System.out.println("********** inside if loop for checking");
@@ -122,12 +122,19 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
             BigDecimal duration = new BigDecimal(numOfMonths);
 
             if (current2.isAfter(compareDate)) {
-                BigDecimal latePayment = loan.getLatePayment();
+                BigDecimal latePaymentAmt = loan.getLatePayment();
                 BigDecimal monthlyPayment = loan.getMonthlyPayment();
-
-                BigDecimal temp = latePayment.add(monthlyPayment).multiply(lateRate);
-                latePayment.add(temp);
-                loan.setLatePayment(latePayment);
+                System.out.println("********** monthly paymemnt is: " + monthlyPayment);
+                System.out.println("********** late rate is: " + lateRate);
+                
+                //System.out.println("********** temp1 is: " + temp1);
+                //System.out.println("********** late payment is: " + latePaymentAmt);
+                BigDecimal temp = latePaymentAmt.add(monthlyPayment).multiply(lateRate);
+                System.out.println("********** temp is: " + temp);
+                latePaymentAmt=latePaymentAmt.add(temp);
+                System.out.println("********** monthly late paymemnt is: " + latePaymentAmt);
+                loan.setLatePayment(latePaymentAmt);
+                em.flush();
                 try {
                     sendLatePaymentNotificationEmail(loan.getCustomer().getName(), loan.getCustomer().getEmail(), loan.getAccountNumber());
                 } catch (MessagingException ex) {
