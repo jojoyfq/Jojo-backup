@@ -7,6 +7,7 @@ package BillEntity.Session;
 
 import BillEntity.BillingOrganization;
 import BillEntity.OtherBank;
+import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +53,8 @@ public interface BillSessionBeanLocal {
     public boolean addRecurrentArrangement(String boName, BigDecimal amount, Long savingAccountNumber, String billReference, Integer times, Integer interval, Date StartDate);
 
     public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount);
+
+    public void recurrentBillDeduction() throws NotEnoughAmountException;
 
     
 }
