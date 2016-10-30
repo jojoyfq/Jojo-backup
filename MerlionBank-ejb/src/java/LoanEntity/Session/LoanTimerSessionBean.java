@@ -29,6 +29,8 @@ import javax.persistence.Query;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Months;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -36,12 +38,15 @@ import org.joda.time.Months;
  */
 @Stateless
 public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
-@PersistenceContext
-    private EntityManager em;
- @EJB
 
-private LoanApplicationSessionBean lasb;
- //Timer
+    @PersistenceContext
+    private EntityManager em;
+    @EJB
+ 
+    private LoanApplicationSessionBeanLocal lasbl;
+
+    //Timer
+
     @Override
       public void closeAccounts(){
          Query query = em.createQuery("SELECT a FROM Loan a");
@@ -49,7 +54,7 @@ private LoanApplicationSessionBean lasb;
        List<Loan>  loans=new ArrayList<Loan>();
        
        for (int i=0;i<currentLoans.size();i++){
-          if (currentLoans.get(i).getStatus().equals("staffVerified") ||currentLoans.get(i).getStatus().equals("customerVerified")|| currentLoans.get(i).getStartDate()!=null)
+          if ((currentLoans.get(i).getStatus().equals("staffVerified") ||currentLoans.get(i).getStatus().equals("customerVerified"))&& currentLoans.get(i).getStartDate()!=null)
               loans.add(currentLoans.get(i));
       }
        Date todayDate=Calendar.getInstance().getTime();
@@ -82,114 +87,139 @@ private LoanApplicationSessionBean lasb;
         System.out.println("Inside send email");
 
         String content = "<h2>Dear " + name
-                + ",</h2><br /><h1>  Sorry! You application of Loan "+ accountNumber+"has been terminated due to long time no reponses.</h1><br />"
+                + ",</h2><br /><h1>  Sorry! You application of Loan " + accountNumber + "has been terminated due to long time no reponses.</h1><br />"
                 + "<p style=\"color: #ff0000;\">For more enquiries, please kindly contact +65 8888 8888. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please log in and use case management page and submit your enquiry there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
-        sendEmail.run(email, subject, content);  
+        sendEmail.run(email, subject, content);
     }
-     
-      @Override
-       public void calculateLatePayment(Date currentDate) throws EmailNotSendException{
-         Query query = em.createQuery("SELECT a FROM Loan a");
-        List<Loan> currentLoans = new ArrayList(query.getResultList()); 
-       List<Loan>  loans=new ArrayList<Loan>();
-       BigDecimal lateRate=new BigDecimal("0.02");
- 
-       for (int i=0;i<currentLoans.size();i++){
-          if (currentLoans.get(i).getStatus().equals("active"))
-              loans.add(currentLoans.get(i));
-      }
-       
-       Loan loan=new Loan();
-       for (int j=0;j<loans.size();j++){
-           loan=loans.get(j);
-           DateTime payDate = new DateTime(loan.getLoanDate());
-           DateTime compareDate = payDate.plusMonths(loan.getPaidTerm()+1);
-           DateTime current2 = new DateTime(currentDate);
-           
-           Months inBetween = Months.monthsBetween(compareDate, current2);
-        int numOfMonths = inBetween.getMonths();
-        BigDecimal duration=new BigDecimal (numOfMonths);
+
+    @Override
+    public void calculateLatePayment() throws EmailNotSendException {
+        System.out.println("********** inside the calculateLatePayment method");
+        Query query = em.createQuery("SELECT a FROM Loan a");
+        List<Loan> currentLoans = new ArrayList(query.getResultList());
+        System.out.println("********** the size of currentloans is " + currentLoans.size());
         
-          if (current2.isAfter(compareDate)){
-             BigDecimal latePayment=loan.getLatePayment();
-              BigDecimal monthlyPayment= loan.getMonthlyPayment();
-              
-              BigDecimal temp=latePayment.add(monthlyPayment).multiply(lateRate);
-              latePayment.add(temp);
-              loan.setLatePayment(latePayment);
-              try{
-               sendLatePaymentNotificationEmail(loan.getCustomer().getName(),loan.getCustomer().getEmail(),loan.getAccountNumber());
-              }catch (MessagingException ex) {
-            System.out.println("Error sending email.");
-            throw new EmailNotSendException("Error sending email.");
+        List<Loan> loans = new ArrayList<Loan>();
+        BigDecimal lateRate = new BigDecimal("0.02");
+
+        for (int i = 0; i < currentLoans.size(); i++) {
+            System.out.println("********** inside for loop ~");
+            if (currentLoans.get(i).getStatus().equals("active")) {
+                loans.add(currentLoans.get(i));
+                System.out.println("********** the size of loans is " + loans.size());
+            }
         }
-                         
-          }     
-           
-       }
-       }
-       
-@Override        
-public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException{
-            Query query = em.createQuery("SELECT a FROM Loan a");
-        List<Loan> currentLoans = new ArrayList(query.getResultList()); 
-       List<Loan>  loans=new ArrayList<Loan>();
-       BigDecimal monthlyPayment2=new BigDecimal(0);
- 
-       for (int i=0;i<currentLoans.size();i++){
-          if (currentLoans.get(i).getStatus().equals("active"))
-              loans.add(currentLoans.get(i));
-      }
-       
-       Loan loan=new Loan();
-       for (int j=0;j<loans.size();j++){
-           loan=loans.get(j);
-           LoanType loanType=loan.getLoanType();
-           DateTime payDate = new DateTime(loan.getLoanDate());
-           DateTime compareDate = payDate.plusMonths(loan.getPaidTerm());
-           //compareDate=compareDate.minusDays(3);
-           
-           DateTime current2 = new DateTime(currentDate);
-           
-           String newstring1 = new SimpleDateFormat("yyyy-MM-dd").format(compareDate);
-           String newstring2 = new SimpleDateFormat("yyyy-MM-dd").format(current2);
-           BigDecimal temp=new BigDecimal("zero");
-           Double temp2=0.0;
-           
-           if (newstring1.equals(newstring2)){
-               if (loanType.getName().equals("SIBOR Package")) {
-                monthlyPayment2 = lasb.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loanType.getSIBOR(), loanType.getSIBORrate1());
-            } else if (loanType.getName().equals("Fixed Interest Package")) {
-                if (loan.getPaidTerm()<=36)
-                monthlyPayment2 = lasb.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loan.getInterestRate1(), temp2);
-            } else
-               monthlyPayment2 = lasb.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loanType.getSIBOR(), loan.getInterestRate2());
+
+        Loan loan = new Loan();
+        for (int j = 0; j < loans.size(); j++) {
+            System.out.print("********** inside the loans loop");
+            loan = loans.get(j);
+            Date todayDate = Calendar.getInstance().getTime();
+            DateTime payDate = new DateTime(loan.getLoanDate());
+            DateTime compareDate = payDate.plusMonths(loan.getPaidTerm() + 1);
+            DateTime current2 = new DateTime(todayDate);
+
+            Months inBetween = Months.monthsBetween(compareDate, current2);
+            System.out.println("************ the difference in month is " + inBetween);
+            int numOfMonths = inBetween.getMonths();
+            System.out.println("************ the difference in month is " + numOfMonths);
+            BigDecimal duration = new BigDecimal(numOfMonths);
+
+            if (current2.isAfter(compareDate)) {
+                BigDecimal latePaymentAmt = loan.getLatePayment();
+                BigDecimal monthlyPayment = loan.getMonthlyPayment();
+                System.out.println("********** monthly paymemnt is: " + monthlyPayment);
+                System.out.println("********** late rate is: " + lateRate);
                 
-        } else if (loanType.getType().equals("Car")) {
-             monthlyPayment2 = lasb.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loan.getInterestRate1(), temp2);
-        } else if (loanType.getType().equals("Education")) {
-            monthlyPayment2 = lasb.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loan.getInterestRate1(), temp2);
+                //System.out.println("********** temp1 is: " + temp1);
+                //System.out.println("********** late payment is: " + latePaymentAmt);
+                BigDecimal temp = latePaymentAmt.add(monthlyPayment).multiply(lateRate);
+                System.out.println("********** temp is: " + temp);
+                latePaymentAmt=latePaymentAmt.add(temp);
+                System.out.println("********** monthly late paymemnt is: " + latePaymentAmt);
+                loan.setLatePayment(latePaymentAmt);
+                em.flush();
+                try {
+                    sendLatePaymentNotificationEmail(loan.getCustomer().getName(), loan.getCustomer().getEmail(), loan.getAccountNumber());
+                } catch (MessagingException ex) {
+                    System.out.println("Error sending email.");
+                    throw new EmailNotSendException("Error sending email.");
+                }
+
+            }
 
         }
-              
-               loan.getMonthlyPayment().add(monthlyPayment2);
-              em.flush();
-              try{
-               sendRepaymentNotificationEmail(loan.getCustomer().getName(),loan.getCustomer().getEmail(),loan.getAccountNumber());
-              }catch (MessagingException ex) {
-            System.out.println("Error sending email.");
-            throw new EmailNotSendException("Error sending email.");
+    }
+
+    @Override
+    public void updateMonthlyPayment() throws EmailNotSendException {
+        System.out.println("********** inside the udateMonthlyPayment method");
+        Query query = em.createQuery("SELECT a FROM Loan a");
+        List<Loan> currentLoans = new ArrayList(query.getResultList());
+        List<Loan> loans = new ArrayList<Loan>();
+        BigDecimal monthlyPayment2 = new BigDecimal(0);
+
+        for (int i = 0; i < currentLoans.size(); i++) {
+            if (currentLoans.get(i).getStatus().equals("active")) {
+                loans.add(currentLoans.get(i));
+            }
         }
-              }
-           
-       }
-       
-           
-           
-     private void sendRepaymentNotificationEmail(String name, String email, Long accountNumber) throws MessagingException {
+
+        Loan loan = new Loan();
+        for (int j = 0; j < loans.size(); j++) {
+            loan = loans.get(j);
+            LoanType loanType = loan.getLoanType();
+            System.out.println("********** loan type is" + loanType);
+            DateTime payDate = new DateTime(loan.getLoanDate());
+            DateTime compareDate = payDate.plusMonths(loan.getPaidTerm());
+            
+           //compareDate=compareDate.minusDays(3);
+            Date todayDate = Calendar.getInstance().getTime();
+            DateTime current2 = new DateTime(todayDate);
+            
+            DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+            String newstring1 = dtf.print(compareDate);
+            String newstring2 = dtf.print(current2);
+            
+//            String newstring1 = new SimpleDateFormat("yyyy-MM-dd").format(compareDate);
+//            String newstring2 = new SimpleDateFormat("yyyy-MM-dd").format(current2);
+            BigDecimal temp = new BigDecimal("0");
+            Double temp2 = 0.0;
+
+            if (newstring1.equals(newstring2)) {
+                if (loanType.getName().equals("SIBOR Package")) {
+                    monthlyPayment2 = lasbl.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loanType.getSIBOR(), loanType.getSIBORrate1());
+                } else if (loanType.getName().equals("Fixed Interest Package")) {
+                    if (loan.getPaidTerm() <= 36) {
+                        monthlyPayment2 = lasbl.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loan.getInterestRate1(), temp2);
+                    }
+                } else {
+                    monthlyPayment2 = lasbl.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loanType.getSIBOR(), loan.getInterestRate2());
+                }
+
+            } else if (loanType.getType().equals("Car")) {
+                monthlyPayment2 = lasbl.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loan.getInterestRate1(), temp2);
+            } else if (loanType.getType().equals("Education")) {
+                monthlyPayment2 = lasbl.fixedCalculator(loan.getPrincipal().subtract(loan.getDownpayment()), loan.getLoanTerm(), loan.getInterestRate1(), temp2);
+
+            }
+
+            loan.getMonthlyPayment().add(monthlyPayment2);
+            em.flush();
+            try {
+                sendRepaymentNotificationEmail(loan.getCustomer().getName(), loan.getCustomer().getEmail(), loan.getAccountNumber());
+            } catch (MessagingException ex) {
+                System.out.println("Error sending email.");
+                throw new EmailNotSendException("Error sending email.");
+            }
+        }
+
+    }
+
+    private void sendRepaymentNotificationEmail(String name, String email, Long accountNumber) throws MessagingException {
         String subject = "Merlion Bank - Your Loan Payment is late";
         System.out.println("Inside send email");
 
@@ -202,9 +232,9 @@ public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException{
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
         sendEmail.run(email, subject, content);
-    }  
-           
-      private void sendLatePaymentNotificationEmail(String name, String email, Long accountNumber) throws MessagingException {
+    }
+
+    private void sendLatePaymentNotificationEmail(String name, String email, Long accountNumber) throws MessagingException {
         String subject = "Merlion Bank - Your loan bill for this month is here";
         System.out.println("Inside send email");
 
@@ -217,43 +247,46 @@ public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException{
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
         sendEmail.run(email, subject, content);
-    }  
-    
-      @Override
-    public void autoBadDebt(Date currentDate)throws EmailNotSendException{
-         Query query = em.createQuery("SELECT a FROM Loan a");
-        List<Loan> currentLoans = new ArrayList(query.getResultList()); 
-       List<Loan>  loans=new ArrayList<Loan>();
- 
-       for (int i=0;i<currentLoans.size();i++){
-          if (currentLoans.get(i).getStatus().equals("active"))
-              loans.add(currentLoans.get(i));
-      }
-       
-       Loan loan=new Loan();
-       for (int j=0;j<loans.size();j++){
-           loan=loans.get(j);
-           DateTime payDate = new DateTime(loan.getLoanDate());
-           DateTime compareDate = payDate.plusMonths(loan.getPaidTerm()+4);
-           DateTime current2 = new DateTime(currentDate);
-        
-          if (current2.isAfter(compareDate)){
-             loan.setStatus("bad debt");
-              
-              try{
-               sendBadDebtNotificationEmail(loan.getCustomer().getName(),loan.getCustomer().getEmail(),loan.getAccountNumber());
-              }catch (MessagingException ex) {
-            System.out.println("Error sending email.");
-            throw new EmailNotSendException("Error sending email.");
-        }
-                         
-          }     
-           
-       }
-        
     }
-    
-     private void sendBadDebtNotificationEmail(String name, String email, Long accountNumber) throws MessagingException {
+
+    @Override
+    public void autoBadDebt() throws EmailNotSendException {
+//       DateTime currentDateNow = new DateTime();
+        System.out.println("inside the autoBadDebt method ***************");
+        Query query = em.createQuery("SELECT a FROM Loan a");
+        List<Loan> currentLoans = new ArrayList(query.getResultList());
+        List<Loan> loans = new ArrayList<Loan>();
+
+        for (int i = 0; i < currentLoans.size(); i++) {
+            if (currentLoans.get(i).getStatus().equals("active")) {
+                loans.add(currentLoans.get(i));
+            }
+        }
+
+        Loan loan = new Loan();
+        for (int j = 0; j < loans.size(); j++) {
+            loan = loans.get(j);
+            DateTime payDate = new DateTime(loan.getLoanDate());
+            DateTime compareDate = payDate.plusMonths(loan.getPaidTerm() + 4);
+            DateTime current2 = new DateTime();
+            
+            if (current2.isAfter(compareDate)) {
+                loan.setStatus("bad debt");
+
+                try {
+                    sendBadDebtNotificationEmail(loan.getCustomer().getName(), loan.getCustomer().getEmail(), loan.getAccountNumber());
+                } catch (MessagingException ex) {
+                    System.out.println("Error sending email.");
+                    throw new EmailNotSendException("Error sending email.");
+                }
+
+            }
+
+        }
+
+    }
+
+    private void sendBadDebtNotificationEmail(String name, String email, Long accountNumber) throws MessagingException {
         String subject = "Merlion Bank - Your loan has been marked as bad debt";
         System.out.println("Inside send email");
 
@@ -266,9 +299,18 @@ public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException{
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
         System.out.println(content);
         sendEmail.run(email, subject, content);
-    }  
-     
-    
+    }
+
+    public void autoBadDebt(Date currentDate) throws EmailNotSendException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+      
+    @Override
      public void loanPayByGIRO()throws NotEnoughAmountException{
          Query query = em.createQuery("SELECT a FROM GIROArrangement a");
         List<GIROArrangement> GIROArrangements = new ArrayList(query.getResultList());

@@ -260,26 +260,26 @@ public class CustomerLoanManagedBean implements Serializable {
         System.out.println("*************Customer create loan details - loanTerm " + loanTerm);
         System.out.println("*************Customer create loan details - startDate " + startDate);
 
-        try {
-
-            loanTypeId = lasbl.findTypeIdByName(loanName);
-            System.out.println("*************Customer create loan details - loantypeId " + loanTypeId);
-            if (customer.getId() == null) {
-                customerId = logInManagedBean.getCustomerId();
-                lasbl.createLoanAccountExisting(customerId, monthlyRepayment, loanTypeId, principal, downpayment, loanTerm);
-
-            } else {
-                customerId = customer.getId();
-                lasbl.createLoanAccount(customerId, monthlyRepayment, loanTypeId, principal, downpayment, loanTerm);
-
-            }
-
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your loan account has been successfully created! Please check your email for further details.");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        } catch (EmailNotSendException | LoanTermInvalidException ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
+//        try {
+//
+//            loanTypeId = lasbl.findTypeIdByName(loanName);
+//            System.out.println("*************Customer create loan details - loantypeId " + loanTypeId);
+//            if (customer.getId() == null) {
+//                customerId = logInManagedBean.getCustomerId();
+//                lasbl.createLoanAccountExisting(customerId, monthlyRepayment, loanTypeId, principal, downpayment, loanTerm);
+//
+//            } else {
+//                customerId = customer.getId();
+//                lasbl.createLoanAccount(customerId, monthlyRepayment, loanTypeId, principal, downpayment, loanTerm);
+//
+//            }
+//
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your loan account has been successfully created! Please check your email for further details.");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        } catch (EmailNotSendException | LoanTermInvalidException ex) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        }
 
     }
     

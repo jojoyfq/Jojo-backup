@@ -46,6 +46,20 @@ public class SavingAccount implements Serializable {
     private BigDecimal balance;
     private BigDecimal availableBalance;
     private BigDecimal accumDailyInterest;
+    private List<BigDecimal> dailyBalance;
+
+    public List<BigDecimal> getDailyBalance() {
+        return dailyBalance;
+    }
+
+    public void setDailyBalance(List<BigDecimal> dailyBalance) {
+        this.dailyBalance = dailyBalance;
+    }
+
+    public SavingAccount(BigDecimal accumDailyInterest) {
+        this.accumDailyInterest = accumDailyInterest;
+    }
+    
     private String status; //activated, inactive, terminated, below balance
     //@OneToOne(mappedBy="savingAccount")
     //private Customer customer;
@@ -98,6 +112,9 @@ public class SavingAccount implements Serializable {
         this.status = status;
         this.customer = customer;
         this.savingAccountType = savingAccountType;
+        this.dailyBalance = new ArrayList<BigDecimal> ();
+        this.accumDailyInterest = BigDecimal.valueOf(0);
+        this.transactionRecord = new ArrayList<>();
         this.giroArrangement = new ArrayList<>();
         this.recurrentBillArrangement = new ArrayList<>();
     }
@@ -213,7 +230,11 @@ public class SavingAccount implements Serializable {
     public Boolean deductAmt(BigDecimal amount) {
 
         if (this.availableBalance.doubleValue() >= amount.doubleValue()) {
+            System.out.print(this.availableBalance);
+            System.out.print(amount);
             this.availableBalance.subtract(amount);
+            System.out.print(this.availableBalance);
+            this.balance.subtract(amount);
             return true;
         } else {
             return false;

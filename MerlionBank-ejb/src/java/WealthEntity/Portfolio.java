@@ -5,6 +5,7 @@
  */
 package WealthEntity;
 
+import CommonEntity.Staff;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -38,7 +39,7 @@ public class Portfolio implements Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
     private String status;
-  
+  private Integer term;
     
     
     @ManyToOne
@@ -49,6 +50,9 @@ public class Portfolio implements Serializable {
     
     @OneToMany(cascade={CascadeType.ALL},mappedBy="portfolio")
     private List<Product> products;
+    
+     @ManyToOne
+    private Staff staff;
 
     public Portfolio() {
     }
@@ -65,6 +69,24 @@ public class Portfolio implements Serializable {
         this.portfolioTransactions = portfolioTransactions;
         this.products = products;
         this.status=status;
+    }
+
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
+
+
+    public Integer getTerm() {
+        return term;
+    }
+
+    public void setTerm(Integer term) {
+        this.term = term;
     }
 
 

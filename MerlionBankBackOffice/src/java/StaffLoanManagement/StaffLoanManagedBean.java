@@ -125,7 +125,7 @@ public class StaffLoanManagedBean implements Serializable {
         loanCategories.put("Car", "Car");
         loanCategories.put("Education", "Education");
 
-        Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<String, String>();
         map.put("SIBOR Package", "SIBOR Package");
         map.put("Fixed Interest Package", "Fixed Interest Package");
         data.put("Home", map);
@@ -134,7 +134,6 @@ public class StaffLoanManagedBean implements Serializable {
         map.put("Car Loan", "Car Loan");
 
         data.put("Car", map);
-
         map = new HashMap<String, String>();
         map.put("NUS Education Loan", "NUS Education Loan");
 
@@ -150,11 +149,15 @@ public class StaffLoanManagedBean implements Serializable {
         }
     }
 
-    public void searchCustomerId(ActionEvent event) throws UserNotExistException, UserNotActivatedException {
+    public void searchCustomerId(ActionEvent event) throws UserNotExistException, UserNotActivatedException, ListEmptyException, IOException {
         try {
                         System.out.println("searched customer is "+searchedCustomerIc);
             searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
-        } catch (UserNotExistException | UserNotActivatedException ex) {
+            oneCustomerAllLoans = lmsbl.searchLoan(searchedCustomerIc);
+            
+                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffActivateLoanForCustomer.xhtml");
+
+        } catch (UserNotExistException | UserNotActivatedException|ListEmptyException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
@@ -324,26 +327,26 @@ public void openDocs(ActionEvent event) {
         System.out.println("*************Customer create loan details - loanTerm " + loanTerm);
         System.out.println("*************Customer create loan details - monthly income " + monthlyIncome);
 
-        try {
-
-            loanTypeId = lasbl.findTypeIdByName(loanName);
-            if (customer.getId() == null) {
-                System.out.println("Create loan account for EXISTING customer");
-                searchedCustomer.getId();
-                customerId=lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
-                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message","Loan Account has been created for customer "+searchedCustomer.getIc()+"!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-            } else {
-                System.out.println("Create loan account for NEW customer customerID " + customer.getId());
-
-                lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
- FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been created for customer "+customer.getIc()+"!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-            }
-        } catch (LoanTermInvalidException ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
+//        try {
+//
+//            loanTypeId = lasbl.findTypeIdByName(loanName);
+//            if (customer.getId() == null) {
+//                System.out.println("Create loan account for EXISTING customer");
+//                searchedCustomer.getId();
+//                customerId=lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+//                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message","Loan Account has been created for customer "+searchedCustomer.getIc()+"!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//            } else {
+//                System.out.println("Create loan account for NEW customer customerID " + customer.getId());
+//
+//                lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+// FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been created for customer "+customer.getIc()+"!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//            }
+//        } catch (LoanTermInvalidException ex) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        }
 
     }
     public void staffViewPendingLoans(ActionEvent event) throws IOException {

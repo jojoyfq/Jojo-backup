@@ -26,17 +26,16 @@
                     <div class="Container100 NoPadding Responsive50 ui-fluid">
 
                         <h:form id="form">
-                            <p:panel id="panel" header="Wealth Management Payment System - My Dicretionary Accounts" >
+                            <p:panel id="panel" header="Wealth Management Payment System - Customer's Dicretionary Accounts" >
 
                                 <p:messages id="msgs" />
 
                                 <h:panelGrid columns="4" cellpadding="5">
 
-                                    <p:dataTable var="Wealth" value="#{customerWealthManagedBean.allWealthAccounts}"  editable="true" >
+                                    <p:dataTable var="Wealth" value="#{staffWealthManagedBean.allWealthAccounts}"  editable="true" >
                                         <f:facet name="header">
                                             My Discretionary Accounts
                                         </f:facet>
-                                        <p:ajax event="rowEdit" listener="#{customerLoanManagedBean.customerUpdateLoan}"  />
 
                                         <p:column headerText="Wealth ID" style="width: 80px;">
 
@@ -77,14 +76,9 @@
                                             <h:outputText value="#{Wealth.status}" />
                                         </p:column>
 
-
-
-
-
-
                                         <p:column headerText="Transfer by Saving Account" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{staffWealthManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
                                                     <f:attribute name="selectedWealth" value="#{Wealth}"  />
                                                 </p:commandButton>
                                             </center>

@@ -5,9 +5,13 @@
  */
 package WealthEntity.Session;
 
+import CommonEntity.Staff;
 import Exception.EmailNotSendException;
+import Exception.ListEmptyException;
+import Exception.NotEnoughAmountException;
 import WealthEntity.Portfolio;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -27,12 +31,23 @@ public interface WealthManagementSessionBeanLocal {
     public List<Portfolio> staffRejectPortfolios(Long staffId, Long portfolioId) throws EmailNotSendException;
 
     public List<Portfolio> staffApprovePortfolios(Long staffId, Long portfolioId) throws EmailNotSendException;
+  
 
     public Portfolio displayPortfolio(Long portfolioId);
 
-    public List<Portfolio> staffModifyPortfolios(Long staffId, Long portfolioId, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double stock, int term) throws EmailNotSendException;
+    public List<Portfolio> staffModifyPortfolios(Long staffId, Long portfolioId, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double bond, int term) throws EmailNotSendException;
 
     //View pending Activation plan, haven't finished staff activate plan function
-    public List<Portfolio> viewAllPendingAcivationTailoredPlan();
-
+    public List<Portfolio> viewAllPendingAcivationTailoredPlan(Long customerId);
+    
+    public Portfolio staffActivateLoan(Long staffId, Long portfolioId, Date startDate);
+    
+    //Staff perform discretionary account cash withdraw
+     public Boolean compareAmount(long discretionaryAccountId, BigDecimal amount);
+      public Long discreationaryAccountMoneyWithdrawWithEnoughBalance(Long staffId, Long customerId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException;
+       public Long transferBackToSavingWithNotEnoughBalance(Long staffId, Long customerId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException;
+  
+       //After staff approve tailored plan, they need to assign a RM
+  public List<Staff> retrieveStaffsAccordingToRole(String roleName)throws ListEmptyException;
+    public Long assignRM(Long portfolioId,Long staffId);
 }
