@@ -315,5 +315,20 @@ public class BillSessionBean implements BillSessionBeanLocal {
          }
         
     }
+    
+    @Override
+    public List<GIROArrangement> viewableGIRO (Long customerId){
+        Customer customer = em.find(Customer.class, customerId);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        List<GIROArrangement> viewable = new ArrayList<GIROArrangement>();
+        for(int i=0;i<savingAccounts.size();i++){
+            for(int j=0;j<savingAccounts.get(i).getGiroArrangement().size();j++){
+                if(!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")){
+                    viewable.add(savingAccounts.get(i).getGiroArrangement().get(j));
+                }
+            }
+        }
+        return viewable;
+    }
 
 }

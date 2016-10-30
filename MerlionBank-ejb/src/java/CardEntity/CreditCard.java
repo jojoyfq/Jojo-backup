@@ -46,6 +46,18 @@ public class CreditCard implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "creditCard")
     List<CreditChargeback> chargeback = new ArrayList();
 
+    public CreditCard(){}
+    
+    public CreditCard(Long cardNumber,String cardHolder,Date startDate,Date expiryDate,Long cvv, CreditCardType creditCardType,Customer customer){
+        this.cardNumber = cardNumber;
+        this.cardHolder = cardHolder;
+        this.startDate = startDate;
+        this.expiryDate = expiryDate;
+        this.cvv = cvv;
+        this.creditCardType = creditCardType;
+        this.customer = customer;
+    }
+    
     public Customer getCustomer() {
         return customer;
     }

@@ -16,8 +16,10 @@ import org.joda.time.DateTime;
 @Local
 public interface TimerDemoSessionBeanLocal {
 
-    public void createTimers(Date startTime);
-
     public void cancelTimers(String schedulerId);
+
+    public void createTimers(Date startTime, String timerInfo);
+
+    public void createTimers(Date startTime);
     
 }
