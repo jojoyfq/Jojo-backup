@@ -44,4 +44,6 @@ public interface SavingAccountSessionBeanLocal {
     public void dailyInterestAccrued();
 
     public void monthlyInterestCrediting();
+
+    public void checkCustomerAge();
 }

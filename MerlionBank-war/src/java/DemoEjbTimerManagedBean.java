@@ -1,5 +1,3 @@
-
-
 import ejb.session.singleton.TimerDemoSessionBeanLocal;
 import java.io.Serializable;
 import java.util.Date;
@@ -44,12 +42,14 @@ public class DemoEjbTimerManagedBean implements Serializable
     }
     
     //by clicking 'confirmed' 
-     public void createTimers()
+     public void createTimers(ActionEvent event)
     {
         if(startTime != null){
         System.out.println(":::::::::::::::::::pppppp");
         System.out.println(startTime);
-        timerDemoSessionBeanLocal.createTimers(startTime);     
+        
+        String timerInfo = event.getComponent().getAttributes().get("timerName").toString();
+        timerDemoSessionBeanLocal.createTimers(startTime, timerInfo);     
         }
         else{
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please choose time.");
