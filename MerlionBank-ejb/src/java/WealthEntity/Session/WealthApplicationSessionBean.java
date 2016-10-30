@@ -109,6 +109,9 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
 
         DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer);
         em.persist(discretionaryAccount);
+        em.flush();
+                 discretionaryAccount.setCommission(initialValue);
+                 
         List<DiscretionaryAccount> discretionaryAccounts = new ArrayList<DiscretionaryAccount>();
         discretionaryAccounts.add(0, discretionaryAccount);
         customer.setDiscretionaryAccounts(discretionaryAccounts);
@@ -141,6 +144,8 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
         DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer);
         em.persist(discretionaryAccount);
         em.flush();
+        
+        discretionaryAccount.setCommission(initialValue);
         List<DiscretionaryAccount> discretionaryAccounts = new ArrayList<DiscretionaryAccount>();
 
         if (customer.getDiscretionaryAccounts() == null) {
@@ -149,7 +154,6 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
         } else {//alr have fixed acct
             customer.getDiscretionaryAccounts().add(discretionaryAccount);
         }
-
         em.persist(customer);
         em.flush();
 
@@ -300,6 +304,8 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
 
         DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer);
         em.persist(discretionaryAccount);
+         em.flush();
+                  discretionaryAccount.setCommission(initialValue);
         List<DiscretionaryAccount> discretionaryAccounts = new ArrayList<DiscretionaryAccount>();
         discretionaryAccounts.add(0, discretionaryAccount);
         customer.setDiscretionaryAccounts(discretionaryAccounts);
@@ -350,8 +356,9 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
         BigDecimal initialValue = new BigDecimal("0.0000");
 
         DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer);
-        em.persist(discretionaryAccount);
+        em.persist(discretionaryAccount);     
         em.flush();
+         discretionaryAccount.setCommission(initialValue);
         List<DiscretionaryAccount> discretionaryAccounts = new ArrayList<DiscretionaryAccount>();
 
         if (customer.getDiscretionaryAccounts() == null) {
