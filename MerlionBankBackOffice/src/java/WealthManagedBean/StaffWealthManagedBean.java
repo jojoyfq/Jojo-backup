@@ -225,9 +225,9 @@ public class StaffWealthManagedBean implements Serializable {
     }
 
     public void displayPending(ActionEvent event) throws IOException {
-        System.out.println("*****Go in to view all pending tailored plans!");
+//        System.out.println("*****Go in to view all pending tailored plans!");
 //        pendingApprovedTailoredPlans = wmsbl.viewAllPendingAcivationTailoredPlan();
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingPlans.xhtml");
+//        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingPlans.xhtml");
 
     }
 

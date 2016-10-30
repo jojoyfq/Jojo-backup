@@ -327,26 +327,26 @@ public void openDocs(ActionEvent event) {
         System.out.println("*************Customer create loan details - loanTerm " + loanTerm);
         System.out.println("*************Customer create loan details - monthly income " + monthlyIncome);
 
-        try {
-
-            loanTypeId = lasbl.findTypeIdByName(loanName);
-            if (customer.getId() == null) {
-                System.out.println("Create loan account for EXISTING customer");
-                searchedCustomer.getId();
-                customerId=lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
-                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message","Loan Account has been created for customer "+searchedCustomer.getIc()+"!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-            } else {
-                System.out.println("Create loan account for NEW customer customerID " + customer.getId());
-
-                lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
- FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been created for customer "+customer.getIc()+"!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-            }
-        } catch (LoanTermInvalidException ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
+//        try {
+//
+//            loanTypeId = lasbl.findTypeIdByName(loanName);
+//            if (customer.getId() == null) {
+//                System.out.println("Create loan account for EXISTING customer");
+//                searchedCustomer.getId();
+//                customerId=lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+//                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message","Loan Account has been created for customer "+searchedCustomer.getIc()+"!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//            } else {
+//                System.out.println("Create loan account for NEW customer customerID " + customer.getId());
+//
+//                lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
+// FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been created for customer "+customer.getIc()+"!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//            }
+//        } catch (LoanTermInvalidException ex) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        }
 
     }
     public void staffViewPendingLoans(ActionEvent event) throws IOException {
