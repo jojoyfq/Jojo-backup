@@ -51,13 +51,13 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, accountId);
         Customer customer = em.find(Customer.class, customerId);
         BigDecimal amount = discretionaryAccount.getBalance();
-        BigDecimal currentAmount = new BigDecimal(200000);
+        BigDecimal currentAmount = new BigDecimal(250000);
         int res = amount.compareTo(currentAmount);
         if (res == 0 || res == 1) {
             discretionaryAccount.setStatus("active");
             return accountId;
         } else {
-            throw new NotEnoughAmountException("This account has not met the minimum SG$200000 requirement");
+            throw new NotEnoughAmountException("This account has not met the minimum SG$250000 requirement");
         }
     }
 
@@ -127,7 +127,7 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
     public Boolean compareAmount(Long customerId, long discretionaryAccountId, BigDecimal amount) {
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, discretionaryAccountId);
         BigDecimal totalBalance = discretionaryAccount.getTotalBalance();
-        BigDecimal temp = new BigDecimal(200000);
+        BigDecimal temp = new BigDecimal(250000);
         if ((totalBalance.subtract(amount)).compareTo(temp) == -1) {
             return false;
         } else {
@@ -171,7 +171,7 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         if (amount.compareTo(discretionaryAccount.getBalance()) == 1) {
             throw new NotEnoughAmountException("There is not enough amount of money in this Discretionary Account");
         }
-        BigDecimal cutline = new BigDecimal(200000);
+        BigDecimal cutline = new BigDecimal(250000);
         BigDecimal processingFee = new BigDecimal(1.15);
 
         savingAccount.setBalance(savingAccount.getBalance().add(amount));
