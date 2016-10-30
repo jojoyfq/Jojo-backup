@@ -175,6 +175,7 @@ public class CreditCardManagedBean implements Serializable {
     public void uploadFileForeigner(ActionEvent event) throws IOException {
         if (file != null) {         
             creditCardTypeList = ccsb.getCreditCardType();
+
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_selectCard.xhtml");
         } else {
@@ -220,6 +221,7 @@ public class CreditCardManagedBean implements Serializable {
     public void uploadFileSingaporean(ActionEvent event) throws IOException {
         if (file != null) {           
             creditCardTypeList = ccsb.getCreditCardType();
+
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_selectCard.xhtml");
         } else {
