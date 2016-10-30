@@ -9,6 +9,7 @@ import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import Exception.EmailNotSendException;
+import Exception.NotEnoughAmountException;
 import LoanEntity.Session.LoanTimerSessionBeanLocal;
 import static com.sun.faces.facelets.util.Path.context;
 import java.util.Date;
@@ -81,6 +82,8 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
         }else if(timerInfo.equals("LoanUpdateMonthlyPayment-TIMER")){
             Timer loanUpdateMonthlyPayment = timerService.createTimer(startTime, 1 * 60 * 10000, "LoanUpdateMonthlyPayment-TIMER");
             System.out.println("********** LoanUpdateMonthlyPayment-TIMER");
+        }else if(timerInfo.equals("LoanPayByGIRO-TIMER")){
+            Timer loanPayByGIRO = timerService.createTimer(startTime, 1 * 60 * 10000, "LoanPayByGIRO-TIMER");
         }
     }
 
@@ -96,7 +99,7 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
     }
 
     @Timeout
-    public void timeout(Timer timer) throws EmailNotSendException {
+    public void timeout(Timer timer) throws EmailNotSendException, NotEnoughAmountException {
         System.err.println("********** get in timeout here!!!!");
         Date currentDate = new Date();
         if (timer.getInfo().toString().equals("FixedDeposit-TIMER")) {
@@ -121,6 +124,8 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             ltsbl.calculateLatePayment();
         } else if (timer.getInfo().toString().equals("LoanUpdateMonthlyPayment-TIMER")) {
             ltsbl.updateMonthlyPayment();
+        } else if (timer.getInfo().toString().equals("LoanPayByGIRO-TIMER")){
+            ltsbl.loanPayByGIRO();
         }
     }
 

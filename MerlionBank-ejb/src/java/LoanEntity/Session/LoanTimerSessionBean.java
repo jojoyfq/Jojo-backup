@@ -310,6 +310,7 @@ public class LoanTimerSessionBean implements LoanTimerSessionBeanLocal {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
       
+    @Override
      public void loanPayByGIRO()throws NotEnoughAmountException{
          Query query = em.createQuery("SELECT a FROM GIROArrangement a");
         List<GIROArrangement> GIROArrangements = new ArrayList(query.getResultList());

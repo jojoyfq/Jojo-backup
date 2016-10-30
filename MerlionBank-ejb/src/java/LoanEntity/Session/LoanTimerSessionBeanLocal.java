@@ -6,6 +6,7 @@
 package LoanEntity.Session;
 
 import Exception.EmailNotSendException;
+import Exception.NotEnoughAmountException;
 import java.util.Date;
 import javax.ejb.Local;
 
@@ -29,4 +30,6 @@ public interface LoanTimerSessionBeanLocal {
     public void updateMonthlyPayment() throws EmailNotSendException;
 
     public void calculateLatePayment() throws EmailNotSendException;
+
+    public void loanPayByGIRO() throws NotEnoughAmountException;
 }
