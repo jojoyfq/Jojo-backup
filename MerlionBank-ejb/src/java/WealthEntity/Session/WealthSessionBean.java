@@ -16,6 +16,7 @@ import Exception.NotEnoughAmountException;
 import LoanEntity.Loan;
 import Other.Session.sendEmail;
 import WealthEntity.DiscretionaryAccount;
+import WealthEntity.Good;
 import WealthEntity.Portfolio;
 import WealthEntity.PortfolioTransaction;
 import WealthEntity.Product;
@@ -281,20 +282,23 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
 
         List<PortfolioTransaction> portfolioTransactions = new ArrayList<PortfolioTransaction>();
         List<Product> products = new ArrayList<Product>();
+        List<Good> goods=new ArrayList<Good>();
 
         BigDecimal rate = new BigDecimal(foreignExchange);
         BigDecimal purchaseAmount = investAmount.multiply(rate);
-        Product foreignExchangeProduct = new Product("Foreign Exchange", purchaseAmount, foreignExchange);
+        BigDecimal test=new BigDecimal(0);
+        
+        Product foreignExchangeProduct = new Product("Foreign Exchange", purchaseAmount, foreignExchange,goods,purchaseAmount,test);
         em.persist(foreignExchangeProduct);
 
         rate = new BigDecimal(equity);
         purchaseAmount = investAmount.multiply(rate);
-        Product equityProduct = new Product("Equity", purchaseAmount, equity);
+        Product equityProduct = new Product("Equity", purchaseAmount, equity,goods,purchaseAmount,test);
         em.persist(equityProduct);
 
         rate = new BigDecimal(bond);
         purchaseAmount = investAmount.multiply(rate);
-        Product stockProduct = new Product("Bond", purchaseAmount, bond);
+        Product stockProduct = new Product("Bond", purchaseAmount, bond,goods,purchaseAmount,test);
         em.persist(equityProduct);
 
         products.add(foreignExchangeProduct);
@@ -404,20 +408,22 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         DiscretionaryAccount discretionaryAccount = portfolio.getDiscretionaryAccount();
 
         List<Product> products = new ArrayList<Product>();
+          List<Good> goods=new ArrayList<Good>();
 
         BigDecimal rate = new BigDecimal(foreignExchange);
         BigDecimal purchaseAmount = investAmount.multiply(rate);
-        Product foreignExchangeProduct = new Product("Foreign Exchange", purchaseAmount, foreignExchange);
+        BigDecimal test=new BigDecimal(0);
+        Product foreignExchangeProduct = new Product("Foreign Exchange", purchaseAmount, foreignExchange,goods,purchaseAmount,test);
         em.persist(foreignExchangeProduct);
 
         rate = new BigDecimal(equity);
         purchaseAmount = investAmount.multiply(rate);
-        Product equityProduct = new Product("Equity", purchaseAmount, equity);
+        Product equityProduct = new Product("Equity", purchaseAmount, equity,goods,purchaseAmount,test);
         em.persist(equityProduct);
 
         rate = new BigDecimal(bond);
         purchaseAmount = investAmount.multiply(rate);
-        Product stockProduct = new Product("Bond", purchaseAmount, bond);
+        Product stockProduct = new Product("Bond", purchaseAmount, bond,goods,purchaseAmount,test);
         em.persist(equityProduct);
 
         products.add(foreignExchangeProduct);

@@ -15,9 +15,13 @@ import Exception.NotEnoughAmountException;
 import LoanEntity.Loan;
 import Other.Session.sendEmail;
 import WealthEntity.DiscretionaryAccount;
+import WealthEntity.Good;
 import WealthEntity.Portfolio;
+import WealthEntity.PortfolioTransaction;
 import WealthEntity.Product;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -184,20 +188,22 @@ BigDecimal investAmount=portfolio.getInvestAmount();
 DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
 
     List<Product> products=new ArrayList<Product>();
+    List<Good> goods=new ArrayList<Good>();
         
         BigDecimal rate=new BigDecimal(foreignExchange);
         BigDecimal purchaseAmount=investAmount.multiply(rate);
-        Product foreignExchangeProduct=new Product("Foreign Exchange", purchaseAmount, foreignExchange);
+        BigDecimal test=new BigDecimal(0);
+        Product foreignExchangeProduct=new Product("Foreign Exchange", purchaseAmount, foreignExchange,goods,purchaseAmount,test);
         em.persist(foreignExchangeProduct);
         
         rate=new BigDecimal(equity);
         purchaseAmount=investAmount.multiply(rate);
-        Product equityProduct=new Product("Equity", purchaseAmount, equity);
+        Product equityProduct=new Product("Equity", purchaseAmount, equity,goods,purchaseAmount,test);
         em.persist(equityProduct);
         
         rate=new BigDecimal(bond);
         purchaseAmount=investAmount.multiply(rate);
-        Product stockProduct=new Product("Bond", purchaseAmount, bond);
+        Product stockProduct=new Product("Bond", purchaseAmount, bond,goods,purchaseAmount,test);
         em.persist(equityProduct);
         
          products.add(foreignExchangeProduct);
@@ -299,7 +305,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
     
      @Override
     public Long transferBackToSavingWithNotEnoughBalance(Long staffId, Long customerId, Long discretionaryAccountId, BigDecimal amount) throws NotEnoughAmountException {
-        Customer customer = em.find(Customer.class, customerId);
+        
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, discretionaryAccountId);
 
         if (amount.compareTo(discretionaryAccount.getBalance()) == 1) {
@@ -327,6 +333,158 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
        smsbl.recordStaffAction(staffId, "Perform cash withdraw SGD$ "+amount+" for Discretionary Account Id " + discretionaryAccount.getId(), discretionaryAccount.getCustomer().getId());
         return discretionaryAccountId;
     }
+    
+    @Override
+    public List<Portfolio> displayPortfoliosUnderStaff(Long staffId){
+        Staff staff = em.find(Staff.class, staffId);
+        return staff.getPortfolios();
+    }
+    
+    @Override
+    public List<Product> displayProduct(Long customerId,Long portfolioId){
+              Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+              return portfolio.getProducts();
+    }
+    @Override
+    public List<Good>displayGood(Long productId){
+        Product product=em.find(Product.class,productId);
+        return product.getGoods();
+    }
+    
+    @Override
+    public Long buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
+        Product product = em.find(Product.class, productId);
+        Good good = em.find(Good.class, goodId);
+        
+        BigDecimal number=new BigDecimal(numOfUnits);
+        BigDecimal totalAmount=unitPrice.multiply(number);
+        
+        if ((product.getPurchaseAmount().add(totalAmount)).compareTo(product.getExpectedAmount())==1){
+            throw new NotEnoughAmountException ("According to contract, there is not enough amount to purchase this good. This may due to your have exceed the total amount of this category or there is not enough money it the account.");
+        }
+        BigDecimal existingAmount=new BigDecimal(good.getNumOfUnits());
+        
+        BigDecimal newUnitPrice=totalAmount.add(good.getUnitPrice().multiply(existingAmount));
+        Integer newNumber=numOfUnits+good.getNumOfUnits();
+        good.setUnitPrice(newUnitPrice);
+        good.setNumOfUnits(newNumber);
+        
+        product.setPurchaseAmount(product.getPurchaseAmount().add(totalAmount));
+        
+        recordTransaction(product.getPortfolio().getId(), product,good,unitPrice,numOfUnits,"buy");
+        smsbl.recordStaffAction(staffId, "buy goods for wealth product " + good.getId(), product.getPortfolio().getDiscretionaryAccount().getCustomer().getId());
+        return goodId;
+    }
+    
+    @Override
+    public Long buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
+         Product product = em.find(Product.class, productId);
+        
+        BigDecimal number=new BigDecimal(numOfUnits);
+        BigDecimal totalAmount=unitPrice.multiply(number);
+        
+        if ((product.getPurchaseAmount().add(totalAmount)).compareTo(product.getExpectedAmount())==1){
+            throw new NotEnoughAmountException ("According to contract, there is not enough amount to purchase this good. This may due to your have exceed the total amount of this category or there is not enough money it the account.");
+        }
+        
+        Good good=new Good(productName,unitPrice, numOfUnits, product);
+        em.persist(good);
+        em.flush();
+        
+        List<Good>goods=product.getGoods();
+        goods.add(good);
+        product.setGoods(goods);
+        
+        product.setPurchaseAmount(product.getPurchaseAmount().add(totalAmount));
+        
+        recordTransaction(product.getPortfolio().getId(), product,good,unitPrice,numOfUnits,"buy");
+         smsbl.recordStaffAction(staffId, "buy goods for wealth product " + good.getId(), product.getPortfolio().getDiscretionaryAccount().getCustomer().getId());
+        return good.getId();
+    }
+    
+     @Override
+    public List<Good> sellGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
+        Product product = em.find(Product.class, productId);
+        Good good = em.find(Good.class, goodId);
+        
+        BigDecimal number=new BigDecimal(numOfUnits);
+        BigDecimal totalAmount=unitPrice.multiply(number);
+        
+         if (numOfUnits>good.getNumOfUnits()){
+            throw new NotEnoughAmountException ("You don't have enough "+good.getName()+"in account");
+        }
+        BigDecimal existingAmount=new BigDecimal(good.getNumOfUnits());
+        
+        
+        Integer newNumber=numOfUnits-good.getNumOfUnits();
+        good.setNumOfUnits(newNumber);
+        
+        product.setPurchaseAmount(product.getPurchaseAmount().subtract(good.getUnitPrice().multiply(number)));
+        
+        product.setCurrentAmount(product.getCurrentAmount().subtract(good.getUnitPrice().multiply(number)).add(totalAmount));
+        
+        updatePortfolioAmount(product.getPortfolio());
+        updateDiscretionaryAccount(product.getPortfolio().getDiscretionaryAccount());
+            
+        recordTransaction(product.getPortfolio().getId(), product,good,unitPrice,numOfUnits,"sell");
+        smsbl.recordStaffAction(staffId, "sell goods for wealth product " + good.getId(), product.getPortfolio().getDiscretionaryAccount().getCustomer().getId());
+        return product.getGoods();
+        
+        
+    }
+    
+    private void updatePortfolioAmount(Portfolio portfolio){
+        List<Product> products=portfolio.getProducts();
+        BigDecimal amount= new BigDecimal(0);
+        
+        for (int i=0;i<products.size();i++){
+            amount.add(products.get(i).getCurrentAmount());
+            
+        }
+        portfolio.setPresentValue(amount);
+        
+        BigDecimal rate=amount.subtract(portfolio.getInvestAmount());
+        BigDecimal trueRate = rate.divide(portfolio.getInvestAmount(),MathContext.DECIMAL128);
+       
+        Double realRate=trueRate.doubleValue();
+        portfolio.setMonthlyInterestRate(realRate);
+        em.flush();
+        
+    }
+    
+    private void updateDiscretionaryAccount(DiscretionaryAccount discretionaryAccount){
+        List<Portfolio> portfolios=discretionaryAccount.getPortfolios();
+        BigDecimal amount=new BigDecimal(0);
+        
+        for (int i=0;i<portfolios.size();i++){
+            amount.add(portfolios.get(i).getPresentValue());
+        }
+        
+        discretionaryAccount.setTotalBalance(amount.add(discretionaryAccount.getBalance()));
+        em.flush();
+        
+    }
 
  
+    
+    private void recordTransaction(Long portfolioId, Product product,Good good,BigDecimal unitPrice,Integer numOfUnits,String transactionType){
+        Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+        BigDecimal temp=new BigDecimal(0);
+        BigDecimal number=new BigDecimal(numOfUnits);
+        PortfolioTransaction portfolioTransaction=new PortfolioTransaction();
+        
+        if (transactionType.equals("buy")){
+          portfolioTransaction=new PortfolioTransaction(Calendar.getInstance().getTime(), product.getProductName(), good.getName(), unitPrice, numOfUnits, temp, unitPrice.multiply(number), portfolio);  
+        }else if (transactionType.equals("sell")){
+         portfolioTransaction=new PortfolioTransaction(Calendar.getInstance().getTime(), product.getProductName(), good.getName(), unitPrice, numOfUnits, unitPrice.multiply(number), temp, portfolio);     
+        }
+        em.persist(portfolioTransaction);
+        em.flush();
+        
+        List<PortfolioTransaction> portfolioTransactions=portfolio.getPortfolioTransactions();
+        portfolioTransactions.add(portfolioTransaction);       
+        portfolio.setPortfolioTransactions(portfolioTransactions);
+        em.flush();
+        
+    }
 }
