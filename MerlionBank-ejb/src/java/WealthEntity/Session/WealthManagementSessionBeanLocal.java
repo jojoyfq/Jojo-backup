@@ -9,7 +9,9 @@ import CommonEntity.Staff;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Exception.NotEnoughAmountException;
+import WealthEntity.Good;
 import WealthEntity.Portfolio;
+import WealthEntity.Product;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -50,4 +52,12 @@ public interface WealthManagementSessionBeanLocal {
        //After staff approve tailored plan, they need to assign a RM
   public List<Staff> retrieveStaffsAccordingToRole(String roleName)throws ListEmptyException;
     public Long assignRM(Long portfolioId,Long staffId);
+    
+    //buy & sell product
+    public List<Portfolio> displayPortfoliosUnderStaff(Long staffId);
+     public List<Product> displayProduct(Long customerId,Long portfolioId);
+      public List<Good>displayGood(Long productId);
+       public Long buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
+       public Long buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
+        public List<Good> sellGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
 }
