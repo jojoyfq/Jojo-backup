@@ -114,6 +114,7 @@ public class SavingAccount implements Serializable {
         this.savingAccountType = savingAccountType;
         this.dailyBalance = new ArrayList<BigDecimal> ();
         this.accumDailyInterest = BigDecimal.valueOf(0);
+        this.transactionRecord = new ArrayList<>();
         this.giroArrangement = new ArrayList<>();
         this.recurrentBillArrangement = new ArrayList<>();
     }
@@ -229,7 +230,11 @@ public class SavingAccount implements Serializable {
     public Boolean deductAmt(BigDecimal amount) {
 
         if (this.availableBalance.doubleValue() >= amount.doubleValue()) {
+            System.out.print(this.availableBalance);
+            System.out.print(amount);
             this.availableBalance.subtract(amount);
+            System.out.print(this.availableBalance);
+            this.balance.subtract(amount);
             return true;
         } else {
             return false;
