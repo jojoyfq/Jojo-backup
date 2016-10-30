@@ -158,7 +158,7 @@ public class WealthTimerSessionBean implements WealthTimerSessionBeanLocal {
            int size=portfolios.get(i).getPortfolioTransactions().size();
             accountDate=new DateTime(portfolios.get(i).getPortfolioTransactions().get(size-1));
        
-          if (portfolios.get(i).getStatus().equals("active") && compareDate.isAfter(accountDate)){
+          if (portfolios.get(i).getStatus().equals("active") && compareDate.isAfter(accountDate) && portfolios.get(i).getType().equals("Tailored plan")){
               try{
             sendViolationEmail(portfolios.get(i).getStaff().getStaffName(),portfolios.get(i).getStaff().getStaffEmail(),portfolios.get(i).getId()); 
      
