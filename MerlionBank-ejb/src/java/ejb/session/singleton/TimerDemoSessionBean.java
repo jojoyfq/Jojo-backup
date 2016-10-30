@@ -6,6 +6,7 @@
 package ejb.session.singleton;
 
 import BillEntity.Session.BillSessionBeanLocal;
+import BillEntity.Session.BillTimerSessionBeanLocal;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
@@ -51,7 +52,7 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
     LoanTimerSessionBeanLocal ltsbl;
     
     @EJB
-    BillSessionBeanLocal bsbl;
+    BillTimerSessionBeanLocal btsbl;
 
     @Override
     public void createTimers(Date startTime, String timerInfo) {
@@ -133,7 +134,7 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
         } else if (timer.getInfo().toString().equals("LoanPayByGIRO-TIMER")){
             ltsbl.loanPayByGIRO();
         } else if (timer.getInfo().toString().equals("RecurrentBill-TIMER"))
-            bsbl.recurrentBillDeduction();
+            btsbl.recurrentBillDeduction();
     }
 
     public void createTimers(Date startTime) {

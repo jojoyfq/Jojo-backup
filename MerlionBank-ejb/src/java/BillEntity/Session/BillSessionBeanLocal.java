@@ -54,7 +54,4 @@ public interface BillSessionBeanLocal {
 
     public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount);
 
-    public void recurrentBillDeduction() throws NotEnoughAmountException;
-
-    
 }

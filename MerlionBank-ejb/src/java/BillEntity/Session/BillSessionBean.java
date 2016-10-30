@@ -27,6 +27,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -315,65 +317,5 @@ public class BillSessionBean implements BillSessionBeanLocal {
             return false;
         }
 
-    }
-
-    @Override
-    public void recurrentBillDeduction() throws NotEnoughAmountException {
-        Query query = em.createQuery("SELECT a FROM RecurrentBillArrangement a");
-        List<RecurrentBillArrangement> recurrentBillArrangements = new ArrayList(query.getResultList());
-//        List<RecurrentBillArrangement> temp = new ArrayList<RecurrentBillArrangement>();
-
-        //times remaining is greater than 0 
-        for (int i = 0; i < recurrentBillArrangements.size(); i++) {
-            if (recurrentBillArrangements.get(i).getTimesRemaining() > 0 && recurrentBillArrangements.get(i).getStatus().equals("active")) {
-                System.out.println("**********the recurrent bill ID is " + recurrentBillArrangements.get(i).getId());
-
-                Date startDate = recurrentBillArrangements.get(i).getStartDate();
-                Date todayDate = Calendar.getInstance().getTime();
-
-                DateTime dateToStart = new DateTime(startDate);
-                DateTime dateToday = new DateTime(todayDate);
-
-                Integer remainingTimes = recurrentBillArrangements.get(i).getTimesRemaining(); // get remaining times
-                Integer totalTimes = recurrentBillArrangements.get(i).getBillTimes();
-
-                //if it is the first time for the recurrent, remainingTimes = totalTimes
-                if (remainingTimes == totalTimes) {
-                    if (dateToStart.equals(dateToday)) {
-                        System.out.println("********** inside first dedcution checking");
-                        SavingAccount savingAccount = recurrentBillArrangements.get(i).getSavingAccount();
-                        BigDecimal recurrentAmt = recurrentBillArrangements.get(i).getAmount();
-
-                        //the saving account has not enough balance
-                        if (recurrentAmt.compareTo(savingAccount.getAvailableBalance()) == 1) {
-                            throw new NotEnoughAmountException("There is not enough amount of money in this savingAccount");
-                        } else {
-                            //balance is enough
-                            recurrentBillArrangements.get(i).setTimesRemaining(remainingTimes - 1);
-                            savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(recurrentAmt));
-                        }
-                    }
-                } else { //it is not the first time of deduction 
-                    Integer interval = recurrentBillArrangements.get(i).getBillInterval();
-                    Integer timePassed = (totalTimes - remainingTimes) * interval;
-                    DateTime nextDeductionDate = dateToStart.plusWeeks(timePassed); //calculate the next dedection date
-
-                    if (dateToday.equals(nextDeductionDate)) {
-                        System.out.println("********** inside remaining dedcution checking");
-                        SavingAccount savingAccount = recurrentBillArrangements.get(i).getSavingAccount();
-                        BigDecimal recurrentAmt = recurrentBillArrangements.get(i).getAmount();
-
-                        //the saving account has not enough balance
-                        if (recurrentAmt.compareTo(savingAccount.getAvailableBalance()) == 1) {
-                            throw new NotEnoughAmountException("There is not enough amount of money in this savingAccount");
-                        } else {
-                            //balance is enough
-                            recurrentBillArrangements.get(i).setTimesRemaining(remainingTimes - 1);
-                            savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(recurrentAmt));
-                        }
-                    }
-                }
-            }
-        }
     }
 }
