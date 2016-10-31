@@ -33,14 +33,14 @@
 
                                 <h:outputLabel for="principal" value="Principal Amount(S$):" />
                                 <p:inputNumber id="principal" value="#{staffLoanManagedBean.principal}" label="principal" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter downpayment!" >
-                                            <f:convertNumber locale="en-US" />
+                                    <f:convertNumber locale="en-US" />
                                 </p:inputNumber>
                                 <p:message for="principal" display="icon"/>
                                 <h:outputLabel />
 
                                 <h:outputLabel for="downpayment" value="Downpayment(S$):" />
                                 <p:inputNumber id="downpayment" value="#{staffLoanManagedBean.downpayment}" label="downpayment" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter downpayment!" >
-                                            <f:convertNumber locale="en-US" />
+                                    <f:convertNumber locale="en-US" />
                                 </p:inputNumber>
                                 <p:message for="downpayment" display="icon"/>
                                 <h:outputLabel />
@@ -50,8 +50,70 @@
                                 <p:message for="loanTerm" display="icon"/>
                                 <p:watermark for="loanTerm" value="Please key in the number of months" id="watermark" />
 
+                                <h:outputLabel  for="homeType" value="Home Type:" rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" /> 
+                                    <p:selectOneRadio rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" id="homeType" value="#{staffLoanManagedBean.homeType}" required="true" requiredMessage="Please choose home type!">
+                                        <f:selectItem itemLabel="HDB flat" itemValue="HDB flat" rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}"/>
+                                        <f:selectItem itemLabel="Executive Condominium" itemValue="Executive Condominium"  rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" />
+                                    </p:selectOneRadio>
+                       
+                                <p:message for="homeType" display="icon" rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}"/>
+                                <h:outputLabel />
+                                
+                                <h:outputLabel  rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" for="address" value="Home Address" />
+                                <p:inputText id="address" value="#{staffLoanManagedBean.homeAddress}" label="address" rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" required="true" requiredMessage="Please enter home address!" />
+                                <p:message for="address" display="icon" rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" />
+                                <h:outputLabel />
+                                
+                                <h:outputLabel  rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" for="postal" value="Postal Code:" />
+                                <p:inputText id="postal" value="#{staffLoanManagedBean.postalCode}"  rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" label="postal" required="true" requiredMessage="Please enter the postal code!" />
+                                <p:message for="postal" display="icon" rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" />
+                                
+                                <h:outputLabel rendered="#{staffLoanManagedBean.loanTypeName eq 'Car'}" for="carModel" value="Car Model" />
+                                <p:inputText id="carModel" value="#{staffLoanManagedBean.loanTerm}" label="carModel" rendered="#{staffLoanManagedBean.loanTypeName eq 'Car'}"  required="true" requiredMessage="Please enter car model!" />
+                                <p:message for="carModel" display="icon" rendered="#{staffLoanManagedBean.loanTypeName eq 'Car'}" />
+                                <h:outputLabel rendered="#{staffLoanManagedBean.loanTypeName eq 'Car'}" />
+
+                                <h:outputLabel rendered="#{staffLoanManagedBean.loanTypeName eq 'Education'}" for="inst" value="Insititution" />
+                                <p:inputText id="inst" value="#{staffLoanManagedBean.institution}" label="inst" rendered="#{staffLoanManagedBean.loanTypeName eq 'Education'}"  required="true" requiredMessage="Please enter institution!" />
+                                <p:message for="inst" display="icon" rendered="#{staffLoanManagedBean.loanTypeName eq 'Education'}" />
                                 <h:outputLabel />
 
+                                <h:outputLabel rendered="#{staffLoanManagedBean.loanTypeName eq 'Education'}" for="major" value="Major" />
+                                <p:inputText id="major" value="#{staffLoanManagedBean.institution}" label="major" rendered="#{staffLoanManagedBean.loanTypeName eq 'Education'}"   required="true" requiredMessage="Please enter institution!" />
+                                <p:message for="major" display="icon" rendered="#{staffLoanManagedBean.loanTypeName eq 'Education'}" />
+                                <h:outputLabel />                                
+                                <h:outputLabel rendered="#{staffLoanManagedBean.loanTypeName eq 'Education'}" for="graduate" value="Expected Graduation Date" />
+                                <p:calendar id="graduate" value="#{staffLoanManagedBean.graduationDate}" rendered="#{staffLoanManagedBean.loanTypeName eq 'Education'}"  label="graduate" locale="de" navigator="true"  required="true" requiredMessage="Please enter institution!" />
+                                <p:message for="graduate" display="icon" rendered="#{staffLoanManagedBean.loanTypeName eq 'Home'}" />
+                                                             
+
+                                <h:outputLabel  for="property" value="Total Property Debt(S$):" />
+                                <p:inputNumber id="property" value="#{staffLoanManagedBean.propertyLoanAmt}" label="property" decimalPlaces="2" required="true" requiredMessage="Please enter total propety debt!" >
+                                    <f:convertNumber locale="en-US" />
+                                </p:inputNumber>
+                                <p:message for="property" display="icon" />
+                                <h:outputLabel />
+
+                                <h:outputLabel for="education" value="Total Education Debt(S$):" />
+                                <p:inputNumber id="education" value="#{staffLoanManagedBean.educationAmt}" label="education" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter total education debt!" >
+                                    <f:convertNumber locale="en-US" />
+                                </p:inputNumber>
+                                <p:message for="education" display="icon"/>
+                                <h:outputLabel />
+
+                                <h:outputLabel for="carDebt" value="Total Car Debt(S$):" />
+                                <p:inputNumber id="carDebt" value="#{staffLoanManagedBean.carLoanAmt}" label="carDebt" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter total car debt!" >
+                                    <f:convertNumber locale="en-US" />
+                                </p:inputNumber>
+                                <p:message for="carDebt" display="icon"/>
+                                <h:outputLabel />
+
+                                <h:outputLabel for="personalLoan" value="Total Personal Loan(S$):" />
+                                <p:inputNumber id="personalLoan" value="#{staffLoanManagedBean.personalLoanAmt}" label="personalLoan" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter total personal loan!" >
+                                    <f:convertNumber locale="en-US" />
+                                </p:inputNumber>
+                                <p:message for="personalLoan" display="icon"/>
+                                <h:outputLabel />
 
 
 
@@ -98,12 +160,12 @@
 
                                     <p:commandButton id="calculate" value="Calculate"  actionListener="#{staffLoanManagedBean.calculateMonthlyPayment}"  oncomplete="PF('carPanelWDG').loadContents();" />
                                 </p:panelGrid>
-                                 <p:overlayPanel  widgetVar="carPanelWDG" for="calculate" showCloseIcon="true">
+                                <p:overlayPanel  widgetVar="carPanelWDG" for="calculate" showCloseIcon="true">
                                     <h:outputLabel value="Monthly Repayment(S$): "/>
                                     <h:outputText value="#{staffLoanManagedBean.monthlyRepayment}"  >
-                                         <f:convertNumber locale="en-US" pattern="#0.00" locale="pt_BR"/>
+                                        <f:convertNumber locale="en-US" pattern="#0.00"  />
                                     </h:outputText>
-                                 </p:overlayPanel>
+                                </p:overlayPanel>
 
                             </p:dialog>
                         </h:form>

@@ -28,30 +28,37 @@
                 </div>
             </div>       
             <div class="Container50">
-                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+                <h:form>
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 
-                    <p:outputLabel for="category" value="Product Category" />
-                    <p:selectOneMenu id="category" value="#{customerWealthManagedBean.typeName}" style="width:250px">
-                        <p:ajax listener="#{customerWealthManagedBean.onLoanChange}" update="city" />
-                        <f:selectItem itemLabel="Select Product Category" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{customerWealthManagedBean.wealthProducts}" />
+                        <p:outputLabel for="category" value="Product Category: " />
+                        <p:selectOneMenu id="category" value="#{customerWealthManagedBean.typeName}" style="width:250px">
+                            <p:ajax listener="#{customerWealthManagedBean.onLoanChange()}" update="city" />
+                            <f:selectItem itemLabel="Select Product Category" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{customerWealthManagedBean.wealthProducts}" />
 
-                    </p:selectOneMenu>
+                        </p:selectOneMenu>
 
-                    <p:outputLabel for="city" value="Product Name: " />
-                    <p:selectOneMenu id="city" value="#{customerWealthManagedBean.type}" style="width:250px">
-                        <f:selectItem itemLabel="Select Specific Product Name" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{customerWealthManagedBean.wealthTypes}" />
-                    </p:selectOneMenu>
-
-
-
+                        <p:outputLabel for="city" value="Product Name: " />
+                        <p:selectOneMenu id="city" value="#{customerWealthManagedBean.type}" style="width:250px">
+                            <f:selectItem itemLabel="Select Specific Product Name" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{customerWealthManagedBean.wealthTypes}" />
+                        </p:selectOneMenu>
 
 
 
-                </p:panelGrid>
-                <p:separator />
+                        <f:facet name="footer">
 
+                       
+                                <p:commandButton  value="Next" actionListener="#{customerWealthManagedBean.customerFillUpApplicationForm}" oncomplete="PF('carDialog').show()" style="width:100px;height:40px" />
+                          
+
+                        </f:facet>
+
+
+                    </p:panelGrid>
+                    <p:separator />
+                </h:form>
             </div>
 
             <div class="Container100">
@@ -64,15 +71,14 @@
                             <div class="EmptyBox10"></div>
                             Pre-Defined Wealth Product<br/>-Education Planning<br/>- Retirement Planning
                             <div class="EmptyBox10"></div>
-
-                            <h:outputLink id="content" value="#">
-                                <h:outputText value="More Info" />
-                            </h:outputLink>
-                            <p:tooltip id="toolTipContent" for="content" position="bottom">
-                                <span class="BoldLeaden Fs14 FontDosisMedium">Retirement Planning</span>
-                                <br/>                             <span class="BoldLeaden Fs14 FontDosisMedium">Education Planning</span>
-
-                            </p:tooltip>
+                            <p:commandButton id="imageBtn" value="More Info" type="button" styleClass="GrayButton"/>
+                            <p:overlayPanel id="imagePanel" for="imageBtn" hideEffect="fade">
+                                <div class="EmptyBox10"></div>
+                                <span class="BoldLeaden Fs14 FontDosisMedium">1.55% p.a. 
+                                    bonus interest on
+                                    your SGD savings</span>
+                                <div class="EmptyBox10"></div>
+                            </p:overlayPanel>
                         </div>
                     </div>
                     <div class="Container50 Responsive50 Flex">

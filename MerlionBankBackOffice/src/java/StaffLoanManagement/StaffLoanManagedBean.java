@@ -5,6 +5,7 @@
  */
 package StaffLoanManagement;
 
+import BillEntity.GIROArrangement;
 import CommonEntity.Customer;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
@@ -20,7 +21,6 @@ import StaffManagement.staffLogInManagedBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -106,6 +106,24 @@ public class StaffLoanManagedBean implements Serializable {
     private double risk;
     private String path;
 
+    private String homeType = null;
+    private String homeAddress = null;
+    private String carModel = null;
+    private BigDecimal existingDebit = new BigDecimal("0");
+    private Long postalCode = null;
+    private Long postCode = postalCode;
+    private String carMode = carModel;
+    private String institution = null;
+    private String major = null;
+    private Date graduationDate = null;
+    private BigDecimal propertyLoanAmt;
+    private BigDecimal carLoanAmt;
+    private BigDecimal educationAmt;
+    private BigDecimal personalLoanAmt;
+    private List<GIROArrangement> allGirso;
+    private GIROArrangement selectedGiro;
+    private String giroDecision;
+
     @PostConstruct
     public void init() {
         customer = new Customer();
@@ -113,19 +131,22 @@ public class StaffLoanManagedBean implements Serializable {
         selectedLoan = new Loan();
         loanToCal = new LoanType();
         selectedLoanType = new LoanType();
+        selectedGiro = new GIROArrangement();
         staffId = staffLogInManagedBean.getStaffId();
         monthlyRepayment = new BigDecimal("0.00000");
         monthlyRepayment.setScale(2, BigDecimal.ROUND_DOWN);
         pendingLoans = new ArrayList<>();
         oneCustomerAllLoans = new ArrayList<>();
         allLoanTypes = new ArrayList<>();
+        allGirso = new ArrayList<>();
         loanCategories = new HashMap<String, String>();
         loanNames = new HashMap<String, String>();
+
         loanCategories.put("Home", "Home");
         loanCategories.put("Car", "Car");
         loanCategories.put("Education", "Education");
 
-                Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("SIBOR Package", "SIBOR Package");
         map.put("Fixed Interest Package", "Fixed Interest Package");
         data.put("Home", map);
@@ -148,16 +169,29 @@ public class StaffLoanManagedBean implements Serializable {
             loanNames = new HashMap<String, String>();
         }
     }
+      public void searchCustomerIdDashboard(ActionEvent event) throws UserNotExistException, UserNotActivatedException, ListEmptyException, IOException {
+        try {
+            System.out.println("searched customer is " + searchedCustomerIc);
+            searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
+            oneCustomerAllLoans = lmsbl.searchLoan(searchedCustomerIc);
+
+
+        } catch (UserNotExistException | UserNotActivatedException | ListEmptyException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        }
+    }
 
     public void searchCustomerId(ActionEvent event) throws UserNotExistException, UserNotActivatedException, ListEmptyException, IOException {
         try {
-                        System.out.println("searched customer is "+searchedCustomerIc);
+            System.out.println("searched customer is " + searchedCustomerIc);
             searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
             oneCustomerAllLoans = lmsbl.searchLoan(searchedCustomerIc);
-            
-                         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffActivateLoanForCustomer.xhtml");
 
-        } catch (UserNotExistException | UserNotActivatedException|ListEmptyException ex) {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffActivateLoanForCustomer.xhtml");
+
+        } catch (UserNotExistException | UserNotActivatedException | ListEmptyException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
@@ -169,33 +203,34 @@ public class StaffLoanManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffDisplayAllLoanTypes.xhtml");
     }
 
-   
     public void staffUpdateLoanType(RowEditEvent event) {
         selectedLoanType = (LoanType) (event.getObject());
         System.out.println("********Loan Type selected to be updated: " + selectedLoanType.getName());
-        if(selectedLoanType.getName().equals("SIBOR Package")){
-        interest1 = selectedLoanType.getSIBOR();
-        interest2 = selectedLoanType.getSIBORrate1();
-        }else if(selectedLoanType.getName().equals("NUS Education Loan")){
-        interest1=selectedLoanType.getEducationRate();
-        interest2=null;
-        }else if(selectedLoanType.getName().equals("Fixed Interest Package")){
-        interest1=selectedLoanType.getFixedRate();
-        interest2=selectedLoanType.getFixedRate2();
-        }else{
-         interest1=selectedLoanType.getInterestRate();
-        interest2=null;
+        if (selectedLoanType.getName().equals("SIBOR Package")) {
+            interest1 = selectedLoanType.getSIBOR();
+            interest2 = selectedLoanType.getSIBORrate1();
+        } else if (selectedLoanType.getName().equals("NUS Education Loan")) {
+            interest1 = selectedLoanType.getEducationRate();
+            interest2 = null;
+        } else if (selectedLoanType.getName().equals("Fixed Interest Package")) {
+            interest1 = selectedLoanType.getFixedRate();
+            interest2 = selectedLoanType.getFixedRate2();
+        } else {
+            interest1 = selectedLoanType.getInterestRate();
+            interest2 = null;
         }
         //   selectedLoanType = (LoanType) event.getComponent().getAttributes().get("selectedLoanType");
         allLoanTypes = lmsbl.updateLoanType(selectedLoanType.getId(), interest1, interest2);
-         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message","Interest Rate for "+selectedLoanType.getName()+" has been changed!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Interest Rate for " + selectedLoanType.getName() + " has been changed!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+
     }
-public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
-             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffDisplayLoanTypes.xhtml");
-   
-}   
+
+    public void goToDisplayLoanTypes(ActionEvent event) throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffDisplayLoanTypes.xhtml");
+
+    }
+
     public void goToLoanPage(ActionEvent event) throws IOException {
         loanToCal = lasbl.findTypeByName(loanName);
         if (loanName.equals("Fixed Interest Package")) {
@@ -235,12 +270,12 @@ public void goToDisplayLoanTypes(ActionEvent event) throws IOException{
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
-public void openDocs(ActionEvent event) {
 
-           selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+    public void openDocs(ActionEvent event) {
 
-           System.out.println("********Selected customer to view documents is " + selectedLoan.getCustomer().getIc());
+        selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+
+        System.out.println("********Selected customer to view documents is " + selectedLoan.getCustomer().getIc());
         //File openFile = new File(selectedCustomer.getFileDestination());
 //         if(!Desktop.isDesktopSupported()){
 //            System.out.println("Desktop is not supported");
@@ -250,16 +285,15 @@ public void openDocs(ActionEvent event) {
 //        Desktop desktop = Desktop.getDesktop();
 //        if(openFile.exists()) desktop.open(openFile);
 //        
-        
-             path = "http://localhost:8080/"+selectedLoan.getCustomer().getFileDestination();
-                    System.out.println("File Path From customer is "+selectedLoan.getCustomer().getFileDestination());
-        System.out.println("File Path is "+path);
+
+        path = "http://localhost:8080/" + selectedLoan.getCustomer().getFileDestination();
+        System.out.println("File Path From customer is " + selectedLoan.getCustomer().getFileDestination());
+        System.out.println("File Path is " + path);
 
 //            Runtime runtime = Runtime.getRuntime();
 //            runtime.exec("explorer.exe C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\"+path);
 //            System.out.println("open");
-   
-       }
+    }
 
     public void goToApplyLoanForNewCustomerPage(ActionEvent event) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/staffCreateLoanAccountForNewCustomer.xhtml");
@@ -318,7 +352,8 @@ public void openDocs(ActionEvent event) {
     }
 
     public void staffApplyLoanForCustomer(ActionEvent event) throws LoanTermInvalidException {
-
+postCode = postalCode;
+        carMode = carModel;
         //System.out.println("*************Customer create loan details - customerId " + customer.getIc());
         System.out.println("*************Customer create loan details - loanTypeName " + loanTypeName);
         System.out.println("*************Customer create loan details - loanName " + loanName);
@@ -328,20 +363,21 @@ public void openDocs(ActionEvent event) {
         System.out.println("*************Customer create loan details - monthly income " + monthlyIncome);
 
         try {
-
+            existingDebit.add(propertyLoanAmt).add(carLoanAmt).add(educationAmt).add(personalLoanAmt);
+            // int i = propertyLoanAmt.intValue() + carLoanAmt.intValue()+ educationAmt.intValue() + personalLoanAmt.intValue();
             loanTypeId = lasbl.findTypeIdByName(loanName);
             if (customer.getId() == null) {
                 System.out.println("Create loan account for EXISTING customer");
                 searchedCustomer.getId();
-                customerId=lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
-                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message","Loan Account has been created for customer "+searchedCustomer.getIc()+"!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
+                customerId = lasbl.StaffCreateLoanAccountExisting(staffId, customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm, homeType, homeAddress, postCode, carModel, existingDebit, postalCode, carMode, institution, major, graduationDate);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been created for customer " + searchedCustomer.getIc() + "!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
             } else {
                 System.out.println("Create loan account for NEW customer customerID " + customer.getId());
 
-                lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm);
- FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been created for customer "+customer.getIc()+"!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
+                lasbl.StaffCreateLoanAccount(staffId, customer.getId(), monthlyIncome, loanTypeId, principal, downpayment, loanTerm, homeType, homeAddress, postCode, carModel, existingDebit, postalCode, carMode, institution, major, graduationDate);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been created for customer " + customer.getIc() + "!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
         } catch (LoanTermInvalidException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -349,6 +385,7 @@ public void openDocs(ActionEvent event) {
         }
 
     }
+
     public void staffViewPendingLoans(ActionEvent event) throws IOException {
         System.out.println("**** go to view pending loans alr!");
         pendingLoans = lmsbl.staffViewPendingLoans();
@@ -357,15 +394,15 @@ public void openDocs(ActionEvent event) {
     }
 
     public void staffViewCustomer(SelectEvent event) {
-        selectedLoan=(Loan) event.getObject();
-        System.out.println("*****Selected Loan to view customer is "+selectedLoan.getLoanType().getName());
-       // selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+        selectedLoan = (Loan) event.getObject();
+        System.out.println("*****Selected Loan to view customer is " + selectedLoan.getLoanType().getName());
+        // selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
 
     }
 
     public void staffRejectPending(ActionEvent event) throws EmailNotSendException {
         try {
-        //    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+            //    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
             loanId = selectedLoan.getId();
             System.out.println("*************Selected pending loan to view - loan ID is " + selectedLoan.getId());
             System.out.println("**************Selected pending loan to view - customer ic" + selectedLoan.getCustomer().getName());
@@ -424,13 +461,13 @@ public void openDocs(ActionEvent event) {
 
     public List<Loan> staffActivateLoan(ActionEvent event) throws UserNotExistException, UserNotActivatedException, ListEmptyException {
         try {
-           // selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+            // selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
             // selectedLoan= (Loan) event.getObject();
             System.out.println("*****Loan ID to activate loan is " + loanId);
             lmsbl.staffActivateLoan(loanId, loanDate);
             System.out.println("*****Customer IC to activate loan is " + customerIc);
             oneCustomerAllLoans = lmsbl.searchLoan(customerIc);
-            
+
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan has been activated successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (UserNotExistException | ListEmptyException | UserNotActivatedException ex) {
@@ -440,14 +477,60 @@ public void openDocs(ActionEvent event) {
         return oneCustomerAllLoans;
 
     }
-public void calculateRisk(ActionEvent event){
-    selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
-System.out.println("************Selected customer ID to calculate risk is "+selectedLoan.getCustomer().getId());
-System.out.println("************Selected loan ID to calculate risk is "+selectedLoan.getId());
 
-  risk=  lmsbl.calculateRisk(selectedLoan.getCustomer().getId(), selectedLoan.getId());
+    public void calculateRisk(ActionEvent event) {
+        selectedLoan = (Loan) event.getComponent().getAttributes().get("selectedLoan");
+        System.out.println("************Selected customer ID to calculate risk is " + selectedLoan.getCustomer().getId());
+        System.out.println("************Selected loan ID to calculate risk is " + selectedLoan.getId());
 
+        risk = lmsbl.calculateRisk(selectedLoan.getCustomer().getId(), selectedLoan.getId());
+
+    }
+
+    public void displayAllGiros(ActionEvent event) throws EmailNotSendException, IOException {
+        try {
+            allGirso = lmsbl.displayGIROArrangement();
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewAllGiro.xhtml");
+        } catch (EmailNotSendException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+public void onRowSelect(SelectEvent event){
+   System.out.println("****Selected GIRO id is " + selectedGiro.getId());
+            selectedGiro = (GIROArrangement) event.getObject();
 }
+    public void staffManageGiro(ActionEvent event) throws EmailNotSendException {
+        try {
+            System.out.println("****Selected GIRO id is " + selectedGiro.getId());
+//            selectedGiro = (GIROArrangement) event.getObject();
+            allGirso = lmsbl.manageGIROArrangement(staffId, selectedGiro.getId(), giroDecision);
+
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully " + giroDecision + " GIRO " + selectedGiro.getId() + " appplication!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        } catch (EmailNotSendException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public String getGiroDecision() {
+        return giroDecision;
+    }
+
+    public void setGiroDecision(String giroDecision) {
+        this.giroDecision = giroDecision;
+    }
+
+    public List<GIROArrangement> getAllGirso() {
+        return allGirso;
+    }
+
+    public void setAllGirso(List<GIROArrangement> allGirso) {
+        this.allGirso = allGirso;
+    }
+
     public List<LoanType> getAllLoanTypes() {
         return allLoanTypes;
     }
@@ -815,6 +898,125 @@ System.out.println("************Selected loan ID to calculate risk is "+selected
     public void setPath(String path) {
         this.path = path;
     }
-    
+
+    public String getHomeType() {
+        return homeType;
+    }
+
+    public void setHomeType(String homeType) {
+        this.homeType = homeType;
+    }
+
+    public String getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public Long getPostCode() {
+        return postCode;
+    }
+
+    public void setPostCode(Long postCode) {
+        this.postCode = postCode;
+    }
+
+    public String getCarModel() {
+        return carModel;
+    }
+
+    public void setCarModel(String carModel) {
+        this.carModel = carModel;
+    }
+
+    public BigDecimal getExistingDebit() {
+        return existingDebit;
+    }
+
+    public void setExistingDebit(BigDecimal existingDebit) {
+        this.existingDebit = existingDebit;
+    }
+
+    public Long getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(Long postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCarMode() {
+        return carMode;
+    }
+
+    public void setCarMode(String carMode) {
+        this.carMode = carMode;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public Date getGraduationDate() {
+        return graduationDate;
+    }
+
+    public void setGraduationDate(Date graduationDate) {
+        this.graduationDate = graduationDate;
+    }
+
+    public BigDecimal getPropertyLoanAmt() {
+        return propertyLoanAmt;
+    }
+
+    public void setPropertyLoanAmt(BigDecimal propertyLoanAmt) {
+        this.propertyLoanAmt = propertyLoanAmt;
+    }
+
+    public BigDecimal getCarLoanAmt() {
+        return carLoanAmt;
+    }
+
+    public void setCarLoanAmt(BigDecimal carLoanAmt) {
+        this.carLoanAmt = carLoanAmt;
+    }
+
+    public BigDecimal getEducationAmt() {
+        return educationAmt;
+    }
+
+    public void setEducationAmt(BigDecimal educationAmt) {
+        this.educationAmt = educationAmt;
+    }
+
+    public BigDecimal getPersonalLoanAmt() {
+        return personalLoanAmt;
+    }
+
+    public void setPersonalLoanAmt(BigDecimal personalLoanAmt) {
+        this.personalLoanAmt = personalLoanAmt;
+    }
+
+    public GIROArrangement getSelectedGiro() {
+        return selectedGiro;
+    }
+
+    public void setSelectedGiro(GIROArrangement selectedGiro) {
+        this.selectedGiro = selectedGiro;
+    }
 
 }

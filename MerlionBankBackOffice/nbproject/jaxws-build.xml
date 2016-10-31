@@ -28,10 +28,10 @@
     </target>
     <target name="wsimport-client-TestWebService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/TestWebService"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/TestWebService" destdir="${build.generated.dir}/jax-wsCache/TestWebService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/TestWebService/wsdl/127.0.0.1_8080/TestWebService/TestWebService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://127.0.0.1:8080/TestWebService/TestWebService?wsdl" xnocompile="true" xendorsed="true" package="webservice.soap.client">
+<!--        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/TestWebService" destdir="${build.generated.dir}/jax-wsCache/TestWebService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/TestWebService/wsdl/127.0.0.1_8080/TestWebService/TestWebService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://127.0.0.1:8080/TestWebService/TestWebService?wsdl" xnocompile="true" xendorsed="true" package="webservice.soap.client">
             <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/TestWebService/wsdl/127.0.0.1_8080/TestWebService/TestWebService.wsdl"/>
             <produces dir="${build.generated.dir}/jax-wsCache/TestWebService"/>
-        </wsimport>
+        </wsimport>-->
         <copy todir="${build.generated.sources.dir}/jax-ws">
             <fileset dir="${build.generated.dir}/jax-wsCache/TestWebService">
                 <include name="**/*.java"/>

@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -79,6 +81,7 @@ public class StaffWealthManagedBean implements Serializable {
 
     private List<Portfolio> pendingApprovedTailoredPlans;
     private List<Portfolio> oneCustomerAllPortfolios;
+     private List<Portfolio> pendingActivatedPlans;
     private List<DiscretionaryAccount> allWealthAccounts;
     private DiscretionaryAccount selectedWealth;
     UploadedFile file;
@@ -94,6 +97,8 @@ public class StaffWealthManagedBean implements Serializable {
     private List<SavingAccount> oneCustomerAllSavingAccts;
     private SavingAccount selectedSavingAccout;
     private BigDecimal amount;
+    private Portfolio selecteWealthToActivate;
+    private Date startDate;
 
     public UploadedFile getFile() {
         return file;
@@ -127,6 +132,8 @@ public class StaffWealthManagedBean implements Serializable {
         allWealthAccounts = new ArrayList<>();
         oneCustomerAllSavingAccts = new ArrayList<>();
         selectedSavingAccout = new SavingAccount();
+        pendingActivatedPlans = new ArrayList<>();
+        selecteWealthToActivate = new Portfolio();
 //        wealthProducts.put("Predefined Products", "Predefined Products");
 //        wealthProducts.put("Tailored Product", "Tailored Product");
 //
@@ -145,10 +152,29 @@ public class StaffWealthManagedBean implements Serializable {
         try {
             System.out.println("searched customer is " + searchedCustomerIc);
             searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
+            searchedCustomerId = searchedCustomer.getId();
+            
         } catch (UserNotExistException | UserNotActivatedException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
+        }
+    }
+     public void searchCustomerIdToActivate(ActionEvent event) throws UserNotExistException, UserNotActivatedException {
+        try {
+            System.out.println("searched customer is " + searchedCustomerIc);
+            searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
+            searchedCustomerId = searchedCustomer.getId();
+                System.out.println("**** go to view pending loans alr!");
+        pendingActivatedPlans = wmsbl.viewAllPendingAcivationTailoredPlan(searchedCustomerId);
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingActivatedPlans.xhtml");
+
+        } catch (UserNotExistException | UserNotActivatedException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        } catch (IOException ex) {
+            Logger.getLogger(StaffWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -226,7 +252,7 @@ public class StaffWealthManagedBean implements Serializable {
 
     public void displayPending(ActionEvent event) throws IOException {
         System.out.println("*****Go in to view all pending tailored plans!");
-        pendingApprovedTailoredPlans = wmsbl.viewAllPendingAcivationTailoredPlan();
+        pendingApprovedTailoredPlans = wmsbl.viewAllPendingApproveTailoredPlan();
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingPlans.xhtml");
 
     }
@@ -279,6 +305,11 @@ public class StaffWealthManagedBean implements Serializable {
         try {
             selectedPort = (Portfolio) event.getObject();
             System.out.println("******Selected Portfolio to edit is " + selectedPort.getId());
+            exepectedRateOfReturn = selectedPort.getExpectedRateOfReturn();
+            foreignExchange = selectedPort.getProducts().get(0).getPercentage();
+            equity = selectedPort.getProducts().get(1).getPercentage();
+            bond = selectedPort.getProducts().get(2).getPercentage();
+            term = selectedPort.getTerm();
             oneCustomerAllPortfolios = wmsbl.staffModifyPortfolios(staffId, selectedPort.getId(), exepectedRateOfReturn, foreignExchange, equity, bond, term);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Modified Successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -315,12 +346,51 @@ public class StaffWealthManagedBean implements Serializable {
 
     }
 
-// public void staffViewPendingWealthApplications(ActionEvent event) throws IOException {
-//        System.out.println("**** go to view pending loans alr!");
-//        pendingDisAccount = wasbl.();
-//        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewPendingLoans.xhtml");
-//
-//    }
+ public void selectPortToActivate(ActionEvent event){
+      selecteWealthToActivate = (Portfolio) event.getComponent().getAttributes().get("selecteWealthToActivate");
+
+ }
+ public void staffActivatePlan(ActionEvent event){
+     System.out.println("******Selected portfolio to activate is "+selecteWealthToActivate.getId());
+     
+     wmsbl.staffActivateLoan(staffId, selecteWealthToActivate.getId(), startDate);
+      FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully activate plan "+selecteWealthToActivate.getType()+"("+selecteWealthToActivate.getId()+")");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+ }
+
+    public Portfolio getSelecteWealthToActivate() {
+        return selecteWealthToActivate;
+    }
+
+    public void setSelecteWealthToActivate(Portfolio selecteWealthToActivate) {
+        this.selecteWealthToActivate = selecteWealthToActivate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getSearchedCustomerIc() {
+        return searchedCustomerIc;
+    }
+
+    public void setSearchedCustomerIc(String searchedCustomerIc) {
+        this.searchedCustomerIc = searchedCustomerIc;
+    }
+
+    public List<Portfolio> getPendingActivatedPlans() {
+        return pendingActivatedPlans;
+    }
+
+    public void setPendingActivatedPlans(List<Portfolio> pendingActivatedPlans) {
+        this.pendingActivatedPlans = pendingActivatedPlans;
+    }
+ 
     public Customer getCustomer() {
         return customer;
     }
