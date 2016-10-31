@@ -9,6 +9,7 @@ import BillEntity.BillRecord;
 import BillEntity.BillingOrganization;
 import BillEntity.RecurrentBillArrangement;
 import DepositEntity.SavingAccount;
+import Exception.EmailNotSendException;
 import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -102,9 +104,11 @@ public class BillTimerSessionBean implements BillTimerSessionBeanLocal {
                     Integer interval = recurrentBillArrangements.get(i).getBillInterval();
                     Integer timePassed = (totalTimes - remainingTimes) * interval;
                     DateTime nextDeductionDate = dateToStart.plusWeeks(timePassed); //calculate the next dedection date
+                    System.out.println("******** Next deduction date is " + nextDeductionDate);
                     String nextDeduction = dtf.print(nextDeductionDate);
-
-                    if (dateToday.equals(nextDeduction)) {
+                    System.out.println("******** Next deduction date is " + nextDeduction);
+                        
+                    if (today.equals(nextDeduction)) {
                         System.out.println("********** inside remaining dedcution checking");
                         SavingAccount savingAccount = recurrentBillArrangements.get(i).getSavingAccount();
                         BigDecimal recurrentAmt = recurrentBillArrangements.get(i).getAmount();
