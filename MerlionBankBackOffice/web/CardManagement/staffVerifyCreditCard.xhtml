@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingCreditCardApplication" value="#{creditCardManagedBean.pendingCreditCardApplications}" selectionMode="single" selection="#{creditCardManagedBean.selectedCreditApplication}" rowKey="#{pendingCreditCardApplication.id}">
+                                    <f:facet name="header">
+                                        Pending Credit Card Application
+                                    </f:facet>
+                                    <p:column selectionMode="single"/>
+
+                                    <p:column headerText="Customer ID" >
+                                        <h:outputText value="#{pendingCreditCardApplication.customerID}" />
+                                    </p:column>
+
+                                    <p:column headerText="Customer Name" >
+                                        <h:outputText value="#{pendingCreditCardApplication.customerName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Customer IC" >
+                                        <h:outputText value="#{pendingCreditCardApplication.customerIC}" />
+                                    </p:column>
+
+                                    <p:column headerText="Nationality" >
+                                        <h:outputText value="#{pendingCreditCardApplication.customerNationality}" />
+                                    </p:column>
+
+                                    <p:column headerText="Credit Card Type" >
+                                        <h:outputText value="#{pendingCreditCardApplication.creditCardType}" />
+                                    </p:column>
+
+                                    <p:column headerText="Document" style="width: 80px;" >
+                                        <center>
+                                            <p:selectOneMenu id="applicationList" value="#{creditCardManagedBean.fileSelected}">
+                                                <f:selectItem itemLabel="Select File To View ..." itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{pendingCreditCardApplication.fileDestination}" />
+                                            </p:selectOneMenu>  
+                                            
+                                            <p:commandButton  icon="ui-icon-mail-open"  oncomplete="PF('msgDialog2').show()"  update=":form:msgDetail2" actionListener="#{creditCardManagedBean.openDocs}" ajax="true" value ="View" >
+                                                <f:attribute name="selectedCreditCardApplication" value="#{pendingCreditCardApplication}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
+                                    <f:facet name="footer">
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{creditCardManagedBean.approveCardApplication}"  />
+                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{creditCardManagedBean.rejectCardApplication}"  />
+                                    </f:facet>
+                                </p:dataTable>
+
+                            </h:panelGrid>
+                            <p:dialog id="dialogMessage2"   header="Document" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail2" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+
+                                        <h:graphicImage value="#{creditCardManagedBean.path}" />
+
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
+
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

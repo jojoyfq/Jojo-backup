@@ -327,6 +327,7 @@ System.out.println("*******Existing Debt is "+existingDebit);
             Logger.getLogger(CustomerLoanManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+
     }
 
     public void fileUploadListener(FileUploadEvent e) throws IOException {

@@ -384,6 +384,7 @@ postCode = postalCode;
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
 
+
     }
 
     public void staffViewPendingLoans(ActionEvent event) throws IOException {

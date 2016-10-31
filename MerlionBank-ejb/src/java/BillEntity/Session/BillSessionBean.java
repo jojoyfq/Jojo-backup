@@ -5,15 +5,18 @@
  */
 package BillEntity.Session;
 
+import BillEntity.BillRecord;
 import BillEntity.BillingOrganization;
 import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
 import BillEntity.RecurrentBillArrangement;
 import CommonEntity.Customer;
+import CommonEntity.CustomerAction;
 import CommonEntity.Staff;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,141 +32,145 @@ import javax.persistence.Query;
  */
 @Stateless
 public class BillSessionBean implements BillSessionBeanLocal {
-        @PersistenceContext
+
+    @PersistenceContext
     private EntityManager em;
+
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    public boolean addBank(String bankName,String swiftCode,String UEN,String address){
+
+    public boolean addBank(String bankName, String swiftCode, String UEN, String address) {
         List<OtherBank> existingBanks = this.viewBank();
-     
-      for(int i=0;i<existingBanks.size();i++){
-          if(existingBanks.get(i).getName().equalsIgnoreCase(bankName)||existingBanks.get(i).getSwiftCode().equalsIgnoreCase(swiftCode)||existingBanks.get(i).getUEN().equalsIgnoreCase(UEN)){
-              System.out.print("Existing name, SWIFT or UEN");
-              return false;
-          }
-      }
-      OtherBank bank = new OtherBank(bankName,swiftCode,UEN,address);
-      em.persist(bank);
-      return true;
+
+        for (int i = 0; i < existingBanks.size(); i++) {
+            if (existingBanks.get(i).getName().equalsIgnoreCase(bankName) || existingBanks.get(i).getSwiftCode().equalsIgnoreCase(swiftCode) || existingBanks.get(i).getUEN().equalsIgnoreCase(UEN)) {
+                System.out.print("Existing name, SWIFT or UEN");
+                return false;
+            }
+        }
+        OtherBank bank = new OtherBank(bankName, swiftCode, UEN, address);
+        em.persist(bank);
+        return true;
     }
-    
-        @Override
-    public List<OtherBank> viewBank(){
+
+    @Override
+    public List<OtherBank> viewBank() {
         List<OtherBank> otherBanks = new ArrayList<>();
         Query query = em.createQuery("SELECT a FROM OtherBank a");
         otherBanks = new ArrayList(query.getResultList());
         return otherBanks;
     }
-    
-        @Override
-    public List<String> viewBankNames(){
+
+    @Override
+    public List<String> viewBankNames() {
         List<OtherBank> otherBanks = this.viewBank();
         List<String> bankNames = new ArrayList<>();
-        for(int i=0;i<otherBanks.size();i++ ){
-            if(otherBanks.get(i).getStatus().equalsIgnoreCase("active")){
-            bankNames.add(otherBanks.get(i).getName());}
+        for (int i = 0; i < otherBanks.size(); i++) {
+            if (otherBanks.get(i).getStatus().equalsIgnoreCase("active")) {
+                bankNames.add(otherBanks.get(i).getName());
+            }
         }
         return bankNames;
     }
-    
+
 //    public boolean deleteBank (String id){
 //        
 //    } 
-        @Override
-    public void modifyBank(String bankName, String address, String SWIFT, String UEN, Long bankId){
-        OtherBank bank = em.find(OtherBank.class,bankId);
+    @Override
+    public void modifyBank(String bankName, String address, String SWIFT, String UEN, Long bankId) {
+        OtherBank bank = em.find(OtherBank.class, bankId);
         bank.setAddress(address);
         bank.setName(bankName);
         bank.setUEN(UEN);
         bank.setSwiftCode(SWIFT);
         em.flush();
     }
-    
-        @Override
-    public boolean addBO(String bOName, String bankName, Long accountNum,String UEN, String address){
+
+    @Override
+    public boolean addBO(String bOName, String bankName, Long accountNum, String UEN, String address) {
         List<BillingOrganization> bOs = this.viewBO();
         OtherBank bank = this.findBank(bankName);
-        for(int i=0;i<bOs.size();i++){
-            if(bOs.get(i).getName().equalsIgnoreCase(bOName)||bOs.get(i).getUEN().equals(UEN)||(bOs.get(i).getBank().equals(bank)&&bOs.get(i).getAccountNumber().equals(accountNum))){
-              System.out.print("Error! Existing BO name/acct/uen");
-              return false;
+        for (int i = 0; i < bOs.size(); i++) {
+            if (bOs.get(i).getName().equalsIgnoreCase(bOName) || bOs.get(i).getUEN().equals(UEN) || (bOs.get(i).getBank().equals(bank) && bOs.get(i).getAccountNumber().equals(accountNum))) {
+                System.out.print("Error! Existing BO name/acct/uen");
+                return false;
             }
         }
-      
-      BillingOrganization bO = new BillingOrganization(bOName, bank, accountNum, UEN, address);
-      bank.getBillingOrganization().add(bO);
-      em.persist(bO);
-      em.flush();
-      return true;
+
+        BillingOrganization bO = new BillingOrganization(bOName, bank, accountNum, UEN, address);
+        bank.getBillingOrganization().add(bO);
+        em.persist(bO);
+        em.flush();
+        return true;
     }
-    
-        @Override
-    public List<BillingOrganization> viewBO(){
+
+    @Override
+    public List<BillingOrganization> viewBO() {
         List<BillingOrganization> bOs = new ArrayList<>();
         Query q = em.createQuery("SELECT a FROM BillingOrganization a");
         bOs = new ArrayList(q.getResultList());
         return bOs;
     }
-    
-        @Override
-    public List<String> viewBOName(){
+
+    @Override
+    public List<String> viewBOName() {
         List<BillingOrganization> bos = this.viewBO();
         List<String> boNames = new ArrayList<>();
-        for(int i =0;i<bos.size();i++){
-            if(bos.get(i).getStatus().equalsIgnoreCase("active")){
-               boNames.add(bos.get(i).getName());
+        for (int i = 0; i < bos.size(); i++) {
+            if (bos.get(i).getStatus().equalsIgnoreCase("active")) {
+                boNames.add(bos.get(i).getName());
             }
         }
         return boNames;
     }
-    
-        @Override
-    public void modifyBO(String boName, String boAddress, String boBankName,String boUEN, Long accountNumber, Long boId){
+
+    @Override
+    public void modifyBO(String boName, String boAddress, String boBankName, String boUEN, Long accountNumber, Long boId) {
         BillingOrganization bo = em.find(BillingOrganization.class, boId);
         bo.setAccountNumber(accountNumber);
         bo.setAddress(boAddress);
         bo.setName(boName);
         bo.setUEN(boUEN);
-        if(!bo.getBank().getName().equalsIgnoreCase(boBankName)){
-        OtherBank oldBank =  bo.getBank();
-        oldBank.getBillingOrganization().remove(bo);
-        OtherBank newBank = this.findBank(boBankName);
-        bo.setBank(newBank);
-        newBank.getBillingOrganization().add(bo);
+        if (!bo.getBank().getName().equalsIgnoreCase(boBankName)) {
+            OtherBank oldBank = bo.getBank();
+            oldBank.getBillingOrganization().remove(bo);
+            OtherBank newBank = this.findBank(boBankName);
+            bo.setBank(newBank);
+            newBank.getBillingOrganization().add(bo);
         }
         em.flush();
-         
+
     }
-    
-        @Override
-    public int deleteBO(String bOName){
-     BillingOrganization bO = this.findBO(bOName);
-     //when giro and recurrent ends, disconnect them with BO
-     if(bO.getGIROArrangement().isEmpty()&& bO.getRecurrentBillArrangement().isEmpty()){
-         for(int i =0;i<bO.getBillRecord().size();i++){
-             if(bO.getBillRecord().get(i).getStatus().equalsIgnoreCase("pending")){
-                 System.out.print("have pending bill");
-                 return 1;  //have pending bill         
-             }
-         }
-     bO.setStatus("terminated");
-     OtherBank bank = bO.getBank();
-     bank.getBillingOrganization().remove(bO);
-     System.out.print("successfully removed");
-     em.flush();
-     return 3; //successful
-     }else{
-         System.out.print("have giro and recurrent arrangement");
-         return 2; //have arrangement
-     }     
+
+    @Override
+    public int deleteBO(String bOName) {
+        BillingOrganization bO = this.findBO(bOName);
+        //when giro and recurrent ends, disconnect them with BO
+        if (bO.getGIROArrangement().isEmpty() && bO.getRecurrentBillArrangement().isEmpty()) {
+            for (int i = 0; i < bO.getBillRecord().size(); i++) {
+                if (bO.getBillRecord().get(i).getStatus().equalsIgnoreCase("pending")) {
+                    System.out.print("have pending bill");
+                    return 1;  //have pending bill         
+                }
+            }
+            bO.setStatus("terminated");
+            OtherBank bank = bO.getBank();
+            bank.getBillingOrganization().remove(bO);
+            System.out.print("successfully removed");
+            em.flush();
+            return 3; //successful
+        } else {
+            System.out.print("have giro and recurrent arrangement");
+            return 2; //have arrangement
+        }
     }
-    
-        @Override
-    public int deleteBank(String bankName){
-        OtherBank bank =  this.findBank(bankName);
-        if(bank.getBillingOrganization().isEmpty()){
-            for(int i=0;i<bank.getTransactionRecord().size();i++){
-                if(bank.getTransactionRecord().get(i).getStatus().equalsIgnoreCase("pending")){
+
+    @Override
+    public int deleteBank(String bankName) {
+        OtherBank bank = this.findBank(bankName);
+        if (bank.getBillingOrganization().isEmpty()) {
+            for (int i = 0; i < bank.getTransactionRecord().size(); i++) {
+                if (bank.getTransactionRecord().get(i).getStatus().equalsIgnoreCase("pending")) {
                     System.out.print("have pending transaction!");
                     return 2;
                 }
@@ -172,33 +179,34 @@ public class BillSessionBean implements BillSessionBeanLocal {
             System.out.print("successfully removed");
             em.flush();
             return 3;
-        }else{
+        } else {
             System.out.print("have associated BO");
             return 1;
-        }  
+        }
     }
-    
-        @Override
-    public BillingOrganization findBO(String bOName){
+
+    @Override
+    public BillingOrganization findBO(String bOName) {
         Query q = em.createQuery("SELECT a FROM BillingOrganization a WHERE a.name = :bOName");
         q.setParameter("bOName", bOName);
         BillingOrganization bO = (BillingOrganization) q.getResultList().get(0);
-        return bO;  
+        return bO;
     }
-    
-        @Override
-    public OtherBank findBank(String bankName){
+
+    @Override
+    public OtherBank findBank(String bankName) {
         Query q = em.createQuery("SELECT a FROM OtherBank a WHERE a.name = :bankName");
         q.setParameter("bankName", bankName);
         OtherBank bank = (OtherBank) q.getResultList().get(0);
         return bank;
     }
+
     @Override
     public void logStaffAction(String description, Long customerId, Long staffId) {
         List<StaffAction> actions = new ArrayList<>();
         System.out.print(customerId);
         System.out.print(staffId);
-        
+
         Staff staff = em.find(Staff.class, staffId);
         StaffAction action = new StaffAction(Calendar.getInstance().getTime(), description, customerId, staff);
         em.persist(action);
@@ -212,54 +220,115 @@ public class BillSessionBean implements BillSessionBeanLocal {
         }
         em.flush();
     }
-    
-        @Override
-    public boolean addGIROArrangement(String customerName, String boName, BigDecimal limit, Long savingAcctNum, String billReference){
+
+    @Override
+    public boolean addGIROArrangement(String customerName, String boName, BigDecimal limit, Long savingAcctNum, String billReference) {
         //check if got existing arrangement with same bo and reference
         SavingAccount savingAcct = this.findSavingAccount(savingAcctNum);
         BillingOrganization bo = this.findBO(boName);
         List<GIROArrangement> existingGIRO = savingAcct.getGiroArrangement();
-        if(!existingGIRO.isEmpty()){
-            for(int i=0;i<existingGIRO.size();i++){
-                if(existingGIRO.get(i).getBillReference().equalsIgnoreCase(billReference) && existingGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)){
+        if (!existingGIRO.isEmpty()) {
+            for (int i = 0; i < existingGIRO.size(); i++) {
+                if (existingGIRO.get(i).getBillReference().equalsIgnoreCase(billReference) && existingGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)) {
                     System.out.print("same BO and same reference alr exist!");
                     return false;
                 }
             }
-        GIROArrangement giroArrangement = new GIROArrangement(customerName,limit,bo,billReference,savingAcct);
-        em.persist(giroArrangement);
-        bo.getGIROArrangement().add(giroArrangement);
-        savingAcct.getGiroArrangement().add(giroArrangement);
-        em.flush();
-        return true;
-        }else{
-        GIROArrangement giroArrangement = new GIROArrangement(customerName, limit,bo,billReference,savingAcct);
-        em.persist(giroArrangement);
-        bo.getGIROArrangement().add(giroArrangement);
-        savingAcct.getGiroArrangement().add(giroArrangement);
-        em.flush(); 
-        return true;
+            GIROArrangement giroArrangement = new GIROArrangement(customerName, limit, bo, billReference, savingAcct);
+            em.persist(giroArrangement);
+            bo.getGIROArrangement().add(giroArrangement);
+            savingAcct.getGiroArrangement().add(giroArrangement);
+            String description = "Add giro arrangement" + giroArrangement.getId();
+            this.logAction(description, savingAcct.getCustomer().getId());
+            em.flush();
+            return true;
+        } else {
+            GIROArrangement giroArrangement = new GIROArrangement(customerName, limit, bo, billReference, savingAcct);
+            em.persist(giroArrangement);
+            bo.getGIROArrangement().add(giroArrangement);
+            savingAcct.getGiroArrangement().add(giroArrangement);
+            String description = "Add giro arrangement" + giroArrangement.getId();
+            this.logAction(description, savingAcct.getCustomer().getId());
+            em.flush();
+            return true;
         }
     }
-    
-        @Override
-    public boolean addRecurrentArrangement(String boName, BigDecimal amount, Long savingAccountNumber, String billReference, Integer times, Integer interval, Date StartDate){
+
+    @Override
+    public boolean addRecurrentArrangement(String boName, BigDecimal amount, Long savingAccountNumber, String billReference, Integer times, Integer interval, Date StartDate) {
         SavingAccount savingAcct = this.findSavingAccount(savingAccountNumber);
         BillingOrganization bo = this.findBO(boName);
-        RecurrentBillArrangement recurrent = new RecurrentBillArrangement(amount,bo,billReference,savingAcct,times,StartDate,interval,times);
+        RecurrentBillArrangement recurrent = new RecurrentBillArrangement(amount, bo, billReference, savingAcct, times, StartDate, interval, times);
         em.persist(recurrent);
         savingAcct.getRecurrentBillArrangement().add(recurrent);
         bo.getRecurrentBillArrangement().add(recurrent);
+        String description = "Add recurrent arrangement" + recurrent.getId();
+        this.logAction(description, savingAcct.getCustomer().getId());
         em.flush();
         return true;
     }
-   
-    private SavingAccount findSavingAccount(Long accountNum){
+
+    private SavingAccount findSavingAccount(Long accountNum) {
         SavingAccount account = new SavingAccount();
-        Query m= em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :savingAccountNumber");
+        Query m = em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :savingAccountNumber");
         m.setParameter("savingAccountNumber", accountNum);
-        account = (SavingAccount)m.getResultList().get(0);
-        return account;      
+        account = (SavingAccount) m.getResultList().get(0);
+        return account;
+    }
+
+    private void logAction(String description, Long customerId) {
+        List<CustomerAction> actions = new ArrayList<>();
+        Customer customer = em.find(Customer.class, customerId);
+        CustomerAction action = new CustomerAction((Calendar.getInstance().getTime()), description, customer);
+        em.persist(action);
+        System.out.print(action.getDescription());
+        if (customer.getCustomerActions() == null) {
+            actions.add(action);
+            customer.setCustomerActions(actions);
+            em.persist(actions);
+        } else {
+            customer.getCustomerActions().add(action);
+        }
+        em.flush();
+    }
+    
+    @Override
+    public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount){
+         SavingAccount savingAccount = this.findSavingAccount(accountNumber);
+         BillingOrganization bo = this.findBO(boName);
+         System.out.print("balance before payment "+ savingAccount.getAvailableBalance());
+         if(savingAccount.getAvailableBalance().compareTo(amount) != -1){
+           savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
+           savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
+           System.out.print("balance after payment "+ savingAccount.getAvailableBalance());
+            Date todayDate=  new Date();
+           BillRecord bill = new BillRecord(bo,billReference,"BI",amount,null, "settled","Bill payment to "+boName, todayDate, accountNumber, null, savingAccount,null,null);
+             em.persist(bill);
+             savingAccount.getTransactionRecord().add(bill);
+             //invoke webservice to send bill
+             String description = "Bill payment to "+boName;
+             this.logAction(description, savingAccount.getCustomer().getId());
+             em.flush();
+             return true;
+         }else{
+             return false;
+         }
+        
+    }
+    
+    @Override
+    public List<GIROArrangement> viewableGIRO (Long customerId){
+        Customer customer = em.find(Customer.class, customerId);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        List<GIROArrangement> viewable = new ArrayList<GIROArrangement>();
+        for(int i=0;i<savingAccounts.size();i++){
+            for(int j=0;j<savingAccounts.get(i).getGiroArrangement().size();j++){
+                if(!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")){
+                    viewable.add(savingAccounts.get(i).getGiroArrangement().get(j));
+                }
+            }
+        }
+        return viewable;
     }
 
 }

@@ -38,6 +38,7 @@ public class DiscretionaryAccount implements Serializable {
     private BigDecimal totalBalance;
     private BigDecimal accumDailyInterest;
     private String status;
+    private BigDecimal commission;
     
     @ManyToOne
     private Customer customer;
@@ -56,6 +57,14 @@ public class DiscretionaryAccount implements Serializable {
         this.accumDailyInterest = accumDailyInterest;
         this.status = status;
         this.customer = customer;
+    }
+
+    public BigDecimal getCommission() {
+        return commission;
+    }
+
+    public void setCommission(BigDecimal commission) {
+        this.commission = commission;
     }
 
     public BigDecimal getTotalBalance() {

@@ -255,6 +255,7 @@ public class StaffWealthManagedBean implements Serializable {
         pendingApprovedTailoredPlans = wmsbl.viewAllPendingApproveTailoredPlan();
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingPlans.xhtml");
 
+
     }
 
     public void staffAcceptPlan(ActionEvent event) {

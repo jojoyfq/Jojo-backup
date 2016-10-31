@@ -28,11 +28,11 @@
                                 <h:panelGrid columns="2" cellpadding="5">
 
                                     <h:outputLabel for="employmentPass" value="Upload your employeement pass scanned version (PDF format): " />                                 
-                                    <p:fileUpload fileUploadListener="#{creditCardManagedBean.handleEPUpload}" mode="advanced" dragDropSupport="false"
+                                    <p:fileUpload fileUploadListener="#{creditCardManagedBean.fileUploadListener}" mode="advanced" dragDropSupport="false"
                                   multiple="true" update="msgs" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/" />
                                     
                                     <h:outputLabel for="salaryApprove" value="Upload your salary approve document (PDF format): " />                                 
-                                    <p:fileUpload fileUploadListener="#{creditCardManagedBean.handleSAUpload}" mode="advanced" dragDropSupport="false"
+                                    <p:fileUpload fileUploadListener="#{creditCardManagedBean.fileUploadListener}" mode="advanced" dragDropSupport="false"
                                   multiple="true" update="msgs" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/" />
                                     
                                                                    

@@ -6,6 +6,7 @@
 package BillEntity.Session;
 
 import BillEntity.BillingOrganization;
+import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -50,6 +51,10 @@ public interface BillSessionBeanLocal {
     public boolean addGIROArrangement(String customerName, String boName, BigDecimal limit, Long savingAcctNum, String billReference);
 
     public boolean addRecurrentArrangement(String boName, BigDecimal amount, Long savingAccountNumber, String billReference, Integer times, Integer interval, Date StartDate);
+
+    public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount);
+
+    public List<GIROArrangement> viewableGIRO(Long customerId);
 
     
 }

@@ -6,6 +6,7 @@
 package LoanEntity.Session;
 
 import Exception.EmailNotSendException;
+import Exception.NotEnoughAmountException;
 import java.util.Date;
 import javax.ejb.Local;
 
@@ -20,10 +21,15 @@ public interface LoanTimerSessionBeanLocal {
     public void closeAccounts();
     
     //run daily- check all loan accounts
-    
-    public void calculateLatePayment(Date currentDate) throws EmailNotSendException;
+   
     
     public void updateMonthlyPayment(Date currentDate) throws EmailNotSendException;
-   
-    public void autoBadDebt(Date currentDate)throws EmailNotSendException;  
+
+    public void autoBadDebt() throws EmailNotSendException;
+
+    public void updateMonthlyPayment() throws EmailNotSendException;
+
+    public void calculateLatePayment() throws EmailNotSendException;
+
+    public void loanPayByGIRO() throws NotEnoughAmountException;
 }

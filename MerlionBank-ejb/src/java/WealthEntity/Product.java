@@ -7,11 +7,14 @@ package WealthEntity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -24,20 +27,43 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String productName;
-    private BigDecimal purchaseAmount;
+    private BigDecimal expectedAmount;
     private BigDecimal currentAmount;
+    private BigDecimal purchaseAmount;
     private Double percentage;
     
      @ManyToOne
     private Portfolio portfolio;
+     
+     @OneToMany(cascade={CascadeType.ALL},mappedBy="product")
+    private List<Good> goods;
 
     public Product() {
     }
 
-    public Product(String productName, BigDecimal purchaseAmount, Double percentage) {
+    public Product(String productName, BigDecimal expectedAmount, Double percentage,List<Good> goods,BigDecimal currentAmount,BigDecimal purchaseAmount) {
         this.productName = productName;
-        this.purchaseAmount = purchaseAmount;
+        this.expectedAmount = expectedAmount;
         this.percentage = percentage;
+        this.goods=goods;
+        this.currentAmount=currentAmount;
+        this.purchaseAmount=purchaseAmount;
+    }
+
+    public BigDecimal getPurchaseAmount() {
+        return purchaseAmount;
+    }
+
+    public void setPurchaseAmount(BigDecimal purchaseAmount) {
+        this.purchaseAmount = purchaseAmount;
+    }
+
+    public List<Good> getGoods() {
+        return goods;
+    }
+
+    public void setGoods(List<Good> goods) {
+        this.goods = goods;
     }
 
      
@@ -49,12 +75,12 @@ public class Product implements Serializable {
         this.productName = productName;
     }
 
-    public BigDecimal getPurchaseAmount() {
-        return purchaseAmount;
+    public BigDecimal getExpectedAmount() {
+        return expectedAmount;
     }
 
-    public void setPurchaseAmount(BigDecimal purchaseAmount) {
-        this.purchaseAmount = purchaseAmount;
+    public void setExpectedAmount(BigDecimal expectedAmount) {
+        this.expectedAmount = expectedAmount;
     }
 
     public BigDecimal getCurrentAmount() {

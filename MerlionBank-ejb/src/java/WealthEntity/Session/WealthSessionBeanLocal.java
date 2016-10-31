@@ -40,7 +40,7 @@ public interface WealthSessionBeanLocal {
 
     public Long staffCreatePrefefinedPlan(Long staffId, Long customerId, Long accountId, BigDecimal initialAmount, String type, int term) throws NotEnoughAmountException;
 
-    public Long createTailoredPortfolio(Long customerId, Long discretionaryAccountId, BigDecimal investAmount, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double stock, int term) throws NotEnoughAmountException;
+    public Long createTailoredPortfolio(Long customerId, Long discretionaryAccountId, BigDecimal investAmount, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double bond, int term) throws NotEnoughAmountException;
 
     public List<Portfolio> displayAllPortfolios(Long discretionaryAccountId);
 
@@ -51,4 +51,5 @@ public interface WealthSessionBeanLocal {
 public List<Portfolio> ModifyPortfolios(Long portfolioId, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double stock,int term) throws EmailNotSendException;
 
 public List<Portfolio> portfolioEarlyWithdraw(Long portfolioId);
+public Long payCommissionFee(Long customerId, Long discretionaryAccountId) throws NotEnoughAmountException;
 }
