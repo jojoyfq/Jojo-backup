@@ -28,20 +28,14 @@
 
                                 <h:outputLabel for="Amount" value="Total Investment Amount(S$):" />
                                 <p:inputNumber id="Amount" value="#{customerWealthManagedBean.initialAmount}" label="Amount" symbolPosition="s"  decimalPlaces="2" required="true" requiredMessage="Please enter total investment amount!" />
-                                <p:message for="monthlyIncome" display="icon"/>
+                                <p:message for="Amount" display="icon"/>
                                 <h:outputLabel />
-
-                             
 
                                 <h:outputLabel for="term" value="Total Term:" />
                                 <p:inputNumber id="term" value="#{customerWealthManagedBean.term}" label="term" symbolPosition="s"  decimalPlaces="0" required="true" requiredMessage="Please enter term!" />
                                 <p:message for="term" display="icon"/>
-                                <p:watermark for="loanTerm" value="Please key in the number of months" id="watermark" />
-
+                                <p:watermark for="term" value="Please key in the number of months" id="watermark" />
                                 <h:outputLabel />
-
-
-
 
                             </p:panelGrid>
                             <p:separator />
@@ -60,41 +54,7 @@
 
 
                         </h:form>
-                        <h:form>  
-
-                            <p:dialog header="Calculator" widgetVar="dlg1" modal="true" height="100">
-                                <p:panelGrid  columns="3" >
-                                    <h:outputLabel for="amount" value="Amount " /> 
-                                    <p:inputNumber id="amount" value="#{staffLoanManagedBean.loanAmount}" symbolPosition="s" emptyValue="zero" decimalPlaces="2"  required="true" requiredMessage="Please enter your loan amount!"/>
-                                    <h:message class="Red" for="amount"  />
-
-                                    <h:outputLabel for="loanTerm" value="Loan Term: " /> 
-                                    <p:inputNumber id="loanTerm" value="#{staffLoanManagedBean.calLoanTerm}" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter your loan term" />
-                                    <h:message class="Red" for="loanTerm"  />
-
-                                    <h:outputLabel for="rate1" value="Interest1:  " /> 
-                                    <h:outputText id="rate1" value="#{staffLoanManagedBean.interest1}"   >
-                                        <f:convertNumber type="percent" minFractionDigits="4" />
-                                    </h:outputText>
-                                    <h:outputLabel />
-
-                                    <h:outputLabel for="rate2" value="Interest2:  " /> 
-                                    <h:outputText id="rate2" value="#{staffLoanManagedBean.interest2}"   >
-                                        <f:convertNumber type="percent" minFractionDigits="4" />
-                                    </h:outputText>
-                                    <h:outputLabel />
-
-                                    <p:commandButton id="calculate" value="Calculate"  actionListener="#{staffLoanManagedBean.calculateMonthlyPayment}"  oncomplete="PF('carPanelWDG').loadContents();" />
-                                </p:panelGrid>
-                                 <p:overlayPanel  widgetVar="carPanelWDG" for="calculate" showCloseIcon="true">
-                                    <h:outputLabel value="Monthly Repayment(S$): "/>
-                                    <h:outputText value="#{staffLoanManagedBean.monthlyRepayment}"  >
-                                         <f:convertNumber locale="en-US" pattern="#0.00" locale="pt_BR"/>
-                                    </h:outputText>
-                                 </p:overlayPanel>
-
-                            </p:dialog>
-                        </h:form>
+                       
                     </div>
                 </div>
             </div> 
@@ -102,16 +62,7 @@
 
         <!-- Right Column -->
         <div class="Container20 NoPadding Responsive50">
-            <div class="Card ui-fluid">
-                <i class="fa fa-fw"></i>
-                <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
-                <div class="EmptyBox10"></div>
-                <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
-                <div class="EmptyBox10"></div>
-                <p:commandButton  value="Calculate"  icon="fa fa-calculator"  type="button" styleClass="PurpleButton Fleft Fs14 White" onclick="PF('dlg1').show();"/>
-
-
-            </div>
+           
         </div>
 
     </ui:define>

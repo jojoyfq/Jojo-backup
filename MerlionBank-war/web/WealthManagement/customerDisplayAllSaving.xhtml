@@ -69,7 +69,7 @@
                                         </p:column>-->
                                         <p:column headerText="Transfer From Saving Account" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" onclick="PF('carDialog').show()"  ajax="true"  >
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.selectSavingSet}" oncomplete="PF('carDialog').show()"  ajax="true"  >
                                                <f:attribute name="selectedSavingAccout" value="#{savingAcct}"   />
                                                 </p:commandButton>
                                             </center>
@@ -77,19 +77,18 @@
                                        
                                     </p:dataTable>
 
-                                    <p:dialog id="dialogMessage" header="Transfer" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
+                                    <p:dialog id="dialogMessage" header="Transfer" widgetVar="carDialog"  hideEffect="fade" resizable="true" responsive="true">
                                         <h:form>
                                             <p:outputPanel id="carDetail" style="text-align:center;">
                                                 <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
 
                                                     <h:outputText value="Amount" style="font-weight: bold"/>
-                                                    <h:outputText value="#{customerWealthManagedBean.amount}"/>
+                                                    <p:inputText value="#{customerWealthManagedBean.amount}"/>
 
-                                                    <div class="Container60">
+                                                   
                                                         <p:commandButton actionListener="#{customerWealthManagedBean.customerPayBySaving}" onclick="if (!confirm('Are you sure you want to pay now?'))
                                                             return false;" value="Submit" update=":form:panel" ajax="false" />
-                                                    </div>
-                                                    <div class="Container30"></div>
+                                                   
                                                 </p:panelGrid>
                                             </p:outputPanel></h:form>
                                     </p:dialog>

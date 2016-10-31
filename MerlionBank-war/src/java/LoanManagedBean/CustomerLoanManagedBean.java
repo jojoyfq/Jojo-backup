@@ -5,6 +5,7 @@
  */
 package LoanManagedBean;
 
+import BillEntity.Session.BillSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 //import CommonEntity.Session.AccountManagementSessionBeanLocal;
@@ -33,6 +34,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -58,8 +61,10 @@ public class CustomerLoanManagedBean implements Serializable {
     private LoanSessionBeanLocal lsbl;
     @EJB
     private LoanApplicationSessionBeanLocal lasbl;
-     @EJB
+    @EJB
     AccountManagementSessionBeanLocal amsbl;
+    @EJB
+    BillSessionBeanLocal bsbl;
 
     @Inject
     private LogInManagedBean logInManagedBean;
@@ -104,9 +109,32 @@ public class CustomerLoanManagedBean implements Serializable {
     private Map<String, String> loanCategories;
     private Map<String, String> loanNames;
     private BigDecimal earlyInterest;
- UploadedFile file;
+    UploadedFile file;
 
-	
+    private String homeType = null;
+    private String homeAddress = null;
+    private String carModel = null;
+    private BigDecimal existingDebit = new BigDecimal("0");
+    private Long postalCode = null;
+    private Long postCode = postalCode;
+    private String carMode = carModel;
+    private String institution = null;
+    private String major = null;
+    private Date graduationDate = null;
+    private BigDecimal propertyLoanAmt;
+    private BigDecimal carLoanAmt;
+    private BigDecimal educationAmt;
+    private BigDecimal personalLoanAmt;
+    private String boName;
+    private BigDecimal limit;
+    private String billReference;
+    private Long savingAccountNumber;
+    private BigDecimal monthlyIncome;
+    private BigDecimal tdsr;
+    private BigDecimal msr;
+    private BigDecimal calMonthlyIncome;
+    private BigDecimal calExistingDebt;
+
     public CustomerLoanManagedBean() {
     }
 
@@ -213,8 +241,8 @@ public class CustomerLoanManagedBean implements Serializable {
         System.out.println("*********Caculator: interest2 " + interest2);
 
         monthlyRepayment = lasbl.fixedCalculator(loanAmount, calLoanTerm, interest1, interest2);
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your Monthly Payment: " + monthlyRepayment);
-        RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your Monthly Payment: " + monthlyRepayment);
+//        RequestContext.getCurrentInstance().showMessageInDialog(message);
         return monthlyRepayment;
     }
 
@@ -248,10 +276,10 @@ public class CustomerLoanManagedBean implements Serializable {
 
         return detail;
     }
-    
 
     public void customerApplyLoan(ActionEvent event) throws EmailNotSendException, LoanTermInvalidException {
-
+        postCode = postalCode;
+        carMode = carModel;
         System.out.println("*************Customer create loan details - customerId " + customer.getId());
         System.out.println("*************Customer create loan details - loanTypeName " + loanTypeName);
         System.out.println("*************Customer create loan details - loanName " + loanName);
@@ -259,52 +287,70 @@ public class CustomerLoanManagedBean implements Serializable {
         System.out.println("*************Customer create loan details - downpayment " + downpayment);
         System.out.println("*************Customer create loan details - loanTerm " + loanTerm);
         System.out.println("*************Customer create loan details - startDate " + startDate);
+ System.out.println("*************Customer create loan details - homeType " + homeType);
+        System.out.println("*************Customer create loan details - homeAddress " + homeAddress);
+        System.out.println("*************Customer create loan details - propertyLoanAmt " + propertyLoanAmt);
+        System.out.println("*************Customer create loan details - carLoanAmt " + carLoanAmt);
+            System.out.println("*************Customer create loan details - educationAmt " + educationAmt);
+        System.out.println("*************Customer create loan details - personalLoanAmt " + personalLoanAmt);
+        System.out.println("*************Customer create loan details - postalCode " + postalCode);
+        System.out.println("*************Customer create loan details - postCode " + postCode);
+        System.out.println("*************Customer create loan details - carModel " + carModel);
+        System.out.println("*************Customer create loan details - carMode " + carMode);
+        try {
 
-//        try {
-//
-//            loanTypeId = lasbl.findTypeIdByName(loanName);
-//            System.out.println("*************Customer create loan details - loantypeId " + loanTypeId);
-//            if (customer.getId() == null) {
-//                customerId = logInManagedBean.getCustomerId();
-//                lasbl.createLoanAccountExisting(customerId, monthlyRepayment, loanTypeId, principal, downpayment, loanTerm);
-//
-//            } else {
-//                customerId = customer.getId();
-//                lasbl.createLoanAccount(customerId, monthlyRepayment, loanTypeId, principal, downpayment, loanTerm);
-//
-//            }
-//
+            loanTypeId = lasbl.findTypeIdByName(loanName);
+            System.out.println("*************Customer create loan details - loantypeId " + loanTypeId);
+                  existingDebit = existingDebit.add(propertyLoanAmt).add(carLoanAmt).add(educationAmt).add(personalLoanAmt);
+          //                            existingDebit = existingDebit.add(propertyLoanAmt);
+
+System.out.println("*******Existing Debt is "+existingDebit);
+            if (customer.getId() == null) {
+                customerId = logInManagedBean.getCustomerId();
+                lasbl.createLoanAccountExisting(customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm, homeType, homeAddress, postCode, carModel, existingDebit, postalCode, carMode, institution, major, graduationDate);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/uploadFileExisting.xhtml");
+
+            } else {
+                customerId = customer.getId();
+                lasbl.createLoanAccount(customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm, homeType, homeAddress, postCode, carModel, existingDebit, postalCode, carMode, institution, major, graduationDate);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/uploadFile.xhtml");
+
+            }
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/uploadFile.xhtml");
+
 //            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your loan account has been successfully created! Please check your email for further details.");
 //            RequestContext.getCurrentInstance().showMessageInDialog(message);
-//        } catch (EmailNotSendException | LoanTermInvalidException ex) {
-//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-//            RequestContext.getCurrentInstance().showMessageInDialog(message);
-//        }
+        } catch (EmailNotSendException | LoanTermInvalidException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } catch (IOException ex) {
+            Logger.getLogger(CustomerLoanManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
 
     }
-    
-       public void fileUploadListener(FileUploadEvent e) throws IOException {
-  
- // Get uploaded file from the FileUploadEvent
-         this.file = e.getFile();
+
+    public void fileUploadListener(FileUploadEvent e) throws IOException {
+
+        // Get uploaded file from the FileUploadEvent
+        this.file = e.getFile();
      //    InputStream input = e.getFile().getInputstream();
-         
+
       //   File inputFile = new File(e.getFile().getFileName());
- 
          // Get uploaded file from the FileUploadEvent
-    //     this.file = e.getFile();
- //                customer.
- //                System.out.println("");
-         // Print out the information of the file
-         System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
- 
-         System.out.println("Uploade file Customer Ic: "+customer.getIc());
-       // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
-        String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" +customer.getIc() +"\\"+file.getFileName();
+        //     this.file = e.getFile();
+        //                customer.
+        //                System.out.println("");
+        // Print out the information of the file
+        System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
+
+        System.out.println("Uploade file Customer Ic: " + customer.getIc());
+        // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
+        String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + customer.getIc() + "\\" + file.getFileName();
        // String savedFileName = path + "/" + uploadedFile.getFileName();
-    //    File fileToSave = new File(savedFileName);
+        //    File fileToSave = new File(savedFileName);
         File fileToSave = new File(destPath);
-      
+
         fileToSave.getParentFile().mkdirs();
         fileToSave.delete();
         //Generate path file to copy file
@@ -314,23 +360,21 @@ public class CustomerLoanManagedBean implements Serializable {
         InputStream input = e.getFile().getInputstream();
         Files.copy(input, fileToSavePath, StandardCopyOption.REPLACE_EXISTING);
 // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "Sxiaojing" ;d
- 
+
 //         File destFile = new File(destPath);
 //         FileUtils.forceMkdir(destFile);
 //         FileUtils.copyInputStreamToFile(input, destFile);
         //FileUtils.copyFileToDirectory(inputFile, destFile);
-         System.out.println("File uploaded successfully!");
-                  System.out.println("File path: "+fileToSave.getAbsoluteFile().getName());
-                  System.out.println("File path: "+fileToSave.getCanonicalFile().getName());
+        System.out.println("File uploaded successfully!");
+        System.out.println("File path: " + fileToSave.getAbsoluteFile().getName());
+        System.out.println("File path: " + fileToSave.getCanonicalFile().getName());
 
-         amsbl.setFileDestination(customer.getId(),  fileToSave.getParentFile().getName()+"/"+fileToSave.getAbsoluteFile().getName());
-          FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        amsbl.setFileDestination(customer.getId(), fileToSave.getParentFile().getName() + "/" + fileToSave.getAbsoluteFile().getName());
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
 //           FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
- 
-     }
 
-
+    }
 
     public List<Loan> customerViewAllLoans(Long id) throws ListEmptyException {
         try {
@@ -420,10 +464,11 @@ public class CustomerLoanManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    public void customerDisplayEarlyPayoffInterest(ActionEvent event){
-        System.out.println("******selected loan to disaply full amount is "+selectedLoan.getId());
+
+    public void customerDisplayEarlyPayoffInterest(ActionEvent event) {
+        System.out.println("******selected loan to disaply full amount is " + selectedLoan.getId());
         earlyInterest = lsbl.displayRedemptionInterest(selectedLoan.getId());
-      selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
+        selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
     }
 
     public void customerEarlyRedemption(ActionEvent event) throws NotEnoughAmountException {
@@ -433,16 +478,54 @@ public class CustomerLoanManagedBean implements Serializable {
             System.out.println("******Selected loan account id " + selectedLoan.getId());
             customerId = logInManagedBean.getCustomerId();
             lsbl.applyEarlyRedemption(customerId, selectedLoan.getId(), selectedSavingAccout.getId());
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully paid off your loan "+selectedLoan.getLoanType().getName()+" ("+selectedLoan.getId()+")");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully paid off your loan " + selectedLoan.getLoanType().getName() + " (" + selectedLoan.getId() + ")");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (NotEnoughAmountException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
+    public void customerApplyGiro (ActionEvent event) throws IOException{
+       FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/addGIRO.xhtml");
+
+        bsbl.addGIROArrangement(customerName, boName, limit, savingAccountNumber, billReference);
+    
+    }
+    
+    public void calculateTDSR (ActionEvent event){
+        System.out.println("*****TDSR calculator: ");
+         System.out.println("*****monthly income is  "+calMonthlyIncome);
+                System.out.println("*****Exsiting debt is "+calExistingDebt);
+
+        tdsr = lasbl.calculateTDSR(calMonthlyIncome, calExistingDebt);
+    
+    }
+    
+    public void calculateMSR (ActionEvent event){
+        System.out.println("*****MSR calculator: ");
+        System.out.println("*****monthly income is  "+calMonthlyIncome);
+        System.out.println("*****Exsiting debt is "+calExistingDebt);
+        msr = lasbl.calculateMSR(calMonthlyIncome, calExistingDebt);
+    }
 //    public void customerDisplayLoans(ActionEvent event) {
 //
 //    }
+
+    public BigDecimal getCalMonthlyIncome() {
+        return calMonthlyIncome;
+    }
+
+    public void setCalMonthlyIncome(BigDecimal calMonthlyIncome) {
+        this.calMonthlyIncome = calMonthlyIncome;
+    }
+
+    public BigDecimal getCalExistingDebt() {
+        return calExistingDebt;
+    }
+
+    public void setCalExistingDebt(BigDecimal calExistingDebt) {
+        this.calExistingDebt = calExistingDebt;
+    }
 
     public LoanSessionBeanLocal getLsbl() {
         return lsbl;
@@ -795,11 +878,197 @@ public class CustomerLoanManagedBean implements Serializable {
     public void setEarlyInterest(BigDecimal earlyInterest) {
         this.earlyInterest = earlyInterest;
     }
-public UploadedFile getFile() {
-		return file;
-	}
 
-	public void setFile(UploadedFile file) {
-		this.file = file;
-	}
+    public UploadedFile getFile() {
+        return file;
+    }
+
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
+
+    public AccountManagementSessionBeanLocal getAmsbl() {
+        return amsbl;
+    }
+
+    public void setAmsbl(AccountManagementSessionBeanLocal amsbl) {
+        this.amsbl = amsbl;
+    }
+
+    public String getHomeType() {
+        return homeType;
+    }
+
+    public void setHomeType(String homeType) {
+        this.homeType = homeType;
+    }
+
+    public String getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public String getCarModel() {
+        return carModel;
+    }
+
+    public void setCarModel(String carModel) {
+        this.carModel = carModel;
+    }
+
+    public BigDecimal getExistingDebit() {
+        return existingDebit;
+    }
+
+    public void setExistingDebit(BigDecimal existingDebit) {
+        this.existingDebit = existingDebit;
+    }
+
+    public Long getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(Long postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public Long getPostCode() {
+        return postCode;
+    }
+
+    public void setPostCode(Long postCode) {
+        this.postCode = postCode;
+    }
+
+    public String getCarMode() {
+        return carMode;
+    }
+
+    public void setCarMode(String carMode) {
+        this.carMode = carMode;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public Date getGraduationDate() {
+        return graduationDate;
+    }
+
+    public void setGraduationDate(Date graduationDate) {
+        this.graduationDate = graduationDate;
+    }
+
+    public BigDecimal getPropertyLoanAmt() {
+        return propertyLoanAmt;
+    }
+
+    public void setPropertyLoanAmt(BigDecimal propertyLoanAmt) {
+        this.propertyLoanAmt = propertyLoanAmt;
+    }
+
+    public BigDecimal getCarLoanAmt() {
+        return carLoanAmt;
+    }
+
+    public void setCarLoanAmt(BigDecimal carLoanAmt) {
+        this.carLoanAmt = carLoanAmt;
+    }
+
+    public BigDecimal getEducationAmt() {
+        return educationAmt;
+    }
+
+    public void setEducationAmt(BigDecimal educationAmt) {
+        this.educationAmt = educationAmt;
+    }
+
+    public BigDecimal getPersonalLoanAmt() {
+        return personalLoanAmt;
+    }
+
+    public void setPersonalLoanAmt(BigDecimal personalLoanAmt) {
+        this.personalLoanAmt = personalLoanAmt;
+    }
+
+    public BillSessionBeanLocal getBsbl() {
+        return bsbl;
+    }
+
+    public void setBsbl(BillSessionBeanLocal bsbl) {
+        this.bsbl = bsbl;
+    }
+
+    public String getBoName() {
+        return boName;
+    }
+
+    public void setBoName(String boName) {
+        this.boName = boName;
+    }
+
+    public BigDecimal getLimit() {
+        return limit;
+    }
+
+    public void setLimit(BigDecimal limit) {
+        this.limit = limit;
+    }
+
+    public String getBillReference() {
+        return billReference;
+    }
+
+    public void setBillReference(String billReference) {
+        this.billReference = billReference;
+    }
+
+    public Long getSavingAccountNumber() {
+        return savingAccountNumber;
+    }
+
+    public void setSavingAccountNumber(Long savingAccountNumber) {
+        this.savingAccountNumber = savingAccountNumber;
+    }
+
+    public BigDecimal getTdsr() {
+        return tdsr;
+    }
+
+    public void setTdsr(BigDecimal tdsr) {
+        this.tdsr = tdsr;
+    }
+
+    public BigDecimal getMsr() {
+        return msr;
+    }
+
+    public void setMsr(BigDecimal msr) {
+        this.msr = msr;
+    }
+
+    public BigDecimal getMonthlyIncome() {
+        return monthlyIncome;
+    }
+
+    public void setMonthlyIncome(BigDecimal monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
+    }
+
 }
