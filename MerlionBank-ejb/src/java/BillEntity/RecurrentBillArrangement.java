@@ -35,9 +35,9 @@ public class RecurrentBillArrangement implements Serializable {
     private String billReference;
     @ManyToOne
     private SavingAccount savingAccount;
-    private Integer billTimes;
+    private Integer billTimes; 
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date startDate;
+    private Date startDate; 
     private Integer billInterval;// in weeks
     private Integer timesRemaining;
     private String status;//active, terminated

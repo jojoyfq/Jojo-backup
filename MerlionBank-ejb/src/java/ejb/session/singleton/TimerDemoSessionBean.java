@@ -5,6 +5,8 @@
  */
 package ejb.session.singleton;
 
+import BillEntity.Session.BillSessionBeanLocal;
+import BillEntity.Session.BillTimerSessionBeanLocal;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
@@ -48,6 +50,9 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
 
     @EJB
     LoanTimerSessionBeanLocal ltsbl;
+    
+    @EJB
+    BillTimerSessionBeanLocal btsbl;
 
     @Override
     public void createTimers(Date startTime, String timerInfo) {
@@ -74,16 +79,18 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             Timer loanAccountTimer = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanAccountStatus-TIMER");
             System.err.println("********** LoanAccountStatus-TIMER");
         }else if (timerInfo.equals("LoanAutoBadDebt-TIMER")){
-            Timer loanAutoBadDebt = timerService.createTimer(startTime, 1 * 60 * 10000, "LoanAutoBadDebt-TIMER");
+            Timer loanAutoBadDebt = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanAutoBadDebt-TIMER");
             System.err.println("********** LoanAutoBadDebt-TIMER");
         }else if(timerInfo.equals("LoanLatePayment-TIMER")){
-            Timer loanLatePayment = timerService.createTimer(startTime, 1* 60 * 10000, "LoanLatePayment-TIMER");
+            Timer loanLatePayment = timerService.createTimer(startTime, 1* 60 * 1000, "LoanLatePayment-TIMER");
             System.err.println("********** LoanLatePayment-TIMER");
         }else if(timerInfo.equals("LoanUpdateMonthlyPayment-TIMER")){
-            Timer loanUpdateMonthlyPayment = timerService.createTimer(startTime, 1 * 60 * 10000, "LoanUpdateMonthlyPayment-TIMER");
+            Timer loanUpdateMonthlyPayment = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanUpdateMonthlyPayment-TIMER");
             System.out.println("********** LoanUpdateMonthlyPayment-TIMER");
         }else if(timerInfo.equals("LoanPayByGIRO-TIMER")){
-            Timer loanPayByGIRO = timerService.createTimer(startTime, 1 * 60 * 10000, "LoanPayByGIRO-TIMER");
+            Timer loanPayByGIRO = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanPayByGIRO-TIMER");
+        }else if(timerInfo.equals("RecurrentBill-TIMER")){
+            Timer recurrentBill = timerService.createTimer(startTime, 1 * 60 * 1000, "RecurrentBill-TIMER");
         }
     }
 
@@ -126,7 +133,8 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             ltsbl.updateMonthlyPayment();
         } else if (timer.getInfo().toString().equals("LoanPayByGIRO-TIMER")){
             ltsbl.loanPayByGIRO();
-        }
+        } else if (timer.getInfo().toString().equals("RecurrentBill-TIMER"))
+            btsbl.recurrentBillDeduction();
     }
 
     public void createTimers(Date startTime) {
