@@ -1,0 +1,103 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container100 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{staffLoanManagedBean.allGirso}" editable="true" selectionMode="single" selection="#{staffLoanManagedBean.selectedGiro}" rowKey="#{pendingLoan.id}">
+                                    <f:facet name="header">
+                                        GIRO Management
+                                    </f:facet>
+
+                                    <p:ajax event="rowSelect" listener="#{staffLoanManagedBean.onRowSelect}" update=":form:msgs" />
+                                    
+                                    <p:column headerText="Customer Name" >
+                                        <h:outputText value="#{pendingLoan.customerName}" />
+                                    </p:column>
+
+                                    <p:column headerText="GIRO ID" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+
+
+                                    <p:column headerText="Bill Reference">
+                                        <h:outputText value="#{pendingLoan.billReference}" />
+                                    </p:column>
+
+                                    <p:column headerText="Billing Organization">
+                                        <h:outputText value="#{pendingLoan.billingOrganization.name}" />
+                                    </p:column>
+
+                                    <p:column headerText="Deduction Limit">
+                                        <h:outputText value="#{pendingLoan.deductionLimit}" />
+                                    </p:column>
+
+                                    <p:column headerText="Deduction Date">
+                                        <h:outputText value="#{pendingLoan.deductionDay}" >
+                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Saving Account Number">
+                                        <h:outputText value="#{pendingLoan.savingAccount.accountNumber}" />
+                                    </p:column>
+
+                                    <p:column headerText="GIRO Status ">
+                                        <h:outputText value="#{pendingLoan.status}" />
+                                    </p:column>
+
+
+                                    <f:facet name="footer">
+                                        <div class="Card  SoftGray TexAlCenter HoverEffect ui-fluid">
+                                            <div class="EmptyBox10"></div>
+                                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">                                         
+                                                <p:selectOneRadio id="console" value="#{staffLoanManagedBean.giroDecision}">
+                                                    <f:selectItem itemLabel="Approve" itemValue="Approve" />
+                                                    <f:selectItem itemLabel="Reject" itemValue="Reject" />
+                                                </p:selectOneRadio>
+
+                                                <p:commandButton value="Submit"  update=":form" actionListener="#{staffLoanManagedBean.staffManageGiro}"/>
+
+                                            </h:panelGrid>
+                                        </div>
+                                    </f:facet>
+                                </p:dataTable>
+
+                            </h:panelGrid>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -25,6 +26,56 @@ public class Good implements Serializable {
     private String name;
     private BigDecimal unitPrice;
     private Integer numOfUnits;
+    
+    @ManyToOne
+    private Product product;
+
+    public Good() {
+    }
+
+    public Good(String name, BigDecimal unitPrice, Integer numOfUnits, Product product) {
+        this.name = name;
+        this.unitPrice = unitPrice;
+        this.numOfUnits = numOfUnits;
+        this.product = product;
+    }
+    
+    
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public Integer getNumOfUnits() {
+        return numOfUnits;
+    }
+
+    public void setNumOfUnits(Integer numOfUnits) {
+        this.numOfUnits = numOfUnits;
+    }
+
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+    
+    
     
 
     public Long getId() {

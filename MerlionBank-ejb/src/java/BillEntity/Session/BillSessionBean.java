@@ -296,26 +296,41 @@ public class BillSessionBean implements BillSessionBeanLocal {
     }
 
     @Override
-    public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount) {
-        SavingAccount savingAccount = this.findSavingAccount(accountNumber);
-        BillingOrganization bo = this.findBO(boName);
-        System.out.print("balance before payment " + savingAccount.getAvailableBalance());
-        if (savingAccount.getAvailableBalance().compareTo(amount) != -1) {
-            savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
-            savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
-            System.out.print("balance after payment " + savingAccount.getAvailableBalance());
-            Date todayDate = new Date();
-            BillRecord bill = new BillRecord(bo, billReference, "BI", amount, null, "settled", "Bill payment to " + boName, todayDate, accountNumber, null, savingAccount, null, null);
-            em.persist(bill);
-            savingAccount.getTransactionRecord().add(bill);
-            //invoke webservice to send bill
-            String description = "Bill payment to " + boName;
-            this.logAction(description, savingAccount.getCustomer().getId());
-            em.flush();
-            return true;
-        } else {
-            return false;
-        }
-
+    public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount){
+         SavingAccount savingAccount = this.findSavingAccount(accountNumber);
+         BillingOrganization bo = this.findBO(boName);
+         System.out.print("balance before payment "+ savingAccount.getAvailableBalance());
+         if(savingAccount.getAvailableBalance().compareTo(amount) != -1){
+           savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
+           savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
+           System.out.print("balance after payment "+ savingAccount.getAvailableBalance());
+            Date todayDate=  new Date();
+           BillRecord bill = new BillRecord(bo,billReference,"BI",amount,null, "settled","Bill payment to "+boName, todayDate, accountNumber, null, savingAccount,null,null);
+             em.persist(bill);
+             savingAccount.getTransactionRecord().add(bill);
+             //invoke webservice to send bill
+             String description = "Bill payment to "+boName;
+             this.logAction(description, savingAccount.getCustomer().getId());
+             em.flush();
+             return true;
+         }else{
+             return false;
+         }
+        
     }
-}
+    
+    @Override
+    public List<GIROArrangement> viewableGIRO (Long customerId){
+        Customer customer = em.find(Customer.class, customerId);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        List<GIROArrangement> viewable = new ArrayList<GIROArrangement>();
+        for(int i=0;i<savingAccounts.size();i++){
+            for(int j=0;j<savingAccounts.get(i).getGiroArrangement().size();j++){
+                if(!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")){
+                    viewable.add(savingAccounts.get(i).getGiroArrangement().get(j));
+                }
+            }
+        }
+        return viewable;
+    }
+    }

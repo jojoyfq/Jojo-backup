@@ -8,6 +8,7 @@ package WealthEntity.Session;
 import LoanEntity.Loan;
 import Other.Session.sendEmail;
 import WealthEntity.DiscretionaryAccount;
+import WealthEntity.Portfolio;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -137,6 +138,47 @@ public class WealthTimerSessionBean implements WealthTimerSessionBeanLocal {
                 + "<p style=\"color: #ff0000;\">For more enquiries, please kindly contact +65 8888 8888. Thank you.</p>"
                 + "<br /><p>Note: Please do not reply this email. If you have further questions, please log in and use case management page and submit your enquiry there.</p>"
                 + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);  
+    }
+    
+    public void checkStaffViolation(){
+        Query query = em.createQuery("SELECT a FROM Portfolio a");
+        List<Portfolio> portfolios = new ArrayList(query.getResultList()); 
+       List<Portfolio>  selected=new ArrayList<Portfolio>();
+       
+       BigDecimal temp=new BigDecimal(0);
+       
+       Date currentTime=Calendar.getInstance().getTime();
+       DateTime today=new DateTime(currentTime);
+           DateTime compareDate = today.minusMonths(1);
+           DateTime accountDate=new DateTime();
+       
+       for (int i=0;i<portfolios.size();i++){
+           int size=portfolios.get(i).getPortfolioTransactions().size();
+            accountDate=new DateTime(portfolios.get(i).getPortfolioTransactions().get(size-1));
+       
+          if (portfolios.get(i).getStatus().equals("active") && compareDate.isAfter(accountDate) && portfolios.get(i).getType().equals("Tailored plan")){
+              try{
+            sendViolationEmail(portfolios.get(i).getStaff().getStaffName(),portfolios.get(i).getStaff().getStaffEmail(),portfolios.get(i).getId()); 
+     
+          }catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+        }
+          }
+        
+    }
+    }
+    
+    private void sendViolationEmail(String name, String email,Long accountNumber) throws MessagingException {
+      String subject = "Merlion Bank - No portfolio transaction within one month";
+        System.out.println("Inside send email");
+
+        String content = "<h2>Dear " + name
+                + ",</h2><br /><h1>  The portfolio has no transaction within one month. Portfolio id:  "+ accountNumber+".</h1><br />"
+                + "<p style=\"color: #ff0000;\">For more enquiries, please kindly contact +65 8888 8888. Thank you.</p>"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please look for merlion bank internal support.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank Staff Support</p>";
         System.out.println(content);
         sendEmail.run(email, subject, content);  
     }

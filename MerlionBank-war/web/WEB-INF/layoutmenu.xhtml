@@ -81,12 +81,14 @@
                 <p:submenu id="wealth_management" label="Wealth Management">
                     <p:menuitem id="create_wealthForExisting" value="Apply Discretionary Account" actionListener="#{customerWealthManagedBean.goToApplyWealthAccountExistCustomer}" /> 
                     <p:menuitem id="buy" value="Buy Wealth Product" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForBuyProduct}" /> 
-
-                    <p:menuitem id="view_wealth_account" value="View My Discreationary Account" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccounts}"/>
+                    <p:menuitem id="view_wealth_account" value="Fund Transfer To My Discreationary Account" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccounts}"/>
+                    <p:menuitem id="view_wealth_account2" value="Plan Management" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForPortfolio}"/>
 
                 </p:submenu>
 
                 <p:submenu id="pa_docs" label="Portfolio Management">
+                    <p:menuitem id="view_portfolio" value="View My Portfolio" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsPortfolio}"/>
+
                 </p:submenu>
 
             </pa:menu>
