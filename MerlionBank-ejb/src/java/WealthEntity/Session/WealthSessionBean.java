@@ -107,7 +107,7 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         }
 
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().add(amount));
-        discretionaryAccount.getTotalBalance().add(amount);
+        discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().add(amount));
 
         savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
         savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
