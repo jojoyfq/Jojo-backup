@@ -138,7 +138,8 @@ public List<Staff> retrieveStaffsAccordingToRole(String roleName)throws ListEmpt
     @Override
     public Long assignRM(Long portfolioId,Long staffId){
         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
-        Staff staff=em.find(Staff.class,portfolioId);
+        Staff staff=em.find(Staff.class,staffId);
+        System.out.println("Inside Session Bean staff Id: "+staffId);
         portfolio.setStaff(staff);
         List<Portfolio> portfolios=staff.getPortfolios();
         portfolios.add(portfolio);

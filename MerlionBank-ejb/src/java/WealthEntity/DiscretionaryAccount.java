@@ -49,7 +49,7 @@ public class DiscretionaryAccount implements Serializable {
     public DiscretionaryAccount() {
     }
 
-    public DiscretionaryAccount(Long accountNumber, Date startDate, Date endDate, BigDecimal balance, BigDecimal accumDailyInterest, String status, Customer customer) {
+    public DiscretionaryAccount(Long accountNumber, Date startDate, Date endDate, BigDecimal balance, BigDecimal accumDailyInterest, String status, Customer customer,BigDecimal totalBalance) {
         this.accountNumber = accountNumber;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -57,6 +57,7 @@ public class DiscretionaryAccount implements Serializable {
         this.accumDailyInterest = accumDailyInterest;
         this.status = status;
         this.customer = customer;
+        this.totalBalance=totalBalance;
     }
 
     public BigDecimal getCommission() {
