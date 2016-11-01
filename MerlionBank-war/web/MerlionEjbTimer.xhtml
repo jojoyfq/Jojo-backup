@@ -121,7 +121,7 @@
                     </h:panelGrid>
 
                     <h:panelGrid columns="3">
-                        <p:outputLabel value="10. Recurrent Bill: " />
+                        <p:outputLabel value="11. Recurrent Bill: " />
                         <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
                             <f:attribute name="timerName" value="RecurrentBill-TIMER" />
                         </p:commandButton>
@@ -129,6 +129,37 @@
                             <f:attribute name="timerName" value="RecurrentBill-TIMER" />
                         </p:commandButton> 
                     </h:panelGrid>
+                    
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="12. Wealth Account Closing: " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="CloseWealthAccount-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="CloseWealthAccount-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+                    
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="13. Wealth Interest Crediting: " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="WealthAccountInterest-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="WealthAccountInterest-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+                    
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="14. Wealth Commission Fee Calculating: " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="WealthCommissionFee-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="WealthCommissionFee-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+                    
 
                 </p:panel>
             </h:form>

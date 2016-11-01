@@ -13,6 +13,7 @@ import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.NotEnoughAmountException;
 import LoanEntity.Session.LoanTimerSessionBeanLocal;
+import WealthEntity.Session.WealthTimerSessionBeanLocal;
 import static com.sun.faces.facelets.util.Path.context;
 import java.util.Date;
 import javax.annotation.Resource;
@@ -53,6 +54,9 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
     
     @EJB
     BillTimerSessionBeanLocal btsbl;
+    
+    @EJB
+    WealthTimerSessionBeanLocal wtsbl;
 
     @Override
     public void createTimers(Date startTime, String timerInfo) {
@@ -91,6 +95,12 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             Timer loanPayByGIRO = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanPayByGIRO-TIMER");
         }else if(timerInfo.equals("RecurrentBill-TIMER")){
             Timer recurrentBill = timerService.createTimer(startTime, 1 * 60 * 1000, "RecurrentBill-TIMER");
+        }else if(timerInfo.equals("CloseWealthAccount-TIMER")){
+            Timer closeWealthAccount = timerService.createTimer(startTime, 1 * 60 * 1000, "CloseWealthAccount-TIMER");
+        }else if (timerInfo.equals("WealthAccountInterest-TIMER")){
+            Timer wealthAccountInterest = timerService.createTimer(startTime, 1 * 60 * 1000, "WealthAccountInterest-TIMER");
+        }else if (timerInfo.equals("WealthCommissionFee-TIMER")){
+            Timer wealthCommission = timerService.createTimer(startTime, 1 * 60 * 1000, "WealthCommissionFee-TIMER");
         }
     }
 
@@ -133,8 +143,15 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             ltsbl.updateMonthlyPayment();
         } else if (timer.getInfo().toString().equals("LoanPayByGIRO-TIMER")){
             ltsbl.loanPayByGIRO();
-        } else if (timer.getInfo().toString().equals("RecurrentBill-TIMER"))
+        } else if (timer.getInfo().toString().equals("RecurrentBill-TIMER")){
             btsbl.recurrentBillDeduction();
+        } else if (timer.getInfo().toString().equals("CloseWealthAccount-TIMER")){
+            wtsbl.closeAccount();
+        } else if (timer.getInfo().toString().equals("WealthAccountInterest-TIMER")){
+            wtsbl.interestCrediting();
+        } else if (timer.getInfo().toString().equals("WealthCommissionFee-TIMER")){
+            wtsbl.commissionFeeCalculation();
+        }
     }
 
     public void createTimers(Date startTime) {
