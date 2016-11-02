@@ -177,15 +177,17 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         savingAccount.setBalance(savingAccount.getBalance().add(amount));
         savingAccount.setBalance(savingAccount.getAvailableBalance().add(amount));
 
-        if (discretionaryAccount.getTotalBalance().compareTo(cutline) == 1 || discretionaryAccount.getTotalBalance().compareTo(cutline) == 0) {
-            BigDecimal totalBalance = discretionaryAccount.getTotalBalance().subtract(amount);
-            BigDecimal tier1 = cutline.subtract(totalBalance);
-            amount = amount.subtract(tier1);
-            amount = amount.add(tier1.multiply(processingFee));
-        } else {
-            amount = amount.multiply(processingFee);
-        }
+//        if (discretionaryAccount.getTotalBalance().compareTo(cutline) == 1 || discretionaryAccount.getTotalBalance().compareTo(cutline) == 0) {
+//            BigDecimal totalBalance = discretionaryAccount.getTotalBalance().subtract(amount);
+//            BigDecimal tier1 = cutline.subtract(totalBalance);
+//            amount = amount.subtract(tier1);
+//            amount = amount.add(tier1.multiply(processingFee));
+//        } else {
+//            amount = amount.multiply(processingFee);
+//        }
+        BigDecimal interestRate=new BigDecimal(0.0005);
 
+        discretionaryAccount.setAccumDailyInterest(interestRate);
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
         discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));
 
@@ -403,8 +405,28 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
     }
 
     @Override
-    public List<Portfolio> ModifyPortfolios(Long portfolioId, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double bond, int term) throws EmailNotSendException {
+    public List<Portfolio> ModifyPortfolioRate(Long portfolioId, Double expectedRateOfReturn, int term)  {
         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+       
+        portfolio.setTerm(term);
+
+        Date currentTime = portfolio.getStartDate();
+        DateTime start = new DateTime(currentTime);
+        DateTime currentTime1 = start.plusMonths(term);
+        Date currentTimestamp = currentTime1.toDate();
+
+        portfolio.setEndDate(currentTimestamp);
+
+        portfolio.setStatus("inactive");
+
+        List<Portfolio> portfolios = portfolio.getDiscretionaryAccount().getPortfolios();
+
+        return portfolios;
+    }
+    
+    @Override
+    public List<Portfolio> ModifyPortfolioProduct(Long portfolioId,Double foreignExchange, Double equity, Double bond) {
+         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
         BigDecimal investAmount = portfolio.getInvestAmount();
         DiscretionaryAccount discretionaryAccount = portfolio.getDiscretionaryAccount();
 
@@ -432,16 +454,6 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         products.add(stockProduct);
 
         portfolio.setProducts(products);
-
-        portfolio.setTerm(term);
-
-        Date currentTime = portfolio.getStartDate();
-        DateTime start = new DateTime(currentTime);
-        DateTime currentTime1 = start.plusMonths(term);
-        Date currentTimestamp = currentTime1.toDate();
-
-        portfolio.setEndDate(currentTimestamp);
-
         portfolio.setStatus("inactive");
 
         List<Portfolio> portfolios = portfolio.getDiscretionaryAccount().getPortfolios();

@@ -48,7 +48,8 @@ public interface WealthSessionBeanLocal {
 
     public List<Portfolio> customerAcceptPlan(Long customerId, Long portfolioId) throws EmailNotSendException;
 
-public List<Portfolio> ModifyPortfolios(Long portfolioId, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double stock,int term) throws EmailNotSendException;
+ public List<Portfolio> ModifyPortfolioRate(Long portfolioId, Double expectedRateOfReturn, int term);
+ public List<Portfolio> ModifyPortfolioProduct(Long portfolioId,Double foreignExchange, Double equity, Double bond);
 
 public List<Portfolio> portfolioEarlyWithdraw(Long portfolioId);
 public Long payCommissionFee(Long customerId, Long discretionaryAccountId) throws NotEnoughAmountException;
