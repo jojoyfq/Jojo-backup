@@ -38,6 +38,7 @@ public class CreditCard implements Serializable {
     private Long cvv;
     private String password;
     private String salt;
+    private String status;
     
     @ManyToOne
     private CreditCardType creditCardType = new CreditCardType();
@@ -173,5 +174,13 @@ public class CreditCard implements Serializable {
     public String toString() {
         return "CardEntity.CreditCard[ id=" + id + " ]";
     }
-    
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+      
 }

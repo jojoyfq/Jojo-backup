@@ -10,6 +10,10 @@ import CardEntity.CreditCardApplication;
 import CardEntity.CreditCardType;
 import CommonEntity.Customer;
 import Exception.CreditCardException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +39,8 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
 
     @PersistenceContext
     private EntityManager em;
+    private static final Random RANDOM = new SecureRandom();
+    public static final int SALT_LENGTH = 32;
 
     @Override
     public List<String> getCreditCardType() {
@@ -167,6 +173,71 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
         Long cvv = Long.valueOf(number);
 
         return cvv;
+    }
+    
+    @Override
+    public boolean verifyCreditCard(String cardHolder, Long cardNo, Date expiryDate, Long cvv) throws CreditCardException {
+        SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy");
+        String formatExpiryDate = dt.format(expiryDate);
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNo");
+        m.setParameter("cardNo", cardNo);
+        List<CreditCard> creditCards = new ArrayList(m.getResultList());
+        if (creditCards.isEmpty()) {
+            throw new CreditCardException("The Card Number is incorrect");
+        } else {
+            CreditCard creditCard = creditCards.get(0);
+            String formateExpiryDateD = dt.format(creditCard.getExpiryDate());
+            if (!creditCard.getCardHolder().equalsIgnoreCase(cardHolder)) {
+                throw new CreditCardException("The Card Holder Name is incorrect");
+            } else if (!formatExpiryDate.equals(formateExpiryDateD)) {
+                throw new CreditCardException("The Expiry Date is incorrect");
+            } else if (!creditCard.getCvv().equals(cvv)) {
+                throw new CreditCardException("The cvv number is incorrect");
+            } else {
+                return true;
+            }
+        }
+    }
+    
+    @Override
+    public void setPassword(Long cardNo, String password) {
+        //password salt and hash
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$%^&*!?+-";
+        for (int i = 0; i < SALT_LENGTH; i++) {
+            int index = (int) (RANDOM.nextDouble() * letters.length());
+            salt += letters.substring(index, index + 1);
+        }
+        String passwordDatabase = passwordHash(password + salt);
+        System.out.println("Password after hash&salt:" + passwordDatabase);
+
+        //find the Credit card and set password
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNo");
+        m.setParameter("cardNo", cardNo);
+        CreditCard creditCard = (CreditCard)m.getSingleResult();
+        creditCard.setPassword(passwordDatabase);
+        creditCard.setStatus("active");
+        creditCard.setSalt(salt);
+        em.flush();
+    }
+    
+    private String passwordHash(String pass) {
+        String md5 = null;
+
+        try {
+            //Create MessageDigest object for MD5
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            //Update input string in message digest
+            digest.update(pass.getBytes(), 0, pass.length());
+
+            //Converts message digest value in base 16 (hex) 
+            md5 = new BigInteger(1, digest.digest()).toString(16);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md5;
     }
     
     
