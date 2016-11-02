@@ -25,6 +25,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -313,6 +314,29 @@ public class BillSessionBean implements BillSessionBeanLocal {
          }else{
              return false;
          }
+        
+    }
+    @Override
+    public List<GIROArrangement> getPendingGIRO (String boName){
+        Query m = em.createQuery("SELECT b FROM GIROArrangement b WHERE b.status = :status");
+        m.setParameter("status", "pending");
+        List<GIROArrangement> result = new ArrayList<>();
+        List<GIROArrangement> allGIRO = m.getResultList();
+        for(int i=0; i< allGIRO.size(); i++){
+            if(allGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)){
+                result.add(allGIRO.get(i));
+            }
+        }
+        return result;
+    }
+        
+        
+
+    @Override
+    public void approveGIRO(Long id,String boName,DateTime deductDate){
+        GIROArrangement giro = em.find(GIROArrangement.class, id);
+        giro.setStatus("active");
+        giro.setDeductionDay(deductDate);
         
     }
 
