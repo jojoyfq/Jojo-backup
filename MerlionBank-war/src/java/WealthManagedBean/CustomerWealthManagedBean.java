@@ -439,16 +439,16 @@ if((equity+bond+foreignExchange)>1){
 public void customerModifyPortfolio(RowEditEvent event){
     selectedPort = (Portfolio) event.getObject();
     System.out.println("Selected Portfolio to edit - id: "+selectedPort.getId());
-        try {
-            oneCustomerAllPortfolios = wsbl.ModifyPortfolios(selectedPort.getId(), exepectedRateOfReturn, foreignExchange, equity, bond, term);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully modifed your plan!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        
-        } catch (EmailNotSendException ex) {
-         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        
-        }
+//        try {
+//            oneCustomerAllPortfolios = wsbl.ModifyPortfolios(selectedPort.getId(), exepectedRateOfReturn, foreignExchange, equity, bond, term);
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully modifed your plan!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        
+//        } catch (EmailNotSendException ex) {
+//         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        
+//        }
 }
     public void withdrawFromDiscretionaryAccount(ActionEvent event) {
         System.out.println("******Selected discretionary Account to withdraw is " + selectedWealth.getId());
