@@ -177,15 +177,17 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         savingAccount.setBalance(savingAccount.getBalance().add(amount));
         savingAccount.setBalance(savingAccount.getAvailableBalance().add(amount));
 
-        if (discretionaryAccount.getTotalBalance().compareTo(cutline) == 1 || discretionaryAccount.getTotalBalance().compareTo(cutline) == 0) {
-            BigDecimal totalBalance = discretionaryAccount.getTotalBalance().subtract(amount);
-            BigDecimal tier1 = cutline.subtract(totalBalance);
-            amount = amount.subtract(tier1);
-            amount = amount.add(tier1.multiply(processingFee));
-        } else {
-            amount = amount.multiply(processingFee);
-        }
+//        if (discretionaryAccount.getTotalBalance().compareTo(cutline) == 1 || discretionaryAccount.getTotalBalance().compareTo(cutline) == 0) {
+//            BigDecimal totalBalance = discretionaryAccount.getTotalBalance().subtract(amount);
+//            BigDecimal tier1 = cutline.subtract(totalBalance);
+//            amount = amount.subtract(tier1);
+//            amount = amount.add(tier1.multiply(processingFee));
+//        } else {
+//            amount = amount.multiply(processingFee);
+//        }
+        BigDecimal interestRate=new BigDecimal(0.05);
 
+        discretionaryAccount.setAccumDailyInterest(interestRate);
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
         discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));
 
