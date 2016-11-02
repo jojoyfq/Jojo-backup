@@ -96,6 +96,15 @@
                                         </center>
                                     </p:column>
 
+                                    <p:column headerText="Assign RM" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetailg" actionListener="#{staffWealthManagedBean.assignRM}" oncomplete="PF('msgDialogg').show()"  ajax="true" type="submit" >
+<!--                                                <f:setPropertyActionListener value="{pendingLoan}" target="{staffWealthManagedBean.selectedPort}" />-->
+                                                                                                <f:attribute name="selectedPort" value="#{pendingLoan}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
                                     <p:column headerText="Edit" style="width:32px">
                                         <p:rowEditor />
                                     </p:column>
@@ -172,6 +181,26 @@
                                 </p:outputPanel>
                             </p:dialog>
 
+                            <p:dialog header="Staff Information" widgetVar="msgDialogg" modal="true" height="100">
+                                <p:outputPanel id="msgDetailg" style="text-align:center;" >
+
+                                    <p:outputLabel for="issueType" value="Issue Type: " />
+
+                                    <p:selectOneMenu id="issueType" value="#{staffWealthManagedBean.selectedRoleName}" style="width:150px">
+                                        <p:ajax listener="#{staffWealthManagedBean.onStaffChange}" update="staffName"/>
+                                        <f:selectItem itemLabel="Select Department" itemValue="" noSelectionOption="true" />
+                                        <f:selectItems value="#{staffWealthManagedBean.availableRoleNames}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel for="staffName" value="Relationship Manager " />
+                                    <p:selectOneMenu id="staffName" value="#{staffWealthManagedBean.selectedStaffName}" style="width:150px">
+                                        <f:selectItem itemLabel="Select Staff" itemValue="" noSelectionOption="true" />
+                                        <f:selectItems value ="#{staffWealthManagedBean.availableStaffs}"/>
+                                    </p:selectOneMenu>    
+
+                                    <p:commandButton value="Submit"  actionListener="#{staffWealthManagedBean.assignRM2}" icon="ui-icon-check" />
+                                </p:outputPanel>
+
+                            </p:dialog>
                         </h:form>
                     </div>
                 </div>
