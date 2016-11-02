@@ -398,10 +398,13 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         if ((product.getPurchaseAmount().add(totalAmount)).compareTo(product.getExpectedAmount())==1){
             throw new NotEnoughAmountException ("According to contract, there is not enough amount to purchase this good. This may due to your have exceed the total amount of this category or there is not enough money it the account.");
         }
-        BigDecimal existingAmount=new BigDecimal(good.getNumOfUnits());
-        
-        BigDecimal newUnitPrice=totalAmount.add(good.getUnitPrice().multiply(existingAmount));
+        BigDecimal existingAmount=new BigDecimal(good.getNumOfUnits());      
+        BigDecimal newUnitPrice=totalAmount.add(good.getUnitPrice().multiply(existingAmount));   
         Integer newNumber=numOfUnits+good.getNumOfUnits();
+        BigDecimal num=new BigDecimal(newNumber);
+         newUnitPrice =newUnitPrice.divide(num,MathContext.DECIMAL128);
+        newUnitPrice.setScale(4, RoundingMode.HALF_UP);
+        
         good.setUnitPrice(newUnitPrice);
         good.setNumOfUnits(newNumber);
         
