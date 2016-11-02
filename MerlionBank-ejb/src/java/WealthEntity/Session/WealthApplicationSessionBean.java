@@ -10,6 +10,7 @@ import CommonEntity.CustomerAction;
 import CommonEntity.OnlineAccount;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import Exception.EmailNotSendException;
+import Exception.NotEnoughAmountException;
 import Exception.UserExistException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
@@ -418,7 +419,7 @@ BigDecimal interestRate=new BigDecimal(0.024);
         List<Customer> temp = new ArrayList(q.getResultList());
         Customer customer = temp.get(temp.size() - 1);
         BigDecimal amount = customer.getDiscretionaryAccounts().get(0).getBalance();
-        BigDecimal currentAmount = new BigDecimal(200000);
+        BigDecimal currentAmount = new BigDecimal(250000);
         int res = amount.compareTo(currentAmount);
         if (res == 0 || res == 1) {
             return ic;
@@ -426,7 +427,40 @@ BigDecimal interestRate=new BigDecimal(0.024);
             return "invalid amount";
         }
     }
+    
+    @Override
+    public String verifyExistingDiscretionaryAccountBalance(Long discretionaryAccountId) throws NotEnoughAmountException{
+        DiscretionaryAccount discretionaryAccount=em.find(DiscretionaryAccount.class,discretionaryAccountId);
+        BigDecimal amount = discretionaryAccount.getBalance();
+        BigDecimal currentAmount = new BigDecimal(250000);
+        int res = amount.compareTo(currentAmount);
+        if (res == 0 || res == 1) {
+            return discretionaryAccount.getCustomer().getIc();
+        }else
+           return "invalid amount";
+        }
+    
+ 
+@Override
+public List<DiscretionaryAccount> updateAccountStatus(Long discretionaryAccountId){
+ DiscretionaryAccount discretionaryAccount=em.find(DiscretionaryAccount.class,discretionaryAccountId);
+  discretionaryAccount.setStatus("active");
+ em.flush();
+ 
+ Customer customer=discretionaryAccount.getCustomer();
 
+        CustomerAction action = new CustomerAction(Calendar.getInstance().getTime(), "Activate Discretionary Account", customer);
+        em.persist(action);
+        List<CustomerAction> customerActions = customer.getCustomerActions();
+        customerActions.add(action);
+        customer.setCustomerActions(customerActions);
+        em.persist(customer);
+        em.flush();
+        
+        return customer.getDiscretionaryAccounts();
+
+}
+        
      
 
 }

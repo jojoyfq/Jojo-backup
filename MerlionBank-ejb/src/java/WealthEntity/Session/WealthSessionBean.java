@@ -185,7 +185,7 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
 //        } else {
 //            amount = amount.multiply(processingFee);
 //        }
-        BigDecimal interestRate=new BigDecimal(0.05);
+        BigDecimal interestRate=new BigDecimal(0.0005);
 
         discretionaryAccount.setAccumDailyInterest(interestRate);
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
