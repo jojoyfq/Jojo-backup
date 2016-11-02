@@ -342,7 +342,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
     }
     
     @Override
-    public List<Product> displayProduct(Long customerId,Long portfolioId){
+    public List<Product> displayProduct(Long portfolioId){
               Portfolio portfolio = em.find(Portfolio.class, portfolioId);
               return portfolio.getProducts();
     }
@@ -353,7 +353,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
     }
     
     @Override
-    public Long buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
+    public List<Good> buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
         Product product = em.find(Product.class, productId);
         Good good = em.find(Good.class, goodId);
         
@@ -374,11 +374,11 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         
         recordTransaction(product.getPortfolio().getId(), product,good,unitPrice,numOfUnits,"buy");
         smsbl.recordStaffAction(staffId, "buy goods for wealth product " + good.getId(), product.getPortfolio().getDiscretionaryAccount().getCustomer().getId());
-        return goodId;
+        return displayGood(product.getId());
     }
     
     @Override
-    public Long buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
+    public List<Good> buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
          Product product = em.find(Product.class, productId);
         
         BigDecimal number=new BigDecimal(numOfUnits);
@@ -400,7 +400,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         
         recordTransaction(product.getPortfolio().getId(), product,good,unitPrice,numOfUnits,"buy");
          smsbl.recordStaffAction(staffId, "buy goods for wealth product " + good.getId(), product.getPortfolio().getDiscretionaryAccount().getCustomer().getId());
-        return good.getId();
+        return displayGood(product.getId());
     }
     
      @Override

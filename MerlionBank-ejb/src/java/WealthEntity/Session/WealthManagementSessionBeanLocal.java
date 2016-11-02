@@ -55,9 +55,9 @@ public interface WealthManagementSessionBeanLocal {
     
     //buy & sell product
     public List<Portfolio> displayPortfoliosUnderStaff(Long staffId);
-     public List<Product> displayProduct(Long customerId,Long portfolioId);
+  public List<Product> displayProduct(Long portfolioId);
       public List<Good>displayGood(Long productId);
-       public Long buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
-       public Long buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
+       public List<Good> buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
+       public List<Good> buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
         public List<Good> sellGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
 }
