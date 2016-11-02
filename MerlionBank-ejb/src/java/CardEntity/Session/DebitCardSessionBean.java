@@ -489,5 +489,6 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
         List<String> debitCardType = q.getResultList();
         return debitCardType;
     }
-
+    
+    
 }

@@ -8,6 +8,7 @@ package BillEntity.Session;
 import BillEntity.BillingOrganization;
 import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
+import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -59,5 +60,6 @@ public interface BillSessionBeanLocal {
 
     public List<GIROArrangement> getPendingGIRO(String boName);
 
-    
+    public List<GIROArrangement> viewableGIRO(Long customerId);  
+
 }

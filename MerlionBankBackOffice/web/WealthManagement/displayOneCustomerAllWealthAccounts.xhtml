@@ -84,9 +84,9 @@
                                             </center>
                                         </p:column>
 
-                                        <p:column headerText="Early Payoff" style="width: 80px;" >
+                                        <p:column headerText="Withdraw Money" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{staffWealthManagedBean.selectWealthAccountToWithdraw}" oncomplete="PF('msgDialog2').show()"  ajax="false" type="submit" >
                                                     <f:attribute name="selectedWealth" value="#{Wealth}"  />
                                                 </p:commandButton>
                                             </center>
@@ -99,6 +99,22 @@
 
 
                             </p:panel>
+                             <p:dialog id="dialogMessage1"   header="Withdraw" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail1" style="text-align:center;">
+                                <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
+
+                                                    <h:outputText value="Withdraw Amount S($)" style="font-weight: bold"/>
+                                                    <h:outputText value="#{staffWealthManagedBean.withdrawAmount}"/>
+
+                                                    <div class="Container60">
+                                                        <p:commandButton actionListener="#{staffWealthManagedBean.withdrawFromDiscretionaryAccount}" onclick="if (!confirm('Are you sure you want to withdraw now?'))
+                                                            return false;" value="Submit" update=":form:panel" ajax="false" />
+                                                    </div>
+                                                    <div class="Container30"></div>
+                                                </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
                         </h:form>
                     </div>
                 </div>

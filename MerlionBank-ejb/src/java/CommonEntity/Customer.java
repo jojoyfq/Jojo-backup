@@ -66,6 +66,8 @@ public class Customer implements Serializable {
     private BigDecimal intraTransferLimit;
     private BigDecimal monthlyIncome;
     private String fileDestination;
+    private List<String> loanFileDestination;
+    private List<String> CreditCardFileDestination;
 
 
     public BigDecimal getMonthlyIncome() {
@@ -234,6 +236,24 @@ public class Customer implements Serializable {
     public void setMessages(List<MessageEntity> messages) {
         this.messages = messages;
     }
+
+    public List<String> getLoanFileDestination() {
+        return loanFileDestination;
+    }
+
+    public void setLoanFileDestination(List<String> loanFileDestination) {
+        this.loanFileDestination = loanFileDestination;
+    }
+
+    public List<String> getCreditCardFileDestination() {
+        return CreditCardFileDestination;
+    }
+
+    public void setCreditCardFileDestination(List<String> CreditCardFileDestination) {
+        this.CreditCardFileDestination = CreditCardFileDestination;
+    }
+    
+    
     
 //    public List<FixedDepositAccount> getFixedDepositeAccounts() {
 //        return fixedDepositeAccounts;

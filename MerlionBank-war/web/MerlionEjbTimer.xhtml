@@ -109,7 +109,7 @@
                             <f:attribute name="timerName" value="LoanAccountStatus-TIMER" />
                         </p:commandButton> 
                     </h:panelGrid>
-                                      
+
                     <h:panelGrid columns="3">
                         <p:outputLabel value="10. Loan Pay By GIRO: " />
                         <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
@@ -117,6 +117,16 @@
                         </p:commandButton>
                         <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
                             <f:attribute name="timerName" value="LoanPayByGIRO-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="10. Recurrent Bill: " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="RecurrentBill-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="RecurrentBill-TIMER" />
                         </p:commandButton> 
                     </h:panelGrid>
 

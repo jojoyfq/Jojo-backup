@@ -1,0 +1,170 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container5 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container90 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Portfolio Management System - Trade </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 NoPadding Responsive50 ui-fluid">
+
+                        <h:form id="form">
+                            <p:panel id="panel" header="Wealth Management Payment System - Trading" >
+
+                                <p:messages id="msgs" />
+
+                                <h:panelGrid columns="4" cellpadding="5">
+
+                                    <p:dataTable var="Wealth" value="#{portfolioManagedBean.oneProductAllGoods}"  editable="true" >
+
+                                        <p:column headerText="Instrument ID" style="width: 80px;">
+
+                                            <h:outputText value="#{Wealth.id}" />
+                                        </p:column>
+
+                                        <p:column headerText="Instrument Name">
+
+                                            <h:outputText value="#{Wealth.name}" />
+                                        </p:column>
+
+                                        <p:column headerText="Share Price">
+                                            <h:outputText value="#{Wealth.unitPrice}" >
+                                                <f:convertNumber locale="en-US" minFractionDigits="2" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="No. of Shares">
+                                            <h:outputText value="#{Wealth.numOfUnits}" >
+                                                <f:convertNumber locale="en-US"  minFractionDigits="2" />
+                                            </h:outputText>
+                                        </p:column>
+
+
+
+
+                                        <p:column headerText="Buy" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{portfolioManagedBean.selectGood}" oncomplete="PF('replyDialog2').show()"  ajax="true"  >
+                                                    <f:attribute name="selectedGood" value="#{Wealth}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+
+                                        <p:column headerText="Sell" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{portfolioManagedBean.selectGood}" oncomplete="PF('replyDialog1').show()"  ajax="true" >
+
+                                                    <f:attribute name="selectedGood" value="#{Wealth}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+
+
+                                    </p:dataTable>
+
+
+                                </h:panelGrid>
+                                 </p:panel>
+                                </h:form>
+                        
+                                <h:form id="form2">
+                                    <p:dialog header="Sell Transaction" widgetVar="replyDialog1" showEffect="fade" hideEffect="fade" resizable="true" >
+
+
+                                        <h:outputLabel for="ic" value="Price: " />
+                                        <p:inputNumber id="ic" value="#{portfolioManagedBean.unitPrice}"  required="true" requiredMessage="Please input unit price"/>
+                                        <p:message for="ic" display="icon" />
+
+                                        <h:outputLabel for="customerName" value="Number of Shares: " />
+                                        <p:inputText id="customerName" value="#{portfolioManagedBean.numOfUnits}"  required="true" requiredMessage="Please input number of shares">
+
+                                        </p:inputText>
+                                        <p:message for="customerName" display="icon"/>
+
+                                        <div class="Container30"></div>
+                                        <div class="Container40">
+                                            <p:commandButton icon="ui-icon-mail-closed" value="Submit" actionListener="#{portfolioManagedBean.staffSellGood}" update=":form2" ajax="false"  />
+                                        </div>
+                                    </p:dialog>
+                                </h:form >
+                                
+                                <h:form id="form3">
+                                    <p:dialog header="Buy Transaction" widgetVar="replyDialog2" showEffect="fade" hideEffect="fade" resizable="true" >
+
+
+                                        <h:outputLabel for="ic1" value="Price: " />
+                                        <p:inputNumber id="ic1" value="#{portfolioManagedBean.unitPrice}"  required="true" requiredMessage="Please input unit price"/>
+                                        <p:message for="ic1" display="icon" />
+
+                                        <h:outputLabel for="customerName1" value="Number of Shares: " />
+                                        <p:inputText id="customerName1" value="#{portfolioManagedBean.numOfUnits}"  required="true" requiredMessage="Please input number of shares">
+
+                                        </p:inputText>
+                                        <p:message for="customerName1" display="icon"/>
+
+                                        <div class="Container30"></div>
+                                        <div class="Container40">
+                                            <p:commandButton icon="ui-icon-mail-closed" value="Submit" actionListener="#{portfolioManagedBean.staffBuyExistingGood}" update=":form3" ajax="false"  />
+                                        </div>
+                                    </p:dialog>
+                                </h:form >
+                                <div class="Container100 ui-fluid">
+                                    <div class="Container30"></div>
+                                    <div class="Container40">
+                                        <h:form id="form1">  
+                                            <p:commandButton icon="ui-icon-pencil" onclick="PF('replyDialog').show()"  ajax="true" value="Buy New Instrument" />
+                                            <p:dialog header="Buy Transaction" widgetVar="replyDialog" showEffect="fade" hideEffect="fade" resizable="true" >
+
+                                                <h:outputLabel for="name" value="Instrument Name: " />
+                                                <p:inputText id="name" value="#{portfolioManagedBean.productName}"  required="true" requiredMessage="Please input instrument name"/>
+                                                <p:message for="name" display="icon" />
+
+                                                <h:outputLabel for="ic" value="Price: " />
+                                                <p:inputNumber id="ic" value="#{portfolioManagedBean.unitPrice}"  required="true" requiredMessage="Please input unit price"/>
+                                                <p:message for="ic" display="icon" />
+
+                                                <h:outputLabel for="customerName" value="Number of Shares: " />
+                                                <p:inputText id="customerName" value="#{portfolioManagedBean.numOfUnits}"  required="true" requiredMessage="Please input number of shares">
+
+                                                </p:inputText>
+                                                <p:message for="customerName" display="icon"/>
+
+                                                <div class="Container30"></div>
+                                                <div class="Container40">
+                                                    <p:commandButton icon="ui-icon-mail-closed" value="Submit" actionListener="#{portfolioManagedBean.staffBuyNewGood}" update=":form1" ajax="false"  />
+                                                </div>
+                                            </p:dialog>
+                                        </h:form>
+                                    </div>
+                                    <div class="Container30"></div>
+                                </div>
+                           
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container5 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

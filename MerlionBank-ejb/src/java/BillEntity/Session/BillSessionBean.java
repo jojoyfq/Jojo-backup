@@ -15,6 +15,7 @@ import CommonEntity.CustomerAction;
 import CommonEntity.Staff;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
+import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 
 /**
  *
@@ -39,7 +43,6 @@ public class BillSessionBean implements BillSessionBeanLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-
     public boolean addBank(String bankName, String swiftCode, String UEN, String address) {
         List<OtherBank> existingBanks = this.viewBank();
 
@@ -292,7 +295,7 @@ public class BillSessionBean implements BillSessionBeanLocal {
         }
         em.flush();
     }
-    
+
     @Override
     public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount){
          SavingAccount savingAccount = this.findSavingAccount(accountNumber);
@@ -316,7 +319,7 @@ public class BillSessionBean implements BillSessionBeanLocal {
          }
         
     }
-    @Override
+
     public List<GIROArrangement> getPendingGIRO (String boName){
         Query m = em.createQuery("SELECT b FROM GIROArrangement b WHERE b.status = :status");
         m.setParameter("status", "pending");
@@ -340,4 +343,19 @@ public class BillSessionBean implements BillSessionBeanLocal {
         
     }
 
-}
+    @Override
+    public List<GIROArrangement> viewableGIRO (Long customerId){
+        Customer customer = em.find(Customer.class, customerId);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        List<GIROArrangement> viewable = new ArrayList<GIROArrangement>();
+        for(int i=0;i<savingAccounts.size();i++){
+            for(int j=0;j<savingAccounts.get(i).getGiroArrangement().size();j++){
+                if(!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")){
+                    viewable.add(savingAccounts.get(i).getGiroArrangement().get(j));
+                }
+            }
+        }
+        return viewable;
+    }
+    }
+

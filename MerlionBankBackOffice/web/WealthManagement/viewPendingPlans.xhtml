@@ -27,14 +27,11 @@
                             <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
                                 <p:messages id="msgs" />
 
-                                <p:dataTable id="radioDT" var="pendingLoan" value="#{staffWealthManagedBean.pendingApprovedTailoredPlans}" editable="true" selectionMode="single" selection="#{staffLoanManagedBean.selectedLoan}" rowKey="#{pendingLoan.id}">
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{staffWealthManagedBean.pendingApprovedTailoredPlans}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selectedPort}" rowKey="#{pendingLoan.id}">
                                     <f:facet name="header">
                                         Pending Tailored Plans
                                     </f:facet>
                                     <p:ajax event="rowEdit" listener="#{staffWealthManagedBean.staffModifyPortfolio}"  />
-
-                                    <p:column selectionMode="single"/>
-
 
                                     <p:column headerText="Plan ID" >
                                         <h:outputText value="#{pendingLoan.id}" />
@@ -51,41 +48,12 @@
                                     </p:column>
 
                                     <p:column headerText="Expected Rate of Return"> 
-                                        <p:cellEditor rendered="#{pendingLoan.type eq "Tailored Product" }">
+                                        <p:cellEditor >
                                             <f:facet name="output"><h:outputText value="#{pendingLoan.expectedRateOfReturn}" >
                                                     <f:convertNumber type="percent" minFractionDigits="2" /> 
                                                 </h:outputText></f:facet>
                                             <f:facet name="input"><p:inputText  value="#{pendingLoan.expectedRateOfReturn}" style="width:100%"/></f:facet>
 
-                                        </p:cellEditor>
-                                    </p:column>
-
-                                    <p:column headerText="FX Proportion">
-                                        <p:cellEditor rendered="#{pendingLoan.type eq "Tailored Product" }">
-                                            <f:facet name="output"><h:outputText value="#{staffWealthManagedBean.foreignExchange}" >
-                                                    <f:convertNumber type="percent" minFractionDigits="2" />
-                                                </h:outputText></f:facet>
-                                            <f:facet name="input"><p:inputText  value="#{staffWealthManagedBean.foreignExchange}" style="width:100%"/></f:facet>
-                                        </p:cellEditor>
-                                    </p:column>
-
-
-                                    <p:column headerText="Equity Proportion">
-                                        <p:cellEditor rendered="#{pendingLoan.type eq "Tailored Product" }">
-                                            <f:facet name="output"><h:outputText value="#{staffWealthManagedBean.equity}" >
-                                                    <f:convertNumber type="percent" minFractionDigits="2" />
-                                                </h:outputText></f:facet>
-                                            <f:facet name="input"><p:inputText  value="#{staffWealthManagedBean.equity}" style="width:100%"/></f:facet>
-                                        </p:cellEditor>
-                                    </p:column>
-
-
-                                    <p:column headerText="Bond Proportion">
-                                        <p:cellEditor rendered="#{pendingLoan.type eq "Tailored Product" }">
-                                            <f:facet name="output"><h:outputText value="#{staffWealthManagedBean.bond}" >
-                                                    <f:convertNumber type="percent" minFractionDigits="2" />
-                                                </h:outputText></f:facet>
-                                            <f:facet name="input"><p:inputText  value="#{staffWealthManagedBean.vond}" style="width:100%"/></f:facet>
                                         </p:cellEditor>
                                     </p:column>
 
@@ -110,15 +78,33 @@
                                         <h:outputText value="#{pendingLoan.status}" />
                                     </p:column>
 
-                                     <p:column headerText="Customer Detail" style="width: 80px;" >
+                                    <p:column headerText="Products Detail" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail" oncomplete="PF('msgDialog').show()"  ajax="true" type="submit" >
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail1" oncomplete="PF('msgDialog2').show()"  ajax="true" type="submit" >
                                                 <f:setPropertyActionListener value="#{pendingLoan}" target="#{staffWealthManagedBean.selectedPort}" />
                                                 <!--                                                <f:attribute name="selectedLoan" value="{pendingLoan}"  />-->
                                             </p:commandButton>
                                         </center>
                                     </p:column>
-                                    
+
+                                    <p:column headerText="Customer Detail" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icp:commandButtonon-mail-open" update=":form:msgDetail" oncomplete="PF('msgDialog').show()"  ajax="true" type="submit" >
+                                                <f:setPropertyActionListener value="#{pendingLoan}" target="#{staffWealthManagedBean.selectedPort}" />
+                                                <!--                                                <f:attribute name="selectedLoan" value="{pendingLoan}"  />-->
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
+                                    <p:column headerText="Assign RM" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetailg" actionListener="#{staffWealthManagedBean.assignRM}" oncomplete="PF('msgDialogg').show()"  ajax="true" type="submit" >
+<!--                                                <f:setPropertyActionListener value="{pendingLoan}" target="{staffWealthManagedBean.selectedPort}" />-->
+                                                                                                <f:attribute name="selectedPort" value="#{pendingLoan}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
                                     <p:column headerText="Edit" style="width:32px">
                                         <p:rowEditor />
                                     </p:column>
@@ -135,7 +121,7 @@
                                 </p:dataTable>
 
                             </h:panelGrid>
-<p:dialog id="dialogMessage"   header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
+                            <p:dialog id="dialogMessage"   header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
                                 <p:outputPanel id="msgDetail" style="text-align:center;">
                                     <p:panelGrid  columns="2"  >
 
@@ -143,7 +129,7 @@
                                         <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.id}" />
 
                                         <h:outputText value="Customer IC:" />
-                                        <h:outputText value="#{stastaffWealthManagedBean.selectedPort.discretionaryAccount.customer.ic}" />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.ic}" />
 
                                         <h:outputText value="Customer Name: " />
                                         <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.name}" />
@@ -169,8 +155,52 @@
                                     </p:panelGrid>
                                 </p:outputPanel>
                             </p:dialog>
+                            <p:dialog id="dialogMessage1"   header="Product Info" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail1" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
 
+                                        <p:dataTable id="radioDT1" var="product" value="#{staffWealthManagedBean.selectedPort.products}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selectedPort}" rowKey="#{product.id}">
+                                            <p:ajax event="rowEdit" listener="#{staffWealthManagedBean.staffModifyPortfolio}" update=":form" /> 
 
+                                            <p:column headerText="Product Name">
+                                                <h:outputText value="#{product.productName}" />
+                                            </p:column>
+
+                                            <p:column headerText="Proportion">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{product.percentage}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText id="modelInput" value="#{product.percentage}" style="width:100%"/></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+
+                                            <p:column headerText="Edit" style="width:32px">
+                                                <p:rowEditor />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
+                            <p:dialog header="Staff Information" widgetVar="msgDialogg" modal="true" height="100">
+                                <p:outputPanel id="msgDetailg" style="text-align:center;" >
+
+                                    <p:outputLabel for="issueType" value="Issue Type: " />
+
+                                    <p:selectOneMenu id="issueType" value="#{staffWealthManagedBean.selectedRoleName}" style="width:150px">
+                                        <p:ajax listener="#{staffWealthManagedBean.onStaffChange}" update="staffName"/>
+                                        <f:selectItem itemLabel="Select Department" itemValue="" noSelectionOption="true" />
+                                        <f:selectItems value="#{staffWealthManagedBean.availableRoleNames}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel for="staffName" value="Relationship Manager " />
+                                    <p:selectOneMenu id="staffName" value="#{staffWealthManagedBean.selectedStaffName}" style="width:150px">
+                                        <f:selectItem itemLabel="Select Staff" itemValue="" noSelectionOption="true" />
+                                        <f:selectItems value ="#{staffWealthManagedBean.availableStaffs}"/>
+                                    </p:selectOneMenu>    
+
+                                    <p:commandButton value="Submit"  actionListener="#{staffWealthManagedBean.assignRM2}" icon="ui-icon-check" />
+                                </p:outputPanel>
+
+                            </p:dialog>
                         </h:form>
                     </div>
                 </div>

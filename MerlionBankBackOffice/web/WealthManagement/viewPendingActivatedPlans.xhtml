@@ -1,0 +1,190 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container100 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{staffWealthManagedBean.pendingActivatedPlans}" editable="true" selectionMode="single" selection="#{staffLoanManagedBean.selectedLoan}" rowKey="#{pendingLoan.id}">
+                                    <f:facet name="header">
+                                        Pending Tailored Plans For Activation
+                                    </f:facet>
+
+                                    <p:column headerText="Plan ID" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Plan Type">
+                                        <h:outputText value="#{pendingLoan.type}" />
+                                    </p:column>
+
+                                    <p:column headerText="Total Investment Amount S($)">
+                                        <h:outputText value="#{pendingLoan.investAmount}" >
+                                            <f:convertNumber locale="en-US" /> 
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Expected Rate of Return"   > 
+                                        <h:outputText value="#{pendingLoan.expectedRateOfReturn}" >
+                                            <f:convertNumber type="percent" minFractionDigits="2" /> 
+                                        </h:outputText>
+                                    </p:column>
+
+                                
+                                    <p:column headerText="Start Date">
+                                        <h:outputText value="#{pendingLoan.startDate}"  >
+                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+
+
+                                    <p:column headerText="Term">
+                                      <h:outputText  value="#{pendingLoan.term}" />
+                                    </p:column>
+
+
+
+                                    <p:column headerText="Plan Status ">
+                                        <h:outputText value="#{pendingLoan.status}" />
+                                    </p:column>
+                                    
+                                       <p:column headerText="Products Detail" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail1" oncomplete="PF('msgDialog2').show()"  ajax="true" type="submit" >
+                                                <f:setPropertyActionListener value="#{pendingLoan}" target="#{staffWealthManagedBean.selectedPort}" />
+                                                <!--                                                <f:attribute name="selectedLoan" value="{pendingLoan}"  />-->
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
+                                    <p:column headerText="Customer Detail" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail" oncomplete="PF('msgDialog').show()"  ajax="true" type="submit" >
+                                                <f:setPropertyActionListener value="#{pendingLoan}" target="#{staffWealthManagedBean.selectedPort}" />
+                                                <!--                                                <f:attribute name="selectedLoan" value="{pendingLoan}"  />-->
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
+                                    <p:column headerText="Enter Wealth Start Date" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton icon="ui-icon-mail-open"  actionListener="#{staffWealthManagedBean.selectPortToActivate}" oncomplete="PF('carDialog').show()"  ajax="true" type="submit" >
+                                                <f:attribute name="selecteWealthToActivate" value="#{pendingLoan}" />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+                                    <p:separator />
+
+                                </p:dataTable>
+
+                            </h:panelGrid>
+                            <p:dialog id="dialogMessage"   header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+
+                                        <h:outputText value="Customer ID: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.id}" />
+
+                                        <h:outputText value="Customer IC:" />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.ic}" />
+
+                                        <h:outputText value="Customer Name: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.name}" />
+                                        <h:outputText value="Customer Gender: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.gender}" />
+
+                                        <h:outputText value="Customer Email: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.email}"  />
+
+                                        <h:outputText value="Customer Date of Birth: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.dateOfBirth}"  >
+                                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+
+                                        <h:outputText value="Customer Family Information: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.familyInfo}"  />
+
+                                        <h:outputText value="Customer Financial Asset: " />
+                                        <h:outputText value="#{staffWealthManagedBean.selectedPort.discretionaryAccount.customer.financialAsset}"  />
+
+
+
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+  <p:dialog id="dialogMessage1"   header="Product Info" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail1" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+
+                                        <p:dataTable id="radioDT1" var="product" value="#{staffWealthManagedBean.selectedPort.products}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selectedPort}" rowKey="#{product.id}">
+                                            <p:ajax event="rowEdit" listener="#{staffWealthManagedBean.staffModifyPortfolio}" update=":form" /> 
+
+                                            <p:column headerText="Product Name">
+                                                <h:outputText value="#{product.productName}" />
+                                            </p:column>
+
+                                            <p:column headerText="Proportion">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{product.percentage}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText id="modelInput" value="#{product.percentage}" style="width:100%"/></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+
+                                            <p:column headerText="Edit" style="width:32px">
+                                                <p:rowEditor />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
+
+                        </h:form>
+                        <p:dialog id="dialogMessage" header="Enter the start date" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
+                            <h:form id="form1">
+                                <p:outputPanel id="carDetail" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
+
+                                        <h:outputText value="Start Date" style="font-weight: bold"/>
+                                        <p:calendar value="#{staffWealthManagedBean.startDate}" locale="de" navigator="true"/>
+
+                                      
+                                            <p:commandButton actionListener="#{staffWealthManagedBean.staffActivatePlan}" value="Submit" update=":form1" ajax="false" />
+                                        
+                                    </p:panelGrid>
+                                </p:outputPanel></h:form>
+                        </p:dialog>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

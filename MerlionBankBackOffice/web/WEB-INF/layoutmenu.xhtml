@@ -66,10 +66,11 @@
                     </p:submenu>
                 </p:submenu>
                 <p:submenu id="loan_management" label="Loan Management">
-                    <p:menuitem id="view_pending_loans" value="View All Pending Loan Applications" actionListener="#{staffLoanManagedBean.staffViewPendingLoans}"/> 
                     <p:menuitem id="create_Loan_for_old_customer" value="Create Loan Account For Existing Customer" actionListener="#{staffLoanManagedBean.goToDisplayLoanTypes}"/> 
-                    <p:menuitem id="change_loan_types" value="Loan Management" actionListener="#{staffLoanManagedBean.staffViewLoanTypeList}"/> 
+                    <p:menuitem id="view_pending_loans" value="View All Pending Loan Applications" actionListener="#{staffLoanManagedBean.staffViewPendingLoans}"/> 
                     <p:menuitem id="activateLoan" value="Activate Loan For Customer" outcome="/LoanManagement/searchCustomer"/> 
+                    <p:menuitem id="change_loan_types" value="Loan Management" actionListener="#{staffLoanManagedBean.staffViewLoanTypeList}"/> 
+                    <p:menuitem id="displayGIRO" value="GIRO Management" actionListener="#{staffLoanManagedBean.displayAllGiros}"/> 
 
                 </p:submenu>
 
@@ -95,12 +96,15 @@
 
                 <p:submenu id="wealth_management" label="Wealth Management">
                     <p:menuitem id="createWealthForExistingCustomer" value="Create Discretionary Account For existing Customer" actionListener="#{staffWealthManagedBean.goToApplyWealthAccountExistCustomer}"/>
-                    <p:menuitem id="viewPendingPlans" value="View All Pending Plans" outcome="/WealthManagement/viewPendingPlans"/>
-                    <p:menuitem id="discretionaryAccountManagmement" value="Customer Discretionary Account Management" outcome="/WealthManagement/searchCustomer"/>
+                    <p:menuitem id="viewPendingPlans" value="View All Pending Plans" actionListener="#{staffWealthManagedBean.displayPending}" />
+                    <p:menuitem id="activatePlan" value="Activate Plan For Customer" outcome="/WealthManagement/searchCustomer"/> 
+                    <p:menuitem id="discretionaryAccountManagmement" value="Discretionary Account Management" outcome="/WealthManagement/searchCustomer"/>
 
                 </p:submenu>
 
                 <p:submenu id="portfolio_management" label="Portfolio Management">
+                    <p:menuitem id="portfolioManagement" value="Customer Portfolio Management" actionListener="#{portfolioManagedBean.goToViewAllPortfolios}"/>
+
                 </p:submenu>
 
                 <p:submenu id="customer_analytics" label="Customer Analytics">
