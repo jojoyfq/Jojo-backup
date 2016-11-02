@@ -105,18 +105,15 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
 
         //create discretionary account
         long discretionaryAccoutNumber = generateDiscretionaryAccountNumber();
-<<<<<<< HEAD
-        BigDecimal initialValue = new BigDecimal("0.0000");
-        BigDecimal interestRate=new BigDecimal(0.024);
-=======
-        BigDecimal initialValue = new BigDecimal(0);
->>>>>>> origin/master
 
-<<<<<<< HEAD
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, interestRate, "inactive", customer);
-=======
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer,initialValue);
->>>>>>> origin/master
+        BigDecimal interestRate=new BigDecimal(0.024);
+
+        BigDecimal initialValue = new BigDecimal(0);
+
+
+
+        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, interestRate, "inactive", customer,initialValue);
+
         em.persist(discretionaryAccount);
         em.flush();
                  discretionaryAccount.setCommission(initialValue);
@@ -149,16 +146,13 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
 
         long discretionaryAccoutNumber = generateDiscretionaryAccountNumber();
         BigDecimal initialValue = new BigDecimal(0);
-<<<<<<< HEAD
-        BigDecimal interestRate=new BigDecimal(0.024);
-=======
->>>>>>> origin/master
 
-<<<<<<< HEAD
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, interestRate, "inactive", customer);
-=======
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer,initialValue);
->>>>>>> origin/master
+        BigDecimal interestRate=new BigDecimal(0.024);
+
+
+
+        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, interestRate, "inactive", customer,initialValue);
+
         em.persist(discretionaryAccount);
         em.flush();
         
@@ -318,17 +312,14 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
         
         long discretionaryAccoutNumber = generateDiscretionaryAccountNumber();
         BigDecimal initialValue = new BigDecimal(0);
-<<<<<<< HEAD
+
         BigDecimal interestRate=new BigDecimal(0.024);
        
-=======
->>>>>>> origin/master
 
-<<<<<<< HEAD
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, interestRate, "inactive", customer);
-=======
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer,initialValue);
->>>>>>> origin/master
+
+
+        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, interestRate, "inactive", customer,initialValue);
+
         em.persist(discretionaryAccount);
          em.flush();
                   discretionaryAccount.setCommission(initialValue);
@@ -380,16 +371,13 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
 
         long discretionaryAccoutNumber = generateDiscretionaryAccountNumber();
         BigDecimal initialValue = new BigDecimal(0);
-<<<<<<< HEAD
-BigDecimal interestRate=new BigDecimal(0.024);
-=======
->>>>>>> origin/master
 
-<<<<<<< HEAD
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, interestRate, "inactive", customer);
-=======
-        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, initialValue, "inactive", customer,initialValue);
->>>>>>> origin/master
+BigDecimal interestRate=new BigDecimal(0.024);
+
+
+
+        DiscretionaryAccount discretionaryAccount = new DiscretionaryAccount(discretionaryAccoutNumber, Calendar.getInstance().getTime(), null, initialValue, interestRate, "inactive", customer,initialValue);
+
         em.persist(discretionaryAccount);     
         em.flush();
          discretionaryAccount.setCommission(initialValue);
