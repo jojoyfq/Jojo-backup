@@ -183,4 +183,26 @@ public class WealthTimerSessionBean implements WealthTimerSessionBeanLocal {
         sendEmail.run(email, subject, content);  
     }
    
+    @Override
+    public void closePortfolio(){
+         Query query = em.createQuery("SELECT a FROM Portfolio a");
+        List<Portfolio> portfolios = new ArrayList(query.getResultList()); 
+       List<Portfolio>  selected=new ArrayList<Portfolio>();
+       
+       Date currentTime=Calendar.getInstance().getTime();
+        for (int i=0;i<portfolios.size();i++){
+        if (portfolios.get(i).getStatus().equals("active") && currentTime.after(portfolios.get(i).getEndDate()) ){
+            Portfolio portfolio=portfolios.get(i);
+            DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
+            portfolio.setStatus("completed");
+            discretionaryAccount.setBalance(discretionaryAccount.getBalance().add(portfolio.getPresentValue()));
+        }
+        
+    }
+        }
+    
+    @Override
+    public void preDefinedPlanInterestCrediting(){
+        
+    }
 }
