@@ -138,7 +138,8 @@ public List<Staff> retrieveStaffsAccordingToRole(String roleName)throws ListEmpt
     @Override
     public Long assignRM(Long portfolioId,Long staffId){
         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
-        Staff staff=em.find(Staff.class,portfolioId);
+        Staff staff=em.find(Staff.class,staffId);
+        System.out.println("Inside Session Bean staff Id: "+staffId);
         portfolio.setStaff(staff);
         List<Portfolio> portfolios=staff.getPortfolios();
         portfolios.add(portfolio);
@@ -182,7 +183,37 @@ public List<Staff> retrieveStaffsAccordingToRole(String roleName)throws ListEmpt
     }
     
      @Override
-    public List<Portfolio> staffModifyPortfolios(Long staffId, Long portfolioId, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double bond,int term) throws EmailNotSendException{
+    public List<Portfolio> staffModifyPortfolioRate(Long staffId, Long portfolioId, Double expectedRateOfReturn,int term) throws EmailNotSendException{
+Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+BigDecimal investAmount=portfolio.getInvestAmount();
+DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
+ portfolio.setTerm(term);
+
+        Date currentTime = portfolio.getStartDate();
+        DateTime start = new DateTime(currentTime);
+        DateTime currentTime1 = start.plusMonths(term);
+        Date currentTimestamp = currentTime1.toDate();
+
+        portfolio.setEndDate(currentTimestamp);
+        
+        portfolio.setStatus("staffVefified");
+        
+        try {
+            sendMofifiedEmail(discretionaryAccount.getCustomer().getName(), discretionaryAccount.getCustomer().getEmail(), portfolio.getId());
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+
+        //List<Loan> loans = staffViewPendingLoans();
+        smsbl.recordStaffAction(staffId, "Update portfolio id " + portfolio.getId(), discretionaryAccount.getCustomer().getId());
+    
+        List<Portfolio> portfolios = viewAllPendingApproveTailoredPlan();
+        return portfolios;
+}
+    
+    @Override
+    public List<Portfolio> staffModifyPortfolioProduct(Long staffId, Long portfolioId, Double foreignExchange,Double equity,Double bond) throws EmailNotSendException{
 Portfolio portfolio = em.find(Portfolio.class, portfolioId);
 BigDecimal investAmount=portfolio.getInvestAmount();
 DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
@@ -226,6 +257,9 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         List<Portfolio> portfolios = viewAllPendingApproveTailoredPlan();
         return portfolios;
 }
+    
+    
+    
     
     private void sendMofifiedEmail(String name, String email, Long accountNumber) throws MessagingException {
         String subject = "Merlion Bank - Your wealth plan has been modified- Pending verification";
@@ -311,21 +345,23 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         if (amount.compareTo(discretionaryAccount.getBalance()) == 1) {
             throw new NotEnoughAmountException("There is not enough amount of money in this Discretionary Account");
         }
-        BigDecimal cutline=new BigDecimal(200000);
-        BigDecimal processingFee=new BigDecimal(1.15);
-        
-      
-        
-        if (discretionaryAccount.getTotalBalance().compareTo(cutline)==1 ||discretionaryAccount.getTotalBalance().compareTo(cutline)==0 ){       
-        BigDecimal totalBalance=discretionaryAccount.getTotalBalance().subtract(amount);
-        BigDecimal tier1=cutline.subtract(totalBalance);
-        amount=amount.subtract(tier1);
-        amount=amount.add(tier1.multiply(processingFee));
-    }else{
-        amount=amount.multiply(processingFee);    
-        }
+       // BigDecimal cutline=new BigDecimal(200000);
+//        BigDecimal processingFee=new BigDecimal(1.15);
+//        
+//      
+//        
+//        if (discretionaryAccount.getTotalBalance().compareTo(cutline)==1 ||discretionaryAccount.getTotalBalance().compareTo(cutline)==0 ){       
+//        //BigDecimal totalBalance=discretionaryAccount.getTotalBalance().subtract(amount);
+//        //BigDecimal tier1=cutline.subtract(totalBalance);
+//        amount=amount.subtract(tier1);
+//        amount=amount.add(tier1.multiply(processingFee));
+//    }else{
+//        amount=amount.multiply(processingFee);    
+//        }
 
-       
+       BigDecimal interestRate=new BigDecimal(0.05);
+
+        discretionaryAccount.setAccumDailyInterest(interestRate);
 
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
        discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));

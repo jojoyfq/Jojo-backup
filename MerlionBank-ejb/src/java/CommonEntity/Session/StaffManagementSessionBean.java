@@ -28,6 +28,7 @@ import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import Other.Session.GeneratePassword;
 import Other.Session.sendEmail;
+import WealthEntity.Portfolio;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -608,6 +609,9 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         staff.setSalt(salt);
         em.persist(staff);
         em.flush();
+        
+        List<Portfolio> portfolios=new ArrayList<Portfolio>();
+        staff.setPortfolios(portfolios);
 
         recordStaffAction(staffID, "create a new staff" + staffIc, null);
 

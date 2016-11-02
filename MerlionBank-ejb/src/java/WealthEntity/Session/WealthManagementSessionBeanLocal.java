@@ -37,7 +37,8 @@ public interface WealthManagementSessionBeanLocal {
 
     public Portfolio displayPortfolio(Long portfolioId);
 
-    public List<Portfolio> staffModifyPortfolios(Long staffId, Long portfolioId, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double bond, int term) throws EmailNotSendException;
+   public List<Portfolio> staffModifyPortfolioRate(Long staffId, Long portfolioId, Double expectedRateOfReturn,int term) throws EmailNotSendException;
+    public List<Portfolio> staffModifyPortfolioProduct(Long staffId, Long portfolioId, Double foreignExchange,Double equity,Double bond) throws EmailNotSendException;
 
     //View pending Activation plan, haven't finished staff activate plan function
     public List<Portfolio> viewAllPendingAcivationTailoredPlan(Long customerId);

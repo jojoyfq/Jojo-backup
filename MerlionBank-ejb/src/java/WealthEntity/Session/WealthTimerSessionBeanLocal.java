@@ -16,4 +16,6 @@ public interface WealthTimerSessionBeanLocal {
  public void closeAccount();
  public void interestCrediting();
  public void commissionFeeCalculation();
+  public void closePortfolio();
+  public void preDefinedPlanInterestCrediting();
 }
