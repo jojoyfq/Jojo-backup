@@ -223,11 +223,11 @@ public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLoc
             BigDecimal temp4=new BigDecimal(0.6);
             
             if (principal.compareTo(temp2)==-1){
-                if (principal.compareTo(principal.multiply(temp3))==1)
+                if ((principal.subtract(downpayment)).compareTo(principal.multiply(temp3))==1)
                         throw new LoanTermInvalidException("According to MAS,for cars with an open market value (OMV) of $20,000 or less, buyers can borrow up to 70 per cent of the purchase price");
 
             }else {
-                if (principal.compareTo(principal.multiply(temp4))==1)
+                if ((principal.subtract(downpayment)).compareTo(principal.multiply(temp4))==1)
                         throw new LoanTermInvalidException("According to MAS,for cars with an open market value (OMV) more than $20,000 , buyers can borrow up to 60 per cent of the purchase price");
             }
         } else if (loanType.getType().equals("Education")) {
@@ -525,11 +525,11 @@ loan.setGraduationDate(graduationDate);
             BigDecimal temp4=new BigDecimal(0.6);
             
             if (principal.compareTo(temp2)==-1){
-                if (principal.compareTo(principal.multiply(temp3))==1)
+                if ((principal.subtract(downpayment)).compareTo(principal.multiply(temp3))==1)
                         throw new LoanTermInvalidException("According to MAS,for cars with an open market value (OMV) of $20,000 or less, buyers can borrow up to 70 per cent of the purchase price");
 
             }else {
-                if (principal.compareTo(principal.multiply(temp4))==1)
+                if ((principal.subtract(downpayment)).compareTo(principal.multiply(temp4))==1)
                         throw new LoanTermInvalidException("According to MAS,for cars with an open market value (OMV) more than $20,000 , buyers can borrow up to 60 per cent of the purchase price");
             }
         } else if (loanType.getType().equals("Education")) {

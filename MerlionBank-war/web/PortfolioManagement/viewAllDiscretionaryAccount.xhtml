@@ -98,6 +98,13 @@
                                             </center>
                                         </p:column>
                                         
+                                         <p:column headerText="View Portfolio" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplayPortfolios}" update=":form:panel" ajax="false" type="submit" >
+                                                    <f:attribute name="selectedWealth" value="#{Wealth}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
 
                                     </p:dataTable>
 

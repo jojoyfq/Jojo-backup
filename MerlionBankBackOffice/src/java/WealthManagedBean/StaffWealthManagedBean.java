@@ -7,6 +7,8 @@ package WealthManagedBean;
 
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import CommonEntity.Session.StaffManagementSessionBeanLocal;
+import CommonEntity.Staff;
 import DepositEntity.SavingAccount;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
@@ -29,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -79,11 +83,13 @@ public class StaffWealthManagedBean implements Serializable {
 
     private List<Portfolio> pendingApprovedTailoredPlans;
     private List<Portfolio> oneCustomerAllPortfolios;
+    private List<Portfolio> pendingActivatedPlans;
     private List<DiscretionaryAccount> allWealthAccounts;
     private DiscretionaryAccount selectedWealth;
     UploadedFile file;
     private List<DiscretionaryAccount> pendingDisAccount;
     private Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
+    Map<String, String> map = new HashMap<String, String>();
 
     private Map<String, String> wealthProducts;
     private Map<String, String> wealthTypes;
@@ -94,14 +100,17 @@ public class StaffWealthManagedBean implements Serializable {
     private List<SavingAccount> oneCustomerAllSavingAccts;
     private SavingAccount selectedSavingAccout;
     private BigDecimal amount;
+    private BigDecimal withdrawAmount;
+    private Portfolio selecteWealthToActivate;
+    private Date startDate;
 
-    public UploadedFile getFile() {
-        return file;
-    }
-
-    public void setFile(UploadedFile file) {
-        this.file = file;
-    }
+    private Map<String, String> availableRoleNames;
+    private Map<String, String> availableStaffs;
+    private String selectedRoleName;
+    private List<Staff> relatedStaffs;
+   private String selectedStaffName;
+   private List roleNames;
+   private Long portId;
 
     @EJB
     private WealthApplicationSessionBeanLocal wasbl;
@@ -115,6 +124,8 @@ public class StaffWealthManagedBean implements Serializable {
     private staffLogInManagedBean slimb;
     @EJB
     LoanApplicationSessionBeanLocal lasbl;
+    @EJB
+    StaffManagementSessionBeanLocal smsbl;
 
     @PostConstruct
     public void init() {
@@ -127,6 +138,12 @@ public class StaffWealthManagedBean implements Serializable {
         allWealthAccounts = new ArrayList<>();
         oneCustomerAllSavingAccts = new ArrayList<>();
         selectedSavingAccout = new SavingAccount();
+        pendingActivatedPlans = new ArrayList<>();
+        selecteWealthToActivate = new Portfolio();
+        relatedStaffs = new ArrayList<>();
+        roleNames = new ArrayList<>();
+                availableRoleNames = new HashMap<String, String>();
+
 //        wealthProducts.put("Predefined Products", "Predefined Products");
 //        wealthProducts.put("Tailored Product", "Tailored Product");
 //
@@ -145,10 +162,30 @@ public class StaffWealthManagedBean implements Serializable {
         try {
             System.out.println("searched customer is " + searchedCustomerIc);
             searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
+            searchedCustomerId = searchedCustomer.getId();
+
         } catch (UserNotExistException | UserNotActivatedException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
+        }
+    }
+
+    public void searchCustomerIdToActivate(ActionEvent event) throws UserNotExistException, UserNotActivatedException {
+        try {
+            System.out.println("searched customer is " + searchedCustomerIc);
+            searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
+            searchedCustomerId = searchedCustomer.getId();
+            System.out.println("**** go to view pending loans alr!");
+            pendingActivatedPlans = wmsbl.viewAllPendingAcivationTailoredPlan(searchedCustomerId);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingActivatedPlans.xhtml");
+
+        } catch (UserNotExistException | UserNotActivatedException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        } catch (IOException ex) {
+            Logger.getLogger(StaffWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -193,7 +230,6 @@ public class StaffWealthManagedBean implements Serializable {
 //            RequestContext.getCurrentInstance().showMessageInDialog(message);
 //        }
 //    }
-
     public void existingCustomerCreateWealthAcct(ActionEvent event) throws EmailNotSendException {
         try {
             System.out.println("********Customer Id from search result is " + searchedCustomer.getId());
@@ -225,9 +261,9 @@ public class StaffWealthManagedBean implements Serializable {
     }
 
     public void displayPending(ActionEvent event) throws IOException {
-//        System.out.println("*****Go in to view all pending tailored plans!");
-//        pendingApprovedTailoredPlans = wmsbl.viewAllPendingAcivationTailoredPlan();
-//        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingPlans.xhtml");
+        System.out.println("*****Go in to view all pending tailored plans!");
+        pendingApprovedTailoredPlans = wmsbl.viewAllPendingApproveTailoredPlan();
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingPlans.xhtml");
 
     }
 
@@ -255,7 +291,6 @@ public class StaffWealthManagedBean implements Serializable {
         }
 
     }
-    
 
     public void displayAllDiscretionaryAccount(ActionEvent event) throws ListEmptyException {
         try {
@@ -279,6 +314,11 @@ public class StaffWealthManagedBean implements Serializable {
         try {
             selectedPort = (Portfolio) event.getObject();
             System.out.println("******Selected Portfolio to edit is " + selectedPort.getId());
+            exepectedRateOfReturn = selectedPort.getExpectedRateOfReturn();
+            foreignExchange = selectedPort.getProducts().get(0).getPercentage();
+            equity = selectedPort.getProducts().get(1).getPercentage();
+            bond = selectedPort.getProducts().get(2).getPercentage();
+            term = selectedPort.getTerm();
             oneCustomerAllPortfolios = wmsbl.staffModifyPortfolios(staffId, selectedPort.getId(), exepectedRateOfReturn, foreignExchange, equity, bond, term);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Modified Successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -315,12 +355,133 @@ public class StaffWealthManagedBean implements Serializable {
 
     }
 
-// public void staffViewPendingWealthApplications(ActionEvent event) throws IOException {
-//        System.out.println("**** go to view pending loans alr!");
-//        pendingDisAccount = wasbl.();
-//        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/LoanManagement/viewPendingLoans.xhtml");
-//
-//    }
+    public void selectWealthAccountToWithdraw(ActionEvent event) {
+        selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+
+    }
+
+    public void withdrawFromDiscretionaryAccount(ActionEvent event) {
+        System.out.println("******Selected discretionary Account to withdraw is " + selectedWealth.getId());
+        boolean result = wmsbl.compareAmount(selectedWealth.getId(), withdrawAmount);
+        if (result = true) {
+            try {
+                wmsbl.discreationaryAccountMoneyWithdrawWithEnoughBalance(staffId, selectedWealth.getCustomer().getId(), selectedWealth.getId(), withdrawAmount);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully withdrawed " + withdrawAmount + "!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            } catch (NotEnoughAmountException ex) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } else {
+            try {
+                wmsbl.transferBackToSavingWithNotEnoughBalance(staffId, selectedWealth.getCustomer().getId(), selectedWealth.getId(), withdrawAmount);
+            } catch (NotEnoughAmountException ex) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        }
+    }
+
+    public void selectPortToActivate(ActionEvent event) {
+        selecteWealthToActivate = (Portfolio) event.getComponent().getAttributes().get("selecteWealthToActivate");
+
+    }
+
+    public void staffActivatePlan(ActionEvent event) {
+        System.out.println("******Selected portfolio to activate is " + selecteWealthToActivate.getId());
+
+        wmsbl.staffActivateLoan(staffId, selecteWealthToActivate.getId(), startDate);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully activate plan " + selecteWealthToActivate.getType() + "(" + selecteWealthToActivate.getId() + ")");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+    }
+
+    public void onStaffChange() {
+        if (availableRoleNames != null && !availableRoleNames.equals("")) {
+            availableStaffs = data.get(selectedRoleName);
+        } else {
+            availableStaffs = new HashMap<String, String>();
+        }
+    }
+
+    public void assignRM(ActionEvent event) {
+         selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+         System.out.println("****Selected port to assign rm is "+selectedPort.getId());
+         portId = selectedPort.getId();
+         System.out.println("***********Role size is " + smsbl.viewRoles().size());
+        for (int i = 0; i < smsbl.viewRoles().size(); i++) {
+            System.out.println("********role name is "+smsbl.viewRoles().get(i).getRoleName());
+            roleNames.add(smsbl.viewRoles().get(i).getRoleName());
+        }
+        for (int i = 0; i <roleNames.size(); i++) {
+            availableRoleNames.put(roleNames.get(i).toString(), roleNames.get(i).toString());
+            System.out.println("************** " + availableRoleNames);
+            try {
+                // issueType = slimb.getRoleNames().get(i).toString();
+                relatedStaffs = wmsbl.retrieveStaffsAccordingToRole(roleNames.get(i).toString());
+            } catch (ListEmptyException ex) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+            for (int j = 0; j < relatedStaffs.size(); j++) {
+                map.put(relatedStaffs.get(j).getStaffName(), relatedStaffs.get(j).getStaffName());
+            }
+            data.put(roleNames.get(i).toString(), map);
+            map = new HashMap<String, String>();
+        }
+        
+        
+
+    }
+    public void assignRM2(ActionEvent event){
+//                    selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+System.out.println("******Selected port is "+portId);
+System.out.println("******Selected port staff ID is "+staffId);
+        wmsbl.assignRM(portId, staffId);
+         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully assigned "+selectedStaffName+"!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+    }
+
+    public Portfolio getSelecteWealthToActivate() {
+        return selecteWealthToActivate;
+    }
+
+    public void setSelecteWealthToActivate(Portfolio selecteWealthToActivate) {
+        this.selecteWealthToActivate = selecteWealthToActivate;
+    }
+
+    public BigDecimal getWithdrawAmount() {
+        return withdrawAmount;
+    }
+
+    public void setWithdrawAmount(BigDecimal withdrawAmount) {
+        this.withdrawAmount = withdrawAmount;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getSearchedCustomerIc() {
+        return searchedCustomerIc;
+    }
+
+    public void setSearchedCustomerIc(String searchedCustomerIc) {
+        this.searchedCustomerIc = searchedCustomerIc;
+    }
+
+    public List<Portfolio> getPendingActivatedPlans() {
+        return pendingActivatedPlans;
+    }
+
+    public void setPendingActivatedPlans(List<Portfolio> pendingActivatedPlans) {
+        this.pendingActivatedPlans = pendingActivatedPlans;
+    }
+
     public Customer getCustomer() {
         return customer;
     }
@@ -647,6 +808,86 @@ public class StaffWealthManagedBean implements Serializable {
 
     public void setWmsbl(WealthManagementSessionBeanLocal wmsbl) {
         this.wmsbl = wmsbl;
+    }
+
+    public UploadedFile getFile() {
+        return file;
+    }
+
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
+
+    public Map<String, String> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, String> map) {
+        this.map = map;
+    }
+
+    public Map<String, String> getAvailableRoleNames() {
+        return availableRoleNames;
+    }
+
+    public void setAvailableRoleNames(Map<String, String> availableRoleNames) {
+        this.availableRoleNames = availableRoleNames;
+    }
+
+    public Map<String, String> getAvailableStaffs() {
+        return availableStaffs;
+    }
+
+    public void setAvailableStaffs(Map<String, String> availableStaffs) {
+        this.availableStaffs = availableStaffs;
+    }
+
+    public String getSelectedRoleName() {
+        return selectedRoleName;
+    }
+
+    public void setSelectedRoleName(String selectedRoleName) {
+        this.selectedRoleName = selectedRoleName;
+    }
+
+    public List<Staff> getRelatedStaffs() {
+        return relatedStaffs;
+    }
+
+    public void setRelatedStaffs(List<Staff> relatedStaffs) {
+        this.relatedStaffs = relatedStaffs;
+    }
+
+    public String getSelectedStaffName() {
+        return selectedStaffName;
+    }
+
+    public void setSelectedStaffName(String selectedStaffName) {
+        this.selectedStaffName = selectedStaffName;
+    }
+
+    public List getRoleNames() {
+        return roleNames;
+    }
+
+    public void setRoleNames(List roleNames) {
+        this.roleNames = roleNames;
+    }
+
+    public StaffManagementSessionBeanLocal getSmsbl() {
+        return smsbl;
+    }
+
+    public void setSmsbl(StaffManagementSessionBeanLocal smsbl) {
+        this.smsbl = smsbl;
+    }
+
+    public Long getPortId() {
+        return portId;
+    }
+
+    public void setPortId(Long portId) {
+        this.portId = portId;
     }
 
 }
