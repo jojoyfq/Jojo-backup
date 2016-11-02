@@ -107,7 +107,7 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         }
 
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().add(amount));
-        discretionaryAccount.getTotalBalance().add(amount);
+        discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().add(amount));
 
         savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
         savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
@@ -403,8 +403,28 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
     }
 
     @Override
-    public List<Portfolio> ModifyPortfolios(Long portfolioId, Double expectedRateOfReturn, Double foreignExchange, Double equity, Double bond, int term) throws EmailNotSendException {
+    public List<Portfolio> ModifyPortfolioRate(Long portfolioId, Double expectedRateOfReturn, int term)  {
         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+       
+        portfolio.setTerm(term);
+
+        Date currentTime = portfolio.getStartDate();
+        DateTime start = new DateTime(currentTime);
+        DateTime currentTime1 = start.plusMonths(term);
+        Date currentTimestamp = currentTime1.toDate();
+
+        portfolio.setEndDate(currentTimestamp);
+
+        portfolio.setStatus("inactive");
+
+        List<Portfolio> portfolios = portfolio.getDiscretionaryAccount().getPortfolios();
+
+        return portfolios;
+    }
+    
+    @Override
+    public List<Portfolio> ModifyPortfolioProduct(Long portfolioId,Double foreignExchange, Double equity, Double bond) {
+         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
         BigDecimal investAmount = portfolio.getInvestAmount();
         DiscretionaryAccount discretionaryAccount = portfolio.getDiscretionaryAccount();
 
@@ -432,16 +452,6 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
         products.add(stockProduct);
 
         portfolio.setProducts(products);
-
-        portfolio.setTerm(term);
-
-        Date currentTime = portfolio.getStartDate();
-        DateTime start = new DateTime(currentTime);
-        DateTime currentTime1 = start.plusMonths(term);
-        Date currentTimestamp = currentTime1.toDate();
-
-        portfolio.setEndDate(currentTimestamp);
-
         portfolio.setStatus("inactive");
 
         List<Portfolio> portfolios = portfolio.getDiscretionaryAccount().getPortfolios();

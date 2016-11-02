@@ -22,7 +22,7 @@
             <div class="EmptyBox20"></div>
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Serve Customer </div>
+                    <div class="CardBigTopic"> Search Customer </div>
                     <div class="Separator"></div>
 
                     <div class="Container100 ui-fluid">
@@ -33,7 +33,7 @@
                                     <h:panelGrid columns="2" id="serviceCustomerPanel" cellpadding="5"> 
 
                                         <h:outputLabel for="customerIc" value="Enter customer IC : " />
-                                        <p:inputText id="customerIc" value="#{staffLoanManagedBean.searchedCustomerIc}" label="customerIc" required="true" />
+                                        <p:inputText id="customerIc" value="#{staffWealthManagedBean.searchedCustomerIc}" label="customerIc" required="true" />
 
                                     </h:panelGrid>
                                 </div>
@@ -43,7 +43,7 @@
                                 <div class="Container30"></div>
                                 <div class="Container40">
                                     <p:commandButton value="Search" id="serviceCustomerButton"
-                                                     actionListener="#{staffWealthManagedBean.searchCustomerId}" />
+                                                     actionListener="#{staffWealthManagedBean.searchCustomerIdToActivate}" />
                                 </div>
                                 <div class="Container30"></div>
                             </div>

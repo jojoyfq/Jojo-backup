@@ -13,7 +13,20 @@
 
         <!-- Left Column -->
         <div class="Container20 NoPadding Responsive100">
+                    <div class="Card ui-fluid">
+                        <i class="fa fa-fw"></i>
+                        <span class="Blue Fs20 FontDosisSemiBold">TDSR/MSR Calculator</span>
+                        <div class="EmptyBox10"></div>
+                        <span class="BoldLeaden Fs14 FontDosisMedium">When applying for property loan with the banks, borrowers need to be aware that one of the mandatory assessments by banks is the Total Debt Servicing Ratio (TDSR).<br/> If the property you purchase is a HDB flat, the banks will also look at your Mortgage Service Ratio (MSR).</span>
+                        <div class="EmptyBox10"></div>
 
+                        <p:commandButton  value="Calculate" type="button" icon="fa fa-calculator"   styleClass="CyanButton Fleft Fs14 White" onclick="PF('dlg2').show();"/>
+
+
+                    </div>
+              
+                <div class="Container20"></div>
+           
         </div>
 
         <!-- Center Column -->
@@ -43,32 +56,100 @@
                                 <p:message for="downpayment" display="icon"/>
                                 <h:outputLabel />
 
+
+
                                 <h:outputLabel for="loanTerm" value="Loan Term:" />
                                 <p:inputNumber id="loanTerm" value="#{customerLoanManagedBean.loanTerm}" label="loanTerm" symbolPosition="s" emptyValue="zero" decimalPlaces="0" required="true" requiredMessage="Please enter your loan term!" />
                                 <p:message for="loanTerm" display="icon"/>
                                 <p:watermark for="loanTerm" value="Please key in the number of months" id="watermark" />
 
+                                <h:outputLabel for="income" value="Monthly Income(S$):" />
+                                <p:inputNumber id="income" value="#{customerLoanManagedBean.monthlyIncome}" label="income" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter your monthly income!" />
+                                <p:message for="income" display="icon"/>
+                                <h:outputLabel />
+                                <h:outputLabel  for="homeType" value="Home Type:" rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" /> 
+                                <p:selectOneRadio rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" id="homeType" value="#{customerLoanManagedBean.homeType}" required="true" requiredMessage="Please choose home type!">
+                                    <f:selectItem itemLabel="HDB flat" itemValue="HDB flat" rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}"/>
+                                    <f:selectItem itemLabel="Executive Condominium" itemValue="Executive Condominium"  rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" />
+                                </p:selectOneRadio>
+
+                                <p:message for="homeType" display="icon" rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}"/>
                                 <h:outputLabel />
 
+                                <h:outputLabel  rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" for="address" value="Home Address" />
+                                <p:inputText id="address" value="#{customerLoanManagedBean.homeAddress}" label="address" rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" required="true" requiredMessage="Please enter home address!" />
+                                <p:message for="address" display="icon" rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" />
+                                <h:outputLabel />
+
+                                <h:outputLabel  rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" for="postal" value="Postal Code:" />
+                                <p:inputText id="postal" value="#{customerLoanManagedBean.postalCode}"  rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" label="postal" required="true" requiredMessage="Please enter the postal code!" />
+                                <p:message for="postal" display="icon" rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" />
+
+                                <h:outputLabel rendered="#{customerLoanManagedBean.loanTypeName eq 'Car'}" for="carModel" value="Car Model" />
+                                <p:inputText id="carModel" value="#{customerLoanManagedBean.carModel}" label="carModel" rendered="#{customerLoanManagedBean.loanTypeName eq 'Car'}"  required="true" requiredMessage="Please enter car model!" />
+                                <p:message for="carModel" display="icon" rendered="#{customerLoanManagedBean.loanTypeName eq 'Car'}" />
+                                <h:outputLabel rendered="#{customerLoanManagedBean.loanTypeName eq 'Car'}" />
+
+                                <h:outputLabel rendered="#{customerLoanManagedBean.loanTypeName eq 'Education'}" for="inst" value="Insititution" />
+                                <p:inputText id="inst" value="#{customerLoanManagedBean.institution}" label="inst" rendered="#{customerLoanManagedBean.loanTypeName eq 'Education'}"  required="true" requiredMessage="Please enter institution!" />
+                                <p:message for="inst" display="icon" rendered="#{customerLoanManagedBean.loanTypeName eq 'Education'}" />
+                                <h:outputLabel />
+
+                                <h:outputLabel rendered="#{customerLoanManagedBean.loanTypeName eq 'Education'}" for="major" value="Major" />
+                                <p:inputText id="major" value="#{customerLoanManagedBean.institution}" label="major" rendered="#{customerLoanManagedBean.loanTypeName eq 'Education'}"   required="true" requiredMessage="Please enter institution!" />
+                                <p:message for="major" display="icon" rendered="#{customerLoanManagedBean.loanTypeName eq 'Education'}" />
+                                <h:outputLabel />                                
+                                <h:outputLabel rendered="#{customerLoanManagedBean.loanTypeName eq 'Education'}" for="graduate" value="Expected Graduation Date" />
+                                <p:calendar id="graduate" value="#{customerLoanManagedBean.graduationDate}" rendered="#{customerLoanManagedBean.loanTypeName eq 'Education'}"  label="graduate" locale="de" navigator="true"  required="true" requiredMessage="Please enter institution!" />
+                                <p:message for="graduate" display="icon" rendered="#{customerLoanManagedBean.loanTypeName eq 'Home'}" />
+
+
+                                <h:outputLabel  for="property" value="Total Property Debt(S$):" />
+                                <p:inputNumber id="property" value="#{customerLoanManagedBean.propertyLoanAmt}" label="property" decimalPlaces="2" required="true" requiredMessage="Please enter total propety debt!" >
+                                    <f:convertNumber locale="en-US" />
+                                </p:inputNumber>
+                                <p:message for="property" display="icon" />
+                                <h:outputLabel />
+
+                                <h:outputLabel for="education" value="Total Education Debt(S$):" />
+                                <p:inputNumber id="education" value="#{customerLoanManagedBean.educationAmt}" label="education" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter total education debt!" >
+                                    <f:convertNumber locale="en-US" />
+                                </p:inputNumber>
+                                <p:message for="education" display="icon"/>
+                                <h:outputLabel />
+
+                                <h:outputLabel for="carDebt" value="Total Car Debt(S$):" />
+                                <p:inputNumber id="carDebt" value="#{customerLoanManagedBean.carLoanAmt}" label="carDebt" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter total car debt!" >
+                                    <f:convertNumber locale="en-US" />
+                                </p:inputNumber>
+                                <p:message for="carDebt" display="icon"/>
+                                <h:outputLabel />
+
+                                <h:outputLabel for="personalLoan" value="Total Personal Loan(S$):" />
+                                <p:inputNumber id="personalLoan" value="#{customerLoanManagedBean.personalLoanAmt}" label="personalLoan" symbolPosition="s" emptyValue="zero" decimalPlaces="2" required="true" requiredMessage="Please enter total personal loan!" >
+                                    <f:convertNumber locale="en-US" />
+                                </p:inputNumber>
+                                <p:message for="personalLoan" display="icon"/>
+                                <h:outputLabel />
 
 
 
                             </p:panelGrid>
                             <p:separator />
-<!--   <div class="Container100">
-                                            <div class="Card">
-
-                                                <h1 class="CardBigTopic">Upload Documents </h1>
-                                                <h:form>
-                                                    <p:fileUpload id="file" value="{customerLoanManagedBean.file}"  fileUploadListener="{customerLoanManagedBean.fileUploadListener}" mode="advanced" dragDropSupport="false"
-                                                                  multiple="true" update="messages" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" required="true" requiredMessage="Please choose a document to upload!"/>
-                                                    <p:message for="file" display="icon"/>
-
-                                                    <p:growl id="messages" showDetail="true" />
-                                                </h:form>
-
-                                            </div>
-                                        </div>-->
+                            <!--   <div class="Container100">
+                                                                        <div class="Card">
+                            
+                                                                            <h1 class="CardBigTopic">Upload Documents </h1>
+                                                                            <h:form>
+                                                                                <p:fileUpload id="file" value="{customerLoanManagedBean.file}"  fileUploadListener="{customerLoanManagedBean.fileUploadListener}" mode="advanced" dragDropSupport="false"
+                                                                                              multiple="true" update="messages" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" required="true" requiredMessage="Please choose a document to upload!"/>
+                                                                                <p:message for="file" display="icon"/>
+                            
+                                                                                <p:growl id="messages" showDetail="true" />
+                                                                            </h:form>
+                            
+                                                                        </div>
+                                                                    </div>-->
 
 
                             <div class="Container10"></div>
@@ -80,7 +161,7 @@
                             </div>
 
 
-                           
+
 
                         </h:form>
                         <h:form>  
@@ -111,6 +192,34 @@
                                 </p:panelGrid>
                             </p:dialog>
                         </h:form>
+                        <h:form>
+                            <p:dialog header="Calculator" widgetVar="dlg2" modal="true" height="100">
+                                <h:panelGrid  columns="3" cellpadding="5" >
+                                    <h:outputLabel for="monthlyIncome" value="Monthly Income S($) " /> 
+                                    <p:inputText id="monthlyIncome" value="#{customerLoanManagedBean.calMonthlyIncome}"  required="true" requiredMessage="Please enter your monthly income!" />
+                                    <h:message class="Red" for="monthlyIncome"  />
+
+                                    <h:outputLabel for="existingDebit" value="Total Existing Debt S($) " /> 
+                                    <p:inputText id="existingDebit" value="#{customerLoanManagedBean.calExistingDebt}"  required="true" requiredMessage="Please enter your loan term" />
+                                    <h:message class="Red" for="existingDebit"  />
+
+                                    <p:splitButton value="Calculate TDSR" actionListener="#{customerLoanManagedBean.calculateTDSR}" oncomplete="PF('carPanelWDG1').loadContents();" icon="ui-icon-disk">
+                                        <p:menuitem value="Calculate MSR" actionListener="#{customerLoanManagedBean.calculateMSR}"  oncomplete="PF('carPanelWDG1').loadContents();"  ajax="false" icon="ui-icon-close" />
+                                    </p:splitButton>
+
+                                </h:panelGrid>
+                                <p:overlayPanel  widgetVar="carPanelWDG1" showCloseIcon="true">
+                                    <h:outputLabel value="Monthly Repayment(S$): "/>
+                                    <h:outputText rendered="#{customerLoanManagedBean.tdsr eq null }" value="#{customerLoanManagedBean.msr}"  >
+                                        <f:convertNumber pattern="#0.00" locale="en-US"/>
+                                    </h:outputText>
+
+                                    <h:outputText rendered="#{customerLoanManagedBean.msr eq null }" value="#{customerLoanManagedBean.tdsr}"  >
+                                        <f:convertNumber pattern="#0.00" locale="en-US"/>
+                                    </h:outputText>
+                                </p:overlayPanel>
+                            </p:dialog>
+                        </h:form>
                     </div>
                 </div>
             </div> 
@@ -118,23 +227,23 @@
 
         <!-- Right Column -->
         <div class="Container20 NoPadding Responsive50">
-           
-                              
-                                    <div class="Card ui-fluid">
-                                        <i class="fa fa-fw"></i>
-                                        <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
-                                        <div class="EmptyBox10"></div>
-                                        <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
-                                        <div class="EmptyBox10"></div>
-
-                                        <p:commandButton  value="Calculate" type="button" icon="fa fa-calculator"   styleClass="PurpleButton Fleft Fs14 White" onclick="PF('dlg1').show();"/>
 
 
-                                    </div>
-                                </div>
-                                <div class="Container20"></div>
-                      
-   
+            <div class="Card ui-fluid">
+                <i class="fa fa-fw"></i>
+                <span class="Blue Fs20 FontDosisSemiBold">Repayment Calculator</span>
+                <div class="EmptyBox10"></div>
+                <span class="BoldLeaden Fs14 FontDosisMedium">Find out your estimated home loan repayments as well as ways to pay off your loan faster.</span>
+                <div class="EmptyBox10"></div>
+
+                <p:commandButton  value="Calculate" type="button" icon="fa fa-calculator"   styleClass="PurpleButton Fleft Fs14 White" onclick="PF('dlg1').show();"/>
+
+
+            </div>
+        </div>
+        <div class="Container20"></div>
+
+
 
     </ui:define>
 

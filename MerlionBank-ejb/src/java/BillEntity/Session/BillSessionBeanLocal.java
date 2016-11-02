@@ -8,6 +8,7 @@ package BillEntity.Session;
 import BillEntity.BillingOrganization;
 import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
+import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +55,5 @@ public interface BillSessionBeanLocal {
 
     public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount);
 
-    public List<GIROArrangement> viewableGIRO(Long customerId);
-
-    
+    public List<GIROArrangement> viewableGIRO(Long customerId);  
 }

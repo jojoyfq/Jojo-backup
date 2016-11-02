@@ -182,7 +182,37 @@ public List<Staff> retrieveStaffsAccordingToRole(String roleName)throws ListEmpt
     }
     
      @Override
-    public List<Portfolio> staffModifyPortfolios(Long staffId, Long portfolioId, Double expectedRateOfReturn,Double foreignExchange,Double equity,Double bond,int term) throws EmailNotSendException{
+    public List<Portfolio> staffModifyPortfolioRate(Long staffId, Long portfolioId, Double expectedRateOfReturn,int term) throws EmailNotSendException{
+Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+BigDecimal investAmount=portfolio.getInvestAmount();
+DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
+ portfolio.setTerm(term);
+
+        Date currentTime = portfolio.getStartDate();
+        DateTime start = new DateTime(currentTime);
+        DateTime currentTime1 = start.plusMonths(term);
+        Date currentTimestamp = currentTime1.toDate();
+
+        portfolio.setEndDate(currentTimestamp);
+        
+        portfolio.setStatus("staffVefified");
+        
+        try {
+            sendMofifiedEmail(discretionaryAccount.getCustomer().getName(), discretionaryAccount.getCustomer().getEmail(), portfolio.getId());
+        } catch (MessagingException ex) {
+            System.out.println("Error sending email.");
+            throw new EmailNotSendException("Error sending email.");
+        }
+
+        //List<Loan> loans = staffViewPendingLoans();
+        smsbl.recordStaffAction(staffId, "Update portfolio id " + portfolio.getId(), discretionaryAccount.getCustomer().getId());
+    
+        List<Portfolio> portfolios = viewAllPendingApproveTailoredPlan();
+        return portfolios;
+}
+    
+    @Override
+    public List<Portfolio> staffModifyPortfolioProduct(Long staffId, Long portfolioId, Double foreignExchange,Double equity,Double bond) throws EmailNotSendException{
 Portfolio portfolio = em.find(Portfolio.class, portfolioId);
 BigDecimal investAmount=portfolio.getInvestAmount();
 DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
@@ -226,6 +256,9 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         List<Portfolio> portfolios = viewAllPendingApproveTailoredPlan();
         return portfolios;
 }
+    
+    
+    
     
     private void sendMofifiedEmail(String name, String email, Long accountNumber) throws MessagingException {
         String subject = "Merlion Bank - Your wealth plan has been modified- Pending verification";

@@ -407,8 +407,9 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         List<GIROArrangement> temp=new ArrayList<GIROArrangement>();
         
         for (int i=0;i<GIROArrangements.size();i++){
-            if (GIROArrangements.get(i).equals("Merlion Bank Loan") && GIROArrangements.get(i).getStatus().equals("pending"))
+            if (GIROArrangements.get(i).getBillingOrganization().getName().equals("Merlion Bank Loan") && GIROArrangements.get(i).getStatus().equals("pending"))
                 temp.add(GIROArrangements.get(i));
+            System.out.println("Fang qing said: giro size "+temp.size());
         }
         
         return temp;
