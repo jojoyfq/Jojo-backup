@@ -359,7 +359,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
 //        amount=amount.multiply(processingFee);    
 //        }
 
-       BigDecimal interestRate=new BigDecimal(0.05);
+       BigDecimal interestRate=new BigDecimal(0.0005);
 
         discretionaryAccount.setAccumDailyInterest(interestRate);
 
