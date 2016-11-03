@@ -7,10 +7,13 @@ package WealthEntity.Session;
 
 import CommonEntity.Customer;
 import Exception.EmailNotSendException;
+import Exception.NotEnoughAmountException;
 import Exception.UserExistException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
+import WealthEntity.DiscretionaryAccount;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -32,5 +35,9 @@ public interface WealthApplicationSessionBeanLocal {
 
     //Customer activate account 2nd step, same as saving account, need to verify balance before update password
     public String verifyDiscretionaryAccountBalance(String ic);
+    public String verifyExistingDiscretionaryAccountBalance(Long discretionaryAccountId) throws NotEnoughAmountException;
+    public List<DiscretionaryAccount> updateAccountStatus(Long discretionaryAccountId);
+        
+    
 
 }

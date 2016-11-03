@@ -359,7 +359,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
 //        amount=amount.multiply(processingFee);    
 //        }
 
-       BigDecimal interestRate=new BigDecimal(0.05);
+       BigDecimal interestRate=new BigDecimal(0.0005);
 
         discretionaryAccount.setAccumDailyInterest(interestRate);
 
@@ -377,7 +377,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
     }
     
     @Override
-    public List<Product> displayProduct(Long customerId,Long portfolioId){
+    public List<Product> displayProduct(Long portfolioId){
               Portfolio portfolio = em.find(Portfolio.class, portfolioId);
               return portfolio.getProducts();
     }
@@ -388,7 +388,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
     }
     
     @Override
-    public Long buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
+    public List<Good> buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
         Product product = em.find(Product.class, productId);
         Good good = em.find(Good.class, goodId);
         
@@ -398,10 +398,13 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         if ((product.getPurchaseAmount().add(totalAmount)).compareTo(product.getExpectedAmount())==1){
             throw new NotEnoughAmountException ("According to contract, there is not enough amount to purchase this good. This may due to your have exceed the total amount of this category or there is not enough money it the account.");
         }
-        BigDecimal existingAmount=new BigDecimal(good.getNumOfUnits());
-        
-        BigDecimal newUnitPrice=totalAmount.add(good.getUnitPrice().multiply(existingAmount));
+        BigDecimal existingAmount=new BigDecimal(good.getNumOfUnits());      
+        BigDecimal newUnitPrice=totalAmount.add(good.getUnitPrice().multiply(existingAmount));   
         Integer newNumber=numOfUnits+good.getNumOfUnits();
+        BigDecimal num=new BigDecimal(newNumber);
+         newUnitPrice =newUnitPrice.divide(num,MathContext.DECIMAL128);
+        newUnitPrice.setScale(4, RoundingMode.HALF_UP);
+        
         good.setUnitPrice(newUnitPrice);
         good.setNumOfUnits(newNumber);
         
@@ -409,11 +412,11 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         
         recordTransaction(product.getPortfolio().getId(), product,good,unitPrice,numOfUnits,"buy");
         smsbl.recordStaffAction(staffId, "buy goods for wealth product " + good.getId(), product.getPortfolio().getDiscretionaryAccount().getCustomer().getId());
-        return goodId;
+        return displayGood(product.getId());
     }
     
     @Override
-    public Long buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
+    public List<Good> buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException{
          Product product = em.find(Product.class, productId);
         
         BigDecimal number=new BigDecimal(numOfUnits);
@@ -435,7 +438,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         
         recordTransaction(product.getPortfolio().getId(), product,good,unitPrice,numOfUnits,"buy");
          smsbl.recordStaffAction(staffId, "buy goods for wealth product " + good.getId(), product.getPortfolio().getDiscretionaryAccount().getCustomer().getId());
-        return good.getId();
+        return displayGood(product.getId());
     }
     
      @Override
