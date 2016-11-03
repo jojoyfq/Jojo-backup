@@ -22,7 +22,7 @@ import javax.ejb.Local;
 @Local
 public interface WealthSessionBeanLocal {
 
-    public Long existingCustomerActivateAccount(Long customerId, Long accountId) throws NotEnoughAmountException;
+    public List<DiscretionaryAccount> existingCustomerActivateAccount(Long customerId, Long accountId) throws NotEnoughAmountException,ListEmptyException;
 
     public List<DiscretionaryAccount> displayAvailableDiscretionaryAccounts(Long customerId) throws ListEmptyException;
 

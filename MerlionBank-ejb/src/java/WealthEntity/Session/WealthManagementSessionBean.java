@@ -214,35 +214,47 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
     
     @Override
     public List<Portfolio> staffModifyPortfolioProduct(Long staffId, Long portfolioId, Double foreignExchange,Double equity,Double bond) throws EmailNotSendException{
-Portfolio portfolio = em.find(Portfolio.class, portfolioId);
-BigDecimal investAmount=portfolio.getInvestAmount();
-DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
+ System.out.println("session bean foreignExchange: "+foreignExchange);
+        System.out.println("session bean equity: "+equity);
+        System.out.println("session bean bond: "+bond);
+        
+         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+        BigDecimal investAmount = portfolio.getInvestAmount();
+        DiscretionaryAccount discretionaryAccount = portfolio.getDiscretionaryAccount();
 
-    List<Product> products=new ArrayList<Product>();
-    List<Good> goods=new ArrayList<Good>();
-        
-        BigDecimal rate=new BigDecimal(foreignExchange);
-        BigDecimal purchaseAmount=investAmount.multiply(rate);
+        List<Product> products = new ArrayList<Product>();
+          List<Good> goods=new ArrayList<Good>();
+
+        BigDecimal rate = new BigDecimal(foreignExchange);
+        BigDecimal purchaseAmount = investAmount.multiply(rate);
         BigDecimal test=new BigDecimal(0);
-        Product foreignExchangeProduct=new Product("Foreign Exchange", purchaseAmount, foreignExchange,goods,purchaseAmount,test);
-        em.persist(foreignExchangeProduct);
+        Product foreignExchangeProduct = portfolio.getProducts().get(0);
+        foreignExchangeProduct.setExpectedAmount(purchaseAmount);
+        foreignExchangeProduct.setCurrentAmount(purchaseAmount);
+        foreignExchangeProduct.setPercentage(foreignExchange);
+
+        rate = new BigDecimal(equity);
+        purchaseAmount = investAmount.multiply(rate);
+         Product equityProduct = portfolio.getProducts().get(1);
+        equityProduct.setExpectedAmount(purchaseAmount);
+        equityProduct.setCurrentAmount(purchaseAmount);
+        equityProduct.setPercentage(equity);
+
+        rate = new BigDecimal(bond);
+        purchaseAmount = investAmount.multiply(rate);
+         Product bondProduct = portfolio.getProducts().get(2);
+        bondProduct.setExpectedAmount(purchaseAmount);
+        bondProduct.setCurrentAmount(purchaseAmount);
+        bondProduct.setPercentage(bond);
+
+        portfolio.setStatus("inactive");
         
-        rate=new BigDecimal(equity);
-        purchaseAmount=investAmount.multiply(rate);
-        Product equityProduct=new Product("Equity", purchaseAmount, equity,goods,purchaseAmount,test);
-        em.persist(equityProduct);
+         foreignExchangeProduct.setPortfolio(portfolio);
+        equityProduct.setPortfolio(portfolio);
+        bondProduct.setPortfolio(portfolio);     
         
-        rate=new BigDecimal(bond);
-        purchaseAmount=investAmount.multiply(rate);
-        Product stockProduct=new Product("Bond", purchaseAmount, bond,goods,purchaseAmount,test);
-        em.persist(equityProduct);
-        
-         products.add(foreignExchangeProduct);
-        products.add(equityProduct);
-        products.add(stockProduct);
-        
-        portfolio.setProducts(products);
         portfolio.setStatus("staffVefified");
+
         
         try {
             sendMofifiedEmail(discretionaryAccount.getCustomer().getName(), discretionaryAccount.getCustomer().getEmail(), portfolio.getId());
