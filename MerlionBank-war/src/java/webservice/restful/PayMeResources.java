@@ -305,27 +305,55 @@ public class PayMeResources {
         }
 
     }
-    
+
     @POST
     @Path(value = "isValidSendBackAmount")
     @Produces(MediaType.APPLICATION_JSON)
-    public IsValidSendBackAmountResponse sendToMySavingAccount(@FormParam("sendbackamount") String amount){
+    public IsValidSendBackAmountResponse sendToMySavingAccount(@FormParam("sendbackamount") String amount) {
         boolean sendBackSuccess;
         if (isLoginPage == false) {
             sendBackSuccess = payMeSessionBeanLocal.sendToMyAccount(phoneNumStr, amount);
-            if(sendBackSuccess == false){
+            if (sendBackSuccess == false) {
                 return new IsValidSendBackAmountResponse(1, "Saving Account is no longer valid or not enough available PayMe balance", false);
-            }else{
+            } else {
                 return new IsValidSendBackAmountResponse(0, "", true);
             }
-        }else{
+        } else {
             sendBackSuccess = payMeSessionBeanLocal.sendToMyAccount(phoneNumLogInStr, amount);
-            if(sendBackSuccess == false){
+            if (sendBackSuccess == false) {
                 return new IsValidSendBackAmountResponse(1, "Saving Account is no longer valid or not enough available PayMe balance", false);
-            }else{
+            } else {
                 return new IsValidSendBackAmountResponse(0, "", true);
             }
-        }      
+        }
+    }
+
+    @POST
+    @Path(value = "isValidSendAmount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IsValidSendAmountResponse isValidSendAmount(@FormParam("amount") String amount,
+            @FormParam("recipientnumber") String phoneNumber) {
+
+        String checkAmountValidity;
+        if (isLoginPage == false) {
+            checkAmountValidity = payMeSessionBeanLocal.payMeSent(phoneNumStr, phoneNumber, amount);
+            if (checkAmountValidity.equals("Recipient does not exist")) {
+                return new IsValidSendAmountResponse(1, "Recipient does not exist", false);
+            } else if (checkAmountValidity.equals("Insufficient funds")) {
+                return new IsValidSendAmountResponse(1, "Please ensure you have sufficient funds to send money", true);
+            } else {
+                return new IsValidSendAmountResponse(0, "", true);
+            }
+        } else {
+            checkAmountValidity = payMeSessionBeanLocal.payMeSent(phoneNumLogInStr, phoneNumber, amount);
+            if (checkAmountValidity.equals("Recipient does not exist")) {
+                return new IsValidSendAmountResponse(1, "Recipient does not exist", false);
+            } else if (checkAmountValidity.equals("Insufficient funds")) {
+                return new IsValidSendAmountResponse(1, "Please ensure you have sufficient funds to send money", true);
+            } else {
+                return new IsValidSendAmountResponse(0, "", true);
+            }
+        }
     }
 
 }

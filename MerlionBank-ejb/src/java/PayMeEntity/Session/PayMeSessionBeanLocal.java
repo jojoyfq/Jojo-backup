@@ -29,7 +29,7 @@ public interface PayMeSessionBeanLocal {
     public boolean checkPayMeLogin(String phoneNumber, String password);
     public boolean topUp(String phoneNumber, String amount);
     public boolean sendToMyAccount(String phoneNumber, String amount);   
-    public boolean payMeSent(String phoneNumber, String otherPhone, String amount);
+    public String payMeSent(String phoneNumber, String otherPhone, String amount);
     public String getSavingAccountStringByPhone(String phone);
     public boolean checkTopUpLimit(String phoneNumber, String amount);
     public List<List<String>> getPayMeTransaction(String phoneNumber);

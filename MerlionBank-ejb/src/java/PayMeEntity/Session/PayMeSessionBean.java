@@ -281,7 +281,17 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
     }
 
     @Override
-    public boolean payMeSent(String phoneNumber, String otherPhone, String amount) {
+    public String payMeSent(String phoneNumber, String otherPhone, String amount) {
+        if (phoneNumber.substring(0, 1).equals("+") == false) {
+            phoneNumber = "+" + phoneNumber;
+        }
+        if (otherPhone.substring(0, 1).equals("+") == false) {
+            otherPhone = "+" + otherPhone;
+        }
+
+        System.out.println("PhoneNumber is " + phoneNumber + "**********");
+        System.out.println("otherPhone is " + otherPhone + "**********");
+
         Query q = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :phoneNumber");
         q.setParameter("phoneNumber", phoneNumber);
         PayMe payme = (PayMe) q.getSingleResult();
@@ -289,14 +299,14 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
 
         Query m = em.createQuery("SELECT a FROM PayMe a WHERE a.phoneNumber = :otherPhone");
         m.setParameter("otherPhone", otherPhone);
-        PayMe otherPayMe = (PayMe) m.getSingleResult();
 
         //if other payme number is not valid
-        if (otherPayMe == null) {
-            return false;
+        if (m.getResultList().isEmpty()) {
+            return "Recipient does not exist";
         } else if (payme.getBalance().compareTo(amountBD) == -1) {
-            return false; //payme account does not have enough balance
+            return "Insufficient funds"; //payme account does not have enough balance
         } else {
+            PayMe otherPayMe = (PayMe) m.getSingleResult();
             payme.setBalance(payme.getBalance().subtract(amountBD));
             em.persist(payme);
             otherPayMe.setBalance(otherPayMe.getBalance().add(amountBD));
@@ -313,7 +323,7 @@ public class PayMeSessionBean implements PayMeSessionBeanLocal {
             em.persist(paymeTransaction2);
 
             em.flush();
-            return true;
+            return "Send Successful";
         }
     }
 
