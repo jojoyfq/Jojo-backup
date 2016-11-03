@@ -84,13 +84,14 @@
                                             </center>
                                         </p:column>
 
-                                        <p:column headerText="Withdraw Money" style="width: 80px;" >
+                                       <p:column headerText="Cash Withdraw" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{staffWealthManagedBean.selectWealthAccountToWithdraw}" oncomplete="PF('msgDialog2').show()"  ajax="false" type="submit" >
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White"  actionListener="#{staffWealthManagedBean.selectWealthAccount}" oncomplete="PF('msgDialog2').show()" update=":form:panel" ajax="true" type="submit" >
                                                     <f:attribute name="selectedWealth" value="#{Wealth}"  />
                                                 </p:commandButton>
                                             </center>
                                         </p:column>
+
 
                                     </p:dataTable>
 
@@ -99,12 +100,12 @@
 
 
                             </p:panel>
-                             <p:dialog id="dialogMessage1"   header="Withdraw" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
-                                <p:outputPanel id="msgDetail1" style="text-align:center;">
-                                <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
+                                <p:dialog id="dialogMessage1"   header="Cash Withdraw" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                    <p:outputPanel id="msgDetail1" style="text-align:center;">
+                                <p:panelGrid  columns="2"  >
 
                                                     <h:outputText value="Withdraw Amount S($)" style="font-weight: bold"/>
-                                                    <h:outputText value="#{staffWealthManagedBean.withdrawAmount}"/>
+                                                    <p:inputText value="#{staffWealthManagedBean.withdrawAmount}"/>
 
                                                     <div class="Container60">
                                                         <p:commandButton actionListener="#{staffWealthManagedBean.withdrawFromDiscretionaryAccount}" onclick="if (!confirm('Are you sure you want to withdraw now?'))
