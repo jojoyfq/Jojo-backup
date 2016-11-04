@@ -82,21 +82,15 @@
 
 
 
-                                        <p:column headerText="Transfer by Saving Account" style="width: 80px;" >
+                                        <p:column headerText="Activate Account" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerActivateWealthAccount}" update=":form:panel" ajax="false"  >
                                                     <f:attribute name="selectedWealth" value="#{Wealth}"  />
                                                 </p:commandButton>
                                             </center>
                                         </p:column>
 
-                                        <p:column headerText="Cash Withdraw" style="width: 80px;" >
-                                            <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White"  actionListener="#{customerWealthManagedBean.selectWealthAccount}" oncomplete="PF('msgDialog2').show()" update=":form:panel" ajax="true" type="submit" >
-                                                    <f:attribute name="selectedWealth" value="#{Wealth}"  />
-                                                </p:commandButton>
-                                            </center>
-                                        </p:column>
+                                        
 
 
                                     </p:dataTable>
@@ -104,29 +98,7 @@
 
                                 </h:panelGrid>
 
-                                <p:dialog id="dialogMessage1"   header="Cash Withdraw" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
-                                    <p:outputPanel id="msgDetail1" style="text-align:center;">
-                                        <p:panelGrid  columns="2"  >
-                                            <p:outputLabel id="eq" value="Saving Account"/>
-
-                                            <p:selectOneMenu id="city" value="#{customerWealthManagedBean.selectedSavingAcctId}" effect="fold" editable="true">
-                                                <f:selectItem itemLabel="Select One Saving Account" itemValue="" />
-                                                <f:selectItems value="#{customerWealthManagedBean.allSavingId}" />
-                                            </p:selectOneMenu>
-
-                                            <p:outputLabel  value="Cash Amount S($)"/>
-
-                                            <p:inputText  value="#{customerWealthManagedBean.withdrawAmount}" style="width:100%"/>
-
-
-
-                                            <div class="Card">
-                                                <p:commandButton  update=":form"  value="Submit" actionListener="#{customerWealthManagedBean.withdrawFromDiscretionaryAccount}"  style="width:100px;height:40px" />
-
-                                            </div>
-                                        </p:panelGrid>
-                                    </p:outputPanel>
-                                </p:dialog>
+                               
 
                             </p:panel>
                         </h:form>

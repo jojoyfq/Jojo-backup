@@ -17,7 +17,7 @@
         </div>
 
         <!-- Center Column -->
-        
+
         <div class="Container50 NoPadding Responsive50">
             <div class="EmptyBox20"></div>
             <div class="Container100">
@@ -31,6 +31,14 @@
                                 <div class="Container10"></div>
                                 <div class="Container80">
                                     <h:panelGrid columns="2" id="serviceCustomerPanel" cellpadding="5"> 
+
+                                        <p:outputLabel for="console" value="Service Category" />
+                                        <p:selectOneMenu id="console" value="#{staffWealthManagedBean.service}" style="width:125px" required="true">
+                                            <f:selectItem itemLabel="Select One" itemValue="" />
+                                            <f:selectItem itemLabel="Tailored Portfolio Activation" itemValue="Tailored Portfolio Activation" />
+                                            <f:selectItem itemLabel="Cash Withdraw" itemValue="Cash Withdraw" />
+                                           
+                                        </p:selectOneMenu>
 
                                         <h:outputLabel for="customerIc" value="Enter customer IC : " />
                                         <p:inputText id="customerIc" value="#{staffWealthManagedBean.searchedCustomerIc}" label="customerIc" required="true" />
