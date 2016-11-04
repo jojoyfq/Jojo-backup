@@ -39,7 +39,6 @@ public interface DebitCardSessionBeanLocal {
     public DebitCard getDebitCardForClose(String cardNo);
     public List<String> getDebitCardStringForClose(Long customerID) throws DebitCardException;
     public List<DebitCardTransaction> getDebitCardTransaction(Long cardNo);
-    public void insertDebitCardTransactionForTesting(Long customerID);
     public List<DebitCardType> getDebitCardTypes();
     public List<String> getDebitCardTypeList();
     public double getRebateRate(String type);

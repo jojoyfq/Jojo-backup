@@ -70,6 +70,12 @@ public class CreditCardManagedBean implements Serializable {
     private String cvv;
     private String newPassword;
     private String confirmedPassword;
+    //cancel credit card
+    private List<String> creditCardList;
+    private String creditCardSelected;
+    private Long creditCardSelectedLong;
+    private String cancelReason;
+    private CreditCard creditCardForClose;
 
     @PostConstruct
     public void init() {
@@ -79,6 +85,7 @@ public class CreditCardManagedBean implements Serializable {
             identityList.add(1, "Permanent Resident");
             identityList.add(2, "Foreigner");
             System.out.print(identityList);
+            creditCardList = ccsb.getCreditCardNumbers(customerID);
         } catch (Exception e) {
             System.out.print("init encounter error!");
         }
@@ -112,6 +119,16 @@ public class CreditCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/creditCardActivate_EnterDetail.xhtml");
         } catch (Exception e) {
             System.out.print("dashboard to activate Credit card encounter error!");
+        }
+    }
+    
+    public void dashboardToCancelCreditCard(ActionEvent event) {
+        try {
+            creditCardList = ccsb.getCreditCardNumbers(customerID);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardCancel_selectCard.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to cancel Credit card encounter error!");
         }
     }
 
@@ -282,7 +299,30 @@ public class CreditCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/creditCardActivateSuccess.xhtml");
         }
     }
+    
+    public void showCreditCardDetail(ActionEvent event) throws IOException {
+        if (creditCardSelected != null && cancelReason != null) {
+            creditCardForClose = ccsb.getCreditCardForClose(creditCardSelected);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardCancel_showDetail.xhtml");
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select the required field!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
 
+    
+    public void cancelDebitCard(ActionEvent event) throws CreditCardException, IOException {
+        try {
+            ccsb.cancelCreditCard(creditCardSelected);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardCancelSuccess.xhtml");
+        } catch (CreditCardException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+    
     public Long getCustomerID() {
         return customerID;
     }
@@ -418,7 +458,46 @@ public class CreditCardManagedBean implements Serializable {
     public void setConfirmedPassword(String confirmedPassword) {
         this.confirmedPassword = confirmedPassword;
     }
-    
-    
 
+    public List<String> getCreditCardList() {
+        return creditCardList;
+    }
+
+    public void setCreditCardList(List<String> creditCardList) {
+        this.creditCardList = creditCardList;
+    }
+
+    public Long getCreditCardSelectedLong() {
+        return creditCardSelectedLong;
+    }
+
+    public void setCreditCardSelectedLong(Long creditCardSelectedLong) {
+        this.creditCardSelectedLong = creditCardSelectedLong;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public String getCreditCardSelected() {
+        return creditCardSelected;
+    }
+
+    public void setCreditCardSelected(String creditCardSelected) {
+        this.creditCardSelected = creditCardSelected;
+    }
+
+    public CreditCard getCreditCardForClose() {
+        return creditCardForClose;
+    }
+
+    public void setCreditCardForClose(CreditCard creditCardForClose) {
+        this.creditCardForClose = creditCardForClose;
+    }
+    
+       
 }
