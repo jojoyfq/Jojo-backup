@@ -300,9 +300,9 @@ public class StaffWealthManagedBean implements Serializable {
     }
 
     public void staffAcceptPlan(ActionEvent event) {
-       
+
         try {
-            pendingApprovedTailoredPlans = wmsbl.staffApprovePortfolios(customerId, selectedPort.getId());
+            pendingApprovedTailoredPlans = wmsbl.staffApprovePortfolios(staffId, selectedPort.getId());
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully accepted the plan " + selectedPort.getType() + "(" + selectedPort.getId() + ")");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (EmailNotSendException ex) {
@@ -342,6 +342,7 @@ public class StaffWealthManagedBean implements Serializable {
 
     }
 
+
     public void staffModifyPortfolio(RowEditEvent event) throws EmailNotSendException {
         try {
             selectedPort = (Portfolio) event.getObject();
@@ -369,6 +370,7 @@ public class StaffWealthManagedBean implements Serializable {
             foreignExchange = onePortAllProducts.get(0).getPercentage();
             equity = onePortAllProducts.get(1).getPercentage();
             bond = onePortAllProducts.get(2).getPercentage();
+
 
     }
  public void staffModifyPortfolioProduct(ActionEvent event) throws EmailNotSendException {

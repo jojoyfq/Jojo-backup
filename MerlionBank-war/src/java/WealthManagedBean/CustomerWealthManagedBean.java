@@ -483,6 +483,7 @@ public class CustomerWealthManagedBean implements Serializable {
 
     }
 
+
     public void selectPortfolio(ActionEvent event) {
         selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
         onePortAllProducts = selectedPort.getProducts();
@@ -529,6 +530,7 @@ public class CustomerWealthManagedBean implements Serializable {
         }
 
     }
+
 
     public void withdrawFromDiscretionaryAccount(ActionEvent event) {
         System.out.println("******Selected discretionary Account to withdraw is " + selectedWealth.getId());
