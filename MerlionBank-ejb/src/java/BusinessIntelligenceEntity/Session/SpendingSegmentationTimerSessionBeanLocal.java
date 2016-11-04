@@ -13,5 +13,8 @@ import javax.ejb.Local;
  */
 @Local
 public interface SpendingSegmentationTimerSessionBeanLocal {
-    
+   public void debitCardSegmentation();
+    public void creditCardSegmentation();
+     public void sendBirthdayCoupon();
+   
 }
