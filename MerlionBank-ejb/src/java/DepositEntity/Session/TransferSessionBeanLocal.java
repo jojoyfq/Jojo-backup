@@ -29,7 +29,7 @@ public interface TransferSessionBeanLocal {
 
     public String searchPayeeName(Long payeeAccount);
 
-    public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
+    public List<String> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
 
     public void changeTransferLimit(Long customerID, BigDecimal transferLimit);
 
