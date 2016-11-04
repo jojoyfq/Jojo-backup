@@ -52,9 +52,10 @@ public class SavingAccountManagedBean implements Serializable {
     private String savingAccountName;
     private List<String> savingAccountTypeList;
     private boolean createSavingAccountStatus;
-    private List<Long> savingAccountNumberList;
+    private List<String> savingAccountNumberList;
     private List<Long> inactiveSavingAccountNumberList;
-    private Long savingAccountSelected;
+    private String savingAccountSelected;
+    private Long savingAccountSelectedLong;
     private Long inactiveSavingAccountSelected;
     private List<TransactionRecord> transactionRecordList;
     private List<SavingAccount> savingAccountForCloseAccount;
@@ -189,7 +190,8 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void getTransactionRecords() {
         System.out.print("inside the transaction Managedbean");
-        transactionRecordList = sasb.getTransactionRecord(savingAccountSelected);
+        savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
+        transactionRecordList = sasb.getTransactionRecord(savingAccountSelectedLong);
         //System.out.print(transactionRecordList);
     }
 
@@ -216,7 +218,8 @@ public class SavingAccountManagedBean implements Serializable {
     public void goToCloseSavingAccount(ActionEvent event) {
         try {
             if (savingAccountSelected != null) {
-                savingAccountForCloseAccount = sasb.getSavingAccountForCloseAccount(savingAccountSelected);
+                savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
+                savingAccountForCloseAccount = sasb.getSavingAccountForCloseAccount(savingAccountSelectedLong);
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/DepositManagement/closeSavingAccount.xhtml");
             } else {
@@ -264,10 +267,11 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void checkPendingTransaction(ActionEvent event) throws UserHasPendingTransactionException, IOException, UserHasNoSavingAccountException, UserCloseAccountException {
         try {
-            sasb.checkPendingTransaction(savingAccountSelected);
+            savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
+            sasb.checkPendingTransaction(savingAccountSelectedLong);
             this.getSavingAccountNumbers();
 
-            String description = "Close " + savingAccountSelected + " saving account ";
+            String description = "Close " + savingAccountSelectedLong + " saving account ";
             sasb.logAction(description, customerID);
 
             FacesContext.getCurrentInstance().getExternalContext()
@@ -322,19 +326,19 @@ public class SavingAccountManagedBean implements Serializable {
         this.createSavingAccountStatus = createSavingAccountStatus;
     }
 
-    public List<Long> getSavingAccountNumberList() {
+    public List<String> getSavingAccountNumberList() {
         return savingAccountNumberList;
     }
 
-    public void setSavingAccountNumberList(List<Long> savingAccountNumList) {
+    public void setSavingAccountNumberList(List<String> savingAccountNumList) {
         this.savingAccountNumberList = savingAccountNumList;
     }
 
-    public Long getSavingAccountSelected() {
+    public String getSavingAccountSelected() {
         return savingAccountSelected;
     }
 
-    public void setSavingAccountSelected(Long savingAccountSelected) {
+    public void setSavingAccountSelected(String savingAccountSelected) {
         this.savingAccountSelected = savingAccountSelected;
     }
 
@@ -369,5 +373,15 @@ public class SavingAccountManagedBean implements Serializable {
     public void setInactiveSavingAccountSelected(Long inactiveSavingAccountSelected) {
         this.inactiveSavingAccountSelected = inactiveSavingAccountSelected;
     }
+
+    public Long getSavingAccountSelectedLong() {
+        return savingAccountSelectedLong;
+    }
+
+    public void setSavingAccountSelectedLong(Long savingAccountSelectedLong) {
+        this.savingAccountSelectedLong = savingAccountSelectedLong;
+    }
+    
+    
 
 }
