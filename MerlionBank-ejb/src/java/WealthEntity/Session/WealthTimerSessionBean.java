@@ -237,6 +237,7 @@ public class WealthTimerSessionBean implements WealthTimerSessionBeanLocal {
     
     @Override
     public void preDefinedPlanInterestCrediting(){
+        System.out.println("inside the preDefinedPlanInterestCrediting method");
          Query query = em.createQuery("SELECT a FROM Portfolio a");
         List<Portfolio> portfolios = new ArrayList(query.getResultList()); 
        List<Portfolio>  selected=new ArrayList<Portfolio>();

@@ -101,7 +101,13 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             Timer wealthAccountInterest = timerService.createTimer(startTime, 1 * 60 * 1000, "WealthAccountInterest-TIMER");
         }else if (timerInfo.equals("WealthCommissionFee-TIMER")){
             Timer wealthCommission = timerService.createTimer(startTime, 1 * 60 * 1000, "WealthCommissionFee-TIMER");
-        }
+        }else if (timerInfo.equals("ClosePortfolio-TIMER")){
+            Timer closePortfolio = timerService.createTimer(startTime, 1 * 60 * 1000, "ClosePortfolio-TIMER");
+        }else if (timerInfo.equals("UpdateDiscretionaryAccountInterestRate-TIMER")){
+            Timer updateDiscretionaryAccountInterestRate = timerService.createTimer(startTime, 1 * 60 * 1000, "UpdateDiscretionaryAccountInterestRate-TIMER");
+        }else if (timerInfo.equals("PreDefinedPlanInterestCrediting-TIMER")){
+            Timer preDefinedPlanInterestCrediting = timerService.createTimer(startTime, 1 * 60 * 1000, "PreDefinedPlanInterestCrediting-TIMER");
+        }         
     }
 
     public void cancelTimers(String timerInfo) {
@@ -151,6 +157,12 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             wtsbl.interestCrediting();
         } else if (timer.getInfo().toString().equals("WealthCommissionFee-TIMER")){
             wtsbl.commissionFeeCalculation();
+        } else if (timer.getInfo().toString().equals("ClosePortfolio-TIMER")){
+            wtsbl.closePortfolio();
+        } else if (timer.getInfo().toString().equals("UpdateDiscretionaryAccountInterestRate-TIMER")){
+            wtsbl.updateDiscretionaryAccountInterestRate();
+        } else if (timer.getInfo().toString().equals("PreDefinedPlanInterestCrediting-TIMER")){
+            wtsbl.preDefinedPlanInterestCrediting();
         }
     }
 

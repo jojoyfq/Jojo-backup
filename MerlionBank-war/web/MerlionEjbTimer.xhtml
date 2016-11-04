@@ -21,10 +21,10 @@
 
                     <h:panelGrid columns="3">
                         <p:outputLabel value="1. Saving Account Daily Interest Accural: " />
-                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit" style="float: right;">
                             <f:attribute name="timerName" value="DailyInterestAccrued-TIMER" />
                         </p:commandButton>
-                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit" style="float:right">
                             <f:attribute name="timerName" value="DailyInterestAccrued-TIMER" />
                         </p:commandButton>
                     </h:panelGrid>
@@ -69,7 +69,15 @@
                             <f:attribute name ="timerName" value="OnlineBankingAccount-TIMER" />
                         </p:commandButton>              
                     </h:panelGrid>
-
+                    <br>
+                        
+                    </br>
+                    <div>
+                   <h:panelGrid>
+                        <p:outputLabel value="LOAN" />            
+                    </h:panelGrid>
+                    </div>
+                    
                     <h:panelGrid columns="3">
                         <p:outputLabel value="6. Loan auto bad debt checking: " />
                         <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
@@ -119,7 +127,16 @@
                             <f:attribute name="timerName" value="LoanPayByGIRO-TIMER" />
                         </p:commandButton> 
                     </h:panelGrid>
-
+                    
+                    <br>
+                        
+                    </br>
+                     <div>
+                   <h:panelGrid>
+                        <p:outputLabel value="BILL AND TRANSFER" />            
+                    </h:panelGrid>
+                    </div>
+                    
                     <h:panelGrid columns="3">
                         <p:outputLabel value="11. Recurrent Bill: " />
                         <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
@@ -129,6 +146,18 @@
                             <f:attribute name="timerName" value="RecurrentBill-TIMER" />
                         </p:commandButton> 
                     </h:panelGrid>
+                    
+                    <br>
+                        
+                    </br>
+                    <div>
+                   <h:panelGrid>
+                        <p:outputLabel value="WEALTH MANAGEMENT" />            
+                    </h:panelGrid>
+                    </div>
+                    <div>
+                        
+                    </div>
                     
                     <h:panelGrid columns="3">
                         <p:outputLabel value="12. Wealth Account Closing: " />
@@ -157,6 +186,36 @@
                         </p:commandButton>
                         <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
                             <f:attribute name="timerName" value="WealthCommissionFee-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+                    
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="15. Close Portfolio : " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="ClosePortfolio-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="ClosePortfolio-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+                    
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="16. Update Discretionary Account Interest Rate : " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="UpdateDiscretionaryAccountInterestRate-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="UpdateDiscretionaryAccountInterestRate-TIMER" />
+                        </p:commandButton> 
+                    </h:panelGrid>
+                    
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="17. Predefined Plan Interest Crediting : " />
+                        <p:commandButton value="start" actionListener = "#{DemoEjbTimerManagedBean.createTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="PreDefinedPlanInterestCrediting-TIMER" />
+                        </p:commandButton>
+                        <p:commandButton value="Stop" actionListener="#{DemoEjbTimerManagedBean.cancelTimers}" ajax="false" type="submit">
+                            <f:attribute name="timerName" value="PreDefinedPlanInterestCrediting-TIMER" />
                         </p:commandButton> 
                     </h:panelGrid>
                     
