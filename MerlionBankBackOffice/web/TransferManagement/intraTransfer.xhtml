@@ -33,7 +33,7 @@
                                     <h:panelGrid columns="2" id="intraTransfer" cellpadding="5"> 
 
                                         <h:outputLabel for="yourAccount" value="Select Your Account:" />
-                                        <p:selectOneMenu id="savingAccountList" value="#{transferManagedBean.giverAccountNumLong}">
+                                        <p:selectOneMenu id="savingAccountList" value="#{transferManagedBean.giverAccountNumString}">
                                             <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
                                             <f:selectItems value="#{transferManagedBean.savingAccountList}" />
                                         </p:selectOneMenu>  

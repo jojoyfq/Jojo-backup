@@ -177,31 +177,11 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
         return debitCard.getDebitCardTransaction();
     }
     
-    @Override
-    public void insertDebitCardTransactionForTesting(Long customerID){
-        Customer customer = em.find(Customer.class, customerID);
-        DebitCard debitCard = customer.getSavingAccounts().get(0).getDebitCard();
-        
-        BigDecimal debit1 = new BigDecimal("800");
-        BigDecimal debit2 = new BigDecimal("1000");
-        Date date = Calendar.getInstance().getTime();
-        Long cardNumber1 = Long.parseLong("4581048249572845");
-        Long cardNumber2 = Long.parseLong("8936281946283518");
-        DebitCardTransaction debitTransaction1 = new DebitCardTransaction("POS",debit1 , null, "settled", "Cold Storage",date,null,null,debitCard.getSavingAccount(), "Merlion Bank", "OCBC", cardNumber1, "VISA");
-        DebitCardTransaction debitTransaction2 = new DebitCardTransaction("POS",debit2 , null, "settled", "Bread Talk",date,null,null,debitCard.getSavingAccount(), "Merlion Bank", "DBS", cardNumber2, "VISA");
-        List<DebitCardTransaction> list = new ArrayList();
-        list.add(debitTransaction1);
-        list.add(debitTransaction2);
-        debitCard.setDebitCardTransaction(list);
-        em.persist(debitTransaction1);
-        em.persist(debitTransaction2);
-        em.persist(debitCard);
-        em.flush();
-    }
 
     @Override
-    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount, String merchant) {
+    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount, String merchant,String merchantBank,String merchantSavingAccount) {
 
+        Long merchantAccount = Long.parseLong(merchantSavingAccount);
         BigDecimal posAmount = new BigDecimal(amount);
         Long cardNoL = Long.parseLong(cardNo);
         Long cvvl = Long.parseLong(cvv);
@@ -231,7 +211,7 @@ public class DebitCardSessionBean implements DebitCardSessionBeanLocal {
                     Date currentTime = Calendar.getInstance().getTime();
                     java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-                    DebitCardTransaction transactionRecord = new DebitCardTransaction("POS", posAmount, null, "settled", cardNo + "," +merchant, currentTimestamp, debitCard.getSavingAccount().getAccountNumber(), null, debitCard.getSavingAccount(), "MerlionBank", null,cardNoL,"VISA");
+                    DebitCardTransaction transactionRecord = new DebitCardTransaction("POS", posAmount, null, "settled", cardNo + "," +merchant, currentTimestamp, debitCard.getSavingAccount().getAccountNumber(), merchantAccount, debitCard.getSavingAccount(), "MerlionBank", merchantBank,debitCard,"VISA");
                     em.persist(transactionRecord);
                     debitCard.getDebitCardTransaction().add(transactionRecord);
                     em.flush();

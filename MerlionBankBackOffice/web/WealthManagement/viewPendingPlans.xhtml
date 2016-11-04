@@ -23,7 +23,9 @@
 
                     <div class="Container100 ui-fluid">
 
-                        <h:form id="form">                            
+                        <h:form id="form">  
+                                                        <p:panel id="panel" header="Wealth Management Payment System - My Portfolio" >
+
                             <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
                                 <p:messages id="msgs" />
 
@@ -74,18 +76,18 @@
 
 
 
-                                    <p:column headerText="Loan Status ">
+                                    <p:column headerText="Status ">
                                         <h:outputText value="#{pendingLoan.status}" />
                                     </p:column>
 
-                                    <p:column headerText="Products Detail" style="width: 80px;" >
-                                        <center>
-                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail1" oncomplete="PF('msgDialog2').show()"  ajax="true" type="submit" >
-                                                <f:setPropertyActionListener value="#{pendingLoan}" target="#{staffWealthManagedBean.selectedPort}" />
-                                                <!--                                                <f:attribute name="selectedLoan" value="{pendingLoan}"  />-->
-                                            </p:commandButton>
-                                        </center>
-                                    </p:column>
+                                        <p:column headerText="Products Detail" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton  icon="ui-icon-mail-open" update=":form"  actionListener="#{staffWealthManagedBean.selectPortfolio}" oncomplete="PF('msgDialog2').show()"  ajax="true"  >
+                                                    <!--                                                    <f:setPropertyActionListener value="{Wealth}" target="{customerWealthManagedBean.selectedPort}" />-->
+                                                    <f:attribute name="selectedPort" value="#{pendingLoan}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
 
                                     <p:column headerText="Customer Detail" style="width: 80px;" >
                                         <center>
@@ -99,8 +101,8 @@
                                     <p:column headerText="Assign RM" style="width: 80px;" >
                                         <center>
                                             <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetailg" actionListener="#{staffWealthManagedBean.assignRM}" oncomplete="PF('msgDialogg').show()"  ajax="true" type="submit" >
-<!--                                                <f:setPropertyActionListener value="{pendingLoan}" target="{staffWealthManagedBean.selectedPort}" />-->
-                                                                                                <f:attribute name="selectedPort" value="#{pendingLoan}"  />
+                                                <!--                                                <f:setPropertyActionListener value="{pendingLoan}" target="{staffWealthManagedBean.selectedPort}" />-->
+                                                <f:attribute name="selectedPort" value="#{pendingLoan}"  />
                                             </p:commandButton>
                                         </center>
                                     </p:column>
@@ -121,6 +123,8 @@
                                 </p:dataTable>
 
                             </h:panelGrid>
+                                                                                        </p:panel>
+
                             <p:dialog id="dialogMessage"   header="Customer Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
                                 <p:outputPanel id="msgDetail" style="text-align:center;">
                                     <p:panelGrid  columns="2"  >
@@ -159,24 +163,25 @@
                                 <p:outputPanel id="msgDetail1" style="text-align:center;">
                                     <p:panelGrid  columns="2"  >
 
-                                        <p:dataTable id="radioDT1" var="product" value="#{staffWealthManagedBean.selectedPort.products}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selectedPort}" rowKey="#{product.id}">
-                                            <p:ajax event="rowEdit" listener="#{staffWealthManagedBean.staffModifyPortfolio}" update=":form" /> 
+                                        <p:outputLabel for="fx" value="FX Proportion"/>
+                                        <p:inplace id="fx">
+                                            <p:inputText  value="#{staffWealthManagedBean.foreignExchange}" style="width:100%"/>
+                                        </p:inplace>
 
-                                            <p:column headerText="Product Name">
-                                                <h:outputText value="#{product.productName}" />
-                                            </p:column>
+                                        <p:outputLabel for="eq" value="Equity Proportion"/>
+                                        <p:inplace id="eq">
+                                            <p:inputText  value="#{staffWealthManagedBean.equity}" style="width:100%"/>
+                                        </p:inplace>
 
-                                            <p:column headerText="Proportion">
-                                                <p:cellEditor>
-                                                    <f:facet name="output"><h:outputText value="#{product.percentage}" /></f:facet>
-                                                    <f:facet name="input"><p:inputText id="modelInput" value="#{product.percentage}" style="width:100%"/></f:facet>
-                                                </p:cellEditor>
-                                            </p:column>
+                                        <p:outputLabel for="bd" value="Bond Proportion"/>
+                                        <p:inplace id="bd">
+                                            <p:inputText  value="#{staffWealthManagedBean.bond}" style="width:100%"/>
+                                        </p:inplace>
 
-                                            <p:column headerText="Edit" style="width:32px">
-                                                <p:rowEditor />
-                                            </p:column>
-                                        </p:dataTable>
+                                        <div class="Card">
+                                            <p:commandButton  update=":form"  value="Submit" actionListener="#{staffWealthManagedBean.staffModifyPortfolioProduct(event)}"  style="width:100px;height:40px" />
+
+                                        </div>
                                     </p:panelGrid>
                                 </p:outputPanel>
                             </p:dialog>
