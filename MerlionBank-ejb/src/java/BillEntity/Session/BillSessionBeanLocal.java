@@ -10,6 +10,7 @@ import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
 import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -56,10 +57,10 @@ public interface BillSessionBeanLocal {
 
     public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount);
 
-    public void approveGIRO(Long id, String boName, DateTime deductDate);
-
-    public List<GIROArrangement> getPendingGIRO(String boName);
-
     public List<GIROArrangement> viewableGIRO(Long customerId);  
+
+    public List<String> getPendingGIRO(String boName);
+
+    public boolean approveGIRO(Long id, String boName, String deductDay) throws ParseException;
 
 }

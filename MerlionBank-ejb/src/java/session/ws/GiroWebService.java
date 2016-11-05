@@ -7,7 +7,11 @@ package session.ws;
 
 import BillEntity.GIROArrangement;
 import BillEntity.Session.BillSessionBeanLocal;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -30,19 +34,18 @@ public class GiroWebService {
      * This is a sample web service operation
      * @param status
      * @param id
-     * @param deductDay
-     * @param boName
+     * @param deductionDay
+     * @throws java.text.ParseException
      */
     
     @WebMethod(operationName = "approveGIRO")
-    public void approveGIRO(@WebParam(name = "status")String status, @WebParam(name = "id") Long id, @WebParam(name="deductDay") DateTime deductDay){
-        bsbl.approveGIRO(id, status, deductDay);
+    public boolean approveGIRO(@WebParam(name = "status")String status, @WebParam(name = "id") Long id, @WebParam(name="deductDay") String deductionDay) throws ParseException{
+            return bsbl.approveGIRO(id, status, deductionDay);
     }
     
     @WebMethod(operationName = "displayGIRO")
-    public List<GIROArrangement> displayGIRO(@WebParam(name = "boName")String boName){
-        List<GIROArrangement> giro = bsbl.getPendingGIRO(boName);
-        return giro;
+    public List<String> displayGIRO(@WebParam(name = "boName")String boName){
+        return bsbl.getPendingGIRO(boName);
     }
     
     
