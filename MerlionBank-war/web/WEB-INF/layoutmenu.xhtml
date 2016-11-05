@@ -46,7 +46,8 @@
                     </p:submenu>
 
                     <p:submenu id="creditCard" label="Credit Card" icon="icon-plus">
-                        <p:menuitem id="Apply_Credit_Card" value="Apply Credit Card" actionListener="#{creditCardManagedBean.dashboardToCreateCreditCard}"/> 
+                        <p:menuitem id="Apply_Credit_Card" value="Apply Credit Card" actionListener="#{creditCardManagedBean.dashboardToCreateCreditCard}"/>                 
+                        <p:menuitem id="Activate_Credit_Card" value="Activate Credit Card" actionListener="#{creditCardManagedBean.dashboardToActivateCreditCard}"/> 
                     </p:submenu>
                 </p:submenu>
 
@@ -80,8 +81,9 @@
 
                 <p:submenu id="wealth_management" label="Wealth Management">
                     <p:menuitem id="create_wealthForExisting" value="Apply Discretionary Account" actionListener="#{customerWealthManagedBean.goToApplyWealthAccountExistCustomer}" /> 
+                    <p:menuitem id="activate_wealthForExisting" value="Activate Discretionary Account" actionListener="#{customerWealthManagedBean.goToAcitivateWealthAccount}" /> 
                     <p:menuitem id="buy" value="Buy Wealth Product" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForBuyProduct}" /> 
-                    <p:menuitem id="view_wealth_account" value="Fund Transfer To My Discreationary Account" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccounts}"/>
+                    <p:menuitem id="view_wealth_account" value="Discreationary Account Management" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccounts}"/>
                     <p:menuitem id="view_wealth_account2" value="Plan Management" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForPortfolio}"/>
 
                 </p:submenu>

@@ -10,6 +10,7 @@ import CardEntity.Session.CreditCardSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
+import Exception.CreditCardException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -61,6 +63,13 @@ public class CreditCardManagedBean implements Serializable {
     private UploadedFile cpfContribution;
     private UploadedFile paySlip;
     private UploadedFile salaryApprove;
+    //for credit card activation
+    private String cardNo;
+    private String cardHolder;
+    private Date expiryDate;
+    private String cvv;
+    private String newPassword;
+    private String confirmedPassword;
 
     @PostConstruct
     public void init() {
@@ -77,6 +86,15 @@ public class CreditCardManagedBean implements Serializable {
 
     public CreditCardManagedBean() {
     }
+    
+    public void goBackToHomePage(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/dashboard.xhtml");
+        } catch (Exception e) {
+            System.out.print("Redirect to Home Page Encounter Error!");
+        }
+    }
 
     public void dashboardToCreateCreditCard(ActionEvent event) {
         try {
@@ -85,6 +103,15 @@ public class CreditCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/creditCardApply_SelectIdentity.xhtml");
         } catch (Exception e) {
             System.out.print("dashboard to create credit card encounter error!");
+        }
+    }
+    
+    public void dashboardToActivateCreditCard(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardActivate_EnterDetail.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to activate Credit card encounter error!");
         }
     }
 
@@ -104,7 +131,7 @@ public class CreditCardManagedBean implements Serializable {
     public void sendCreditCardApplication(ActionEvent event) throws IOException {
         if (creditCardTypeSelected != null) {
             Customer customer = ccsb.getCustomer(customerID);
-            ccsb.newCreditCardApplication(customer, identitySelected,creditCardTypeSelected);
+            ccsb.newCreditCardApplication(customer, identitySelected, creditCardTypeSelected);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/CardManagement/creditCardApplySuccess.xhtml");
         } else {
@@ -140,7 +167,6 @@ public class CreditCardManagedBean implements Serializable {
 //        //specify the storage path
 //
 //    }
-
 //    public void handlePaySlipUpload(FileUploadEvent event) {
 //        paySlip = event.getFile();
 //        System.out.print(paySlip.getFileName());
@@ -151,7 +177,6 @@ public class CreditCardManagedBean implements Serializable {
 //        FacesContext.getCurrentInstance().addMessage(null,
 //                new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType)));
 //    }
-
 //    public void handleSAUpload(FileUploadEvent event) {
 //        salaryApprove = event.getFile();
 //        System.out.print(salaryApprove.getFileName());
@@ -161,7 +186,6 @@ public class CreditCardManagedBean implements Serializable {
 //        FacesContext.getCurrentInstance().addMessage(null,
 //                new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType)));
 //    }
-
 //    public void handleEPUpload(FileUploadEvent event) {
 //        employmentPass = event.getFile();
 //        System.out.print(employmentPass.getFileName());
@@ -171,9 +195,8 @@ public class CreditCardManagedBean implements Serializable {
 //        FacesContext.getCurrentInstance().addMessage(null,
 //                new FacesMessage(String.format("File '%s' of type '%s' successfully uploaded!", fileName, contentType)));
 //    }
-
     public void uploadFileForeigner(ActionEvent event) throws IOException {
-        if (file != null) {         
+        if (file != null) {
             creditCardTypeList = ccsb.getCreditCardType();
 
             FacesContext.getCurrentInstance().getExternalContext()
@@ -195,7 +218,7 @@ public class CreditCardManagedBean implements Serializable {
         System.out.println("Uploade file Customer Ic: " + customer.getIc());
         // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
         String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + customer.getIc() + "\\" + file.getFileName();
-       // String savedFileName = path + "/" + uploadedFile.getFileName();
+        // String savedFileName = path + "/" + uploadedFile.getFileName();
         //    File fileToSave = new File(savedFileName);
         File fileToSave = new File(destPath);
 
@@ -219,7 +242,7 @@ public class CreditCardManagedBean implements Serializable {
     }
 
     public void uploadFileSingaporean(ActionEvent event) throws IOException {
-        if (file != null) {           
+        if (file != null) {
             creditCardTypeList = ccsb.getCreditCardType();
 
             FacesContext.getCurrentInstance().getExternalContext()
@@ -227,6 +250,36 @@ public class CreditCardManagedBean implements Serializable {
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please upload all the file!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void verifyCreditCard(ActionEvent event) throws IOException,CreditCardException {
+        try {
+            Long cardNoL = Long.parseLong(cardNo);
+            Long cvvL = Long.parseLong(cvv);
+            if (ccsb.verifyCreditCard(cardHolder, cardNoL, expiryDate, cvvL)) {
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/CardManagement/creditCardActivate_setPassword.xhtml");
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/CardManagement/creditCardActivate_EnterDetail.xhtml");
+            }
+
+        } catch (CreditCardException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+    
+    public void setCreditCardPassword(ActionEvent event) throws IOException {
+        if (!newPassword.equals(confirmedPassword)) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Confirmed Password does not match!! ");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } else {
+            Long cardNoL = Long.parseLong(cardNo);
+            ccsb.setPassword(cardNoL, newPassword);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardActivateSuccess.xhtml");
         }
     }
 
@@ -309,5 +362,63 @@ public class CreditCardManagedBean implements Serializable {
     public void setSalaryApprove(UploadedFile salaryApprove) {
         this.salaryApprove = salaryApprove;
     }
+
+    public UploadedFile getFile() {
+        return file;
+    }
+
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
+
+    public String getCardNo() {
+        return cardNo;
+    }
+
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
+    }
+
+    public String getCardHolder() {
+        return cardHolder;
+    }
+
+    public void setCardHolder(String cardHolder) {
+        this.cardHolder = cardHolder;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public String getCvv() {
+        return cvv;
+    }
+
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmedPassword() {
+        return confirmedPassword;
+    }
+
+    public void setConfirmedPassword(String confirmedPassword) {
+        this.confirmedPassword = confirmedPassword;
+    }
+    
+    
 
 }
