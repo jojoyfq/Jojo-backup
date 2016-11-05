@@ -8,7 +8,9 @@ package CardEntity.Session;
 import CardEntity.CreditCard;
 import CardEntity.CreditCardApplication;
 import CommonEntity.Customer;
+import Exception.CreditCardException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -26,4 +28,9 @@ public interface CreditCardSessionBeanLocal {
     public CreditCard createCreditCard(Long customerID, String cardType) throws ParseException;
     public void approveCreditCardApplication(CreditCardApplication application ) throws ParseException;
     public void rejectCreditCardApplication(CreditCardApplication application);
+    public boolean verifyCreditCard(String cardHolder, Long cardNo, Date expiryDate, Long cvv) throws CreditCardException;
+    public void setPassword(Long cardNo, String password);
+    public List<String> getCreditCardNumbers(Long customerID);
+    public boolean cancelCreditCard(String cardNo) throws CreditCardException;
+    public CreditCard getCreditCardForClose(String cardNo);
 }

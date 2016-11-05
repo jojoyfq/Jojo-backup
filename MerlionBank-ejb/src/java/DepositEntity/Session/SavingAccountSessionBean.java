@@ -126,8 +126,9 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     }
 
     @Override
-    public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
-        List<Long> savingAccountNumbers = new ArrayList();
+    public List<String> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
+        String savingString;
+        List<String> savingAccountNumbers = new ArrayList();
         Customer customer = em.find(Customer.class, customerID);
 
         if (customer.getSavingAccounts().isEmpty()) {
@@ -135,7 +136,8 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         } else {
             for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
                 if (customer.getSavingAccounts().get(i).getStatus().equals("active")) {
-                    savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
+                    savingString = customer.getSavingAccounts().get(i).getAccountNumber()+","+customer.getSavingAccounts().get(i).getSavingAccountType().getAccountType();
+                    savingAccountNumbers.add(savingString);
                 }
             }
             return savingAccountNumbers;

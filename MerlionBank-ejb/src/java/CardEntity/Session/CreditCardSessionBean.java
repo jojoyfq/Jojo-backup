@@ -10,6 +10,11 @@ import CardEntity.CreditCardApplication;
 import CardEntity.CreditCardType;
 import CommonEntity.Customer;
 import Exception.CreditCardException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +26,8 @@ import java.util.Random;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -35,6 +42,8 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
 
     @PersistenceContext
     private EntityManager em;
+    private static final Random RANDOM = new SecureRandom();
+    public static final int SALT_LENGTH = 32;
 
     @Override
     public List<String> getCreditCardType() {
@@ -131,7 +140,8 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
                 m.setParameter("cardType", cardType);
                 CreditCardType creditCardType = (CreditCardType)m.getSingleResult();
 
-                CreditCard creditCard = new CreditCard(cardNumber,cardHolder,startDate,expiryDate,cvv,creditCardType,customer);
+                BigDecimal initialBalance = new BigDecimal("0");
+                CreditCard creditCard = new CreditCard(cardNumber,cardHolder,startDate,expiryDate,cvv,creditCardType,customer,initialBalance);
                 em.persist(creditCard);
                 customer.getCreditCard().add(creditCard);
                 em.persist(customer);
@@ -167,6 +177,133 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
         Long cvv = Long.valueOf(number);
 
         return cvv;
+    }
+    
+    @Override
+    public boolean verifyCreditCard(String cardHolder, Long cardNo, Date expiryDate, Long cvv) throws CreditCardException {
+        SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy");
+        String formatExpiryDate = dt.format(expiryDate);
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNo");
+        m.setParameter("cardNo", cardNo);
+        List<CreditCard> creditCards = new ArrayList(m.getResultList());
+        if (creditCards.isEmpty()) {
+            throw new CreditCardException("The Card Number is incorrect");
+        } else {
+            CreditCard creditCard = creditCards.get(0);
+            String formateExpiryDateD = dt.format(creditCard.getExpiryDate());
+            if (!creditCard.getCardHolder().equalsIgnoreCase(cardHolder)) {
+                throw new CreditCardException("The Card Holder Name is incorrect");
+            } else if (!formatExpiryDate.equals(formateExpiryDateD)) {
+                throw new CreditCardException("The Expiry Date is incorrect");
+            } else if (!creditCard.getCvv().equals(cvv)) {
+                throw new CreditCardException("The cvv number is incorrect");
+            } else {
+                return true;
+            }
+        }
+    }
+    
+    @Override
+    public void setPassword(Long cardNo, String password) {
+        //password salt and hash
+        String salt = "";
+        String letters = "0123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$%^&*!?+-";
+        for (int i = 0; i < SALT_LENGTH; i++) {
+            int index = (int) (RANDOM.nextDouble() * letters.length());
+            salt += letters.substring(index, index + 1);
+        }
+        String passwordDatabase = passwordHash(password + salt);
+        System.out.println("Password after hash&salt:" + passwordDatabase);
+
+        //find the Credit card and set password
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNo");
+        m.setParameter("cardNo", cardNo);
+        CreditCard creditCard = (CreditCard)m.getSingleResult();
+        creditCard.setPassword(passwordDatabase);
+        creditCard.setStatus("active");
+        creditCard.setSalt(salt);
+        em.flush();
+    }
+    
+    private String passwordHash(String pass) {
+        String md5 = null;
+
+        try {
+            //Create MessageDigest object for MD5
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+
+            //Update input string in message digest
+            digest.update(pass.getBytes(), 0, pass.length());
+
+            //Converts message digest value in base 16 (hex) 
+            md5 = new BigInteger(1, digest.digest()).toString(16);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md5;
+    }
+    
+    @Override
+    public List<String> getCreditCardNumbers(Long customerID){
+        List<String> creditCardNumbers = new ArrayList();
+        String creditString;
+        
+        Customer customer = em.find(Customer.class, customerID);
+        List<CreditCard> creditCard = customer.getCreditCard();
+        if(creditCard == null){
+            return null;
+        }else{
+            for(int i=0; i<creditCard.size();i++){
+                creditString = creditCard.get(i).getCardNumber()+","+creditCard.get(i).getCreditCardType().getCreditCardType();
+                creditCardNumbers.add(creditString);
+            }
+        }
+        return creditCardNumbers;
+    }
+    
+    @Override
+    public boolean cancelCreditCard(String cardNo) throws CreditCardException {
+        String[] cardString = cardNo.split(",");
+        String card = cardString[0];
+        Long cardL = Long.parseLong(card);
+
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNoL");
+        m.setParameter("cardNoL", cardL);
+        CreditCard creditCard = (CreditCard) m.getSingleResult();
+
+        if ( creditCard.getCreditCardTransactions() == null) {
+            return true;
+        }else if(creditCard.getBalance().compareTo(BigDecimal.ZERO) == -1){
+              throw new CreditCardException("credit card selected has debt, please make payment to your debt first!");      
+                    
+        }else if(creditCard.getBalance().compareTo(BigDecimal.ZERO) == 1){
+              throw new CreditCardException("credit card selected has prepaid balance, please transfer your amount first!");     
+        }else {
+            for (int i = 0; i < creditCard.getCreditCardTransactions().size(); i++) {
+                if (creditCard.getCreditCardTransactions().get(i).getStatus().equals("pending")) {
+                    throw new CreditCardException("credit card selected has pending transaction, cannot be cancelled!");
+                }
+            }
+            creditCard.setStatus("terminated");
+            em.flush();
+            return true;
+        }
+    }
+    
+    @Override
+    public CreditCard getCreditCardForClose(String cardNo) {
+        Long cardL = Long.parseLong(cardNo.split(",")[0]);
+
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNoL");
+        m.setParameter("cardNoL", cardL);
+        CreditCard creditCard = (CreditCard) m.getSingleResult();
+
+        if (creditCard.getStatus().equals("terminated")) {
+            return null;
+        } else {
+            return creditCard;
+        }
     }
     
     

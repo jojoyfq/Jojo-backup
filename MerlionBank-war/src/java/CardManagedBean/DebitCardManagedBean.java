@@ -48,8 +48,9 @@ public class DebitCardManagedBean implements Serializable {
     @Inject
     LogInManagedBean logInManagedBean;
     private Long customerID;
-    private List<Long> savingAccountNumberList;
-    private Long savingAccountSelected;
+    private List<String> savingAccountNumberList;
+    private String savingAccountSelected;
+    private Long savingAccountSelectedLong;
     private List<String> debitCardTypeList;
     private String debitCardTypeSelected;
     private DebitCard debitCard;
@@ -219,7 +220,8 @@ public class DebitCardManagedBean implements Serializable {
 
     public void createDebitCard(ActionEvent event) throws IOException, UserHasDebitCardException {
         try {
-            debitCard = dcsb.createDebitCard(savingAccountSelected, customerID, debitCardTypeSelected);
+            savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
+            debitCard = dcsb.createDebitCard(savingAccountSelectedLong, customerID, debitCardTypeSelected);
             if (debitCard != null) {
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/CardManagement/debitCardApplySuccess.xhtml");
@@ -283,19 +285,19 @@ public class DebitCardManagedBean implements Serializable {
         this.customerID = customerID;
     }
 
-    public List<Long> getSavingAccountNumberList() {
+    public List<String> getSavingAccountNumberList() {
         return savingAccountNumberList;
     }
 
-    public void setSavingAccountNumberList(List<Long> savingAccountNumberList) {
+    public void setSavingAccountNumberList(List<String> savingAccountNumberList) {
         this.savingAccountNumberList = savingAccountNumberList;
     }
 
-    public Long getSavingAccountSelected() {
+    public String getSavingAccountSelected() {
         return savingAccountSelected;
     }
 
-    public void setSavingAccountSelected(Long savingAccountSelected) {
+    public void setSavingAccountSelected(String savingAccountSelected) {
         this.savingAccountSelected = savingAccountSelected;
     }
 
@@ -457,6 +459,14 @@ public class DebitCardManagedBean implements Serializable {
 
     public void setDebitCardTransaction(List<DebitCardTransaction> debitCardTransaction) {
         this.debitCardTransaction = debitCardTransaction;
+    }
+
+    public Long getSavingAccountSelectedLong() {
+        return savingAccountSelectedLong;
+    }
+
+    public void setSavingAccountSelectedLong(Long savingAccountSelectedLong) {
+        this.savingAccountSelectedLong = savingAccountSelectedLong;
     }
     
     

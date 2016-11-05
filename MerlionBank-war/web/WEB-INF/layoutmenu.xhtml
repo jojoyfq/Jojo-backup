@@ -46,7 +46,9 @@
                     </p:submenu>
 
                     <p:submenu id="creditCard" label="Credit Card" icon="icon-plus">
-                        <p:menuitem id="Apply_Credit_Card" value="Apply Credit Card" actionListener="#{creditCardManagedBean.dashboardToCreateCreditCard}"/> 
+                        <p:menuitem id="Apply_Credit_Card" value="Apply Credit Card" actionListener="#{creditCardManagedBean.dashboardToCreateCreditCard}"/>                 
+                        <p:menuitem id="Activate_Credit_Card" value="Activate Credit Card" actionListener="#{creditCardManagedBean.dashboardToActivateCreditCard}"/> 
+                        <p:menuitem id="Cancel_Credit_Card" value="Cancel Credit Card" actionListener="#{creditCardManagedBean.dashboardToCancelCreditCard}"/>         
                     </p:submenu>
                 </p:submenu>
 

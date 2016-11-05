@@ -31,7 +31,7 @@ public interface DebitCardSessionBeanLocal {
     public List<String> getDebitCardString(Long customerID)throws DebitCardException;
     public List<DebitCard> getDebitCard(Long customerID)throws DebitCardException;
     public List<DebitCardTransaction> getEStatement(Long customerID, Long debitCardNo, Date currentTime) throws NoTransactionRecordFoundException;
-    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount,String merchant);
+    public boolean checkDebitCardBalance(String cardNo, String cvv, String cardHolder, String amount,String merchant,String merchantBank,String merchantSavingAccount);
     public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String debitCardNo) throws ChargebackException;
     public List<DebitChargeback> getPendingDebitChargeback();
     public void setChargebackStatus(DebitChargeback chargeback, String status);
@@ -39,7 +39,6 @@ public interface DebitCardSessionBeanLocal {
     public DebitCard getDebitCardForClose(String cardNo);
     public List<String> getDebitCardStringForClose(Long customerID) throws DebitCardException;
     public List<DebitCardTransaction> getDebitCardTransaction(Long cardNo);
-    public void insertDebitCardTransactionForTesting(Long customerID);
     public List<DebitCardType> getDebitCardTypes();
     public List<String> getDebitCardTypeList();
     public double getRebateRate(String type);

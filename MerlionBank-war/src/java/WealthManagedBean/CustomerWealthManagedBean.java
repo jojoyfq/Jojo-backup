@@ -360,17 +360,18 @@ public class CustomerWealthManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-public void customerActivateWealthAccount(ActionEvent event){
-            selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
-                System.out.println("selected wealth to update is "+selectedWealth.getId());
-        try {
-            allWealthAccounts = wsbl.existingCustomerActivateAccount(logInManagedBean.getCustomerId(),selectedWealth.getId() );
-        } catch (NotEnoughAmountException|ListEmptyException ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
 
-}
+//public void customerActivateWealthAccount(ActionEvent event){
+//            selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+//                System.out.println("selected wealth to update is "+selectedWealth.getId());
+
+//        try {
+//            allWealthAccounts = wsbl.existingCustomerActivateAccount(logInManagedBean.getCustomerId(),selectedWealth.getId() );
+//        } catch (NotEnoughAmountException|ListEmptyException ex) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        }
+
     public void selectSavingSet(ActionEvent event) {
         selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
 
@@ -494,6 +495,7 @@ public void customerActivateWealthAccount(ActionEvent event){
 
     }
 
+
     public void selectPortfolio(ActionEvent event) {
         selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
         onePortAllProducts = selectedPort.getProducts();
@@ -540,6 +542,7 @@ public void customerActivateWealthAccount(ActionEvent event){
         }
 
     }
+
 
     public void withdrawFromDiscretionaryAccount(ActionEvent event) {
         System.out.println("******Selected discretionary Account to withdraw is " + selectedWealth.getId());

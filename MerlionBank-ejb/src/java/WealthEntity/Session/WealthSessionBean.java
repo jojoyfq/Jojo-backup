@@ -49,6 +49,9 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
     @Override
     public List<DiscretionaryAccount> existingCustomerActivateAccount(Long customerId, Long accountId) throws NotEnoughAmountException,ListEmptyException {
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, accountId);
+         if (!discretionaryAccount.getStatus().equals("active"))
+            throw new NotEnoughAmountException ("Discretionary Account status is not active");
+         
         Customer customer = em.find(Customer.class, customerId);
         List<DiscretionaryAccount> discretionaryAccounts = customer.getDiscretionaryAccounts();
         List<DiscretionaryAccount> temp = new ArrayList<DiscretionaryAccount>();
@@ -515,4 +518,20 @@ return temp;
         return discretionaryAccountId;
     }
 
+    public List<PortfolioTransaction> viewtransactionHistory(Long portfolioId,Date startDate,Date endDate){
+          Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+          List<PortfolioTransaction> allTransactions=portfolio.getPortfolioTransactions();
+          DateTime start=new DateTime(startDate).withTimeAtStartOfDay();
+          DateTime end=new DateTime(endDate);
+          end=end.plusDays(1).withTimeAtStartOfDay();
+           List<PortfolioTransaction> result=new ArrayList<PortfolioTransaction>();
+          
+          for (int i=0;i<allTransactions.size();i++){
+              Date time=allTransactions.get(i).getTransactionTime();
+              DateTime transactionTime=new DateTime(time);
+              if (transactionTime.isAfter(start) && transactionTime.isBefore(end))
+                  result.add(allTransactions.get(i));
+          }
+       return result;  
+    }
 }
