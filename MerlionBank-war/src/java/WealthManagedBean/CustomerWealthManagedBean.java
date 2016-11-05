@@ -190,6 +190,18 @@ public class CustomerWealthManagedBean implements Serializable {
         }
 
     }
+     public void goToPayCommission(ActionEvent event) throws IOException {
+        try {
+            allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
+            System.out.println("all wealth account size is " + allWealthAccounts.size());
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/customerPayCommission.xhtml");
+
+        } catch (ListEmptyException | IOException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+
+    }
     public void goToAcitivateWealthAccount(ActionEvent event){
       try {
             allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
@@ -237,17 +249,7 @@ public class CustomerWealthManagedBean implements Serializable {
         }
 
     }
-  public void goToPayCommission(ActionEvent event) throws IOException {
-        try {
-            allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/customerPayCommission.xhtml");
-
-        } catch (ListEmptyException | IOException ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
-
-    }
+ 
     public void fileUploadListener(FileUploadEvent e) throws IOException {
 
         // Get uploaded file from the FileUploadEvent
@@ -311,7 +313,16 @@ public class CustomerWealthManagedBean implements Serializable {
         }
     }
     public void customerPayCommission(ActionEvent event){
-        
+                    selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+                    System.out.println("******Selected Wealth account to pay commission is "+selectedWealth.getId());
+        try {
+            wsbl.payCommissionFee(logInManagedBean.getCustomerId(), selectedWealth.getId());
+             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have succesfully paid the commission ");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } catch (NotEnoughAmountException ex) {
+ FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);        }
+
     }
 
     public void existingCustomerCreateWealthAcct(ActionEvent event) throws EmailNotSendException {
@@ -556,7 +567,7 @@ public class CustomerWealthManagedBean implements Serializable {
             }
         }
     }
-
+ 
     public Customer getCustomer() {
         return customer;
     }

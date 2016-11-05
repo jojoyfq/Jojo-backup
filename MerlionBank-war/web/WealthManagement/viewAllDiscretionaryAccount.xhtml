@@ -121,7 +121,8 @@
 
 
                                             <div class="Card">
-                                                <p:commandButton  update=":form"  value="Submit" actionListener="#{customerWealthManagedBean.withdrawFromDiscretionaryAccount}"  style="width:100px;height:40px" />
+                                                <p:commandButton  update=":form"  value="Submit" actionListener="#{customerWealthManagedBean.withdrawFromDiscretionaryAccount}" onclick="if (!confirm('Are you sure you want to withdraw now?'))
+                                                            return false;" style="width:100px;height:40px" />
 
                                             </div>
                                         </p:panelGrid>
