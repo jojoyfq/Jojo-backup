@@ -12,50 +12,78 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
 
 /**
  *
  * @author shuyunhuang
  */
 @Entity
-public class CounterCash implements Serializable {
+public class CounterCashRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private BigDecimal startAmt;
-    private BigDecimal endAmt;
+    private BigDecimal initialAmount;
+    private BigDecimal finalAmount;
+    
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date startTime;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date endTime;
-    private String staffName;
+    private Long staffId;
     private String status;
     
-    public CounterCash(){       
+    public CounterCashRecord(){       
         
     }
     
-    public CounterCash(BigDecimal startAmt, Date startTime, String StaffName){
-        this.startAmt = startAmt;
+    public CounterCashRecord(BigDecimal startAmt, Date startTime, Long staffId){
+        this.initialAmount = startAmt;
         this.startTime = startTime;
-        this.staffName = staffName;
+        this.staffId = staffId;
         this.status = "initial"; //status can be either initial, matched amount, dismatched amount 
-        this.endAmt = null;
+        this.finalAmount = new BigDecimal("0");
         this.endTime = null;
     }
+
+    public BigDecimal getInitialAmount() {
+        return initialAmount;
+    }
+
+    public void setInitialAmount(BigDecimal initialAmount) {
+        this.initialAmount = initialAmount;
+    }
+
+    public BigDecimal getFinalAmount() {
+        return finalAmount;
+    }
+
+    public void setFinalAmount(BigDecimal finalAmount) {
+        this.finalAmount = finalAmount;
+    }
+
+    public Long getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(Long staffId) {
+        this.staffId = staffId;
+    }
     public BigDecimal getStartAmt() {
-        return startAmt;
+        return initialAmount;
     }
 
     public void setStartAmt(BigDecimal startAmt) {
-        this.startAmt = startAmt;
+        this.initialAmount = startAmt;
     }
 
     public BigDecimal getEndAmt() {
-        return endAmt;
+        return finalAmount;
     }
 
     public void setEndAmt(BigDecimal endAmt) {
-        this.endAmt = endAmt;
+        this.finalAmount = endAmt;
     }
 
     public Date getStartTime() {
@@ -74,13 +102,6 @@ public class CounterCash implements Serializable {
         this.endTime = endTime;
     }
 
-    public String getStaffName() {
-        return staffName;
-    }
-
-    public void setStaffName(String staffName) {
-        this.staffName = staffName;
-    }
 
     public String getStatus() {
         return status;
@@ -109,10 +130,10 @@ public class CounterCash implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CounterCash)) {
+        if (!(object instanceof CounterCashRecord)) {
             return false;
         }
-        CounterCash other = (CounterCash) object;
+        CounterCashRecord other = (CounterCashRecord) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

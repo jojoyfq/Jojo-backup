@@ -15,7 +15,9 @@ import javax.ejb.Local;
  */
 @Local
 public interface CounterCashManagementLocal {
+    
+    public void recordAmount(BigDecimal amount, Date time, String staffName);
 
-    public void recordAmount(BigDecimal amount, Date time, Long staffName);
+    public void recordAmount(BigDecimal amount, Date time, Long staffId);
     
 }

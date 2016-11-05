@@ -31,7 +31,7 @@
 
             <div class="Container70">
                 <div class="EmptyBox20"></div>
-                
+
                 <div class="Card Flex FlexWrap">
                     <div class="CardBigTopic"> Serve Customer </div>
                     <div class="Separator"></div>    
@@ -40,9 +40,9 @@
                     </div>
                     <p:commandButton  value=" Enter Customer IC " actionListener="#{serviceCustomerManagedBean.goToServiceCustomerPage}" />                              
                 </div> 
-                
+
                 <div class="EmptyBox20"></div>
-                
+
                 <div class="Card Flex FlexWrap">
                     <div class="CardBigTopic"> Quick Search </div>
                     <div class="Separator"></div>
@@ -65,14 +65,38 @@
                         </div>
                     </div>
 
-                    <div class="Container25 Responsive50 Flex">
+                    <div class="Card Flex FlexWrap">
+                        <div class="CardBigTopic"> Counter Cash  </div>
+                        <div class="Separator"></div>
+                        <div class="Container25 Responsive50 Flex">
+
+                        </div>
+                        <div class="Container45 Responsive50 Flex">
+                            <div class="Card">
+                                <h:form>
+                                    <div class="Container70 Responsive50">
+                                        <p:inputText placeholder="Enter Counter Cash Amount    " id = "amount" value="#{counterCashManagedBean.amount}" >
+                                            <p:keyFilter regEx="/[\d\-\.]/"/>
+                                            </p:inputText>
+                                    </div>
+
+                                    <div class="Container30 Responsive50">
+                                        <p:commandButton  value="Submit" actionListener = "#{counterCashManagedBean.dashboardEnterAmount(event)}" onclick="submitForm()"/> 
+                                    </div>
+                                </h:form>
+
+                            </div>
+                        </div>
+
+
+                        <div class="Container25 Responsive50 Flex">
+
+                        </div>
 
                     </div>
 
                 </div>
 
-
-                
 
             </div> 
 
