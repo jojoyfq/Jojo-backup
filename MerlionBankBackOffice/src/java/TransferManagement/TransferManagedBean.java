@@ -37,13 +37,14 @@ public class TransferManagedBean implements Serializable {
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
 
-    private List<Long> savingAccountList;
+    private List<String> savingAccountList;
     private String recipientName;
     private String amountString;
     private BigDecimal amountBD;
     private Long recipientAccountNumLong;
     private String recipientAccountNumString;
     private Long giverAccountNumLong;
+    private String giverAccountNumString;
     private Long customerID;
 
     @PostConstruct
@@ -81,9 +82,10 @@ public class TransferManagedBean implements Serializable {
 
     public void oneTimeTransfer(ActionEvent event) throws TransferException, IOException {
         try {
-            if (giverAccountNumLong != null) {
+            if (giverAccountNumString != null) {
                 amountBD = new BigDecimal(amountString);
                 recipientAccountNumLong = Long.parseLong(recipientAccountNumString);
+                giverAccountNumLong = Long.parseLong(giverAccountNumString.split(",")[0]);
                 System.out.print(amountBD);
                 System.out.print(recipientAccountNumLong);
                 tfsb.intraOneTimeTransferCheck(customerID, giverAccountNumLong, recipientAccountNumLong, amountBD);
@@ -174,4 +176,15 @@ public class TransferManagedBean implements Serializable {
     public void setCustomerID(Long customerID) {
         this.customerID = customerID;
     }
+
+
+    public String getGiverAccountNumString() {
+        return giverAccountNumString;
+    }
+
+    public void setGiverAccountNumString(String giverAccountNumString) {
+        this.giverAccountNumString = giverAccountNumString;
+    }
+    
+    
 }
