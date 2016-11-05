@@ -30,4 +30,7 @@ public interface CreditCardSessionBeanLocal {
     public void rejectCreditCardApplication(CreditCardApplication application);
     public boolean verifyCreditCard(String cardHolder, Long cardNo, Date expiryDate, Long cvv) throws CreditCardException;
     public void setPassword(Long cardNo, String password);
+    public List<String> getCreditCardNumbers(Long customerID);
+    public boolean cancelCreditCard(String cardNo) throws CreditCardException;
+    public CreditCard getCreditCardForClose(String cardNo);
 }

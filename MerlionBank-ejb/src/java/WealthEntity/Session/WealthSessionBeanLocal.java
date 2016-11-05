@@ -11,7 +11,9 @@ import Exception.ListEmptyException;
 import Exception.NotEnoughAmountException;
 import WealthEntity.DiscretionaryAccount;
 import WealthEntity.Portfolio;
+import WealthEntity.PortfolioTransaction;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -53,4 +55,6 @@ public interface WealthSessionBeanLocal {
 
 public List<Portfolio> portfolioEarlyWithdraw(Long portfolioId);
 public Long payCommissionFee(Long customerId, Long discretionaryAccountId) throws NotEnoughAmountException;
+
+ public List<PortfolioTransaction> viewtransactionHistory(Long portfolioId,Date startDate,Date endDate);
 }

@@ -349,9 +349,11 @@ public class CustomerWealthManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-public void customerActivateWealthAccount(ActionEvent event){
-            selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
-                System.out.println("selected wealth to update is "+selectedWealth.getId());
+
+//public void customerActivateWealthAccount(ActionEvent event){
+//            selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+//                System.out.println("selected wealth to update is "+selectedWealth.getId());
+
 //        try {
 //            allWealthAccounts = wsbl.existingCustomerActivateAccount(logInManagedBean.getCustomerId(),selectedWealth.getId() );
 //        } catch (NotEnoughAmountException|ListEmptyException ex) {
@@ -359,7 +361,6 @@ public void customerActivateWealthAccount(ActionEvent event){
 //            RequestContext.getCurrentInstance().showMessageInDialog(message);
 //        }
 
-}
     public void selectSavingSet(ActionEvent event) {
         selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
 
@@ -482,6 +483,7 @@ public void customerActivateWealthAccount(ActionEvent event){
         RequestContext.getCurrentInstance().showMessageInDialog(message);
 
     }
+
 
     public void selectPortfolio(ActionEvent event) {
         selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
