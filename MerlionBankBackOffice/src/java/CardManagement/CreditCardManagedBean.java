@@ -42,6 +42,12 @@ public class CreditCardManagedBean implements Serializable {
 
     public CreditCardManagedBean() {
     }
+    
+    public void dashboardToViewCreditChargeback() throws IOException {
+        pendingCreditChargebackList = ccsb.getPendingCreditChargeback();
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/MerlionBankBackOffice/CardManagement/staffViewCreditCardChargeback.xhtml");
+    }
 
     public void getPendingApplication() {
         try {
