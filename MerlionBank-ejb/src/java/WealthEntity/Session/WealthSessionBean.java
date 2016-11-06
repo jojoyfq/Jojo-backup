@@ -162,7 +162,7 @@ return temp;
         }
 
         savingAccount.setBalance(savingAccount.getBalance().add(amount));
-        savingAccount.setBalance(savingAccount.getAvailableBalance().add(amount));
+        savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().add(amount));
 
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
         discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));

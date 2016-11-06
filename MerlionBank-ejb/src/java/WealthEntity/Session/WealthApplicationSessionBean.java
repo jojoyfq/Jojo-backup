@@ -46,7 +46,9 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
     private static final Random RANDOM = new SecureRandom();
     public static final int SALT_LENGTH = 8;
     @EJB
-    StaffManagementSessionBeanLocal smsbl;
+    private StaffManagementSessionBeanLocal smsbl;
+    @EJB
+    private WealthBISessionBeanLocal wbisbl;
 
     @Override
     public Customer createDiscretionaryAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException {
@@ -188,6 +190,10 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
         customer.setCustomerActions(customerActions);
         em.persist(customer);
         em.flush();
+        
+        //To be deleted
+        wbisbl.calculateCombination();
+        
 
         System.out.println("Discretionary Account successfully created");
 

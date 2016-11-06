@@ -12,6 +12,7 @@
             <included-library dirs="200">libs.Joda_Time.classpath</included-library>
             <included-library dirs="200">libs.atlas.classpath</included-library>
             <included-library dirs="200">libs.FileUtils.classpath</included-library>
+            <included-library dirs="200">libs.ampl.classpath</included-library>
             <source-roots>
                 <root id="src.dir" name="源包"/>
             </source-roots>
