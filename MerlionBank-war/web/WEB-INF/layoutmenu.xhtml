@@ -83,7 +83,7 @@
                 <p:submenu id="wealth_management" label="Wealth Management">
                     <p:submenu id="wealthApplication" label="Application and Activation" icon="icon-plus">
                         <p:menuitem id="create_wealthForExisting" value="Apply Discretionary Account" actionListener="#{customerWealthManagedBean.goToApplyWealthAccountExistCustomer}" /> 
-                        <p:menuitem id="activate_onlineForNew" value="Activate Tailored Plan" actionListener="#{customerWealthManagedBean.goToAcitivateWealthAccount}" /> 
+                        <p:menuitem id="activate_onlineForNew" value="Activate Tailored Plan" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForPortfolio}" /> 
                         <p:menuitem id="activate_wealthForExisting" value="Activate Discretionary Account" actionListener="#{customerWealthManagedBean.goToAcitivateWealthAccount}" /> 
                     </p:submenu>
                     <p:submenu id="wealth1" label="Investment Plan and Product" icon="icon-plus">
@@ -96,7 +96,7 @@
                     </p:submenu>
                 </p:submenu>
                     <p:submenu id="pa_docs" label="Portfolio Management">
-                        <p:menuitem id="view_portfolio" value="View My Portfolio" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsPortfolio}"/>
+                        <p:menuitem id="view_portfolio" value="View My Portfolio" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForPortfolioSystem}"/>
 
                     </p:submenu>
 
