@@ -345,4 +345,7 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
         em.flush();
     }
     
+//    public BigDecimal getOutStandAmount(String creditCardString){
+//        Long creditCardNo = Long.parseLong(creditCardString.split(",")[0]);
+//    }
 }

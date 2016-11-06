@@ -9,7 +9,6 @@ import CardEntity.CreditCard;
 import CardEntity.CreditCardTransaction;
 import CardEntity.DebitCard;
 import CardEntity.DebitCardTransaction;
-import DepositEntity.SavingAccount;
 import Exception.SearchException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +27,7 @@ public class SearchCardSessionBean implements SearchCardSessionBeanLocal {
     @PersistenceContext
     private EntityManager em;
 
+    @Override
     public List<String> searchByCardNo(String cardNo) throws SearchException {
         List<String> cardInfo = new ArrayList();
         Long cardNoL = Long.parseLong(cardNo);

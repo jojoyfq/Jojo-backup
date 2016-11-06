@@ -149,6 +149,16 @@ public class CreditCardManagedBean implements Serializable {
             System.out.print("dashboard to Credit Card Chargeback encounter error!");
         }
     }
+    
+    public void dashboardToPayCreditCard(ActionEvent event) {
+        try {
+            creditCardList = ccsb.getCreditCardNumbers(customerID);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardPay_selectCard.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to pay credit card encounter error!");
+        }
+    }
 
 
     public void creditApplyEnterDetail(ActionEvent event) throws IOException {
@@ -357,6 +367,10 @@ public class CreditCardManagedBean implements Serializable {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in the blank box!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
+    }
+    
+    public void showOutstandAmount(ActionEvent event){
+        
     }
     
     public Long getCustomerID() {
