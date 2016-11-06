@@ -8,5 +8,6 @@
     <property name="URL" value="jdbc:mysql://localhost:3306/MerlionBank?zeroDateTimeBehavior=convertToNull"/>
     <property name="User" value="root"/>
     <property name="Password" value="gaoning323"/>
+
   </jdbc-connection-pool>
 </resources>
