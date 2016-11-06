@@ -30,7 +30,7 @@ public class WealthBISessionBean implements WealthBISessionBeanLocal {
 		int steps = 10;
 		// Use the provided path or the default one
 		String modelDirectory = "C:\\Users\\a0113893\\Desktop\\models";
-
+ System.out.println("In Session Bean");
 
 		AMPL ampl = null;
 		// Outer try-catch-finally block, to be sure of releasing the AMPL
@@ -38,14 +38,19 @@ public class WealthBISessionBean implements WealthBISessionBeanLocal {
 		try {
 			// Create AMPL object
 			ampl= new AMPL();
+                         System.out.println("SessionBean check point 1");
 			
 			ampl.setBoolOption("reset_initial_guesses", true);
 			ampl.setBoolOption("send_statuses", false);
 			ampl.setOption("solver", "cplex");
 
+                        System.out.println("SessionBean check point 2");
+                        
 			// Load the AMPL model from file
-			ampl.read(modelDirectory + "/qpmv.mod");
-			ampl.read(modelDirectory + "/qpmvbit.run");
+			ampl.read(modelDirectory + "\\qpmv.mod");
+			ampl.read(modelDirectory + "\\qpmvbit.run");
+                        
+                         System.out.println("SessionBean check point 3");
 
 			// Set tables directory (parameter used in the script above)
 			ampl.getParameter("data_dir").set(modelDirectory);
