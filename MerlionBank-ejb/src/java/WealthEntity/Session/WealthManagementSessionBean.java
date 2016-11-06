@@ -48,8 +48,8 @@ public class WealthManagementSessionBean implements WealthManagementSessionBeanL
  @Override
  public Long topUpAccount(Long staffId,Long accountId,BigDecimal amount){
      DiscretionaryAccount discretionaryAccount=em.find(DiscretionaryAccount.class,accountId);
-     discretionaryAccount.getBalance().add(amount);
-     discretionaryAccount.getTotalBalance().add(amount);
+     discretionaryAccount.setBalance(discretionaryAccount.getBalance().add(amount));
+      discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().add(amount));
      smsbl.recordStaffAction(staffId, "create existing customer discretionary account", discretionaryAccount.getCustomer().getId());
  return accountId;
  }

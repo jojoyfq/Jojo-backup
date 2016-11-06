@@ -20,6 +20,7 @@ import LoanEntity.Session.LoanApplicationSessionBeanLocal;
 import StaffManagement.staffLogInManagedBean;
 import WealthEntity.DiscretionaryAccount;
 import WealthEntity.Portfolio;
+import WealthEntity.PortfolioTransaction;
 import WealthEntity.Product;
 import WealthEntity.Session.WealthApplicationSessionBeanLocal;
 import WealthEntity.Session.WealthManagementSessionBeanLocal;
@@ -45,6 +46,7 @@ import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.UploadedFile;
+import org.primefaces.model.chart.PieChartModel;
 
 /**
  *
@@ -111,10 +113,13 @@ public class StaffWealthManagedBean implements Serializable {
     private Map<String, String> availableStaffs;
     private String selectedRoleName;
     private List<Staff> relatedStaffs;
-   private String selectedStaffName;
-   private List roleNames;
-   private Long portId;
-   private List<Product> onePortAllProducts;
+    private String selectedStaffName;
+    private List roleNames;
+    private Long portId;
+    private List<Product> onePortAllProducts;
+    private List<PortfolioTransaction> onePortfolioAllTransactions;
+    private Date viewStartDate;
+    private Date viewEndDate;
 
     @EJB
     private WealthApplicationSessionBeanLocal wasbl;
@@ -146,9 +151,10 @@ public class StaffWealthManagedBean implements Serializable {
         selecteWealthToActivate = new Portfolio();
         relatedStaffs = new ArrayList<>();
         roleNames = new ArrayList<>();
-                availableRoleNames = new HashMap<String, String>();
-                selectedProduct = new Product();
-                onePortAllProducts = new ArrayList<>();
+        availableRoleNames = new HashMap<String, String>();
+        selectedProduct = new Product();
+        onePortAllProducts = new ArrayList<>();
+        onePortfolioAllTransactions = new ArrayList<>();
 
 //        wealthProducts.put("Predefined Products", "Predefined Products");
 //        wealthProducts.put("Tailored Product", "Tailored Product");
@@ -182,17 +188,25 @@ public class StaffWealthManagedBean implements Serializable {
             System.out.println("searched customer is " + searchedCustomerIc);
             searchedCustomer = lasbl.searchCustomer(searchedCustomerIc);
             searchedCustomerId = searchedCustomer.getId();
-            if(service.equals("Tailored Portfolio Activation")){
-            System.out.println("**** go to view pending loans alr!");
-            pendingActivatedPlans = wmsbl.viewAllPendingAcivationTailoredPlan(searchedCustomerId);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingActivatedPlans.xhtml");
-            }else{
+            if (service.equals("Tailored Portfolio Activation")) {
+                System.out.println("**** go to view pending loans alr!");
+                pendingActivatedPlans = wmsbl.viewAllPendingAcivationTailoredPlan(searchedCustomerId);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/viewPendingActivatedPlans.xhtml");
+            } else if (service.equals("Fund Transfer")) {
                 try {
                     allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(searchedCustomer.getId());
                 } catch (ListEmptyException ex) {
                     Logger.getLogger(StaffWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/displayOneCustomerAllWealthAccounts.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/displayOneCustomerAllWealthAccounts.xhtml");
+
+            } else {
+                try {
+                    allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(searchedCustomer.getId());
+                } catch (ListEmptyException ex) {
+                    Logger.getLogger(StaffWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/displayOneCustomerAllWealthAccounts.xhtml");
 
             }
 
@@ -223,8 +237,8 @@ public class StaffWealthManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/WealthManagement/createWealthForNewCustomer.xhtml");
 
     }
-    
-      public void selectWealthAccount(ActionEvent event) {
+
+    public void selectWealthAccount(ActionEvent event) {
         selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
 //        try {
 //            oneCustomerAllSavingAccts = wsbl.displaySavingAccounts(logInManagedBean.getCustomerId());
@@ -238,8 +252,7 @@ public class StaffWealthManagedBean implements Serializable {
 //        }
 
     }
-
-
+ 
     public void staffCreateWealthForNewCustomer(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
             System.out.println("**********Staff id is " + staffId);
@@ -313,7 +326,7 @@ public class StaffWealthManagedBean implements Serializable {
 
     public void staffCancelPlan(ActionEvent event) throws EmailNotSendException {
         try {
-          //  selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+            //  selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
             pendingApprovedTailoredPlans = wmsbl.staffRejectPortfolios(staffId, selectedPort.getId());
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully rejected the plan " + selectedPort.getType() + "(" + selectedPort.getId() + ")");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -342,19 +355,18 @@ public class StaffWealthManagedBean implements Serializable {
 
     }
 
-
     public void staffModifyPortfolio(RowEditEvent event) throws EmailNotSendException {
         try {
             selectedPort = (Portfolio) event.getObject();
             System.out.println("******Selected Portfolio to edit is " + selectedPort.getId());
-                System.out.println("Term to modify is "+term);
+            System.out.println("Term to modify is " + term);
 
 //            exepectedRateOfReturn = selectedPort.getExpectedRateOfReturn();
 ////            foreignExchange = selectedPort.getProducts().get(0).getPercentage();
 //////            equity = selectedPort.getProducts().get(1).getPercentage();
 //////            bond = selectedPort.getProducts().get(2).getPercentage();
 //////            term = selectedPort.getTerm();
-            oneCustomerAllPortfolios = wmsbl.staffModifyPortfolioRate(staffId, selectedPort.getId(), exepectedRateOfReturn,term);
+            oneCustomerAllPortfolios = wmsbl.staffModifyPortfolioRate(staffId, selectedPort.getId(), exepectedRateOfReturn, term);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Modified Successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
@@ -363,19 +375,20 @@ public class StaffWealthManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-     public void selectPortfolio(ActionEvent event){
-            selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
-            onePortAllProducts = selectedPort.getProducts();
-            System.out.println("fx proportion is" +onePortAllProducts.get(0).getPercentage());
-            foreignExchange = onePortAllProducts.get(0).getPercentage();
-            equity = onePortAllProducts.get(1).getPercentage();
-            bond = onePortAllProducts.get(2).getPercentage();
 
+    public void selectPortfolio(ActionEvent event) {
+        selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+        onePortAllProducts = selectedPort.getProducts();
+        System.out.println("fx proportion is" + onePortAllProducts.get(0).getPercentage());
+        foreignExchange = onePortAllProducts.get(0).getPercentage();
+        equity = onePortAllProducts.get(1).getPercentage();
+        bond = onePortAllProducts.get(2).getPercentage();
 
     }
- public void staffModifyPortfolioProduct(ActionEvent event) throws EmailNotSendException {
+
+    public void staffModifyPortfolioProduct(ActionEvent event) throws EmailNotSendException {
         try {
-          //  selectedPort = (Portfolio) event.getObject();
+            //  selectedPort = (Portfolio) event.getObject();
             System.out.println("******Selected Portfolio to edit is " + selectedPort.getId());
 //            exepectedRateOfReturn = selectedPort.getExpectedRateOfReturn();
 ////            foreignExchange = selectedPort.getProducts().get(0).getPercentage();
@@ -386,13 +399,12 @@ public class StaffWealthManagedBean implements Serializable {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Modified Successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
-
         } catch (EmailNotSendException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
- 
+
     public void customerDisplaySavingAccounts(ActionEvent event) throws ListEmptyException, IOException {
         try {
 
@@ -409,11 +421,10 @@ public class StaffWealthManagedBean implements Serializable {
     public void customerPayBySaving(ActionEvent event) {
 
         //  customerId = logInManagedBean.getCustomerId();
-        selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
-        System.out.println("******Selected saving account id " + selectedSavingAccout.getId());
+        // selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
         System.out.println("******Selected wealth account id " + selectedWealth.getId());
 
-        wmsbl.topUpAccount(staffId, selectedSavingAccout.getId(), amount);
+        wmsbl.topUpAccount(staffId, selectedWealth.getId(), amount);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have transfered S$" + amount + " successfully!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
 
@@ -455,6 +466,7 @@ public class StaffWealthManagedBean implements Serializable {
         System.out.println("******Selected portfolio to activate is " + selecteWealthToActivate.getId());
 
         wmsbl.staffActivateLoan(staffId, selecteWealthToActivate.getId(), startDate);
+        pendingActivatedPlans = wmsbl.viewAllPendingAcivationTailoredPlan(searchedCustomerId);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully activate plan " + selecteWealthToActivate.getType() + "(" + selecteWealthToActivate.getId() + ")");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
 
@@ -469,15 +481,15 @@ public class StaffWealthManagedBean implements Serializable {
     }
 
     public void assignRM(ActionEvent event) {
-         selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
-         System.out.println("****Selected port to assign rm is "+selectedPort.getId());
-         portId = selectedPort.getId();
-         System.out.println("***********Role size is " + smsbl.viewRoles().size());
+        selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+        System.out.println("****Selected port to assign rm is " + selectedPort.getId());
+        portId = selectedPort.getId();
+        System.out.println("***********Role size is " + smsbl.viewRoles().size());
         for (int i = 0; i < smsbl.viewRoles().size(); i++) {
-            System.out.println("********role name is "+smsbl.viewRoles().get(i).getRoleName());
+            System.out.println("********role name is " + smsbl.viewRoles().get(i).getRoleName());
             roleNames.add(smsbl.viewRoles().get(i).getRoleName());
         }
-        for (int i = 0; i <roleNames.size(); i++) {
+        for (int i = 0; i < roleNames.size(); i++) {
             availableRoleNames.put(roleNames.get(i).toString(), roleNames.get(i).toString());
             System.out.println("************** " + availableRoleNames);
             try {
@@ -493,19 +505,36 @@ public class StaffWealthManagedBean implements Serializable {
             data.put(roleNames.get(i).toString(), map);
             map = new HashMap<String, String>();
         }
-        
-        
 
     }
-    public void assignRM2(ActionEvent event){
+
+    public void assignRM2(ActionEvent event) {
 //                    selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
-System.out.println("******Selected port is "+portId);
-System.out.println("******Selected port staff ID is "+staffId);
+        System.out.println("******Selected port is " + portId);
+        System.out.println("******Selected port staff ID is " + staffId);
         wmsbl.assignRM(portId, staffId);
-         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully assigned "+selectedStaffName+"!");
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully assigned " + selectedStaffName + "!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
     }
 
+    public void staffViewAllTransactions(ActionEvent event) {
+        //   selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+        System.out.println("******Selected Discretionary Account to view transaction is " + selectedPort.getId());
+
+        onePortfolioAllTransactions = wsbl.viewtransactionHistory(selectedPort.getId(), viewStartDate, viewEndDate);
+
+    }
+    
+    public void selectPorfolioToViewTransactions(ActionEvent event){
+        selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/PortfolioManagement/staffViewTransactions.xhtml");
+        } catch (IOException ex) {
+             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+
+}
     public Portfolio getSelecteWealthToActivate() {
         return selecteWealthToActivate;
     }
@@ -976,6 +1005,30 @@ System.out.println("******Selected port staff ID is "+staffId);
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public List<PortfolioTransaction> getOnePortfolioAllTransactions() {
+        return onePortfolioAllTransactions;
+    }
+
+    public void setOnePortfolioAllTransactions(List<PortfolioTransaction> onePortfolioAllTransactions) {
+        this.onePortfolioAllTransactions = onePortfolioAllTransactions;
+    }
+
+    public Date getViewStartDate() {
+        return viewStartDate;
+    }
+
+    public void setViewStartDate(Date viewStartDate) {
+        this.viewStartDate = viewStartDate;
+    }
+
+    public Date getViewEndDate() {
+        return viewEndDate;
+    }
+
+    public void setViewEndDate(Date viewEndDate) {
+        this.viewEndDate = viewEndDate;
     }
 
 }
