@@ -8,7 +8,9 @@ package CardEntity.Session;
 import CardEntity.CreditCard;
 import CardEntity.CreditCardApplication;
 import CardEntity.CreditCardType;
+import CardEntity.CreditChargeback;
 import CommonEntity.Customer;
+import Exception.ChargebackException;
 import Exception.CreditCardException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -306,5 +308,41 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
         }
     }
     
+    @Override
+    public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String creditCardNo) throws ChargebackException {
+        Long debitCardNoL = Long.parseLong(creditCardNo);
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :debitCardNoL");
+        m.setParameter("debitCardNoL", debitCardNoL);
+        CreditCard creditCard = (CreditCard) m.getSingleResult();
+        if (creditCard == null) {
+            throw new ChargebackException("The Card Number Entered is not valid!");
+        } else {
+            Date currentTime = Calendar.getInstance().getTime();
+            //chargeback has 5 status: staff unverified, VISA/MasterCard unverified, Merchant Bank unverified, rejected, approved
+            CreditChargeback chargeback = new CreditChargeback(merchantName, transactionDate, transactionAmount, chargebackDescription, currentTime, "staff unverified", creditCard);
+            creditCard.getChargeback().add(chargeback);
+            em.persist(chargeback);
+            em.persist(creditCard);
+            em.flush();
+        }
+    }
+    
+    @Override
+    public List<CreditChargeback> getPendingCreditChargeback() {
+        String status = "staff unverified";
+        Query m = em.createQuery("SELECT b FROM CreditChargeback b WHERE b.status = :status");
+        m.setParameter("status", status);
+        List<CreditChargeback> creditChargeback = m.getResultList();
+        return creditChargeback;
+    }
+    
+    @Override
+    public void setChargebackStatus(CreditChargeback chargeback, String status) {
+        Long cid = chargeback.getId();
+        CreditChargeback cChargeback = em.find(CreditChargeback.class, cid);
+        cChargeback.setStatus(status);
+        em.persist(cChargeback);
+        em.flush();
+    }
     
 }
