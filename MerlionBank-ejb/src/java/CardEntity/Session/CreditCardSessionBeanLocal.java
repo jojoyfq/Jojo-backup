@@ -7,8 +7,11 @@ package CardEntity.Session;
 
 import CardEntity.CreditCard;
 import CardEntity.CreditCardApplication;
+import CardEntity.CreditChargeback;
 import CommonEntity.Customer;
+import Exception.ChargebackException;
 import Exception.CreditCardException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -33,4 +36,7 @@ public interface CreditCardSessionBeanLocal {
     public List<String> getCreditCardNumbers(Long customerID);
     public boolean cancelCreditCard(String cardNo) throws CreditCardException;
     public CreditCard getCreditCardForClose(String cardNo);
+    public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String creditCardNo) throws ChargebackException ;
+    public List<CreditChargeback> getPendingCreditChargeback();
+    public void setChargebackStatus(CreditChargeback chargeback, String status);
 }
