@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -102,7 +104,7 @@ public class staffLogInManagedBean implements Serializable {
 
     @Inject
     StaffLoggingActionManagedBean staffLoggingActionManagedBean;
-    
+
     public String getRoleName() {
         return roleName;
     }
@@ -184,11 +186,6 @@ public class staffLogInManagedBean implements Serializable {
         staff = new Staff();
         roleNames = new ArrayList<>();
 
-        System.out.println("***********Role size is " + smsbl.viewRoles().size());
-        for (int i = 0; i < smsbl.viewRoles().size(); i++) {
-            roleNames.add(smsbl.viewRoles().get(i).getRoleName());
-        }
-
     }
 
     public void goToLogInPage(ActionEvent event) throws IOException {
@@ -196,16 +193,16 @@ public class staffLogInManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInHome.xhtml");
 
     }
-    
-    public void viewStaffAction(ActionEvent event) throws IOException, ListEmptyException{
-         staffLoggingActionManagedBean.viewLoggingAction(event);
-         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/viewActionLog.xhtml");
+
+    public void viewStaffAction(ActionEvent event) throws IOException, ListEmptyException {
+        staffLoggingActionManagedBean.viewLoggingAction(event);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/viewActionLog.xhtml");
     }
 
-    public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
+    public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException, ListEmptyException {
         try {
-            if (staffIc != null && password != null && roleName != null) {
-                staffId = smsbl.checkLogin(staffIc, password, roleName);
+            if (staffIc != null && password != null) {
+                staffId = smsbl.checkLogin(staffIc, password);
                 // staff = smsbl.viewStaff(staffId);
                 name = staff.getStaffName();
                 System.out.println("*****************Staff id is " + staffId);
@@ -234,21 +231,39 @@ public class staffLogInManagedBean implements Serializable {
 //                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);
 //                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("name", selectedCustomer.getName());
 
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
-                //    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
+                    System.out.println("***********Role size is " + smsbl.viewAvailableStaffRole(staffId));
+                    for (int i = 0; i < smsbl.viewAvailableStaffRole(staffId).size(); i++) {
+                        roleNames.add(smsbl.viewAvailableStaffRole(staffId).get(i).getRoleName());
+                    }
+
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/staffLogInNext.xhtml");
+                    //    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
 
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
 
-             //       RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+                    //       RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                 }
 
             } else {
                 System.out.println("Please do not leave blanks!");
             }
-        } catch (UserNotExistException | PasswordNotMatchException | UserNotActivatedException ex) {
+        } catch (UserNotExistException | PasswordNotMatchException | UserNotActivatedException | ListEmptyException ex) {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
+    }
+
+    public void staffLogInSelectRole(ActionEvent event) throws IOException {
+        try {
+            System.out.println("*****When staff select role to log in: " + staffId + " ///role name is: " + roleName);
+            smsbl.checkLoginStaffRole(staffId, roleName);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
+
+        } catch (UserNotExistException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+        }
+
     }
 
     public void updateForgetPasswordVerifyDetail(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
@@ -268,7 +283,7 @@ public class staffLogInManagedBean implements Serializable {
     public void staffUpdatePassword(ActionEvent event) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException, IOException {
         try {
             if (staffId != null && newPassword != null && confirmPassword != null) {
-                System.out.println("*F************Reset Password staff id is  "+staffId);
+                System.out.println("*F************Reset Password staff id is  " + staffId);
                 smsbl.updateForgetPassword(staffId, newPassword, confirmPassword);
 //               FacesContext facesContext = FacesContext.getCurrentInstance();
 //            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "System message", "Your password has been successfully changed! Please log in again!"));
