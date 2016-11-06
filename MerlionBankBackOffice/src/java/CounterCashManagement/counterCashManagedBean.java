@@ -90,7 +90,7 @@ public class counterCashManagedBean implements Serializable {
         BigDecimal amountEnter=new BigDecimal(amount);
         ccml.recordAmount(amountEnter, date, staffId);
         System.out.println("entered the amount");
-        amount="0";
+        amount="";
         }else{
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please enter amount");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
