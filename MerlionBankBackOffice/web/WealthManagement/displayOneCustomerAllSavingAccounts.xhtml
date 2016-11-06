@@ -61,7 +61,7 @@
 <!--                                        <p:column headerText="Tranfer By Saving Account" style="width: 80px;" >
                                             
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="{customerLoanManagedBean}" update=":form:panel" ajax="false" type="submit"  onclick="if (!confirm('Are you sure you want to pcustomerPayBySavingay now?'))
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerPayBySaving}" update=":form:panel" ajax="false" type="submit"  onclick="if (!confirm('Are you sure you want to pay now?'))
                                                             return false;" >
                                                     <f:attribute name="selectedSavingAccout" value="#{savingAcct}"   />
                                                 </p:commandButton>

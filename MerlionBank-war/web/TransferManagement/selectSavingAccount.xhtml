@@ -12,12 +12,12 @@
     <ui:define name="content">
 
         <!-- Left Column -->
-        <div class="Container20 NoPadding Responsive100">
+        <div class="Container25 NoPadding Responsive100">
 
         </div>
 
         <!-- Center Column -->
-        <div class="Container60 NoPadding Responsive50">
+        <div class="Container50 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
                     <div class="CardBigTopic"> Select Your Saving Account to Transfer </div>
@@ -28,7 +28,7 @@
                         <h:form>
                          
                                 <div class="Container70 Responsive50">
-                                    <p:selectOneMenu id="savingAccountList" value="#{transferManagedBean.giverAccountNumString}">
+                                    <p:selectOneMenu id="savingAccountList" value="#{transferManagedBean.giverAccountNumLong}">
                                         <f:selectItem itemLabel="Select Saving Account ..." itemValue="" noSelectionOption="true" />
                                         <f:selectItems value="#{transferManagedBean.savingAccountList}" />
                                     </p:selectOneMenu>  
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Right Column -->
-        <div class="Container20 NoPadding Responsive50">
+        <div class="Container25 NoPadding Responsive50">
 
 
         </div>

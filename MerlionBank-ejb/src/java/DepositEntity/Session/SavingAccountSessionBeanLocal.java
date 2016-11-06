@@ -27,7 +27,7 @@ public interface SavingAccountSessionBeanLocal {
 
     public List<SavingAccount> getSavingAccount(Long customerID)throws UserHasNoSavingAccountException;
     public List<String> getSavingAccountType();
-    public List<String> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
+    public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException;
     public List<TransactionRecord> getTransactionRecord(Long savingAccountNumber);
     public List<SavingAccount> getSavingAccountForCloseAccount(Long savingAccountNum);
     public void checkPendingTransaction(Long savingAccountNum) throws UserHasPendingTransactionException,UserCloseAccountException;

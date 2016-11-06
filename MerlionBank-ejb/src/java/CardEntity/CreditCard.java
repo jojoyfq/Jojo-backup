@@ -7,7 +7,6 @@ package CardEntity;
 
 import CommonEntity.Customer;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +39,6 @@ public class CreditCard implements Serializable {
     private String password;
     private String salt;
     private String status;
-    private BigDecimal balance;
     
     @ManyToOne
     private CreditCardType creditCardType = new CreditCardType();
@@ -48,12 +46,10 @@ public class CreditCard implements Serializable {
     private Customer customer = new Customer();
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "creditCard")
     List<CreditChargeback> chargeback = new ArrayList();
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "creditCard")
-    List<CreditCardTransaction> creditCardTransactions = new ArrayList();
 
     public CreditCard(){}
     
-    public CreditCard(Long cardNumber,String cardHolder,Date startDate,Date expiryDate,Long cvv, CreditCardType creditCardType,Customer customer,BigDecimal balance){
+    public CreditCard(Long cardNumber,String cardHolder,Date startDate,Date expiryDate,Long cvv, CreditCardType creditCardType,Customer customer){
         this.cardNumber = cardNumber;
         this.cardHolder = cardHolder;
         this.startDate = startDate;
@@ -61,7 +57,6 @@ public class CreditCard implements Serializable {
         this.cvv = cvv;
         this.creditCardType = creditCardType;
         this.customer = customer;
-        this.balance = balance;
     }
     
     public Customer getCustomer() {
@@ -152,14 +147,6 @@ public class CreditCard implements Serializable {
     public void setChargeback(List<CreditChargeback> chargeback) {
         this.chargeback = chargeback;
     }
-
-    public List<CreditCardTransaction> getCreditCardTransactions() {
-        return creditCardTransactions;
-    }
-
-    public void setCreditCardTransactions(List<CreditCardTransaction> creditCardTransactions) {
-        this.creditCardTransactions = creditCardTransactions;
-    }
     
     
 
@@ -195,13 +182,5 @@ public class CreditCard implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-          
+      
 }

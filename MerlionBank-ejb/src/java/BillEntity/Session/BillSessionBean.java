@@ -18,8 +18,6 @@ import DepositEntity.SavingAccount;
 import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +29,6 @@ import javax.persistence.Query;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 
 /**
  *
@@ -321,55 +318,6 @@ public class BillSessionBean implements BillSessionBeanLocal {
          }
         
     }
-
-    @Override
-    public List<String> getPendingGIRO (String boName){
-        System.out.print("GIRO Organization name is: "+boName);
-        
-        Query m = em.createQuery("SELECT b FROM GIROArrangement b WHERE b.status = :status");
-        m.setParameter("status", "pending");
-        List<GIROArrangement> allGIRO = m.getResultList();
-        List<String> giroInfo = new ArrayList<>();
-        String oneGIRO = new String();
-        for(int i=0; i< allGIRO.size(); i++){
-            if(allGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)){
-                String concat = oneGIRO.concat(allGIRO.get(i).getId().toString()+","+allGIRO.get(i).getBillReference()+","+allGIRO.get(i).getCustomerName()+","+allGIRO.get(i).getDeductionLimit().toString());
-                giroInfo.add(concat);
-            }
-        }
-        
-        return giroInfo;
-    }
-        
-    public String deductGIRO(Long id,Double amount){
-        System.out.print("giro id is"+id);
-        GIROArrangement giro = em.find(GIROArrangement.class, id);
-        BigDecimal deductAmount = BigDecimal.valueOf(amount);
-        if(giro.getDeductionLimit().compareTo(deductAmount) != -1){
-            if(giro.getSavingAccount().getAvailableBalance().compareTo(deductAmount) != -1){
-                giro.getSavingAccount().setAvailableBalance(giro.getSavingAccount().getAvailableBalance().subtract(deductAmount));
-                  giro.getSavingAccount().setBalance(giro.getSavingAccount().getBalance().subtract(deductAmount)); 
-                  return "Deduction success!";
-            }else{
-                return "Deduction fail! not enough balance";
-            }
-        }else{
-            return "Deduction fail! amount more than limit.";
-        }
-    }
-
-    @Override
-    public boolean approveGIRO(Long id,String status,String deductDay) throws ParseException{
-        System.out.print("giro id is "+id);
-        
-        GIROArrangement giro = em.find(GIROArrangement.class, id);
-        giro.setStatus(status);
-        SimpleDateFormat dateFormator = new SimpleDateFormat("dd-MM-yyyy");
-        DateTime deductDate = new DateTime(dateFormator.parse(deductDay));
-        System.out.print(deductDate);
-        giro.setDeductionDay(deductDate);
-        return true;     
-    }
     
     @Override
     public List<GIROArrangement> viewableGIRO (Long customerId){
@@ -386,4 +334,3 @@ public class BillSessionBean implements BillSessionBeanLocal {
         return viewable;
     }
     }
-

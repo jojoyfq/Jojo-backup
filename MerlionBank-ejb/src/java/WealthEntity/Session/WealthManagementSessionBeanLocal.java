@@ -11,7 +11,6 @@ import Exception.ListEmptyException;
 import Exception.NotEnoughAmountException;
 import WealthEntity.Good;
 import WealthEntity.Portfolio;
-import WealthEntity.PortfolioTransaction;
 import WealthEntity.Product;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -62,7 +61,4 @@ public interface WealthManagementSessionBeanLocal {
        public List<Good> buyExistingGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
        public List<Good> buyNewGood(Long staffId,Long productId,String productName,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
         public List<Good> sellGood(Long staffId, Long productId,Long goodId,BigDecimal unitPrice, Integer numOfUnits) throws NotEnoughAmountException;
-
-      public List<PortfolioTransaction> viewtransactionHistory(Long portfolioId,Date startDate,Date endDate);
-
 }

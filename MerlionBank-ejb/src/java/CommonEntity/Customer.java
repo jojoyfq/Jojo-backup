@@ -7,7 +7,6 @@ package CommonEntity;
 
 //import DepositEntity.FixedDepositAccount;
 
-import BusinessIntelligenceEntity.Interest;
 import CardEntity.CreditCard;
 import DepositEntity.Payee;
 import CustomerRelationshipEntity.CaseEntity;
@@ -116,19 +115,7 @@ public class Customer implements Serializable {
      
      @OneToMany (cascade = {CascadeType.ALL}, mappedBy = "customer")
      private List<CreditCard> creditCard = new ArrayList<CreditCard>();
-     
-     @OneToMany (cascade = {CascadeType.ALL}, mappedBy = "customer")
-     private List<Interest> interests = new ArrayList<Interest>();
 
-    public List<Interest> getInterests() {
-        return interests;
-    }
-
-    public void setInterests(List<Interest> interests) {
-        this.interests = interests;
-    }
-
-     
     public List<DiscretionaryAccount> getDiscretionaryAccounts() {
         return discretionaryAccounts;
     }

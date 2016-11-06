@@ -48,8 +48,8 @@ public class WealthManagementSessionBean implements WealthManagementSessionBeanL
  @Override
  public Long topUpAccount(Long staffId,Long accountId,BigDecimal amount){
      DiscretionaryAccount discretionaryAccount=em.find(DiscretionaryAccount.class,accountId);
-     discretionaryAccount.setBalance(discretionaryAccount.getBalance().add(amount));
-      discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().add(amount));
+     discretionaryAccount.getBalance().add(amount);
+     discretionaryAccount.getTotalBalance().add(amount);
      smsbl.recordStaffAction(staffId, "create existing customer discretionary account", discretionaryAccount.getCustomer().getId());
  return accountId;
  }
@@ -91,7 +91,6 @@ public class WealthManagementSessionBean implements WealthManagementSessionBeanL
 
     @Override
     public List<Portfolio> staffApprovePortfolios(Long staffId, Long portfolioId) throws EmailNotSendException {
-        System.out.println("Session Bean staffId: "+staffId+ "sessionbean portfolioId: "+portfolioId);
         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
         Staff staff = em.find(Staff.class, staffId);
         
@@ -215,47 +214,35 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
     
     @Override
     public List<Portfolio> staffModifyPortfolioProduct(Long staffId, Long portfolioId, Double foreignExchange,Double equity,Double bond) throws EmailNotSendException{
- System.out.println("session bean foreignExchange: "+foreignExchange);
-        System.out.println("session bean equity: "+equity);
-        System.out.println("session bean bond: "+bond);
+Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+BigDecimal investAmount=portfolio.getInvestAmount();
+DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
+
+    List<Product> products=new ArrayList<Product>();
+    List<Good> goods=new ArrayList<Good>();
         
-         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
-        BigDecimal investAmount = portfolio.getInvestAmount();
-        DiscretionaryAccount discretionaryAccount = portfolio.getDiscretionaryAccount();
-
-        List<Product> products = new ArrayList<Product>();
-          List<Good> goods=new ArrayList<Good>();
-
-        BigDecimal rate = new BigDecimal(foreignExchange);
-        BigDecimal purchaseAmount = investAmount.multiply(rate);
+        BigDecimal rate=new BigDecimal(foreignExchange);
+        BigDecimal purchaseAmount=investAmount.multiply(rate);
         BigDecimal test=new BigDecimal(0);
-        Product foreignExchangeProduct = portfolio.getProducts().get(0);
-        foreignExchangeProduct.setExpectedAmount(purchaseAmount);
-        foreignExchangeProduct.setCurrentAmount(purchaseAmount);
-        foreignExchangeProduct.setPercentage(foreignExchange);
-
-        rate = new BigDecimal(equity);
-        purchaseAmount = investAmount.multiply(rate);
-         Product equityProduct = portfolio.getProducts().get(1);
-        equityProduct.setExpectedAmount(purchaseAmount);
-        equityProduct.setCurrentAmount(purchaseAmount);
-        equityProduct.setPercentage(equity);
-
-        rate = new BigDecimal(bond);
-        purchaseAmount = investAmount.multiply(rate);
-         Product bondProduct = portfolio.getProducts().get(2);
-        bondProduct.setExpectedAmount(purchaseAmount);
-        bondProduct.setCurrentAmount(purchaseAmount);
-        bondProduct.setPercentage(bond);
-
-        portfolio.setStatus("inactive");
+        Product foreignExchangeProduct=new Product("Foreign Exchange", purchaseAmount, foreignExchange,goods,purchaseAmount,test);
+        em.persist(foreignExchangeProduct);
         
-         foreignExchangeProduct.setPortfolio(portfolio);
-        equityProduct.setPortfolio(portfolio);
-        bondProduct.setPortfolio(portfolio);     
+        rate=new BigDecimal(equity);
+        purchaseAmount=investAmount.multiply(rate);
+        Product equityProduct=new Product("Equity", purchaseAmount, equity,goods,purchaseAmount,test);
+        em.persist(equityProduct);
         
+        rate=new BigDecimal(bond);
+        purchaseAmount=investAmount.multiply(rate);
+        Product stockProduct=new Product("Bond", purchaseAmount, bond,goods,purchaseAmount,test);
+        em.persist(equityProduct);
+        
+         products.add(foreignExchangeProduct);
+        products.add(equityProduct);
+        products.add(stockProduct);
+        
+        portfolio.setProducts(products);
         portfolio.setStatus("staffVefified");
-
         
         try {
             sendMofifiedEmail(discretionaryAccount.getCustomer().getName(), discretionaryAccount.getCustomer().getEmail(), portfolio.getId());
@@ -298,7 +285,6 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         DiscretionaryAccount discretionaryAccount=discretionaryAccounts.get(i);
         List<Portfolio> temp=discretionaryAccount.getPortfolios();
         for (int j=0;j<temp.size();j++){
-            if (temp.get(j).getStatus().equals("customerVerified"))
             portfolios.add(temp.get(j));
         }
     }
@@ -343,9 +329,7 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         if (amount.compareTo(discretionaryAccount.getBalance()) == 1) {
             throw new NotEnoughAmountException("There is not enough amount of money in this Discretionary Account");
         }
-        if (!discretionaryAccount.getStatus().equals("active"))
-            throw new NotEnoughAmountException ("Discretionary Account status is not active");
-        
+
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
        discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().subtract(amount));
 
@@ -361,9 +345,6 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         if (amount.compareTo(discretionaryAccount.getBalance()) == 1) {
             throw new NotEnoughAmountException("There is not enough amount of money in this Discretionary Account");
         }
-        
-         if (!discretionaryAccount.getStatus().equals("active"))
-            throw new NotEnoughAmountException ("Discretionary Account status is not active");
        // BigDecimal cutline=new BigDecimal(200000);
 //        BigDecimal processingFee=new BigDecimal(1.15);
 //        
@@ -417,10 +398,6 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         if ((product.getPurchaseAmount().add(totalAmount)).compareTo(product.getExpectedAmount())==1){
             throw new NotEnoughAmountException ("According to contract, there is not enough amount to purchase this good. This may due to your have exceed the total amount of this category or there is not enough money it the account.");
         }
-        
-         if (!product.getPortfolio().getStatus().equals("active"))
-            throw new NotEnoughAmountException ("Portfolio status is not active");
-         
         BigDecimal existingAmount=new BigDecimal(good.getNumOfUnits());      
         BigDecimal newUnitPrice=totalAmount.add(good.getUnitPrice().multiply(existingAmount));   
         Integer newNumber=numOfUnits+good.getNumOfUnits();
@@ -449,9 +426,6 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
             throw new NotEnoughAmountException ("According to contract, there is not enough amount to purchase this good. This may due to your have exceed the total amount of this category or there is not enough money it the account.");
         }
         
-         if (!product.getPortfolio().getStatus().equals("active"))
-            throw new NotEnoughAmountException ("Portfolio status is not active");
-        
         Good good=new Good(productName,unitPrice, numOfUnits, product);
         em.persist(good);
         em.flush();
@@ -478,19 +452,15 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
          if (numOfUnits>good.getNumOfUnits()){
             throw new NotEnoughAmountException ("You don't have enough "+good.getName()+"in account");
         }
-         
-          if (!product.getPortfolio().getStatus().equals("active"))
-            throw new NotEnoughAmountException ("Portfolio status is not active");
-         
         BigDecimal existingAmount=new BigDecimal(good.getNumOfUnits());
         
         
-        Integer newNumber=good.getNumOfUnits()-numOfUnits;
+        Integer newNumber=numOfUnits-good.getNumOfUnits();
         good.setNumOfUnits(newNumber);
         
         product.setPurchaseAmount(product.getPurchaseAmount().subtract(good.getUnitPrice().multiply(number)));
         
-        product.setCurrentAmount(product.getCurrentAmount().subtract(existingAmount).add(totalAmount));
+        product.setCurrentAmount(product.getCurrentAmount().subtract(good.getUnitPrice().multiply(number)).add(totalAmount));
         
         updatePortfolioAmount(product.getPortfolio());
         updateDiscretionaryAccount(product.getPortfolio().getDiscretionaryAccount());
@@ -507,7 +477,6 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         BigDecimal amount= new BigDecimal(0);
         
         for (int i=0;i<products.size();i++){
-            System.out.println("Session Bean: everyProduct current Amount: "+products.get(i).getCurrentAmount());
             amount.add(products.get(i).getCurrentAmount());
             
         }
@@ -557,21 +526,4 @@ DiscretionaryAccount discretionaryAccount=portfolio.getDiscretionaryAccount();
         em.flush();
         
     }
-    
-     public List<PortfolioTransaction> viewtransactionHistory(Long portfolioId,Date startDate,Date endDate){
-          Portfolio portfolio = em.find(Portfolio.class, portfolioId);
-          List<PortfolioTransaction> allTransactions=portfolio.getPortfolioTransactions();
-          DateTime start=new DateTime(startDate).withTimeAtStartOfDay();
-          DateTime end=new DateTime(endDate);
-          end=end.plusDays(1).withTimeAtStartOfDay();
-           List<PortfolioTransaction> result=new ArrayList<PortfolioTransaction>();
-          
-          for (int i=0;i<allTransactions.size();i++){
-              Date time=allTransactions.get(i).getTransactionTime();
-              DateTime transactionTime=new DateTime(time);
-              if (transactionTime.isAfter(start) && transactionTime.isBefore(end))
-                  result.add(allTransactions.get(i));
-          }
-       return result;  
-     }
 }

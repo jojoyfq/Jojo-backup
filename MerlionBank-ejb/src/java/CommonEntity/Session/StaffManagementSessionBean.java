@@ -1056,7 +1056,7 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
     //log in
     @Override
-    public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
+    public Long checkLogin(String ic, String password, String staffRoleName) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
         Query q = em.createQuery("SELECT a FROM Staff a WHERE a.staffIc = :ic");
         q.setParameter("ic", ic);
         List<Staff> temp = new ArrayList(q.getResultList());
@@ -1089,15 +1089,6 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
 
         }
 
-
-        return staff.getId();
-    }
-    
-    @Override
-    public Long checkLoginStaffRole(Long staffId, String staffRoleName)throws UserNotExistException{
-        
-        Staff staff=em.find(Staff.class,staffId);
-       
         Query m = em.createQuery("SELECT a FROM StaffRole a WHERE a.roleName = :staffRoleName");
         m.setParameter("staffRoleName", staffRoleName);
         List<StaffRole> temp1 = new ArrayList(m.getResultList());
@@ -1120,8 +1111,8 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         }
 
         recordStaffAction(staff.getId(), "Log in", null);
-         return staff.getId();
-        
+
+        return staff.getId();
     }
 
     @Override
@@ -1231,15 +1222,4 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         return newPermissions;
 
     }
-    
-    @Override 
-   public List<StaffRole> viewAvailableStaffRole(Long staffId) throws ListEmptyException {
-       Staff staff=em.find(Staff.class,staffId);
-       List<StaffRole> staffRoles=staff.getStaffRoles();
-       if (staffRoles.isEmpty())
-           throw new ListEmptyException ("You have no role available");
-       
-       return staffRoles;
-       
-   }
 }

@@ -525,6 +525,21 @@ onePortfolioAllTransactions = new ArrayList<>();
         RequestContext.getCurrentInstance().showMessageInDialog(message);
 
     }
+<<<<<<< HEAD
+public void customerModifyPortfolio(RowEditEvent event){
+    selectedPort = (Portfolio) event.getObject();
+    System.out.println("Selected Portfolio to edit - id: "+selectedPort.getId());
+//        try {
+//            oneCustomerAllPortfolios = wsbl.ModifyPortfolios(selectedPort.getId(), exepectedRateOfReturn, foreignExchange, equity, bond, term);
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully modifed your plan!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        
+//        } catch (EmailNotSendException ex) {
+//         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        
+//        }
+=======
 
 
     public void selectPortfolio(ActionEvent event) {
@@ -544,6 +559,7 @@ public void selectPorfolioToViewTransactions(ActionEvent event){
             Logger.getLogger(CustomerWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+>>>>>>> master
 }
     public void customerModifyPortfolio(RowEditEvent event) {
         selectedPort = (Portfolio) event.getObject();

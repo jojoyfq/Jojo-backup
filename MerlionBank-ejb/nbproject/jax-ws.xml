@@ -4,9 +4,6 @@
     <service name="POSwebservice">
       <implementation-class>session.ws.POSwebservice</implementation-class>
     </service>
-    <service name="GiroWebService">
-      <implementation-class>session.ws.GiroWebService</implementation-class>
-    </service>
   </services>
   <clients/>
 </jax-ws>

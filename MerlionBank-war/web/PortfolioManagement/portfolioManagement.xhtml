@@ -17,7 +17,7 @@
         </div>
 
         <!-- Center Column -->
-        <div class="Container100 NoPadding Responsive50">
+        <div class="Container90 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
                     <div class="CardBigTopic"> Portfolio Management System </div>
@@ -26,13 +26,16 @@
                     <div class="Container100 NoPadding Responsive50 ui-fluid">
 
                         <h:form id="form">
-                            <p:panel id="panel" header="Portfolio Management Payment System - My Portfolio" >
+                            <p:panel id="panel" header="Wealth Management Payment System - My Portfolio" >
 
                                 <p:messages id="msgs" />
 
                                 <h:panelGrid columns="4" cellpadding="5">
 
                                     <p:dataTable var="Wealth" value="#{customerWealthManagedBean.oneCustomerAllPortfolios}"  editable="true" >
+                                        <f:facet name="header">
+                                            My Discretionary Accounts
+                                        </f:facet>
 
                                         <p:column headerText="Portfolio ID" style="width: 80px;">
 
@@ -40,22 +43,9 @@
                                         </p:column>
 
                                         <p:column headerText="Expected Rate of Return">
-                                            <p:cellEditor >
-                                                <f:facet name="output"><h:outputText value="#{Wealth.expectedRateOfReturn}" >
-                                                        <f:convertNumber type="percent" minFractionDigits="2" /> 
-                                                    </h:outputText></f:facet>
-                                                <f:facet name="input"><p:inputText  value="#{Wealth.expectedRateOfReturn}" style="width:100%"/></f:facet>
-                                            </p:cellEditor>
+
+                                            <h:outputText value="#{Wealth.expectedRateOfReturn}" />
                                         </p:column>
-
-                                        <p:column headerText="Term">
-                                            <p:cellEditor>
-                                                <f:facet name="output"><h:outputText  /></f:facet>
-
-                                                <f:facet name="input"><p:inputText id="loanTerm" value="#{customerWealthManagedBean.term}" style="width:100%"/></f:facet>
-                                            </p:cellEditor>
-                                        </p:column>
-
 
                                         <p:column headerText="Asset Under Management">
                                             <h:outputText value="#{Wealth.investAmount}" >
@@ -68,7 +58,7 @@
                                                 <f:convertNumber type="percent" minFractionDigits="2" />
                                             </h:outputText>
                                         </p:column>
-
+                                        
 
 
                                         <p:column headerText="Start Date">
@@ -82,7 +72,7 @@
                                                 <f:convertDateTime pattern="MM/dd/yyyy" />
                                             </h:outputText>
                                         </p:column>
-
+                                        
                                         <p:column headerText="Present Value ">
                                             <h:outputText value="#{Wealth.presentValue}" />
                                         </p:column>
@@ -91,61 +81,40 @@
                                             <h:outputText value="#{Wealth.status}" />
                                         </p:column>
 
-                                        <p:column headerText="Early Payoff" style="width: 80px;" >
-                                            <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerEarlyWithdrawPortfolio}" update=":form:panel" ajax="false" type="submit" >
-                                                    <f:attribute name="selectedPort" value="#{Wealth}"  />
-                                                </p:commandButton>
-                                            </center>
-                                        </p:column>
 
 
 
 
-                                        <p:column headerText="View Product" style="width: 80px;" >
-                                            <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.selectPortfolio}" oncomplete="PF('msgDialog').show()"  update=":form:panel" ajax="true" type="submit" >
-<!--                                                    <f:attribute name="selectedWealth" value="{Wealth}"  />-->
-                                                </p:commandButton>
-                                            </center>
-                                        </p:column>
 
                                         <p:column headerText="View Transactions" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.selectPorfolioToViewTransactions}" update=":form:panel" ajax="false" type="submit" >
-                                                    <f:attribute name="selectedPort" value="#{Wealth}"  />
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                    <f:attribute name="selectedWealth" value="#{Wealth}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+
+                                        <p:column headerText="Early Payoff" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
+                                                    <f:attribute name="selectedWealth" value="#{Wealth}"  />
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>
+                                        
+                                         <p:column headerText="View Portfolio" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplayPortfolios}" update=":form:panel" ajax="false" type="submit" >
+                                                    <f:attribute name="selectedWealth" value="#{Wealth}"  />
                                                 </p:commandButton>
                                             </center>
                                         </p:column>
 
                                     </p:dataTable>
+
+
                                 </h:panelGrid>
 
-                               <p:dialog id="dialogMessage1"   header="Product Info" widgetVar="msgDialog" showEffect="fade" hideEffect="fade" resizable="true">
-                                <p:outputPanel id="msgDetail1" style="text-align:center;">
-                                    <p:panelGrid  columns="2"  >
-                                        <p:outputLabel  value="FX Proportion"/>
-                                     
-                                            <h:outputText  value="#{customerWealthManagedBean.foreignExchange}" style="width:100%"/>
-                                
-
-                                        <p:outputLabel value="Equity Proportion"/>
-                                     
-                                            <h:outputText  value="#{customerWealthManagedBean.equity}" style="width:100%"/>
-                                   
-
-                                        <p:outputLabel value="Bond Proportion"/>
-                                     
-                                            <h:outputText  value="#{customerWealthManagedBean.bond}" style="width:100%"/>
-                                     
-
-
-                                      
-
-
-                                    </p:panelGrid> 
-                                </p:outputPanel>
-                            </p:dialog>
 
                             </p:panel>
                         </h:form>

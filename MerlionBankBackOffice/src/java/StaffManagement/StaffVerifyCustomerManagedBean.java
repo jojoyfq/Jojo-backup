@@ -151,17 +151,6 @@ public class StaffVerifyCustomerManagedBean implements Serializable {
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerId + " has been " + result + "d");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 
-                }else if (!selectedCustomer.getDiscretionaryAccounts().isEmpty()) {
-                    result = "approve";
-
-                    System.out.println("***********Discretionary account ID is " + selectedCustomer.getDiscretionaryAccounts().get(0).getId());
-
-                    svcasbl.verifyDiscretionaryAccountCustomer(staffId, customerId, result, selectedCustomer.getDiscretionaryAccounts().get(0).getId());
-                    pendingCustomers = svcasbl.viewPendingVerificationList();
-
-                    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerId + " has been " + result + "d");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-
                 }
             } else {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer");

@@ -22,7 +22,6 @@ import LoanEntity.LoanType;
 import LoanEntity.Logistic;
 import Other.Session.sendEmail;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -378,8 +377,7 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         List<Instance> instances = new ArrayList(query.getResultList());
         Logistic logistic = new Logistic(3);
         train(instances, logistic);
-        BigDecimal temp=customer.getMonthlyIncome().subtract(loan.getMonthlyPayment());
-        int income=temp.setScale(0, RoundingMode.DOWN).intValueExact();
+        int income=customer.getMonthlyIncome().intValueExact()-loan.getMonthlyPayment().intValueExact();
         
         int gender=0;
         if (customer.getGender().equals("Female"))

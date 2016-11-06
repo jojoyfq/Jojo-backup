@@ -356,6 +356,7 @@ public class StaffWealthManagedBean implements Serializable {
     }
 
     public void staffModifyPortfolio(RowEditEvent event) throws EmailNotSendException {
+
         try {
             selectedPort = (Portfolio) event.getObject();
             System.out.println("******Selected Portfolio to edit is " + selectedPort.getId());
@@ -403,6 +404,7 @@ public class StaffWealthManagedBean implements Serializable {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
+
     }
 
     public void customerDisplaySavingAccounts(ActionEvent event) throws ListEmptyException, IOException {

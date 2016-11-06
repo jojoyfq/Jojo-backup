@@ -27,7 +27,7 @@
                             <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
                                 <p:messages id="msgs" />
 
-                                <p:dataTable id="radioDT" var="pendingLoan" value="#{staffWealthManagedBean.pendingActivatedPlans}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}">
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{staffWealthManagedBean.pendingActivatedPlans}" editable="true" selectionMode="single" selection="#{staffLoanManagedBean.selectedLoan}" rowKey="#{pendingLoan.id}">
                                     <f:facet name="header">
                                         Pending Tailored Plans For Activation
                                     </f:facet>
@@ -152,7 +152,9 @@
                                                 </p:cellEditor>
                                             </p:column>
 
-                                           
+                                            <p:column headerText="Edit" style="width:32px">
+                                                <p:rowEditor />
+                                            </p:column>
                                         </p:dataTable>
                                     </p:panelGrid>
                                 </p:outputPanel>

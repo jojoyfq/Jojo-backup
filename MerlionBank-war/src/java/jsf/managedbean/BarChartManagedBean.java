@@ -58,7 +58,7 @@ public class BarChartManagedBean implements Serializable {
     private BarChartModel initBarModel() {
         BarChartModel model = new BarChartModel();
         ChartSeries cash = new ChartSeries();
-        Long accountNo = Long.parseLong(savingAccountManagedBean.getSavingAccountNumberList().get(0).split(",")[0]);
+        Long accountNo = savingAccountManagedBean.getSavingAccountNumberList().get(0);
         String accountStr = accountNo + "";
         BigDecimal balance = savingAccountManagedBean.getSavingAccounts().get(0).getAvailableBalance();
         cash.set(accountStr, balance);

@@ -10,13 +10,11 @@ import CardEntity.Session.CreditCardSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
-import Exception.ChargebackException;
 import Exception.CreditCardException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,19 +70,6 @@ public class CreditCardManagedBean implements Serializable {
     private String cvv;
     private String newPassword;
     private String confirmedPassword;
-    //cancel credit card
-    private List<String> creditCardList;
-    private String creditCardSelected;
-    private Long creditCardSelectedLong;
-    private String cancelReason;
-    private CreditCard creditCardForClose;
-    //for chargeback requests
-    private String creditCardNo;
-    private String merchantName;
-    private Date transactionDate;
-    private String transactionAmount;
-    private String chargebackDescription;
-            
 
     @PostConstruct
     public void init() {
@@ -94,7 +79,6 @@ public class CreditCardManagedBean implements Serializable {
             identityList.add(1, "Permanent Resident");
             identityList.add(2, "Foreigner");
             System.out.print(identityList);
-            creditCardList = ccsb.getCreditCardNumbers(customerID);
         } catch (Exception e) {
             System.out.print("init encounter error!");
         }
@@ -130,26 +114,6 @@ public class CreditCardManagedBean implements Serializable {
             System.out.print("dashboard to activate Credit card encounter error!");
         }
     }
-    
-    public void dashboardToCancelCreditCard(ActionEvent event) {
-        try {
-            creditCardList = ccsb.getCreditCardNumbers(customerID);
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardCancel_selectCard.xhtml");
-        } catch (Exception e) {
-            System.out.print("dashboard to cancel Credit card encounter error!");
-        }
-    }
-    
-    public void dashboardToChargeback(ActionEvent event) {
-        try {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardChargeback.xhtml");
-        } catch (Exception e) {
-            System.out.print("dashboard to Credit Card Chargeback encounter error!");
-        }
-    }
-
 
     public void creditApplyEnterDetail(ActionEvent event) throws IOException {
         if (identitySelected == null) {
@@ -318,47 +282,7 @@ public class CreditCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/creditCardActivateSuccess.xhtml");
         }
     }
-    
-    public void showCreditCardDetail(ActionEvent event) throws IOException {
-        if (creditCardSelected != null && cancelReason != null) {
-            creditCardForClose = ccsb.getCreditCardForClose(creditCardSelected);
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardCancel_showDetail.xhtml");
-        } else {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select the required field!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
-    }
 
-    
-    public void cancelDebitCard(ActionEvent event) throws CreditCardException, IOException {
-        try {
-            ccsb.cancelCreditCard(creditCardSelected);
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardCancelSuccess.xhtml");
-        } catch (CreditCardException ex) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
-    }
-    
-    public void chargeback(ActionEvent event) throws ChargebackException, IOException {
-        if ((merchantName != null) && (transactionDate != null) && (transactionAmount != null) && (chargebackDescription != null) && (creditCardNo != null)) {
-            BigDecimal amount = new BigDecimal(transactionAmount);
-            try {
-                ccsb.createChargeback(merchantName, transactionDate, amount, chargebackDescription, creditCardNo);
-                FacesContext.getCurrentInstance().getExternalContext()
-                        .redirect("/MerlionBank-war/CardManagement/creditCardChargebackSuccess.xhtml");
-            } catch (ChargebackException e) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", e.getMessage());
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
-            }
-        } else {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in the blank box!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
-    }
-    
     public Long getCustomerID() {
         return customerID;
     }
@@ -494,85 +418,7 @@ public class CreditCardManagedBean implements Serializable {
     public void setConfirmedPassword(String confirmedPassword) {
         this.confirmedPassword = confirmedPassword;
     }
+    
+    
 
-    public List<String> getCreditCardList() {
-        return creditCardList;
-    }
-
-    public void setCreditCardList(List<String> creditCardList) {
-        this.creditCardList = creditCardList;
-    }
-
-    public Long getCreditCardSelectedLong() {
-        return creditCardSelectedLong;
-    }
-
-    public void setCreditCardSelectedLong(Long creditCardSelectedLong) {
-        this.creditCardSelectedLong = creditCardSelectedLong;
-    }
-
-    public String getCancelReason() {
-        return cancelReason;
-    }
-
-    public void setCancelReason(String cancelReason) {
-        this.cancelReason = cancelReason;
-    }
-
-    public String getCreditCardSelected() {
-        return creditCardSelected;
-    }
-
-    public void setCreditCardSelected(String creditCardSelected) {
-        this.creditCardSelected = creditCardSelected;
-    }
-
-    public CreditCard getCreditCardForClose() {
-        return creditCardForClose;
-    }
-
-    public void setCreditCardForClose(CreditCard creditCardForClose) {
-        this.creditCardForClose = creditCardForClose;
-    }
-
-    public String getCreditCardNo() {
-        return creditCardNo;
-    }
-
-    public void setCreditCardNo(String creditCardNo) {
-        this.creditCardNo = creditCardNo;
-    }
-
-    public String getMerchantName() {
-        return merchantName;
-    }
-
-    public void setMerchantName(String merchantName) {
-        this.merchantName = merchantName;
-    }
-
-    public String getTransactionAmount() {
-        return transactionAmount;
-    }
-
-    public void setTransactionAmount(String transactionAmount) {
-        this.transactionAmount = transactionAmount;
-    }
-
-    public String getChargebackDescription() {
-        return chargebackDescription;
-    }
-
-    public void setChargebackDescription(String chargebackDescription) {
-        this.chargebackDescription = chargebackDescription;
-    }
-
-    public Date getTransactionDate() {
-        return transactionDate;
-    }
-
-    public void setTransactionDate(Date transactionDate) {
-        this.transactionDate = transactionDate;
-    }
-       
 }

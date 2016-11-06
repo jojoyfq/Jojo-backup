@@ -81,6 +81,11 @@
                                             <h:outputText value="#{Wealth.status}" />
                                         </p:column>
 
+
+
+
+
+
                                         <p:column headerText="View Products" style="width: 80px;" >
                                             <center>
                                                 <p:commandButton icon="fa fa-file-powerpoint-o" styleClass="Fleft Fs14 White" actionListener="#{portfolioManagedBean.viewProducts}" update=":form:panel" ajax="false" type="submit" >
@@ -89,14 +94,7 @@
                                             </center>
                                         </p:column>
 
-                                          <p:column headerText="View Transactions" style="width: 80px;" >
-                                            <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{staffWealthManagedBean.selectPorfolioToViewTransactions}" update=":form:panel" ajax="false" type="submit" >
-                                                    <f:attribute name="selectedPort" value="#{Wealth}"  />
-                                                </p:commandButton>
-                                            </center>
-                                        </p:column>
-                                      
+                                
                                     </p:dataTable>
 
 

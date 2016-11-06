@@ -8,6 +8,8 @@ package DepositEntity.Session;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.Staff;
+import CounterCash.CashServiceRecord;
+import CounterCash.CounterCashRecord;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.FixedDepositRate;
@@ -33,6 +35,7 @@ import org.joda.time.Period;
 import Exception.EmailNotSendException;
 import Other.Session.sendEmail;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,7 +57,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private BigDecimal fixedAccountBalance; //from managed bean
     private String fixedDuration;//from managed bean
     //private BigDecimal amount; // amount the account should have 
-
+    
     private static final Random RANDOM = new SecureRandom();
     private FixedDepositRate rate;
 
@@ -64,6 +67,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private Customer customer;
     private BigDecimal interest;
 
+    private CashServiceRecord cashServiceRecord;
+    
     public BigDecimal getInterest() {
         return interest;
     }
@@ -156,7 +161,13 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account = new FixedDepositAccount(accountNum, amount, balance, dateOfStart, dateOfEnd, duration, "active", interestRate);
         em.persist(account);
         account.setCustomer(customer);
-
+        
+        //create cash service record 
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        cashServiceRecord = new CashServiceRecord("Fixed Deposit Account Opening", "customer ID" + customer.getIc(), true, currentTimestamp, amount);
+        em.persist(cashServiceRecord);
+        
         List<FixedDepositAccount> fixedAccounts = new ArrayList<FixedDepositAccount>();
         //customer may alr have fixed acct
         if (customer.getFixedDepositeAccounts() == null) {
@@ -417,6 +428,12 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account.setBalance(BigDecimal.valueOf(0));
         account.setStatus("terminated");
         em.flush();
+        
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        cashServiceRecord = new CashServiceRecord("Fixed Deposit Early Withdraw", "customer ID" + account.getCustomer().getIc(), false, currentTimestamp, totalAmount);
+        em.persist(cashServiceRecord);
+ 
         return amountsToDisplay;
     }
 
@@ -468,6 +485,12 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account.setStatus("terminated");
         System.out.print("set status to termianted");
         em.flush();
+        
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        cashServiceRecord = new CashServiceRecord("Fixed Deposit Normal Withdraw", "customer ID" + account.getCustomer().getIc(), false, currentTimestamp, totalAmount);
+        em.persist(cashServiceRecord);
+ 
         return amountsToDisplay;
     }
 

@@ -47,34 +47,18 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
     StaffManagementSessionBeanLocal smsbl;
 
     @Override
-    public List<DiscretionaryAccount> existingCustomerActivateAccount(Long customerId, Long accountId) throws NotEnoughAmountException,ListEmptyException {
+    public Long existingCustomerActivateAccount(Long customerId, Long accountId) throws NotEnoughAmountException {
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, accountId);
-         if (!discretionaryAccount.getStatus().equals("active"))
-            throw new NotEnoughAmountException ("Discretionary Account status is not active");
-         
         Customer customer = em.find(Customer.class, customerId);
-        List<DiscretionaryAccount> discretionaryAccounts = customer.getDiscretionaryAccounts();
-        List<DiscretionaryAccount> temp = new ArrayList<DiscretionaryAccount>();
         BigDecimal amount = discretionaryAccount.getBalance();
         BigDecimal currentAmount = new BigDecimal(250000);
         int res = amount.compareTo(currentAmount);
         if (res == 0 || res == 1) {
-            for (int i = 0; i < discretionaryAccounts.size(); i++) {
-                if (!discretionaryAccounts.get(i).getStatus().equals("terminated")) {
-                    temp.add(discretionaryAccounts.get(i));
-                }
-            }
-
-            if (temp.isEmpty()) {
-                throw new ListEmptyException("You do not have any available discretionary accounts.");
-            }
-            
             discretionaryAccount.setStatus("active");
-return temp;
+            return accountId;
         } else {
             throw new NotEnoughAmountException("This account has not met the minimum SG$250000 requirement");
         }
-
     }
 
     @Override
@@ -201,7 +185,7 @@ return temp;
 //        } else {
 //            amount = amount.multiply(processingFee);
 //        }
-        BigDecimal interestRate = new BigDecimal(0.0005);
+        BigDecimal interestRate=new BigDecimal(0.0005);
 
         discretionaryAccount.setAccumDailyInterest(interestRate);
         discretionaryAccount.setBalance(discretionaryAccount.getBalance().subtract(amount));
@@ -301,23 +285,23 @@ return temp;
 
         List<PortfolioTransaction> portfolioTransactions = new ArrayList<PortfolioTransaction>();
         List<Product> products = new ArrayList<Product>();
-        List<Good> goods = new ArrayList<Good>();
+        List<Good> goods=new ArrayList<Good>();
 
         BigDecimal rate = new BigDecimal(foreignExchange);
         BigDecimal purchaseAmount = investAmount.multiply(rate);
-        BigDecimal test = new BigDecimal(0);
-
-        Product foreignExchangeProduct = new Product("Foreign Exchange", purchaseAmount, foreignExchange, goods, purchaseAmount, test);
+        BigDecimal test=new BigDecimal(0);
+        
+        Product foreignExchangeProduct = new Product("Foreign Exchange", purchaseAmount, foreignExchange,goods,purchaseAmount,test);
         em.persist(foreignExchangeProduct);
 
         rate = new BigDecimal(equity);
         purchaseAmount = investAmount.multiply(rate);
-        Product equityProduct = new Product("Equity", purchaseAmount, equity, goods, purchaseAmount, test);
+        Product equityProduct = new Product("Equity", purchaseAmount, equity,goods,purchaseAmount,test);
         em.persist(equityProduct);
 
         rate = new BigDecimal(bond);
         purchaseAmount = investAmount.multiply(rate);
-        Product stockProduct = new Product("Bond", purchaseAmount, bond, goods, purchaseAmount, test);
+        Product stockProduct = new Product("Bond", purchaseAmount, bond,goods,purchaseAmount,test);
         em.persist(equityProduct);
 
         products.add(foreignExchangeProduct);
@@ -421,9 +405,9 @@ return temp;
     }
 
     @Override
-    public List<Portfolio> ModifyPortfolioRate(Long portfolioId, Double expectedRateOfReturn, int term) {
+    public List<Portfolio> ModifyPortfolioRate(Long portfolioId, Double expectedRateOfReturn, int term)  {
         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
-
+       
         portfolio.setTerm(term);
 
         Date currentTime = portfolio.getStartDate();
@@ -439,47 +423,38 @@ return temp;
 
         return portfolios;
     }
-
+    
     @Override
-    public List<Portfolio> ModifyPortfolioProduct(Long portfolioId, Double foreignExchange, Double equity, Double bond) {
-        System.out.println("session bean foreignExchange: " + foreignExchange);
-        System.out.println("session bean equity: " + equity);
-        System.out.println("session bean bond: " + bond);
-
-        Portfolio portfolio = em.find(Portfolio.class, portfolioId);
+    public List<Portfolio> ModifyPortfolioProduct(Long portfolioId,Double foreignExchange, Double equity, Double bond) {
+         Portfolio portfolio = em.find(Portfolio.class, portfolioId);
         BigDecimal investAmount = portfolio.getInvestAmount();
         DiscretionaryAccount discretionaryAccount = portfolio.getDiscretionaryAccount();
 
         List<Product> products = new ArrayList<Product>();
-        List<Good> goods = new ArrayList<Good>();
+          List<Good> goods=new ArrayList<Good>();
 
         BigDecimal rate = new BigDecimal(foreignExchange);
         BigDecimal purchaseAmount = investAmount.multiply(rate);
-        BigDecimal test = new BigDecimal(0);
-        Product foreignExchangeProduct = portfolio.getProducts().get(0);
-        foreignExchangeProduct.setExpectedAmount(purchaseAmount);
-        foreignExchangeProduct.setCurrentAmount(purchaseAmount);
-        foreignExchangeProduct.setPercentage(foreignExchange);
+        BigDecimal test=new BigDecimal(0);
+        Product foreignExchangeProduct = new Product("Foreign Exchange", purchaseAmount, foreignExchange,goods,purchaseAmount,test);
+        em.persist(foreignExchangeProduct);
 
         rate = new BigDecimal(equity);
         purchaseAmount = investAmount.multiply(rate);
-        Product equityProduct = portfolio.getProducts().get(1);
-        equityProduct.setExpectedAmount(purchaseAmount);
-        equityProduct.setCurrentAmount(purchaseAmount);
-        equityProduct.setPercentage(equity);
+        Product equityProduct = new Product("Equity", purchaseAmount, equity,goods,purchaseAmount,test);
+        em.persist(equityProduct);
 
         rate = new BigDecimal(bond);
         purchaseAmount = investAmount.multiply(rate);
-        Product bondProduct = portfolio.getProducts().get(2);
-        bondProduct.setExpectedAmount(purchaseAmount);
-        bondProduct.setCurrentAmount(purchaseAmount);
-        bondProduct.setPercentage(bond);
+        Product stockProduct = new Product("Bond", purchaseAmount, bond,goods,purchaseAmount,test);
+        em.persist(equityProduct);
 
+        products.add(foreignExchangeProduct);
+        products.add(equityProduct);
+        products.add(stockProduct);
+
+        portfolio.setProducts(products);
         portfolio.setStatus("inactive");
-
-        foreignExchangeProduct.setPortfolio(portfolio);
-        equityProduct.setPortfolio(portfolio);
-        bondProduct.setPortfolio(portfolio);
 
         List<Portfolio> portfolios = portfolio.getDiscretionaryAccount().getPortfolios();
 
@@ -518,20 +493,4 @@ return temp;
         return discretionaryAccountId;
     }
 
-    public List<PortfolioTransaction> viewtransactionHistory(Long portfolioId,Date startDate,Date endDate){
-          Portfolio portfolio = em.find(Portfolio.class, portfolioId);
-          List<PortfolioTransaction> allTransactions=portfolio.getPortfolioTransactions();
-          DateTime start=new DateTime(startDate).withTimeAtStartOfDay();
-          DateTime end=new DateTime(endDate);
-          end=end.plusDays(1).withTimeAtStartOfDay();
-           List<PortfolioTransaction> result=new ArrayList<PortfolioTransaction>();
-          
-          for (int i=0;i<allTransactions.size();i++){
-              Date time=allTransactions.get(i).getTransactionTime();
-              DateTime transactionTime=new DateTime(time);
-              if (transactionTime.isAfter(start) && transactionTime.isBefore(end))
-                  result.add(allTransactions.get(i));
-          }
-       return result;  
-    }
 }

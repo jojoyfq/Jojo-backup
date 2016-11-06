@@ -9,7 +9,6 @@ import CommonEntity.Permission;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
 import Exception.EmailNotSendException;
-import Exception.ListEmptyException;
 import Exception.PasswordNotMatchException;
 import Exception.PasswordTooSimpleException;
 import Exception.RoleAlreadyExistedException;
@@ -92,10 +91,7 @@ public Long updateStaffInfo(Long adminId, Long staffId, String staffIc, String s
     public boolean updateForgetPassword(Long staffId, String newPassword, String confirmPassword) throws PasswordTooSimpleException, PasswordNotMatchException, UnexpectedErrorException;
 
     //log in
-    
-     public Long checkLogin(String ic, String password) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException;
-     public List<StaffRole> viewAvailableStaffRole(Long staffId) throws ListEmptyException;
-    public Long checkLoginStaffRole(Long staffId, String staffRoleName)throws UserNotExistException;
+    public Long checkLogin(String ic, String password, String staffRoleName) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException;
 
     public Staff viewStaff(Long staffID) throws UserNotExistException;
 

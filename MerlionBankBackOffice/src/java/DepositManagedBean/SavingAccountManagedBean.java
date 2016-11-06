@@ -59,10 +59,9 @@ public class SavingAccountManagedBean implements Serializable {
     private String savingAccountName;
     private List<String> savingAccountTypeList;
     private boolean createSavingAccountStatus;
-    private List<String> savingAccountNumberList;
+    private List<Long> savingAccountNumberList;
     private List<Long> notTerminAccountNumList;
-    private Long savingAccountSelectedLong;
-    private String savingAccountSelected;
+    private Long savingAccountSelected;
     private Long notTerminAccountSelected;
     private List<TransactionRecord> transactionRecordList;
     private List<SavingAccount> savingAccountForCloseAccount;
@@ -258,8 +257,7 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void getTransactionRecords() {
         System.out.print("inside the transaction Managedbean");
-        savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
-        transactionRecordList = sasb.getTransactionRecord(savingAccountSelectedLong);
+        transactionRecordList = sasb.getTransactionRecord(savingAccountSelected);
         //System.out.print(transactionRecordList);
     }
 
@@ -267,10 +265,9 @@ public class SavingAccountManagedBean implements Serializable {
         try {
             if (savingAccountSelected != null) {
                 withdrawAmount = new BigDecimal(withdrawAmountString);
-                savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
-                sasb.cashWithdraw(savingAccountSelectedLong, withdrawAmount);
+                sasb.cashWithdraw(savingAccountSelected, withdrawAmount);
 
-//                String description = "Staff " +staff.getStaffIc()+" perform cash withdraw from "+savingAccountSelectedLong+" saving account for customer "+customerID;
+//                String description = "Staff " +staff.getStaffIc()+" perform cash withdraw from "+savingAccountSelected+" saving account for customer "+customerID;
 //                sasb.logStaffAction(description, customerID, staff);
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/DepositManagement/cashWithdrawSuccess.xhtml");
@@ -336,7 +333,6 @@ public class SavingAccountManagedBean implements Serializable {
         try {
             if (savingAccountSelected != null) {
                 System.out.print("inside the goToTransaction Record method!");
-                savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
                 this.getTransactionRecords();
 
 //              String description = "Staff " + staff.getStaffIc() + " perform change saving account interest rate";
@@ -355,8 +351,7 @@ public class SavingAccountManagedBean implements Serializable {
     public void goToCloseSavingAccount(ActionEvent event) {
         try {
             if (savingAccountSelected != null) {
-                savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
-                savingAccountForCloseAccount = sasb.getSavingAccountForCloseAccount(savingAccountSelectedLong);
+                savingAccountForCloseAccount = sasb.getSavingAccountForCloseAccount(savingAccountSelected);
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/DepositManagement/closeSavingAccount.xhtml");
             } else {
@@ -379,11 +374,10 @@ public class SavingAccountManagedBean implements Serializable {
 
     public void checkPendingTransaction(ActionEvent event) throws UserHasPendingTransactionException, IOException, UserHasNoSavingAccountException, UserCloseAccountException {
         try {
-            savingAccountSelectedLong = Long.parseLong(savingAccountSelected.split(",")[0]);
-            sasb.checkPendingTransaction(savingAccountSelectedLong);
+            sasb.checkPendingTransaction(savingAccountSelected);
             this.getSavingAccountNumbers();
 
-//          String description = "Staff " + staff.getStaffIc() + " perform close saving account "+savingAccountSelectedLong+"for customer"+customerID;
+//          String description = "Staff " + staff.getStaffIc() + " perform close saving account "+savingAccountSelected+"for customer"+customerID;
 //          sasb.logStaffAction(description, customerID, staff);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBankBackOffice/DepositManagement/closeSavingAccountSuccess.xhtml");
@@ -437,20 +431,20 @@ public class SavingAccountManagedBean implements Serializable {
         this.createSavingAccountStatus = createSavingAccountStatus;
     }
 
-    public List<String> getSavingAccountNumberList() {
+    public List<Long> getSavingAccountNumberList() {
         return savingAccountNumberList;
     }
 
-    public void setSavingAccountNumberList(List<String> savingAccountNumList) {
+    public void setSavingAccountNumberList(List<Long> savingAccountNumList) {
         this.savingAccountNumberList = savingAccountNumList;
     }
 
-    public Long getSavingAccountSelectedLong() {
-        return savingAccountSelectedLong;
+    public Long getSavingAccountSelected() {
+        return savingAccountSelected;
     }
 
-    public void setSavingAccountSelectedLong(Long savingAccountSelectedLong) {
-        this.savingAccountSelectedLong = savingAccountSelectedLong;
+    public void setSavingAccountSelected(Long savingAccountSelected) {
+        this.savingAccountSelected = savingAccountSelected;
     }
 
     public List<TransactionRecord> getTransactionRecordList() {
@@ -556,15 +550,5 @@ public class SavingAccountManagedBean implements Serializable {
     public void setStaff(Staff staff) {
         this.staff = staff;
     }
-
-    public String getSavingAccountSelected() {
-        return savingAccountSelected;
-    }
-
-    public void setSavingAccountSelected(String savingAccountSelected) {
-        this.savingAccountSelected = savingAccountSelected;
-    }
-    
-    
 
 }
