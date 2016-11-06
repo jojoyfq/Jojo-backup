@@ -277,7 +277,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             em.persist(transactionRecord);
             em.flush();
             
-            cashServiceRecord = new CashServiceRecord("Cash withdraw", "customer ID" + customer.getIc(), false, currentTimestamp, withdrawAmount);
+            cashServiceRecord = new CashServiceRecord("Cash withdraw", "customer ID" + savingAccount.getCustomer().getIc(), false, currentTimestamp, withdrawAmount);
             em.persist(cashServiceRecord);
             em.flush();
         } else {
@@ -306,7 +306,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         em.flush();
         
         //create cash service record 
-        cashServiceRecord = new CashServiceRecord("Cash Deposit", "customer ID" + customer.getIc(), true, currentTimestamp, depositAmount);
+        cashServiceRecord = new CashServiceRecord("Cash Deposit", "customer ID" + savingAccount.getCustomer().getIc(), true, currentTimestamp, depositAmount);
         em.persist(cashServiceRecord);
     }
 

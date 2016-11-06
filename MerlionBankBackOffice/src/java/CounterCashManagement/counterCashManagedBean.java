@@ -35,7 +35,7 @@ public class counterCashManagedBean implements Serializable {
 
     @EJB
     CounterCashManagementLocal ccml;
-    
+
     private Staff staff;
     private Long staffId;
     private Long customerId;
@@ -51,55 +51,64 @@ public class counterCashManagedBean implements Serializable {
     public void setAmount(String amount) {
         this.amount = amount;
     }
-    
-    
-    @Inject 
+
+    @Inject
     private staffLogInManagedBean staffLogInManagedBean;
-    
+
     @Inject
     private ServiceCustomerManagedBean serviceCustomerManagedBean;
-    
+
     @PostConstruct
-    public void init(){
-            System.out.print("inside the init method");
+    public void init() {
+        System.out.print("inside the init method");
         //serviceCustomerManagedBean.init();
-            staff = staffLogInManagedBean.getStaff();
-            staffId = staffLogInManagedBean.getStaffId();
-            //customerId = serviceCustomerManagedBean.getCustomer().getId();
-            //customer = serviceCustomerManagedBean.getCustomer();
-           System.out.print("************************");           
+        staff = staffLogInManagedBean.getStaff();
+        staffId = staffLogInManagedBean.getStaffId();
+        //customerId = serviceCustomerManagedBean.getCustomer().getId();
+        //customer = serviceCustomerManagedBean.getCustomer();
+        System.out.print("************************");
     }
+
     /**
      * Creates a new instance of counterCashManagedBean
      */
-    
     /**
      * Creates a new instance of counterCashManagedBean
+     *
      * @param event
      */
     public void dashboardEnterAmount(ActionEvent event) {
+
         System.out.println("********** inside the dashboard enter amount method **********");
         staffId = staffLogInManagedBean.getStaffId();
 
         System.out.print(staffId);
-        System.out.print(amount);
-        
-        if(amount != null){
-        Calendar today = GregorianCalendar.getInstance();
-        date = today.getTime();
-        BigDecimal amountEnter=new BigDecimal(amount);
-        ccml.recordAmount(amountEnter, date, staffId);
-        System.out.println("entered the amount");
-        amount="";
-        }else{
+        System.out.print("lalllllllalallalalal" + amount == null);
+
+        if (amount != null) {
+            Calendar today = GregorianCalendar.getInstance();
+            date = today.getTime();
+            BigDecimal amountEnter = new BigDecimal(amount);
+            Integer check = ccml.recordAmount(amountEnter, date, staffId);
+
+            System.out.println("entered the amount");
+            amount = "";
+
+            if (check == 2) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Amount is matched.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            } else if (check == 3){
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Amount does not match, please wait for investigation.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please enter amount");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
-        
-        
+
     }
-    
+
     public counterCashManagedBean() {
     }
-    
+
 }

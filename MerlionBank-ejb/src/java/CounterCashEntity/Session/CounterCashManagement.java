@@ -5,8 +5,10 @@
  */
 package CounterCashEntity.Session;
 
+import CommonEntity.Staff;
 import CounterCash.CashServiceRecord;
 import CounterCash.CounterCashRecord;
+import Other.Session.sendEmail;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,9 +38,14 @@ public class CounterCashManagement implements CounterCashManagementLocal {
     private Long staffId;
     private CounterCashRecord counterCashRecord;
 
+    
     @Override
-    public void recordAmount(BigDecimal amount, Date time, Long staffId) {
-
+    public int recordAmount(BigDecimal amount, Date time, Long staffId) {
+        
+        //1 for initial entry 
+        //2 for entry amoutn matched
+        //3 for entry not matched
+        Integer check = 1;
         Query q = em.createQuery("SELECT a FROM CounterCashRecord a");
         List<CounterCashRecord> counterCashLists = new ArrayList(q.getResultList());
 
@@ -57,6 +64,7 @@ public class CounterCashManagement implements CounterCashManagementLocal {
                     System.out.println("********** make a new entry ********** ");
                     counterCashRecord = new CounterCashRecord(amount, time, staffId);
                     em.persist(counterCashRecord);
+                    
                     break;
                 } else if (!counterCashLists.get(i).getStatus().equals("initial") && (counterCashLists.size() != i + 1)) {
                     //the entry is completetd, and the next is not null, exit and proceed to next checking
@@ -73,10 +81,13 @@ public class CounterCashManagement implements CounterCashManagementLocal {
                         if (checkAmount == true) {
                             System.out.println("********** the amout entered match with the previous amount **********");
                             counterCashLists.get(i).setStatus("cleared");
+                            check = 2;
                             break;
                         } else {
                             System.out.println("********** 66666%%%%%% the amount doesnt matched **********");
                             counterCashLists.get(i).setStatus("pending for investigation");
+                            //send email to account manager
+                            check = 3;
                             break;
                         }
                     } else { // a new entry 
@@ -87,6 +98,7 @@ public class CounterCashManagement implements CounterCashManagementLocal {
                 }
             }
         }
+        return check;
     }
 
     // Add business logic below. (Right-click in editor and choose
@@ -133,8 +145,29 @@ public class CounterCashManagement implements CounterCashManagementLocal {
         }
     }
 
-    @Override
-    public void recordAmount(BigDecimal amount, Date time, String staffName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void SendEmailforCounterCashInvestigation(Long satffId) {
+        System.out.println("Inside the send email method");
+        String name = null;
+        String email = null;
+        
+        Query q = em.createQuery("SELECT a FROM STAFF a");
+        List<Staff> staffLists = new ArrayList(q.getResultList());
+        for (int i = 0; i < staffLists.size(); i++) {
+            if (staffLists.get(i).getStaffRoles().contains("account manager")) {
+                name = staffLists.get(i).getStaffName();
+                email = staffLists.get(i).getStaffEmail();
+            }
+        }
+        String subject = "Counter Cash Investigation Required";
+
+        String content = "<h2>Dear " + name
+                + "<h1>Please proceed to counter to investigate the counter cash record</h1>"
+                + "<p style=\"color: #ff0000;\">Please noted that counter cash record proceed by" + staffId + " required investigation.</p>"
+                + "<br /><p>Note: Please do not reply this email.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>MerLION Platform User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
+
     }
+
 }

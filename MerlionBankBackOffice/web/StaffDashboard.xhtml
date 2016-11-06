@@ -75,13 +75,13 @@
                             <div class="Card">
                                 <h:form>
                                     <div class="Container70 Responsive50">
-                                        <p:inputText placeholder="Enter Counter Cash Amount    " id = "amount" value="#{counterCashManagedBean.amount}" >
+                                        <p:inputText placeholder="Enter Counter Cash Amount    " id = "amount" value="#{counterCashManagedBean.amount}" required = "true">
                                             <p:keyFilter regEx="/[\d\-\.]/"/>
                                             </p:inputText>
                                     </div>
 
                                     <div class="Container30 Responsive50">
-                                        <p:commandButton  value="Submit" actionListener = "#{counterCashManagedBean.dashboardEnterAmount(event)}" onclick="submitForm()"/> 
+                                        <p:commandButton value="Submit" actionListener = "#{counterCashManagedBean.dashboardEnterAmount(event)}" onclick="submitForm()"/> 
                                     </div>
                                 </h:form>
 
