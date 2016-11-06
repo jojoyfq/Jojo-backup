@@ -94,8 +94,25 @@
                                             <h:outputText value="#{Wealth.status}" />
                                         </p:column>
 
+                                        <p:column headerText="Accept" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="ui-icon-check" rendered="#{Wealth.status eq 'staffVefified'}" actionListener="#{customerWealthManagedBean.customerAcceptPlan(Wealth.id)}" update=":form" ajax="false" type="submit" 
+                                                                 onclick="if (!confirm('Are you sure you want to approve this plan '))
+                                                                             return false;"/>
+                                            </center>
+                                        </p:column>
+                                        
+                                          <p:column headerText="Cancel" style="width: 80px;" >
+                                            <center>
+                                                <p:commandButton icon="ui-icon-check" actionListener="#{customerWealthManagedBean.customerCancelPlan(Wealth.id)}" update=":form" ajax="false" type="submit" 
+                                                                 onclick="if (!confirm('Are you sure you want to cancel this plan '))
+                                                                             return false;"/>
+                                            </center>
+                                        </p:column>
 
-
+                                        <p:column headerText="Edit" style="width:32px">
+                                            <p:rowEditor />
+                                        </p:column>
 
 
                                         <p:column headerText="Products Detail" style="width: 80px;" >
@@ -111,8 +128,8 @@
                                     </p:dataTable>
                                 </h:panelGrid>
                             </p:panel>
-                     
-                      
+
+
                             <p:dialog id="dialogMessage1"   header="Product Info" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
                                 <p:outputPanel id="msgDetail1" style="text-align:center;">
                                     <p:panelGrid  columns="2"  >
@@ -125,7 +142,7 @@
                                         <p:inplace id="eq">
                                             <p:inputText  value="#{customerWealthManagedBean.equity}" style="width:100%"/>
                                         </p:inplace>
-                                        
+
                                         <p:outputLabel for="bd" value="Bond Proportion"/>
                                         <p:inplace id="bd">
                                             <p:inputText  value="#{customerWealthManagedBean.bond}" style="width:100%"/>

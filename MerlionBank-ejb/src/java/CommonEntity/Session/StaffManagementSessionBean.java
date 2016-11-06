@@ -1231,4 +1231,15 @@ public class StaffManagementSessionBean implements StaffManagementSessionBeanLoc
         return newPermissions;
 
     }
+    
+    @Override 
+   public List<StaffRole> viewAvailableStaffRole(Long staffId) throws ListEmptyException {
+       Staff staff=em.find(Staff.class,staffId);
+       List<StaffRole> staffRoles=staff.getStaffRoles();
+       if (staffRoles.isEmpty())
+           throw new ListEmptyException ("You have no role available");
+       
+       return staffRoles;
+       
+   }
 }

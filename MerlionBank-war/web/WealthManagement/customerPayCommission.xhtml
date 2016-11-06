@@ -73,6 +73,10 @@
                                             </h:outputText>
                                         </p:column>
 
+                                           <p:column headerText="Commission Fee: ">
+                                               <h:outputText value="#{Wealth.commission}" />
+                                        </p:column>
+                                        
                                         <p:column headerText="Status ">
                                             <h:outputText value="#{Wealth.status}" />
                                         </p:column>
@@ -82,9 +86,10 @@
 
 
 
-                                        <p:column headerText="Activate Account" style="width: 80px;" >
+                                        <p:column headerText="Pay Commission" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerActivateWealthAccount}" update=":form:panel" ajax="false"  >
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerPayCommission}" onclick="if (!confirm('Are you sure you want to pay now?'))
+                                                            return false;" update=":form:panel" ajax="false"  >
                                                     <f:attribute name="selectedWealth" value="#{Wealth}"  />
                                                 </p:commandButton>
                                             </center>
