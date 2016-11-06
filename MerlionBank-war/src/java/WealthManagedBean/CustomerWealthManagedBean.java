@@ -15,6 +15,8 @@ import Exception.NotEnoughAmountException;
 import Exception.UserExistException;
 import WealthEntity.DiscretionaryAccount;
 import WealthEntity.Portfolio;
+import WealthEntity.PortfolioTransaction;
+import WealthEntity.Product;
 import WealthEntity.Session.WealthApplicationSessionBeanLocal;
 import WealthEntity.Session.WealthSessionBeanLocal;
 import java.io.File;
@@ -78,7 +80,7 @@ public class CustomerWealthManagedBean implements Serializable {
     private String typeName;
     UploadedFile file;
 
- private Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
+    private Map<String, Map<String, String>> data = new HashMap<String, Map<String, String>>();
 
     private Map<String, String> wealthProducts;
     private Map<String, String> wealthTypes;
@@ -91,7 +93,15 @@ public class CustomerWealthManagedBean implements Serializable {
     private BigDecimal investAmount;
     private List<Portfolio> oneCustomerAllPortfolios;
     private List<DiscretionaryAccount> oneCusotmerWealthAccounts;
-private BigDecimal withdrawAmount;
+    private List<Product> onePortAllProducts;
+    private BigDecimal withdrawAmount;
+    private Long selectedSavingAcctId;
+    private List<Long> allSavingId;
+    
+    private Date viewStartDate;
+    private Date viewEndDate;
+    private List<PortfolioTransaction> onePortfolioAllTransactions;
+
     public UploadedFile getFile() {
         return file;
     }
@@ -124,10 +134,12 @@ private BigDecimal withdrawAmount;
         oneCustomerAllPortfolios = new ArrayList<>();
         selectedPort = new Portfolio();
         oneCusotmerWealthAccounts = new ArrayList<>();
-             wealthProducts = new HashMap<String, String>();
+        wealthProducts = new HashMap<String, String>();
         wealthTypes = new HashMap<String, String>();
-
-         wealthProducts.put("Predefined Products", "Predefined Products");
+        onePortAllProducts = new ArrayList<>();
+        allSavingId = new ArrayList<>();
+onePortfolioAllTransactions = new ArrayList<>();
+        wealthProducts.put("Predefined Products", "Predefined Products");
         wealthProducts.put("Tailored Product", "Tailored Product");
 
         Map<String, String> map = new HashMap<String, String>();
@@ -141,7 +153,7 @@ private BigDecimal withdrawAmount;
     }
 
     public void onLoanChange() {
-        System.out.println("Selected type name "+typeName);
+        System.out.println("Selected type name " + typeName);
         if (typeName != null && !typeName.equals("")) {
             wealthTypes = data.get(typeName);
 
@@ -156,12 +168,12 @@ private BigDecimal withdrawAmount;
     }
 
     public void customerDisplayProducts(ActionEvent event) throws IOException {
-                   selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+        selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
 
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/displayProducts.xhtml");
 
     }
-   
+
     public void customerFillUpApplicationForm(ActionEvent event) throws IOException {
         System.out.println("*******Selected type to apply is " + type);
         if (type.equals("Education Planning") || type.equals("Retirement Planning")) {
@@ -174,7 +186,7 @@ private BigDecimal withdrawAmount;
     public void goToDisplayAllMyWealthAccounts(ActionEvent event) throws IOException {
         try {
             allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
-            System.out.println("all wealth account size is "+allWealthAccounts.size());
+            System.out.println("all wealth account size is " + allWealthAccounts.size());
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/viewAllDiscretionaryAccount.xhtml");
 
         } catch (ListEmptyException | IOException ex) {
@@ -183,7 +195,31 @@ private BigDecimal withdrawAmount;
         }
 
     }
-     public void goToDisplayAllMyWealthAccountsForPortfolio(ActionEvent event) throws IOException {
+     public void goToPayCommission(ActionEvent event) throws IOException {
+        try {
+            allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
+            System.out.println("all wealth account size is " + allWealthAccounts.size());
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/customerPayCommission.xhtml");
+
+        } catch (ListEmptyException | IOException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+
+    }
+    public void goToAcitivateWealthAccount(ActionEvent event){
+      try {
+            allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
+            System.out.println("all wealth account size is " + allWealthAccounts.size());
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/existingCustomerActivateWealthAccount.xhtml");
+
+        } catch (ListEmptyException | IOException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void goToDisplayAllMyWealthAccountsForPortfolio(ActionEvent event) throws IOException {
         try {
             allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/viewDiscretionaryAccountsPort.xhtml");
@@ -194,8 +230,8 @@ private BigDecimal withdrawAmount;
         }
 
     }
-    
-       public void goToDisplayAllMyWealthAccountsPortfolio(ActionEvent event) throws IOException {
+
+    public void goToDisplayAllMyWealthAccountsPortfolio(ActionEvent event) throws IOException {
         try {
             allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/PortfolioManagement/viewAllDiscretionaryAccount.xhtml");
@@ -206,7 +242,8 @@ private BigDecimal withdrawAmount;
         }
 
     }
- public void goToDisplayAllMyWealthAccountsForBuyProduct(ActionEvent event) throws IOException {
+
+    public void goToDisplayAllMyWealthAccountsForBuyProduct(ActionEvent event) throws IOException {
         try {
             allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/customerManageWealthAccounts.xhtml");
@@ -217,6 +254,20 @@ private BigDecimal withdrawAmount;
         }
 
     }
+    
+     public void goToDisplayAllMyWealthAccountsForPortfolioSystem(ActionEvent event) throws IOException {
+        try {
+            allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/PortfolioManagement/viewAllDiscretionaryAccount.xhtml");
+
+        } catch (ListEmptyException | IOException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+
+    }
+    
+ 
     public void fileUploadListener(FileUploadEvent e) throws IOException {
 
         // Get uploaded file from the FileUploadEvent
@@ -258,7 +309,7 @@ private BigDecimal withdrawAmount;
 
     public void customerCreateWealthAcct(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
-            customer = wasbl.createDiscretionaryAccount(customerIc, customerName, customerGender, customerDateOfBirth, password, customerEmail, customerName, customerOccupation, customerFamilyInfo);
+            customer = wasbl.createDiscretionaryAccount(customerIc, customerName, customerGender, customerDateOfBirth, password, customerEmail,customerPhoneNumber , customerOccupation, customerFamilyInfo);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Discretionary Account has been successfully created! Detailed informaiton has been sent to your email!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/uploadFileForWealth.xhtml");
@@ -278,6 +329,18 @@ private BigDecimal withdrawAmount;
             customerOccupation = null;
             customerFamilyInfo = null;
         }
+    }
+    public void customerPayCommission(ActionEvent event){
+                    selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+                    System.out.println("******Selected Wealth account to pay commission is "+selectedWealth.getId());
+        try {
+            wsbl.payCommissionFee(logInManagedBean.getCustomerId(), selectedWealth.getId());
+             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have succesfully paid the commission ");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } catch (NotEnoughAmountException ex) {
+ FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);        }
+
     }
 
     public void existingCustomerCreateWealthAcct(ActionEvent event) throws EmailNotSendException {
@@ -315,11 +378,23 @@ private BigDecimal withdrawAmount;
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-public void selectSavingSet(ActionEvent event){
-            selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
 
+//public void customerActivateWealthAccount(ActionEvent event){
+//            selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+//                System.out.println("selected wealth to update is "+selectedWealth.getId());
 
-}
+//        try {
+//            allWealthAccounts = wsbl.existingCustomerActivateAccount(logInManagedBean.getCustomerId(),selectedWealth.getId() );
+//        } catch (NotEnoughAmountException|ListEmptyException ex) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        }
+
+    public void selectSavingSet(ActionEvent event) {
+        selectedSavingAccout = (SavingAccount) event.getComponent().getAttributes().get("selectedSavingAccout");
+
+    }
+
     public void customerPayBySaving(ActionEvent event) throws NotEnoughAmountException {
         try {
             //  customerId = logInManagedBean.getCustomerId();
@@ -381,20 +456,20 @@ public void selectSavingSet(ActionEvent event){
     }
 
     public void customerCreateTailoredPortfolio(ActionEvent event) throws NotEnoughAmountException {
-     //   selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
-         exepectedRateOfReturn = exepectedRateOfReturn/100;
-         foreignExchange = foreignExchange/100;
-         equity = equity/100;
-         bond = bond/100;
-System.out.println("*****Expected Rate of Return is "+exepectedRateOfReturn);
-System.out.println("*****FX is "+foreignExchange);
-System.out.println("*****Equity is "+equity);
-System.out.println("*****Bond is "+bond);
-if((equity+bond+foreignExchange)>1){
- FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Proportion cannot not be greater than 100%");
+        //   selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+        exepectedRateOfReturn = exepectedRateOfReturn / 100;
+        foreignExchange = foreignExchange / 100;
+        equity = equity / 100;
+        bond = bond / 100;
+        System.out.println("*****Expected Rate of Return is " + exepectedRateOfReturn);
+        System.out.println("*****FX is " + foreignExchange);
+        System.out.println("*****Equity is " + equity);
+        System.out.println("*****Bond is " + bond);
+        if ((equity + bond + foreignExchange) > 1) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Proportion cannot not be greater than 100%");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
             return;
-}
+        }
         try {
             portfolioId = wsbl.createTailoredPortfolio(logInManagedBean.getCustomerId(), selectedWealth.getId(), investAmount, exepectedRateOfReturn, foreignExchange, equity, bond, term);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully created plan for tailored product!");
@@ -407,6 +482,7 @@ if((equity+bond+foreignExchange)>1){
 
     public void customerDisplayPortfolios(ActionEvent event) {
         selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+
         oneCustomerAllPortfolios = wsbl.displayAllPortfolios(selectedWealth.getId());
         System.out.println("*****Display portfolio now!");
         try {
@@ -416,12 +492,25 @@ if((equity+bond+foreignExchange)>1){
         }
 
     }
+    
+     public void customerDisplayPortfoliosForPortfolioSystem(ActionEvent event) {
+        selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+
+        oneCustomerAllPortfolios = wsbl.displayAllPortfolios(selectedWealth.getId());
+        System.out.println("*****Display portfolio now!");
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/PortfolioManagement/portfolioManagement.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(CustomerWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 
     public void customerAcceptPlan(Long portfolioId) {
-    //   selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+        //   selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
         try {
             oneCustomerAllPortfolios = wsbl.customerAcceptPlan(logInManagedBean.getCustomerId(), portfolioId);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully accepted the plan "  + "(" + portfolioId + ")");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully accepted the plan " + "(" + portfolioId + ")");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (EmailNotSendException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -430,12 +519,13 @@ if((equity+bond+foreignExchange)>1){
     }
 
     public void customerCancelPlan(Long portfolioId) {
-      
+
         oneCustomerAllPortfolios = wsbl.customerCancelPortfolios(portfolioId);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully rejected the plan " + "(" + portfolioId + ")");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
 
     }
+<<<<<<< HEAD
 public void customerModifyPortfolio(RowEditEvent event){
     selectedPort = (Portfolio) event.getObject();
     System.out.println("Selected Portfolio to edit - id: "+selectedPort.getId());
@@ -449,14 +539,75 @@ public void customerModifyPortfolio(RowEditEvent event){
 //            RequestContext.getCurrentInstance().showMessageInDialog(message);
 //        
 //        }
+=======
+
+
+    public void selectPortfolio(ActionEvent event) {
+        selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+        onePortAllProducts = selectedPort.getProducts();
+        System.out.println("fx proportion is" + onePortAllProducts.get(0).getPercentage());
+        foreignExchange = onePortAllProducts.get(0).getPercentage();
+        equity = onePortAllProducts.get(1).getPercentage();
+        bond = onePortAllProducts.get(2).getPercentage();
+
+    }
+public void selectPorfolioToViewTransactions(ActionEvent event){
+        selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/PortfolioManagement/viewTransactions.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(CustomerWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+>>>>>>> master
 }
+    public void customerModifyPortfolio(RowEditEvent event) {
+        selectedPort = (Portfolio) event.getObject();
+        System.out.println("Selected Portfolio to edit - id: " + selectedPort.getId());
+        System.out.println("Term to modify is " + term);
+
+        oneCustomerAllPortfolios = wsbl.ModifyPortfolioRate(selectedPort.getId(), exepectedRateOfReturn, term);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully modifed your plan!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+    }
+
+    public void customerModifyProduct(ActionEvent event) {
+        //  selectedPort = (Portfolio) event.getObject();
+        System.out.println("Selected Portfolio to edit - id: " + selectedPort.getId());
+        System.out.println("edited proportion for FX is " + foreignExchange);
+
+        oneCustomerAllPortfolios = wsbl.ModifyPortfolioProduct(selectedPort.getId(), foreignExchange, equity, bond);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully modifed your plan!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+    }
+
+    public void selectWealthAccount(ActionEvent event) {
+        selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+        try {
+            oneCustomerAllSavingAccts = wsbl.displaySavingAccounts(logInManagedBean.getCustomerId());
+            for(int i=0;i<oneCustomerAllSavingAccts.size();i++){
+            allSavingId.add(oneCustomerAllSavingAccts.get(i).getId());
+            }
+            
+        } catch (ListEmptyException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+
+    }
+
+
     public void withdrawFromDiscretionaryAccount(ActionEvent event) {
         System.out.println("******Selected discretionary Account to withdraw is " + selectedWealth.getId());
+                System.out.println("******Selected saving Account to debit is " + selectedSavingAcctId);
+
         boolean result = wsbl.compareAmount(logInManagedBean.getCustomerId(), selectedWealth.getId(), withdrawAmount);
         if (result = true) {
             try {
-                wsbl.transferBackToSavingWithEnoughBalance(logInManagedBean.getCustomerId(), selectedWealth.getCustomer().getId(), selectedWealth.getId(), withdrawAmount);
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully withdrawed "+withdrawAmount+"!");
+                wsbl.transferBackToSavingWithEnoughBalance(logInManagedBean.getCustomerId(),selectedSavingAcctId, selectedWealth.getId(), withdrawAmount);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully withdrawed " + withdrawAmount + "!");
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
             } catch (NotEnoughAmountException ex) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -464,14 +615,32 @@ public void customerModifyPortfolio(RowEditEvent event){
             }
         } else {
             try {
-                wsbl.transferBackToSavingWithNotEnoughBalance(logInManagedBean.getCustomerId(), selectedWealth.getCustomer().getId(), selectedWealth.getId(), withdrawAmount);
+                wsbl.transferBackToSavingWithNotEnoughBalance(logInManagedBean.getCustomerId(),selectedSavingAcctId, selectedWealth.getId(), withdrawAmount);
             } catch (NotEnoughAmountException ex) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
         }
     }
+    
+    public void customerViewAllTransactions(ActionEvent event){
+         //   selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+            System.out.println("******Selected Discretionary Account to view transaction is "+selectedPort.getId());
+            
+onePortfolioAllTransactions = wsbl.viewtransactionHistory(selectedPort.getId(), viewStartDate, viewEndDate);
+    
+    }
+    public void customerEarlyWithdrawPortfolio(ActionEvent event){
+     selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+                 System.out.println("******Selected portfolio to withdraw is "+selectedPort.getId());
+                 oneCustomerAllPortfolios = wsbl.portfolioEarlyWithdraw(selectedPort.getId());
+                   FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully withdraw the portfolio!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                 
 
+
+    }
+ 
     public Customer getCustomer() {
         return customer;
     }
@@ -783,5 +952,54 @@ public void customerModifyPortfolio(RowEditEvent event){
     public void setWithdrawAmount(BigDecimal withdrawAmount) {
         this.withdrawAmount = withdrawAmount;
     }
+
+    public List<Product> getOnePortAllProducts() {
+        return onePortAllProducts;
+    }
+
+    public void setOnePortAllProducts(List<Product> onePortAllProducts) {
+        this.onePortAllProducts = onePortAllProducts;
+    }
+
+    public Long getSelectedSavingAcctId() {
+        return selectedSavingAcctId;
+    }
+
+    public void setSelectedSavingAcctId(Long selectedSavingAcctId) {
+        this.selectedSavingAcctId = selectedSavingAcctId;
+    }
+
+    public List<Long> getAllSavingId() {
+        return allSavingId;
+    }
+
+    public void setAllSavingId(List<Long> allSavingId) {
+        this.allSavingId = allSavingId;
+    }
+
+    public Date getViewStartDate() {
+        return viewStartDate;
+    }
+
+    public void setViewStartDate(Date viewStartDate) {
+        this.viewStartDate = viewStartDate;
+    }
+
+    public Date getViewEndDate() {
+        return viewEndDate;
+    }
+
+    public void setViewEndDate(Date viewEndDate) {
+        this.viewEndDate = viewEndDate;
+    }
+
+    public List<PortfolioTransaction> getOnePortfolioAllTransactions() {
+        return onePortfolioAllTransactions;
+    }
+
+    public void setOnePortfolioAllTransactions(List<PortfolioTransaction> onePortfolioAllTransactions) {
+        this.onePortfolioAllTransactions = onePortfolioAllTransactions;
+    }
+    
 
 }
