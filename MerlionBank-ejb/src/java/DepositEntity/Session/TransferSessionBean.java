@@ -5,6 +5,7 @@
  */
 package DepositEntity.Session;
 
+import BillEntity.OtherBank;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import DepositEntity.Payee;
@@ -115,6 +116,72 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 System.out.println("transfer successfully!");
             }
         }
+
+    }
+    
+    @Override
+    public List<OtherBank> viewOtherBank(){
+         Query query = em.createQuery("SELECT a FROM OtherBank a");
+        List<OtherBank> currentAccounts = new ArrayList(query.getResultList()); 
+       List<OtherBank>  accounts=new ArrayList<OtherBank>();
+       //BigDecimal temp=new BigDecimal(0);
+       for (int i=0;i<currentAccounts.size();i++){
+          if (currentAccounts.get(i).getName().equals("Merlion Bank"))
+             accounts.add(currentAccounts.get(i));
+      }
+       return accounts;
+    }
+    
+     @Override
+    public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName,BigDecimal transferAmount) throws TransferException {
+
+        BigDecimal giverAvailableBalance;
+        BigDecimal giverBalance;
+        BigDecimal recipientAvailableBalance;
+        BigDecimal recipientBalance;
+        BigDecimal updatedGiverAvailableBalance;
+        BigDecimal updatedGiverBalance;
+        BigDecimal updatedRecipientAvailableBalance;
+        BigDecimal updatedRecipientBalance;
+
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :giverBankAccountNum");
+        q.setParameter("giverBankAccountNum", giverBankAccountNum);
+        List<SavingAccount> giverSavingAccounts = q.getResultList();
+        SavingAccount giverSavingAccount = giverSavingAccounts.get(0);
+        giverAvailableBalance = giverSavingAccount.getAvailableBalance();
+        giverBalance = giverSavingAccount.getBalance();
+
+        //check whether customer has exceed the transfer limit amount
+        if (!this.checkTransferLimit(customerID, giverBankAccountNum, transferAmount)) {
+            throw new TransferException("Saving account " + giverBankAccountNum + " Has Exceed the daily Transfer Limit");
+        } //if balance<transferAmount, the transfer is not allowed, return false
+        else if (giverAvailableBalance.compareTo(transferAmount) == -1) {
+            throw new TransferException("Saving account " + giverBankAccountNum + " does not have enough fund!");
+        } 
+
+          
+
+                //update the available balance of giver BankAccount (-)
+                updatedGiverAvailableBalance = giverAvailableBalance.subtract(transferAmount);
+                giverSavingAccount.setAvailableBalance(updatedGiverAvailableBalance);
+                //update the balance of giver BankAccount (-)
+                updatedGiverBalance = giverBalance.subtract(transferAmount);
+                giverSavingAccount.setBalance(updatedGiverBalance);
+               
+                em.flush();
+
+                Date currentTime = Calendar.getInstance().getTime();
+                java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+
+                TransactionRecord transaction1 = new TransactionRecord("INTF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "MerlionBank", recipientBankAccountName);
+                giverSavingAccount.getTransactionRecord().add(transaction1);
+                em.persist(transaction1);
+                em.flush();
+
+                
+                logAction("Transfer to "+recipientBankAccountNum, customerID);
+
+                System.out.println("transfer successfully!"); 
 
     }
 

@@ -1,0 +1,103 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container100 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{customerAnalyticsManagedBean.unverifiedShops}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}">
+                                    <f:facet name="header">
+                                        View All Unverified Shops
+                                    </f:facet>
+
+                                    <p:column headerText="Shop ID" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Shop Name">
+                                        <h:outputText value="#{pendingLoan.name}" />
+                                    </p:column>
+
+                                    <p:column headerText="Shop Status">
+                                        <h:outputText value="#{pendingLoan.status}" />
+                                    </p:column>
+
+
+
+
+                                    <p:column headerText="Assign Category" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail1"  onclick="PF('msgDialog2').show()"  ajax="true" type="submit" >
+                                                <f:attribute name="selectedShop" value="#{pendingLoan}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
+
+                                </p:dataTable>
+
+                            </h:panelGrid>
+
+                            <p:dialog id="dialogMessage1"   header="Shop" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail1" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+                                        <h:outputLabel for="event" value="Category"/>
+
+                                        <h:selectOneMenu value="#{customerAnalyticsManagedBean.categoryName}">
+                                            <f:selectItem itemLabel="Select Category" itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{customerAnalyticsManagedBean.categoryNames}" />
+                                        </h:selectOneMenu>
+
+                                      
+
+                                   
+                                        
+                                            <div class="Card">
+                                              
+                                                    <p:commandButton  update=":form"  value="Submit" actionListener="#{customerAnalyticsManagedBean.assignUnverifiedShopCategory}"  style="width:100px;height:40px" >
+                                                       
+                                                    </p:commandButton>
+                                               
+                                            </div>
+
+
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
+                        </h:form>
+                      
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

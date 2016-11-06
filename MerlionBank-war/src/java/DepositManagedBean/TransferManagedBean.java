@@ -13,6 +13,7 @@ import Exception.UserHasNoSavingAccountException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -57,12 +58,13 @@ public class TransferManagedBean implements Serializable {
     private String payeeDelete;
     private BigDecimal transferLimitDatabase;
     private Long payeeSelectedLong;
-
-    
-
-   
-
-    
+    private Long customerId;
+    private Long giverBankAccountNum;
+    private Long recipientBankAccountNum;
+    private String giverBankAccountNumString;
+    private String recipientBankAccountName;
+    private BigDecimal transferAmount;
+    private List recipientBankNames;
 
     @PostConstruct
     public void init() {
@@ -70,6 +72,10 @@ public class TransferManagedBean implements Serializable {
             this.setCustomerID(logInManagedBean.getCustomerId());
             this.getSavingAccountNumbers();
             this.getPayeeListfromDatabase();
+            recipientBankNames = new ArrayList<>();
+            for (int i = 0; i < tfsb.viewOtherBank().size(); i++) {
+                recipientBankNames.add(tfsb.viewOtherBank().get(i).getName());
+            }
         } catch (Exception e) {
             System.out.print("Get PayeeList encounter error");
         }
@@ -87,7 +93,7 @@ public class TransferManagedBean implements Serializable {
             System.out.print("Dashboard Transfer Encounter Error!");
         }
     }
-    
+
     public void dashboardChangeTransferLimit(ActionEvent event) {
         try {
             this.getTransferLimit();
@@ -97,7 +103,6 @@ public class TransferManagedBean implements Serializable {
             System.out.print("Dashboard Change Transfer Limit Encounter Error!");
         }
     }
-
 
     public void goToOneTimeTransferPage(ActionEvent event) {
         try {
@@ -110,29 +115,28 @@ public class TransferManagedBean implements Serializable {
 
     public void goToTransferByPayee(ActionEvent event) {
         try {
-            if(payeeTransferAccount != null) {
+            if (payeeTransferAccount != null) {
                 String[] payeeString = payeeTransferAccount.split(",");
                 //selected payee saving account number
                 String payeeSelected = payeeString[0];
                 payeeSelectedLong = Long.parseLong(payeeSelected);
                 //selected payee name
                 payeeName = payeeString[1];
-                if(tfsb.checkPayeeValidity(payeeSelectedLong)){
-                FacesContext.getCurrentInstance().getExternalContext()
-                        .redirect("/MerlionBank-war/TransferManagement/transferByPayee.xhtml");
-                }else{
+                if (tfsb.checkPayeeValidity(payeeSelectedLong)) {
+                    FacesContext.getCurrentInstance().getExternalContext()
+                            .redirect("/MerlionBank-war/TransferManagement/transferByPayee.xhtml");
+                } else {
                     FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Payee account you selected is no longer valid!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage); 
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
                 }
-            }else{
+            } else {
                 FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Payee from the Payee List!");
-                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);    
-                 }
+                RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            }
         } catch (Exception e) {
             System.out.print("Redirect to transfer By Payee page fails");
         }
     }
-
 
     public void changeTransferLimit(ActionEvent event) {
         try {
@@ -140,7 +144,7 @@ public class TransferManagedBean implements Serializable {
             if (transferLimitString != null) {
                 transferLimitBD = new BigDecimal(transferLimitString);
                 tfsb.changeTransferLimit(customerID, transferLimitBD);
-                
+
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/TransferManagement/changeTransferLimitSuccess.xhtml");
             } else {
@@ -152,13 +156,12 @@ public class TransferManagedBean implements Serializable {
         }
     }
 
-    
     public void goToDeletePayeePage(ActionEvent event) {
-        try{
+        try {
             this.getPayeeListfromDatabase();
-             FacesContext.getCurrentInstance().getExternalContext()
-                        .redirect("/MerlionBank-war/TransferManagement/deletePayee.xhtml");
-        }catch(Exception e){
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/TransferManagement/deletePayee.xhtml");
+        } catch (Exception e) {
             System.out.print("Redirect to delete Payee page fails");
         }
     }
@@ -218,25 +221,24 @@ public class TransferManagedBean implements Serializable {
         }
     }
 
-    
     public void deletePayee(ActionEvent event) throws IOException {
-        if(payeeDelete != null){
+        if (payeeDelete != null) {
             String[] deletePayee = payeeDelete.split(",");
             payeeDeleteLong = Long.parseLong(deletePayee[0]);
             payeeDeleteName = deletePayee[1];
             tfsb.deletePayee(customerID, payeeDeleteLong);
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBank-war/TransferManagement/deletePayeeSuccess.xhtml");
-        }else{
+        } else {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please Select a Payee to Delete!");
             RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
-    
-    public void getTransferLimit(){
-        try{
+
+    public void getTransferLimit() {
+        try {
             transferLimitDatabase = tfsb.getTransferLimit(customerID);
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.print("Get Intra-Transfer Limit encounter Error!");
         }
     }
@@ -295,6 +297,24 @@ public class TransferManagedBean implements Serializable {
         } catch (Exception e) {
             System.out.print("Redirect to Home Page Encounter Error!");
         }
+    }
+
+    public void interOneTimeTransfer(ActionEvent event) throws TransferException {
+        try {
+            customerId = logInManagedBean.getCustomerId();
+            System.out.println("*****Inter one time transfer: customerId " + customerId);
+            giverBankAccountNum = Long.parseLong((giverBankAccountNumString.split(","))[0]);
+            System.out.println("*****Inter one time transfer: customgiverBankAccountNumerId " + giverBankAccountNum);
+            
+            System.out.println("*****Inter one time transfer: recipientBankAccountNum " + recipientBankAccountNum);
+            System.out.println("*****Inter one time transfer: recipientBankAccountName " + recipientBankAccountName);
+            System.out.println("*****Inter one time transfer: transferAmount " + transferAmount);
+            tfsb.interOneTimeTransferCheck(customerId, giverBankAccountNum, recipientBankAccountNum, recipientBankAccountName, transferAmount);
+        } catch (TransferException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+
     }
 
     public String getRecipientAccountNumString() {
@@ -377,7 +397,6 @@ public class TransferManagedBean implements Serializable {
         this.payeeList = payeeList;
     }
 
-
     public List getSavingAccountList() {
         return savingAccountList;
     }
@@ -409,15 +428,15 @@ public class TransferManagedBean implements Serializable {
     public void setPayeeDelete(String payeeDelete) {
         this.payeeDelete = payeeDelete;
     }
-    
-     public BigDecimal getTransferLimitDatabase() {
+
+    public BigDecimal getTransferLimitDatabase() {
         return transferLimitDatabase;
     }
 
     public void setTransferLimitDatabase(BigDecimal transferLimitDatabase) {
         this.transferLimitDatabase = transferLimitDatabase;
     }
-    
+
     public String getPayeeTransferAccount() {
         return payeeTransferAccount;
     }
@@ -465,7 +484,77 @@ public class TransferManagedBean implements Serializable {
     public void setGiverAccountNumLong(Long giverAccountNumLong) {
         this.giverAccountNumLong = giverAccountNumLong;
     }
-    
-    
-    
+
+    public TransferSessionBeanLocal getTfsb() {
+        return tfsb;
+    }
+
+    public void setTfsb(TransferSessionBeanLocal tfsb) {
+        this.tfsb = tfsb;
+    }
+
+    public LogInManagedBean getLogInManagedBean() {
+        return logInManagedBean;
+    }
+
+    public void setLogInManagedBean(LogInManagedBean logInManagedBean) {
+        this.logInManagedBean = logInManagedBean;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public Long getGiverBankAccountNum() {
+        return giverBankAccountNum;
+    }
+
+    public void setGiverBankAccountNum(Long giverBankAccountNum) {
+        this.giverBankAccountNum = giverBankAccountNum;
+    }
+
+    public Long getRecipientBankAccountNum() {
+        return recipientBankAccountNum;
+    }
+
+    public void setRecipientBankAccountNum(Long recipientBankAccountNum) {
+        this.recipientBankAccountNum = recipientBankAccountNum;
+    }
+
+    public String getRecipientBankAccountName() {
+        return recipientBankAccountName;
+    }
+
+    public void setRecipientBankAccountName(String recipientBankAccountName) {
+        this.recipientBankAccountName = recipientBankAccountName;
+    }
+
+    public BigDecimal getTransferAmount() {
+        return transferAmount;
+    }
+
+    public void setTransferAmount(BigDecimal transferAmount) {
+        this.transferAmount = transferAmount;
+    }
+
+    public List getRecipientBankNames() {
+        return recipientBankNames;
+    }
+
+    public void setRecipientBankNames(List recipientBankNames) {
+        this.recipientBankNames = recipientBankNames;
+    }
+
+    public String getGiverBankAccountNumString() {
+        return giverBankAccountNumString;
+    }
+
+    public void setGiverBankAccountNumString(String giverBankAccountNumString) {
+        this.giverBankAccountNumString = giverBankAccountNumString;
+    }
+
 }

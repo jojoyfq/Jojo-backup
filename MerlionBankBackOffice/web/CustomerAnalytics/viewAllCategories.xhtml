@@ -1,16 +1,139 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
-</html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container100 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{customerAnalyticsManagedBean.allCategories}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}">
+                                    <f:facet name="header">
+                                        View All Categories
+                                    </f:facet>
+
+                                    <p:column headerText="Category ID" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+                                    <p:column headerText="Category Name">
+                                        <h:outputText value="#{pendingLoan.name}" />
+                                    </p:column>
+
+
+                                    <p:column headerText="View Shops" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form" actionListener="#{customerAnalyticsManagedBean.viewAllShops}" oncomplete="PF('msgDialog2').show()"  ajax="true" type="submit" >
+                                                <f:attribute name="selectedCategory" value="#{pendingLoan}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+                                    <p:column headerText="View Coupons" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form" actionListener="#{customerAnalyticsManagedBean.viewAllCoupons}" oncomplete="PF('msgDialog2').show()"  ajax="true" type="submit" >
+                                                <f:attribute name="selectedCategory" value="#{pendingLoan}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
+                                </p:dataTable>
+
+                            </h:panelGrid>
+                        
+                            <p:dialog id="dialogMessage1"   header="Shop" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail1" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+
+                                        <p:dataTable  var="product" value="#{customerAnalyticsManagedBean.allShops}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selectedPort}" rowKey="#{product.id}">
+
+                                            <p:column headerText="Shop ID">
+                                                <h:outputText value="#{product.id}" />
+                                            </p:column>
+
+                                            <p:column headerText="Shop Name">
+                                                <h:outputText value="#{product.name}" />
+                                            </p:column>
+
+                                            <p:column headerText="Shop Status">
+                                                <h:outputText value="#{product.status}" />
+                                            </p:column>
+
+                                            <p:column headerText="Delete" style="width: 80px;" >
+                                                <center>
+                                                    <p:commandButton icon="ui-icon-trash" actionListener="#{customerAnalyticsManagedBean.deleteShop(product.id)}" update=":form" ajax="false" type="submit" 
+                                                                     onclick="if (!confirm('Are you sure you want to delete this shop'))
+                                                                             return false;"/>
+                                                </center>
+                                            </p:column>
+
+                                            <p:column headerText="Modify" style="width: 80px;" >
+                                                <center>
+                                                    <p:commandButton icon="ui-icon-pencil" actionListener="#{customerAnalyticsManagedBean.selectShopToModify}" update=":form" ajax="false" type="submit" 
+                                                                     />
+                                                </center>
+                                            </p:column>
+
+                                            <f:facet name="footer">
+
+                                                <div class="Card">
+                                                    
+                                                    <p:commandButton  update=":form"  value="Add Shop" actionListener="#{customerAnalyticsManagedBean.selectShop}" oncomplete="PF('carDialog').show()" style="width:100px;height:40px" >
+                                                        <f:attribute name="selectedShop" value="#{product}" />
+                                                    </p:commandButton>
+                                                </div>
+
+                                            </f:facet>
+
+                                        </p:dataTable>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <p:dialog id="dialogMessage" header="Add Shop" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
+                            <h:form id="submitShopName">
+                                <p:outputPanel id="carDetail" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
+
+                                        <h:outputText value="Shop Name" style="font-weight: bold"/>
+                                        <p:inputText value="#{customerAnalyticsManagedBean.shopName}" />
+
+
+                                        <p:commandButton actionListener="#{customerAnalyticsManagedBean.addShop}" value="Submit" update=":submitShopName" ajax="false" />
+
+                                    </p:panelGrid>
+                                </p:outputPanel></h:form>
+                        </p:dialog>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

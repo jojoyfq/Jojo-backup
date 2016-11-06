@@ -66,6 +66,7 @@
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus">
 
                         <p:menuitem id="intraTransfer" value="To Merlion Account" actionListener="#{transferManagedBean.dashboardIntraTransfer}" /> 
+                        <p:menuitem id="interTransfer" value="To Other Bank Account" outcome="/TransferManagement/interOneTimeTransfer" /> 
                         <p:menuitem id="changeLimit" value="Change Transfer Limit" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />           
 
                     </p:submenu>

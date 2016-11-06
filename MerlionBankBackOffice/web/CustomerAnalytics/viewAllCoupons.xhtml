@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container100 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingLoan" value="#{customerAnalyticsManagedBean.allCoupons}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}">
+                                    <f:facet name="header">
+                                        View All Coupons
+                                    </f:facet>
+
+                                    <p:column headerText="Coupon ID" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+
+                                    <p:column headerText="Coupon Code">
+                                        <h:outputText value="#{pendingLoan.couponCode}" />
+                                    </p:column>
+
+                                    <p:column headerText="Coupon Shop Name">
+                                        <h:outputText value="#{pendingLoan.shopName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Coupon Details">
+                                        <h:outputText value="#{pendingLoan.description}" />
+                                    </p:column>
+
+                                    <p:column headerText="Coupon Status">
+                                        <h:outputText value="#{pendingLoan.status}" />
+                                    </p:column>
+
+                                    <p:column headerText="Delete" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton icon="ui-icon-trash" actionListener="#{customerAnalyticsManagedBean.deleteShop(pendingLoan.id)}" update=":form" ajax="false" type="submit" 
+                                                             onclick="if (!confirm('Are you sure you want to delete this coupon'))
+                                                                         return false;"/>
+                                        </center>
+                                    </p:column>
+
+                                    <p:column headerText="View Category" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail1" actionListener="#{customerAnalyticsManagedBean.selectCategory}" oncomplete="PF('msgDialog2').show()"  ajax="true" type="submit" >
+                                                <f:attribute name="selectedCategory" value="#{pendingLoan}"  />
+                                            </p:commandButton>
+                                        </center>
+                                    </p:column>
+
+                                    <f:facet name="footer">
+
+                                        <div class="Card">
+                                            <h:form id="addbutton">
+                                                <p:commandButton  update=":addbutton"  value="Add Coupon" actionListener="#{customerAnalyticsManagedBean.selectCoupon}" oncomplete="PF('carDialog').show()" style="width:100px;height:40px" >
+                                                    <f:attribute name="selectedCoupon" value="#{pendingLoan}" />
+                                                </p:commandButton>
+                                            </h:form>
+                                        </div>
+
+                                    </f:facet>
+                                </p:dataTable>
+
+                            </h:panelGrid>
+
+                            <p:dialog id="dialogMessage1"   header="Category Information" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
+                                <p:outputPanel id="msgDetail1" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  >
+
+
+                                        <h:outputText value="Category ID: " />
+                                        <h:outputText value="#{customerAnalyticsManagedBean.selectedCategory.id}" />
+
+                                        <h:outputText value="Category Name " />
+                                        <h:outputText value="#{customerAnalyticsManagedBean.selectedCategory.name}" />
+
+
+
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+
+                        </h:form>
+                        <p:dialog id="dialogMessage" header="Add Coupon" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
+                            <h:form id="submitShopName">
+                                <p:outputPanel id="carDetail" style="text-align:center;">
+                                    <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
+
+                                        <h:outputText value="Shop Name" style="font-weight: bold"/>
+                                        <p:inputText value="#{customerAnalyticsManagedBean.shopName}" />
+
+                                        <h:outputText value="Coupon Description" style="font-weight: bold"/>
+                                        <p:inputText value="#{customerAnalyticsManagedBean.description}" />
+
+                                        <h:outputText value="Coupon Code" style="font-weight: bold"/>
+                                        <p:inputText value="#{customerAnalyticsManagedBean.couponCode}" />
+
+                                        <p:commandButton actionListener="#{customerAnalyticsManagedBean.addCoupon}" value="Submit" update=":submitShopName" ajax="false" />
+
+                                    </p:panelGrid>
+                                </p:outputPanel></h:form>
+                        </p:dialog>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>
