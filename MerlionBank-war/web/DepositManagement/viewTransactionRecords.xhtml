@@ -29,7 +29,7 @@
                                     <p:dataTable var="TransactionRecord" value="#{savingAccountManagedBean.transactionRecordList}">
                                         <p:column headerText="Date">
                                             <h:outputLabel value="#{TransactionRecord.transactionTime}" >
-                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
                                             </h:outputLabel>
                                         </p:column>
 

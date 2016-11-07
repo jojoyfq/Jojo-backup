@@ -65,7 +65,11 @@ public class CreditCardManagedBean implements Serializable {
 
     public void approveCardApplication(ActionEvent event) throws ParseException {
         if(selectedCreditApplication != null){
+            Long customerID = selectedCreditApplication.getCustomerID();
+            //execute approve credit card method
             ccsb.approveCreditCardApplication(selectedCreditApplication);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerID + " application of credit card has been approved!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }else{
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select an application to approve!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
@@ -74,7 +78,11 @@ public class CreditCardManagedBean implements Serializable {
 
     public void rejectCardApplication(ActionEvent event) {
         if(selectedCreditApplication != null){
+            Long customerID = selectedCreditApplication.getCustomerID();
+            //execute approve credit card method
             ccsb.rejectCreditCardApplication(selectedCreditApplication);
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer" + customerID + " application of credit card has been approved!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }else{
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select an application to reject!");
                     RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
