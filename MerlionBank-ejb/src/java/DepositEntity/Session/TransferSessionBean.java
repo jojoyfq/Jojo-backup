@@ -110,30 +110,31 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 recipientSavingAccount.getTransactionRecord().add(transaction2);
                 em.persist(transaction2);
                 em.flush();
-                
-                logAction("Transfer to "+recipientBankAccountNum, customerID);
+
+                logAction("Transfer to " + recipientBankAccountNum, customerID);
 
                 System.out.println("transfer successfully!");
             }
         }
 
     }
-    
+
     @Override
-    public List<OtherBank> viewOtherBank(){
-         Query query = em.createQuery("SELECT a FROM OtherBank a");
-        List<OtherBank> currentAccounts = new ArrayList(query.getResultList()); 
-       List<OtherBank>  accounts=new ArrayList<OtherBank>();
-       //BigDecimal temp=new BigDecimal(0);
-       for (int i=0;i<currentAccounts.size();i++){
-          if (!currentAccounts.get(i).getName().equals("Merlion Bank"))
-             accounts.add(currentAccounts.get(i));
-      }
-       return accounts;
+    public List<OtherBank> viewOtherBank() {
+        Query query = em.createQuery("SELECT a FROM OtherBank a");
+        List<OtherBank> currentAccounts = new ArrayList(query.getResultList());
+        List<OtherBank> accounts = new ArrayList<OtherBank>();
+        //BigDecimal temp=new BigDecimal(0);
+        for (int i = 0; i < currentAccounts.size(); i++) {
+            if (!currentAccounts.get(i).getName().equals("Merlion Bank")) {
+                accounts.add(currentAccounts.get(i));
+            }
+        }
+        return accounts;
     }
-    
-     @Override
-    public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName,BigDecimal transferAmount) throws TransferException {
+
+    @Override
+    public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName, BigDecimal transferAmount) throws TransferException {
 
         BigDecimal giverAvailableBalance;
         BigDecimal giverBalance;
@@ -157,31 +158,28 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         } //if balance<transferAmount, the transfer is not allowed, return false
         else if (giverAvailableBalance.compareTo(transferAmount) == -1) {
             throw new TransferException("Saving account " + giverBankAccountNum + " does not have enough fund!");
-        } 
+        }
 
-          
+        //update the available balance of giver BankAccount (-)
+        updatedGiverAvailableBalance = giverAvailableBalance.subtract(transferAmount);
+        giverSavingAccount.setAvailableBalance(updatedGiverAvailableBalance);
+        //update the balance of giver BankAccount (-)
+        updatedGiverBalance = giverBalance.subtract(transferAmount);
+        giverSavingAccount.setBalance(updatedGiverBalance);
 
-                //update the available balance of giver BankAccount (-)
-                updatedGiverAvailableBalance = giverAvailableBalance.subtract(transferAmount);
-                giverSavingAccount.setAvailableBalance(updatedGiverAvailableBalance);
-                //update the balance of giver BankAccount (-)
-                updatedGiverBalance = giverBalance.subtract(transferAmount);
-                giverSavingAccount.setBalance(updatedGiverBalance);
-               
-                em.flush();
+        em.flush();
 
-                Date currentTime = Calendar.getInstance().getTime();
-                java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-                TransactionRecord transaction1 = new TransactionRecord("INTF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "MerlionBank", recipientBankAccountName);
-                giverSavingAccount.getTransactionRecord().add(transaction1);
-                em.persist(transaction1);
-                em.flush();
+        TransactionRecord transaction1 = new TransactionRecord("INTF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "MerlionBank", recipientBankAccountName);
+        giverSavingAccount.getTransactionRecord().add(transaction1);
+        em.persist(transaction1);
+        em.flush();
 
-                
-                logAction("Transfer to "+recipientBankAccountNum, customerID);
+        logAction("Transfer to " + recipientBankAccountNum, customerID);
 
-                System.out.println("transfer successfully!"); 
+        System.out.println("transfer successfully!");
 
     }
 
@@ -229,14 +227,14 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             recipientAccount.getTransactionRecord().add(transaction2);
             em.persist(transaction2);
             em.flush();
-            
-            logAction("Transfer to "+recipientBankAccountNum, customerID);
+
+            logAction("Transfer to " + recipientBankAccountNum, customerID);
 
             System.out.println("transfer successfully!");
 
         }
     }
-    
+
     @Override
     public void logAction(String description, Long customerId) {
         List<CustomerAction> actions = new ArrayList<>();
@@ -305,14 +303,14 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     @Override
     public List getPayeeList(Long customerID) {
         List payeeAccountList = new ArrayList();
-        
+
         Customer customer = em.find(Customer.class, customerID);
         System.out.print("customer is: " + customer.getName());
 
         for (int i = 0; i < customer.getPayees().size(); i++) {
             String savingAccount = Long.toString(customer.getPayees().get(i).getSavingAccount().getAccountNumber());
             String payeeName = customer.getPayees().get(i).getSavingAccount().getCustomer().getName();
-            payeeAccountList.add(savingAccount+","+payeeName);
+            payeeAccountList.add(savingAccount + "," + payeeName);
         }
         return payeeAccountList;
     }
@@ -330,7 +328,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         } else {
             for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
                 if (customer.getSavingAccounts().get(i).getStatus().equals("active")) {
-                    savingString = customer.getSavingAccounts().get(i).getAccountNumber()+","+customer.getSavingAccounts().get(i).getSavingAccountType().getAccountType();
+                    savingString = customer.getSavingAccounts().get(i).getAccountNumber() + "," + customer.getSavingAccounts().get(i).getSavingAccountType().getAccountType();
                     savingAccountNumbers.add(savingString);
                 }
             }
@@ -346,17 +344,17 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         SavingAccount savingAccount = savingAccounts.get(0);
         return savingAccount.getCustomer().getName();
     }
-    
+
     @Override
-    public boolean checkPayeeValidity (Long payeeAccount) {
+    public boolean checkPayeeValidity(Long payeeAccount) {
         Query m = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :payeeAccount");
         m.setParameter("payeeAccount", payeeAccount);
         SavingAccount savingAccount = (SavingAccount) m.getSingleResult();
-        if(savingAccount != null){
+        if (savingAccount != null) {
             return true;
-        }else{
+        } else {
             return false;
-        }        
+        }
     }
 
     @Override
@@ -411,6 +409,89 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
             }
             totalAmount = accumulatedAmount.add(transferAmount);
             return totalAmount.compareTo(intraLimit) != 1;
+        }
+
+    }
+    
+    @Override
+    public void intraOneTimeTransferCheckMobile(String customerIC, String giverBankAccountString, String recipientBankAccountString, String transferAmountStr) throws TransferException {
+
+        BigDecimal giverAvailableBalance;
+        BigDecimal giverBalance;
+        BigDecimal recipientAvailableBalance;
+        BigDecimal recipientBalance;
+        BigDecimal updatedGiverAvailableBalance;
+        BigDecimal updatedGiverBalance;
+        BigDecimal updatedRecipientAvailableBalance;
+        BigDecimal updatedRecipientBalance;
+
+        Long giverBankAccountNum1 = Long.parseLong(giverBankAccountString);
+        Long recipientBankAccountNum1 = Long.parseLong(recipientBankAccountString);
+        BigDecimal transferAmount1 = new BigDecimal(transferAmountStr);
+
+        Query m = em.createQuery("SELECT a FROM Customer a WHERE a.ic = :customerIC");
+        m.setParameter("customerIC", customerIC);
+        Customer customer = (Customer) m.getSingleResult();
+        Long customerID = customer.getId();
+
+        Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :giverBankAccountNum");
+        q.setParameter("giverBankAccountNum", giverBankAccountNum1);
+        List<SavingAccount> giverSavingAccounts = q.getResultList();
+        SavingAccount giverSavingAccount = giverSavingAccounts.get(0);
+        giverAvailableBalance = giverSavingAccount.getAvailableBalance();
+        giverBalance = giverSavingAccount.getBalance();
+
+        //check whether customer has exceed the transfer limit amount
+        if (!this.checkTransferLimit(customerID, giverBankAccountNum1, transferAmount1)) {
+            throw new TransferException("Saving account " + giverBankAccountNum1 + " Has Exceed the daily Transfer Limit");
+        } //if balance<transferAmount, the transfer is not allowed, return false
+        else if (giverAvailableBalance.compareTo(transferAmount1) == -1) {
+            throw new TransferException("Saving account " + giverBankAccountNum1 + " does not have enough fund!");
+        } else {
+
+            Query g = em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :recipientBankAccountNum");
+            g.setParameter("recipientBankAccountNum", recipientBankAccountNum1);
+            List<SavingAccount> recipientSavingAccounts = g.getResultList();
+
+            //if the query returns an empty result, then the recipientAccountNum doesn't exists
+            if (recipientSavingAccounts.isEmpty()) {
+                throw new TransferException("The Recipient Account Number You have Entered is incorrect!");
+            } else {
+
+                SavingAccount recipientSavingAccount = recipientSavingAccounts.get(0);
+                recipientAvailableBalance = recipientSavingAccount.getAvailableBalance();
+                recipientBalance = recipientSavingAccount.getBalance();
+                //update the available balance of giver BankAccount (-)
+                updatedGiverAvailableBalance = giverAvailableBalance.subtract(transferAmount1);
+                giverSavingAccount.setAvailableBalance(updatedGiverAvailableBalance);
+                //update the balance of giver BankAccount (-)
+                updatedGiverBalance = giverBalance.subtract(transferAmount1);
+                giverSavingAccount.setBalance(updatedGiverBalance);
+                //update the available balance of recipient BankAccount (+)
+                updatedRecipientAvailableBalance = recipientAvailableBalance.add(transferAmount1);
+                recipientSavingAccount.setAvailableBalance(updatedRecipientAvailableBalance);
+                //update the balance of recipient BankAccount (+)
+                updatedRecipientBalance = recipientBalance.add(transferAmount1);
+                recipientSavingAccount.setBalance(updatedRecipientBalance);
+                em.flush();
+
+                Date currentTime = Calendar.getInstance().getTime();
+                java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+
+                TransactionRecord transaction1 = new TransactionRecord("TF", transferAmount1, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum1, recipientBankAccountNum1, giverSavingAccount, "MerlionBank", "MerlionBank");
+                giverSavingAccount.getTransactionRecord().add(transaction1);
+                em.persist(transaction1);
+                em.flush();
+
+                TransactionRecord transaction2 = new TransactionRecord("TF", null, transferAmount1, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum1, recipientBankAccountNum1, recipientSavingAccount, "MerlionBank", "MerlionBank");
+                recipientSavingAccount.getTransactionRecord().add(transaction2);
+                em.persist(transaction2);
+                em.flush();
+
+                logAction("Transfer to " + recipientBankAccountNum1, customerID);
+
+                System.out.println("transfer successfully!");
+            }
         }
 
     }
