@@ -24,14 +24,15 @@
                     <div class="Container100 ui-fluid">
 
                         <h:form id="form">                            
-                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
-                                <p:messages id="msgs" />
+                            <h:panelGrid id="panelGrid" columns="2" cellpadding="5">
+                             
+                                
                                 <h:outputLabel value="Shop ID"/>
-                                <h:outputText value="#{customerAnalyticsManagedBean.shopId}"/>
+                                <h:outputText value="#{customerAnalyticsManagedBean.selectedShop.id}"/>
 
                                 <h:outputLabel for="ajax" value="Shop Name: " />
-                                <p:inplace id="ajax" editor="true">
-                                    <p:inputText value="#{customerAnalyticsManagedBean.shopName}" required="true" label="text" />
+                                <p:inplace id="ajax" editor="true" label="#{customerAnalyticsManagedBean.selectedShop.name}">
+                                    <p:inputText  value="#{customerAnalyticsManagedBean.shopName}" required="true" label="text" />
                                 </p:inplace>
 
                                 <h:outputLabel for="event" value="Category"/>

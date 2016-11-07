@@ -310,6 +310,8 @@ public class TransferManagedBean implements Serializable {
             System.out.println("*****Inter one time transfer: recipientBankAccountName " + recipientBankAccountName);
             System.out.println("*****Inter one time transfer: transferAmount " + transferAmount);
             tfsb.interOneTimeTransferCheck(customerId, giverBankAccountNum, recipientBankAccountNum, recipientBankAccountName, transferAmount);
+             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully transfered "+transferAmount+" to "+recipientBankAccountNum+" !");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (TransferException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);

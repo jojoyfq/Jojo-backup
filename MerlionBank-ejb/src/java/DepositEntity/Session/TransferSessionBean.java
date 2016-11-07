@@ -126,7 +126,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
        List<OtherBank>  accounts=new ArrayList<OtherBank>();
        //BigDecimal temp=new BigDecimal(0);
        for (int i=0;i<currentAccounts.size();i++){
-          if (currentAccounts.get(i).getName().equals("Merlion Bank"))
+          if (!currentAccounts.get(i).getName().equals("Merlion Bank"))
              accounts.add(currentAccounts.get(i));
       }
        return accounts;

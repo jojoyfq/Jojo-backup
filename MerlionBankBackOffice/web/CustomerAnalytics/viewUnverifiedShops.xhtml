@@ -49,7 +49,7 @@
 
                                     <p:column headerText="Assign Category" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail1"  onclick="PF('msgDialog2').show()"  ajax="true" type="submit" >
+                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail1" actionListener="#{customerAnalyticsManagedBean.selectShop}" oncomplete="PF('msgDialog2').show()"  ajax="true" type="submit" >
                                                 <f:attribute name="selectedShop" value="#{pendingLoan}"  />
                                             </p:commandButton>
                                         </center>
@@ -62,7 +62,7 @@
 
                             <p:dialog id="dialogMessage1"   header="Shop" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
                                 <p:outputPanel id="msgDetail1" style="text-align:center;">
-                                    <p:panelGrid  columns="2"  >
+                                    <p:panelGrid  columns="2" layout="grid" >
                                         <h:outputLabel for="event" value="Category"/>
 
                                         <h:selectOneMenu value="#{customerAnalyticsManagedBean.categoryName}">

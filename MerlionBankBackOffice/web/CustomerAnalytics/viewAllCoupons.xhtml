@@ -27,12 +27,16 @@
                             <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
                                 <p:messages id="msgs" />
 
-                                <p:dataTable id="radioDT" var="pendingLoan" value="#{customerAnalyticsManagedBean.allCoupons}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}">
+                                <p:dataTable var="pendingLoan" value="#{customerAnalyticsManagedBean.allCoupons}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}" rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15" tableStyle="width:auto" >
+                                   
                                     <f:facet name="header">
                                         View All Coupons
                                     </f:facet>
 
-                                    <p:column headerText="Coupon ID" >
+                                    <p:column headerText="Coupon ID" style="width:40px" >
                                         <h:outputText value="#{pendingLoan.id}" />
                                     </p:column>
 
@@ -53,53 +57,32 @@
                                         <h:outputText value="#{pendingLoan.status}" />
                                     </p:column>
 
+                                    <p:column headerText="Coupon ID" >
+                                        <h:outputText value="#{pendingLoan.category.name}" />
+                                    </p:column>
+
                                     <p:column headerText="Delete" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton icon="ui-icon-trash" actionListener="#{customerAnalyticsManagedBean.deleteShop(pendingLoan.id)}" update=":form" ajax="false" type="submit" 
+                                            <p:commandButton icon="ui-icon-trash" actionListener="#{customerAnalyticsManagedBean.deleteCoupon(pendingLoan.id)}" update=":form" ajax="false" type="submit" 
                                                              onclick="if (!confirm('Are you sure you want to delete this coupon'))
                                                                          return false;"/>
                                         </center>
                                     </p:column>
 
-                                    <p:column headerText="View Category" style="width: 80px;" >
-                                        <center>
-                                            <p:commandButton  icon="ui-icon-mail-open" update=":form:msgDetail1" actionListener="#{customerAnalyticsManagedBean.selectCategory}" oncomplete="PF('msgDialog2').show()"  ajax="true" type="submit" >
-                                                <f:attribute name="selectedCategory" value="#{pendingLoan}"  />
-                                            </p:commandButton>
-                                        </center>
-                                    </p:column>
 
                                     <f:facet name="footer">
 
                                         <div class="Card">
-                                            <h:form id="addbutton">
-                                                <p:commandButton  update=":addbutton"  value="Add Coupon" actionListener="#{customerAnalyticsManagedBean.selectCoupon}" oncomplete="PF('carDialog').show()" style="width:100px;height:40px" >
-                                                    <f:attribute name="selectedCoupon" value="#{pendingLoan}" />
-                                                </p:commandButton>
-                                            </h:form>
+
+                                            <p:commandButton  update=":form"  value="Add Coupon" actionListener="#{customerAnalyticsManagedBean.selectCoupon}" oncomplete="PF('carDialog').show()" style="width:200px;height:40px" >
+                                                <f:attribute name="selectedCoupon" value="#{pendingLoan}" />
+                                            </p:commandButton>
                                         </div>
 
                                     </f:facet>
                                 </p:dataTable>
 
                             </h:panelGrid>
-
-                            <p:dialog id="dialogMessage1"   header="Category Information" widgetVar="msgDialog2" showEffect="fade" hideEffect="fade" resizable="true">
-                                <p:outputPanel id="msgDetail1" style="text-align:center;">
-                                    <p:panelGrid  columns="2"  >
-
-
-                                        <h:outputText value="Category ID: " />
-                                        <h:outputText value="#{customerAnalyticsManagedBean.selectedCategory.id}" />
-
-                                        <h:outputText value="Category Name " />
-                                        <h:outputText value="#{customerAnalyticsManagedBean.selectedCategory.name}" />
-
-
-
-                                    </p:panelGrid>
-                                </p:outputPanel>
-                            </p:dialog>
 
                         </h:form>
                         <p:dialog id="dialogMessage" header="Add Coupon" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">

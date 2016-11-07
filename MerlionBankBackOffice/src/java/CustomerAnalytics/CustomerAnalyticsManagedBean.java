@@ -95,6 +95,7 @@ public class CustomerAnalyticsManagedBean implements Serializable {
     public void viewAllShops(ActionEvent event) {
         selectedCategory = (Category) event.getComponent().getAttributes().get("selectedCategory");
         System.out.println("******Selected category to view is " + selectedCategory.getId());
+        categoryId = selectedCategory.getId();
         allShops = ssmsbl.displayShop(selectedCategory.getId());
         System.out.println("All Shop size "+allShops.size());
     }
@@ -127,11 +128,14 @@ public class CustomerAnalyticsManagedBean implements Serializable {
 
     public void addShop(ActionEvent event) throws ShopAlreadyExistedException {
         try {
+                    selectedShop = (Shop) event.getComponent().getAttributes().get("selectedShop");
+
             System.out.println("******Selected category to view is " + categoryId);
 
             allShops = ssmsbl.addShop(categoryId, shopName);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully added shop " + shopName + "to Category (" + categoryId + ")!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
+            shopName=null;
         } catch (ShopAlreadyExistedException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -143,7 +147,7 @@ public class CustomerAnalyticsManagedBean implements Serializable {
         // selectedShop = (Shop) event.getComponent().getAttributes().get("selectedShop");
         System.out.println("******Selected shop to view is " + shopId);
 
-        allShops = ssmsbl.deleteShop(categoryId, selectedShop.getId());
+        allShops = ssmsbl.deleteShop(categoryId, shopId);
 
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully deleted shop " + selectedShop.getName() + "from Category (" + categoryId + ")!");
         RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -151,14 +155,16 @@ public class CustomerAnalyticsManagedBean implements Serializable {
     }
 
     public void modifyShop(ActionEvent event) {
-        selectedShop = (Shop) event.getComponent().getAttributes().get("selectedShop");
+       // selectedShop = (Shop) event.getComponent().getAttributes().get("selectedShop");
         System.out.println("******Selected categoryID  is " + categoryId);
-        System.out.println("******Selected shop to modify is " + selectedShop.getId());
+        System.out.println("******Selected shop to modify is " + selectedShopId);
         newCategoryName = (newCategoryName.split(","))[1];
         System.out.println("******New Category Name is " + newCategoryName);
         System.out.println("******Shop Name is " + shopName);
 
-        allShops = ssmsbl.modifyShop(categoryId, selectedShop.getId(), shopName, newCategoryName);
+        allShops = ssmsbl.modifyShop(categoryId, selectedShop.getId(),shopName, newCategoryName);
+          FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully modified shop " + selectedShop.getId() +"!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
     }
 
     public void viewAllUnverifiedShops(ActionEvent event) {
@@ -183,12 +189,12 @@ public class CustomerAnalyticsManagedBean implements Serializable {
 //        splitedCategoryId.add(m);
 //        }
 
-        selectedShop = (Shop) event.getComponent().getAttributes().get("selectedShop");
-        System.out.println("******Selected shop to add category is " + selectedShop.getId());
+      //  selectedShop = (Shop) event.getComponent().getAttributes().get("selectedShop");
+        System.out.println("******Selected shop to add category is " + selectedShopId);
         categoryName = (categoryName.split(","))[1];
         System.out.println("****Select category name: " + categoryName);
 
-        allShops = ssmsbl.assignUnverifiedShopCategory(categoryName, selectedShop.getId());
+        allShops = ssmsbl.assignUnverifiedShopCategory(categoryName, selectedShopId);
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully assinged " + categoryName + " successfully!");
 
         RequestContext.getCurrentInstance().showMessageInDialog(message);
