@@ -8,6 +8,7 @@ package BillEntity.Session;
 import BillEntity.BillingOrganization;
 import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
+import DepositEntity.TransactionRecord;
 import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -62,5 +63,7 @@ public interface BillSessionBeanLocal {
     public List<String> getPendingGIRO(String boName);
 
     public boolean approveGIRO(Long id, String boName, String deductDay) throws ParseException;
+
+    public List<TransactionRecord> sendInterbankTransactions();
 
 }

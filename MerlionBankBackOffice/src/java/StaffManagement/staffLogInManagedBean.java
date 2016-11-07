@@ -202,54 +202,54 @@ public class staffLogInManagedBean implements Serializable {
          FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/viewActionLog.xhtml");
     }
 
-    public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
-        try {
-            if (staffIc != null && password != null && roleName != null) {
-                staffId = smsbl.checkLogin(staffIc, password, roleName);
-                // staff = smsbl.viewStaff(staffId);
-                name = staff.getStaffName();
-                System.out.println("*****************Staff id is " + staffId);
-//                for (int i = 0; i < staff.getStaffRoles().size(); i++) {
-//                    roleNames.add(staff.getStaffRoles().get(i).getRoleName());
+//    public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
+//        try {
+//            if (staffIc != null && password != null && roleName != null) {
+////                staffId = smsbl.checkLogin(staffIc, password, roleName);
+//                // staff = smsbl.viewStaff(staffId);
+//                name = staff.getStaffName();
+//                System.out.println("*****************Staff id is " + staffId);
+////                for (int i = 0; i < staff.getStaffRoles().size(); i++) {
+////                    roleNames.add(staff.getStaffRoles().get(i).getRoleName());
+////                }
+//                if (staffId.toString().equals("1")) {
+//                    System.out.println("Password does not match");
+//                    logInAttempts++;
+//                    System.out.println("number attempts:" + logInAttempts);
+//                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password does not correct! Please try again!");
+//
+//                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+//                    if (logInAttempts >= max_attempts) {
+//                        System.out.println("Your account has been locked out.");
+//                        message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your account has been locked out.");
+//
+//                        RequestContext.getCurrentInstance().showMessageInDialog(message);
+//                        System.out.println(smsbl.lockAccount(staffIc));
+//                    }
+//                } else {
+//                    //  selectedCustomer = amsbl.diaplayCustomerId(customerId);
+//                    logInAttempts = 0;
+//                    System.out.println("*********Log In Attempts");
+////                    System.out.println("Log In Successful!");
+////                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);
+////                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("name", selectedCustomer.getName());
+//
+//                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
+//                //    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
+//
+//                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
+//
+//             //       RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
 //                }
-                if (staffId.toString().equals("1")) {
-                    System.out.println("Password does not match");
-                    logInAttempts++;
-                    System.out.println("number attempts:" + logInAttempts);
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your password does not correct! Please try again!");
-
-                    RequestContext.getCurrentInstance().showMessageInDialog(message);
-                    if (logInAttempts >= max_attempts) {
-                        System.out.println("Your account has been locked out.");
-                        message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Your account has been locked out.");
-
-                        RequestContext.getCurrentInstance().showMessageInDialog(message);
-                        System.out.println(smsbl.lockAccount(staffIc));
-                    }
-                } else {
-                    //  selectedCustomer = amsbl.diaplayCustomerId(customerId);
-                    logInAttempts = 0;
-                    System.out.println("*********Log In Attempts");
-//                    System.out.println("Log In Successful!");
-//                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);
-//                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("name", selectedCustomer.getName());
-
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffDashboard.xhtml");
-                //    FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Logged in successfully!");
-
-                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
-
-             //       RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-                }
-
-            } else {
-                System.out.println("Please do not leave blanks!");
-            }
-        } catch (UserNotExistException | PasswordNotMatchException | UserNotActivatedException ex) {
-            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
-        }
-    }
+//
+//            } else {
+//                System.out.println("Please do not leave blanks!");
+//            }
+//        } catch (UserNotExistException | PasswordNotMatchException | UserNotActivatedException ex) {
+//            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+//            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+//        }
+//    }
 
     public void updateForgetPasswordVerifyDetail(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
         try {
