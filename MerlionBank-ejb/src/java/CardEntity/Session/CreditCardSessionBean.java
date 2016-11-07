@@ -13,6 +13,7 @@ import CommonEntity.Customer;
 import DepositEntity.SavingAccount;
 import Exception.ChargebackException;
 import Exception.CreditCardException;
+import Other.Session.sendEmail;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -31,6 +32,7 @@ import javax.ejb.LocalBean;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -143,13 +145,37 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
         CreditCardType creditCardType = (CreditCardType) m.getSingleResult();
 
         BigDecimal initialBalance = new BigDecimal("0");
-        CreditCard creditCard = new CreditCard(cardNumber, cardHolder, startDate, expiryDate, cvv, creditCardType, customer, initialBalance);
+        CreditCard creditCard = new CreditCard(cardNumber, cardHolder, startDate, expiryDate, cvv, creditCardType, customer, initialBalance, startDate);
         em.persist(creditCard);
         customer.getCreditCard().add(creditCard);
         em.persist(customer);
         em.flush();
 
+        //send application success email to customer
+        try {
+            this.SendCreditCardApplySuccessEmail(cardHolder, creditCardType.getCreditCardType(), customer.getEmail());
+        } catch (MessagingException e) {
+            System.out.print("send credit card apply success email encounter error!");
+        }
+
         return creditCard;
+    }
+
+    private void SendCreditCardApplySuccessEmail(String customerName, String cardType, String email) throws MessagingException {
+        String subject = "Merlion Bank - Credit Card Application of \"" + cardType + "\" Has Been Approved";
+
+        System.out.println("Inside send email");
+
+        String content = "<h2>Dear " + customerName
+                + ",</h2><br /><h1>  Congratulations! You have successfully applied a \"" + cardType + "\" ! </h1><br />"
+                + "<h1>Welcome to Merlion Bank.</h1>"
+                // + "<br />Temporary Password: " + password + "<br />Please activate your account through this link: " + "</h2><br />"
+                + "<p style=\"color: #ff0000;\">Please kindly wait for 5 to 7 working days for our staff to mail the credit card to you. Thank you.</p>"
+                + "<p style=\"color: #ff0000;\">After received the credit card, please login to Merlion online banking to activate your credit card. Thank you.</p>"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>MerLION Platform User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
     }
 
     private long generateCardNumber() {
@@ -257,9 +283,9 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
             return null;
         } else {
             for (int i = 0; i < creditCard.size(); i++) {
-                if(creditCard.get(i).getStatus().equals("active")){
-                creditString = creditCard.get(i).getCardNumber() + "," + creditCard.get(i).getCreditCardType().getCreditCardType();
-                creditCardNumbers.add(creditString);
+                if (creditCard.get(i).getStatus().equals("active")) {
+                    creditString = creditCard.get(i).getCardNumber() + "," + creditCard.get(i).getCreditCardType().getCreditCardType();
+                    creditCardNumbers.add(creditString);
                 }
             }
         }
@@ -388,15 +414,15 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
             Query q = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :creditCardNo");
             q.setParameter("creditCardNo", creditCardNo);
             CreditCard creditCard = (CreditCard) q.getSingleResult();
-            
+
             //update the balance of credit card
             updatedCreditBalance = creditCard.getBalance().add(amountD);
             creditCard.setBalance(updatedCreditBalance);
-            
+
             em.persist(sAccount);
             em.persist(creditCard);
             em.flush();
-            
+
             return true;
         }
     }
