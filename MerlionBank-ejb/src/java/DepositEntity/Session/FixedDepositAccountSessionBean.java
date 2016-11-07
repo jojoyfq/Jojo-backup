@@ -172,6 +172,11 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 
         em.persist(customer);
         em.flush();
+        
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        cashServiceRecord = new CashServiceRecord("Fixed Deposit Account Early Withdraw", "customer ID" + account.getCustomer().getIc(), true, currentTimestamp, amount);
+        em.persist(cashServiceRecord);
         return accountNum;
     }
 
