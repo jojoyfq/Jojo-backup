@@ -36,7 +36,7 @@
                                     <p:message for="cardHolder" display="icon" />
 
                                     <h:outputLabel for="expiryDate" value="Card Expiry Date:" /> 
-                                    <p:calendar id="expiryDate" value="#{debitCardManagedBean.expiryDate}" showOn="button" required="true" requiredMessage="Please choose your date of birth!"/>                                 
+                                    <p:calendar id="expiryDate" value="#{debitCardManagedBean.expiryDate}" showOn="button" locale="de" navigator="true" required="true" requiredMessage="Please choose your date of birth!"/>                                 
                                     <p:message for="expiryDate" display="icon" />
 
                                     <h:outputLabel for="cvv" value="CVV:" /> 

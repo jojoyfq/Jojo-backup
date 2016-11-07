@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        
+
+        <!-- Center Column -->
+        <div class="Container100 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+       
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <p:panel id="viewDebitCardTransHistory" header="Debit Card Transaction History">
+
+                                <h:panelGrid columns="5" cellpadding="5">
+                                    <p:dataTable var="debitTran" value="#{searchManagedBean.debitTrans}">
+                                        <p:column headerText="Date">
+                                            <h:outputText value="#{debitTran.transactionTime}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Code">
+                                            <h:outputText value="#{debitTran.code}" />
+                                        </p:column>
+
+                                        <p:column headerText="Reference No">
+                                            <h:outputText value="#{debitTran.description}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Debit">
+                                            <h:outputText value="#{debitTran.debit}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Credit">
+                                            <h:outputText value="#{debitTran.credit}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </h:panelGrid>
+  
+                            </p:panel>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+ 
+    </ui:define>
+
+</ui:composition>
