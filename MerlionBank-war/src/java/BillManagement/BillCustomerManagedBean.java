@@ -5,6 +5,8 @@
  */
 package BillManagement;
 
+import BillEntity.GIROArrangement;
+import BillEntity.RecurrentBillArrangement;
 import BillEntity.Session.BillSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
@@ -16,6 +18,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -55,6 +58,8 @@ public class BillCustomerManagedBean implements Serializable {
     private Date startDate;
     private Integer times;
     private Integer frequency;
+    private List<GIROArrangement> oneCustomerAllGiros;
+    private List<RecurrentBillArrangement> oneCustomerAllRecurrents;
 
     @Inject
     private LogInManagedBean logInManagedBean;
@@ -78,6 +83,7 @@ public class BillCustomerManagedBean implements Serializable {
         customerIc = logInManagedBean.getIc();
         boNames = bsbl.viewBOName();
         savingAccountManagedBean.init();
+        oneCustomerAllGiros = new ArrayList<>();
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/BillManagement/addGIRO.xhtml");
         otpSuccessRedirect = "/MerlionBank-war/BillManagement/addGIROSuccess.xhtml";
@@ -207,6 +213,26 @@ public class BillCustomerManagedBean implements Serializable {
         } catch (Exception e) {
             System.out.print("Redirect to Home page fails");
         }
+    }
+    
+    public void viewGiro(ActionEvent event){
+        System.out.println("******Go into view giro----customer Id is "+logInManagedBean.getCustomerId());
+             oneCustomerAllGiros = bsbl.viewableGIRO(logInManagedBean.getCustomerId());
+        
+    }
+    public void viewRecurrent (ActionEvent event){
+        System.out.println("******Go into view recurrent----customer Id is "+logInManagedBean.getCustomerId());
+        oneCustomerAllRecurrents = bsbl.viewableRecurrent(logInManagedBean.getCustomerId());
+    }
+    public void deleteGiro(Long giroId){
+        oneCustomerAllGiros=bsbl.deleteGIRO(giroId);
+     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully deleted GIRO (ID:"+giroId+")!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+    }
+      public void deleteRecurrentBill(Long recurrentBillId){
+        oneCustomerAllRecurrents=bsbl.deleteRecurrent(recurrentBillId);
+     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully deleted Recurrent Bill Arrangement (Bill ID:"+recurrentBillId+")!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
     }
 
     public BigDecimal getAmount() {
@@ -357,6 +383,30 @@ public class BillCustomerManagedBean implements Serializable {
 
     public void setOtpSuccessRedirect(String otpSuccessRedirect) {
         this.otpSuccessRedirect = otpSuccessRedirect;
+    }
+
+    public AccountManagementSessionBeanLocal getAmsbl() {
+        return amsbl;
+    }
+
+    public void setAmsbl(AccountManagementSessionBeanLocal amsbl) {
+        this.amsbl = amsbl;
+    }
+
+    public List<GIROArrangement> getOneCustomerAllGiros() {
+        return oneCustomerAllGiros;
+    }
+
+    public void setOneCustomerAllGiros(List<GIROArrangement> oneCustomerAllGiros) {
+        this.oneCustomerAllGiros = oneCustomerAllGiros;
+    }
+
+    public List<RecurrentBillArrangement> getOneCustomerAllRecurrents() {
+        return oneCustomerAllRecurrents;
+    }
+
+    public void setOneCustomerAllRecurrents(List<RecurrentBillArrangement> oneCustomerAllRecurrents) {
+        this.oneCustomerAllRecurrents = oneCustomerAllRecurrents;
     }
 
 }

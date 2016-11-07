@@ -15,9 +15,7 @@ import CommonEntity.CustomerAction;
 import CommonEntity.Staff;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
-import Exception.NotEnoughAmountException;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,9 +27,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 
 /**
  *
@@ -299,91 +294,108 @@ public class BillSessionBean implements BillSessionBeanLocal {
     }
 
     @Override
-    public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount){
-         SavingAccount savingAccount = this.findSavingAccount(accountNumber);
-         BillingOrganization bo = this.findBO(boName);
-         System.out.print("balance before payment "+ savingAccount.getAvailableBalance());
-         if(savingAccount.getAvailableBalance().compareTo(amount) != -1){
-           savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
-           savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
-           System.out.print("balance after payment "+ savingAccount.getAvailableBalance());
-            Date todayDate=  new Date();
-           BillRecord bill = new BillRecord(bo,billReference,"BI",amount,null, "settled","Bill payment to "+boName, todayDate, accountNumber, null, savingAccount,null,null);
-             em.persist(bill);
-             savingAccount.getTransactionRecord().add(bill);
-             //invoke webservice to send bill
-             String description = "Bill payment to "+boName;
-             this.logAction(description, savingAccount.getCustomer().getId());
-             em.flush();
-             return true;
-         }else{
-             return false;
-         }
-        
+    public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount) {
+        SavingAccount savingAccount = this.findSavingAccount(accountNumber);
+        BillingOrganization bo = this.findBO(boName);
+        System.out.print("balance before payment " + savingAccount.getAvailableBalance());
+        if (savingAccount.getAvailableBalance().compareTo(amount) != -1) {
+            savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
+            savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
+            System.out.print("balance after payment " + savingAccount.getAvailableBalance());
+            Date todayDate = new Date();
+            BillRecord bill = new BillRecord(bo, billReference, "BI", amount, null, "settled", "Bill payment to " + boName, todayDate, accountNumber, null, savingAccount, null, null);
+            em.persist(bill);
+            savingAccount.getTransactionRecord().add(bill);
+            //invoke webservice to send bill
+            String description = "Bill payment to " + boName;
+            this.logAction(description, savingAccount.getCustomer().getId());
+            em.flush();
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     @Override
-    public List<String> getPendingGIRO (String boName){
-        System.out.print("GIRO Organization name is: "+boName);
-        
+    public List<String> getPendingGIRO(String boName) {
+        System.out.print("GIRO Organization name is: " + boName);
+
         Query m = em.createQuery("SELECT b FROM GIROArrangement b WHERE b.status = :status");
         m.setParameter("status", "pending");
         List<GIROArrangement> allGIRO = m.getResultList();
         List<String> giroInfo = new ArrayList<>();
         String oneGIRO = new String();
-        for(int i=0; i< allGIRO.size(); i++){
-            if(allGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)){
-                String concat = oneGIRO.concat(allGIRO.get(i).getId().toString()+","+allGIRO.get(i).getBillReference()+","+allGIRO.get(i).getCustomerName()+","+allGIRO.get(i).getDeductionLimit().toString());
+        for (int i = 0; i < allGIRO.size(); i++) {
+            if (allGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)) {
+                String concat = oneGIRO.concat(allGIRO.get(i).getId().toString() + "," + allGIRO.get(i).getBillReference() + "," + allGIRO.get(i).getCustomerName() + "," + allGIRO.get(i).getDeductionLimit().toString());
                 giroInfo.add(concat);
             }
         }
-        
+
         return giroInfo;
     }
-        
-    public String deductGIRO(Long id,Double amount){
-        System.out.print("giro id is"+id);
+
+    public String deductGIRO(Long id, Double amount) {
+        System.out.print("giro id is" + id);
         GIROArrangement giro = em.find(GIROArrangement.class, id);
         BigDecimal deductAmount = BigDecimal.valueOf(amount);
-        if(giro.getDeductionLimit().compareTo(deductAmount) != -1){
-            if(giro.getSavingAccount().getAvailableBalance().compareTo(deductAmount) != -1){
+        if (giro.getDeductionLimit().compareTo(deductAmount) != -1) {
+            if (giro.getSavingAccount().getAvailableBalance().compareTo(deductAmount) != -1) {
                 giro.getSavingAccount().setAvailableBalance(giro.getSavingAccount().getAvailableBalance().subtract(deductAmount));
-                  giro.getSavingAccount().setBalance(giro.getSavingAccount().getBalance().subtract(deductAmount)); 
-                  return "Deduction success!";
-            }else{
+                giro.getSavingAccount().setBalance(giro.getSavingAccount().getBalance().subtract(deductAmount));
+                return "Deduction success!";
+            } else {
                 return "Deduction fail! not enough balance";
             }
-        }else{
+        } else {
             return "Deduction fail! amount more than limit.";
         }
     }
 
     @Override
-    public boolean approveGIRO(Long id,String status,String deductDay) throws ParseException{
-        System.out.print("giro id is "+id);
-        
+    public boolean approveGIRO(Long id, String status, String deductDay) throws ParseException {
+        System.out.print("giro id is " + id);
+
         GIROArrangement giro = em.find(GIROArrangement.class, id);
         giro.setStatus(status);
         SimpleDateFormat dateFormator = new SimpleDateFormat("dd-MM-yyyy");
         DateTime deductDate = new DateTime(dateFormator.parse(deductDay));
         System.out.print(deductDate);
         giro.setDeductionDay(deductDate);
-        return true;     
+        return true;
     }
-    
+
     @Override
-    public List<GIROArrangement> viewableGIRO (Long customerId){
+    public List<GIROArrangement> viewableGIRO(Long customerId) {
         Customer customer = em.find(Customer.class, customerId);
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
         List<GIROArrangement> viewable = new ArrayList<GIROArrangement>();
-        for(int i=0;i<savingAccounts.size();i++){
-            for(int j=0;j<savingAccounts.get(i).getGiroArrangement().size();j++){
-                if(!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")){
+        for (int i = 0; i < savingAccounts.size(); i++) {
+            for (int j = 0; j < savingAccounts.get(i).getGiroArrangement().size(); j++) {
+                if (!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")) {
                     viewable.add(savingAccounts.get(i).getGiroArrangement().get(j));
                 }
             }
         }
         return viewable;
     }
+
+    @Override
+    public List<RecurrentBillArrangement> viewableRecurrent(Long customerId) {
+        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
+        return oneCustomerAllRecurrents;
     }
 
+    @Override
+    public List<GIROArrangement> deleteGIRO(Long giroId) {
+        List<GIROArrangement> oneCustomerAllGiros = new ArrayList<>();
+        return oneCustomerAllGiros;
+    }
+
+    @Override
+    public List<RecurrentBillArrangement> deleteRecurrent(Long recurrentBillId) {
+        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
+        return oneCustomerAllRecurrents;
+    }
+}
