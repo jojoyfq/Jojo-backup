@@ -66,4 +66,6 @@ public interface BillSessionBeanLocal {
 
     public List<TransactionRecord> sendInterbankTransactions();
 
+    public List<String> checkReceivedTransactions(List<String> transactions);
+
 }

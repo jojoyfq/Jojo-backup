@@ -56,12 +56,21 @@ public class SACHManagedBean {
             System.out.print("send to SACH success!");
         }
     }
-
+    
     private boolean recordOneTransaction(java.lang.String giverBank, java.lang.String receiptBank, java.lang.String code, java.lang.String giverAccount, java.lang.String receiptAccount, double amount, java.lang.String transactionTime) {
         // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
         // If the calling of port operations may lead to race condition some synchronization is required.
         WebServiceClient.SACHWebService port = service.getSACHWebServicePort();
         return port.recordOneTransaction(giverBank, receiptBank, code, giverAccount, receiptAccount, amount, transactionTime);
     }
+
+    private java.util.List<java.lang.String> sendTransactionToBank(java.lang.String date, java.lang.String bankName) {
+        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+        // If the calling of port operations may lead to race condition some synchronization is required.
+        WebServiceClient.SACHWebService port = service.getSACHWebServicePort();
+        return port.sendTransactionToBank(date, bankName);
+    }
+    
+    
 
 }

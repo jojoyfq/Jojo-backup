@@ -338,6 +338,21 @@ public class BillSessionBean implements BillSessionBeanLocal {
         return giroInfo;
     }
 
+    @Override
+    public List<GIROArrangement> viewableGIRO(Long customerId) {
+        Customer customer = em.find(Customer.class, customerId);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        List<GIROArrangement> viewable = new ArrayList<GIROArrangement>();
+        for (int i = 0; i < savingAccounts.size(); i++) {
+            for (int j = 0; j < savingAccounts.get(i).getGiroArrangement().size(); j++) {
+                if (!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")) {
+                    viewable.add(savingAccounts.get(i).getGiroArrangement().get(j));
+                }
+            }
+        }
+        return viewable;
+    }
+
     public String deductGIRO(Long id, Double amount) {
         System.out.print("giro id is" + id);
         GIROArrangement giro = em.find(GIROArrangement.class, id);
@@ -354,12 +369,15 @@ public class BillSessionBean implements BillSessionBeanLocal {
             return "Deduction fail! amount more than limit.";
         }
     }
-//for webservice
 
+//for webservice
+//for webservice
+// webservice lala
+// simulation lalallalal
+//for BO to approve GIRO
     @Override
     public boolean approveGIRO(Long id, String status, String deductDay) throws ParseException {
         System.out.print("giro id is " + id);
-
         GIROArrangement giro = em.find(GIROArrangement.class, id);
         giro.setStatus(status);
         if (status.equalsIgnoreCase("active")) {
@@ -371,22 +389,8 @@ public class BillSessionBean implements BillSessionBeanLocal {
         return true;
     }
 
-    @Override
-    public List<GIROArrangement> viewableGIRO(Long customerId) {
-        Customer customer = em.find(Customer.class, customerId);
-        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
-        List<GIROArrangement> viewable = new ArrayList<GIROArrangement>();
-        for (int i = 0; i < savingAccounts.size(); i++) {
-            for (int j = 0; j < savingAccounts.get(i).getGiroArrangement().size(); j++) {
-                if (!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")) {
-                    viewable.add(savingAccounts.get(i).getGiroArrangement().get(j));
-                }
-            }
-        }
-        return viewable;
-    }
-
     //send today's interbank transactions to SACH
+    //codes: BI, INTF, INCR, GIRO
     @Override
     public List<TransactionRecord> sendInterbankTransactions() {
         Date todayDate = new Date();
@@ -397,16 +401,51 @@ public class BillSessionBean implements BillSessionBeanLocal {
         List<TransactionRecord> allRecords = m.getResultList();
         for (int i = 0; i < allRecords.size(); i++) {
             if (dateFormator.format(allRecords.get(i).getTransactionTime()).equalsIgnoreCase(todayDateStr)) {
-                if (allRecords.get(i).getCode().equalsIgnoreCase("INTF") || allRecords.get(i).getCode().equalsIgnoreCase("BI")) {
-                   records.add(allRecords.get(i));
+                if (allRecords.get(i).getCode().equalsIgnoreCase("INTF") || allRecords.get(i).getCode().equalsIgnoreCase("BI") || allRecords.get(i).getCode().equalsIgnoreCase("INCR") || allRecords.get(i).getCode().equalsIgnoreCase("GIRO")) {
+                    records.add(allRecords.get(i));
                 }
             }
         }
         return records;
     }
-    
-   
-    
-    
+
+    //receive transactions from other banks to merlion from sach
+    public void processReceivedTransactions(List<String> transactions) {
+
+    }
+
+    //check transactions from other banks to merlion 
+    @Override
+    public List<String> checkReceivedTransactions(List<String> transactions) {
+        List<String> wrong = new ArrayList<>();
+        for (int i = 0; i < transactions.size(); i++) {
+            if(transactions.get(i).split(",")[4].equalsIgnoreCase("INTF") || transactions.get(i).split(",")[4].equalsIgnoreCase("INCR")){
+                if(this.checkValid(transactions.get(i).split(",")[4], transactions.get(i).split(",")[3]) == false){
+                    wrong.add(transactions.get(i));
+                }
+            }
+        }
+        return wrong;
+    }
+
+    private boolean checkValid(String code, String acctNum) {
+        if (code.equalsIgnoreCase("INTF")) {
+            Query m = em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :accountNumber");
+            m.setParameter("accountNumber", Long.valueOf(acctNum));
+            if(m.getResultList().isEmpty()){
+                return false;
+            }
+            return true;
+        }else if(code.equalsIgnoreCase("INCR")){
+            Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNumber");
+            m.setParameter("cardNumber", Long.valueOf(acctNum));
+            if(m.getResultList().isEmpty()){
+                return false;
+            }
+            return true;
+        }else{
+            return true;
+        }
+    }
 
 }
