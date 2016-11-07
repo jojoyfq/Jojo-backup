@@ -103,18 +103,26 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
 
     @Override
     public void approveCreditCardApplication(CreditCardApplication application) throws ParseException {
-        application.setStatus("approved");
-        Long customerID = application.getCustomerID();
-        String cardType = application.getCreditCardType();
-        em.persist(application);
+        Long applicationID = application.getId();
+        CreditCardApplication apply = em.find(CreditCardApplication.class, applicationID);
+        
+        apply.setStatus("approved");
+        Long customerID = apply.getCustomerID();
+        String cardType = apply.getCreditCardType();
+        em.persist(apply);
+        em.flush();
 
         this.createCreditCard(customerID, cardType);
     }
 
     @Override
     public void rejectCreditCardApplication(CreditCardApplication application) {
-        application.setStatus("rejected");
-        em.persist(application);
+        Long applicationID = application.getId();
+        CreditCardApplication apply = em.find(CreditCardApplication.class, applicationID);
+        
+        apply.setStatus("rejected");
+        em.persist(apply);
+        em.flush();
     }
 
     @Override
@@ -143,9 +151,10 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
         Query m = em.createQuery("SELECT b FROM CreditCardType b WHERE b.creditCardType = :cardType");
         m.setParameter("cardType", cardType);
         CreditCardType creditCardType = (CreditCardType) m.getSingleResult();
+        String status = "inactive";
 
         BigDecimal initialBalance = new BigDecimal("0");
-        CreditCard creditCard = new CreditCard(cardNumber, cardHolder, startDate, expiryDate, cvv, creditCardType, customer, initialBalance, startDate);
+        CreditCard creditCard = new CreditCard(cardNumber, cardHolder, startDate, expiryDate, cvv, creditCardType, customer, initialBalance, startDate,status);
         em.persist(creditCard);
         customer.getCreditCard().add(creditCard);
         em.persist(customer);

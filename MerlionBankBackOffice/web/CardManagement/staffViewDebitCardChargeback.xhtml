@@ -10,10 +10,8 @@
 
     <ui:define name="content">
 
-        <div class="Container5 NoPadding Responsive100">
-        </div>
 
-        <div class="Container90 NoPadding Responsive50">
+        <div class="Container100 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
 
@@ -28,7 +26,7 @@
                                         Pending Debit Card Chargeback Requests
                                     </f:facet>
                                     <p:column selectionMode="single"/>
-                                    
+
                                     <p:column headerText="Chargeback ID" >
                                         <h:outputText value="#{pendingDebitChargeback.id}" />
                                     </p:column>
@@ -48,29 +46,25 @@
                                     <p:column headerText="Merchat Name" >
                                         <h:outputText value="#{pendingDebitChargeback.merchantName}" />
                                     </p:column>
-                                    
+
                                     <p:column headerText="Transaction Date" >
-                                        <h:outputText value="#{pendingDebitChargeback.transactionDate}" />
+                                        <h:outputText value="#{pendingDebitChargeback.transactionDate}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
                                     </p:column>
 
-                                    <f:facet name="footer">
-                                        <p:commandButton process="radioDT"   icon="ui-icon-search" value="Approve" actionListener="#{debitCardManagedBean.verifyDebitChargebackApprove}" oncomplete="PF('carDialog').show()" />
-                                        <p:commandButton process="radioDT"   icon="ui-icon-search" value="Reject" actionListener="#{debitCardManagedBean.verifyDebitChargebackReject}" oncomplete="PF('carDialog').show()" />
-                                    </f:facet>
+                                        <f:facet name="footer">
+                                            <p:commandButton  style="width:200px;height:37px" process="radioDT"   icon="ui-icon-search" value="Approve" actionListener="#{debitCardManagedBean.verifyDebitChargebackApprove}" oncomplete="PF('carDialog').show()" />
+                                            <div class="EmptyBox5"></div>
+                                            <p:commandButton  style="width:200px;height:37px" process="radioDT"   icon="ui-icon-search" value="Reject" actionListener="#{debitCardManagedBean.verifyDebitChargebackReject}" oncomplete="PF('carDialog').show()" />
+                                        </f:facet>
                                 </p:dataTable>
-
                             </h:panelGrid>
-
-
 
                         </h:form>
                     </div>
                 </div>
             </div> 
-        </div>
-
-
-        <div class="Container5 NoPadding Responsive50">
         </div>
 
     </ui:define>
