@@ -88,7 +88,7 @@ public class DebitCardManagedBean implements Serializable {
                 dcsb.setChargebackStatus(selectedChargeback, "staff approved");
                 pendingDebitChargebackList = dcsb.getPendingDebitChargeback();
                 FacesContext.getCurrentInstance().getExternalContext()
-                        .redirect("/MerlionBankBackOffice/CardManagement/staffViewChargeback.xhtml");
+                        .redirect("/MerlionBankBackOffice/CardManagement/staffViewDebitCardChargeback.xhtml");
             } else {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a chargeback to verify! ");
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -104,7 +104,7 @@ public class DebitCardManagedBean implements Serializable {
                 dcsb.setChargebackStatus(selectedChargeback, "staff rejected");
                 pendingDebitChargebackList = dcsb.getPendingDebitChargeback();
                 FacesContext.getCurrentInstance().getExternalContext()
-                        .redirect("/MerlionBankBackOffice/CardManagement/staffViewChargeback.xhtml");
+                        .redirect("/MerlionBankBackOffice/CardManagement/staffViewDebitCardChargeback.xhtml");
             } else {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a chargeback to verify! ");
                 RequestContext.getCurrentInstance().showMessageInDialog(message);

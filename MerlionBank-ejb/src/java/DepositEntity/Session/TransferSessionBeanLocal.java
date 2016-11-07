@@ -5,6 +5,7 @@
  */
 package DepositEntity.Session;
 
+import BillEntity.OtherBank;
 import DepositEntity.TransactionRecord;
 import Exception.PayeeNotFoundException;
 import Exception.TransferException;
@@ -46,5 +47,8 @@ public interface TransferSessionBeanLocal {
      public void payeeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, BigDecimal transferAmount) throws TransferException;
      
      public boolean checkPayeeValidity (Long payeeAccount);
+     
+     public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName,BigDecimal transferAmount) throws TransferException ;
 
+      public List<OtherBank> viewOtherBank();
 }

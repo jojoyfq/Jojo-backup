@@ -59,10 +59,16 @@
                 </p:submenu>
 
                 <p:submenu id="card_management" label="Card Management">
+                    <p:submenu id="search" label="Search" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(5)}">
+                        <p:menuitem id="SearchByCardNo" value="Search By Card Number" actionListener="#{searchManagedBean.dashboardToSearchByCardNo}"/>                                              
+                    </p:submenu>
                     <p:submenu id="debitCard" label="Debit Card" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(5)}">
                         <p:menuitem id="view_debit_chargeback" value="View Pending Debit Card Chargeback" actionListener="#{debitCardManagedBean.dashboardToViewDebitChargeback}"/>                                              
                         <p:menuitem id="view_debit_card_scheme" value="View Debit Card Scheme" actionListener="#{debitCardManagedBean.dashboardToViewDebitCardScheme}"/>   
                         <p:menuitem id="chanage_debit_card_scheme" value="Change Debit Card Scheme" actionListener="#{debitCardManagedBean.dashboardToChangeDebitScheme}"/> 
+                    </p:submenu>
+                    <p:submenu id="creditCard" label="Credit Card" icon="icon-plus" rendered="#{rolePermissionManagedBean.permissionList.get(5)}">
+                        <p:menuitem id="view_credit_chargeback" value="View Pending Credit Card Chargeback" actionListener="#{creditCardManagedBean.dashboardToViewCreditChargeback}"/>                                              
                     </p:submenu>
                 </p:submenu>
                 <p:submenu id="loan_management" label="Loan Management">
@@ -108,6 +114,9 @@
                 </p:submenu>
 
                 <p:submenu id="customer_analytics" label="Customer Analytics">
+                    <p:menuitem id="categoryManagement" value="View All Categories" actionListener="#{customerAnalyticsManagedBean.viewAllCategory}"/>
+                    <p:menuitem id="unverifiedShops" value="View All Unverified Shops" actionListener="#{customerAnalyticsManagedBean.viewAllUnverifiedShops}"/>
+
                 </p:submenu>
 
             </pa:menu>

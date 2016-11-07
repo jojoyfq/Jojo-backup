@@ -15,6 +15,7 @@ import Exception.NotEnoughAmountException;
 import Exception.UserExistException;
 import WealthEntity.DiscretionaryAccount;
 import WealthEntity.Portfolio;
+import WealthEntity.PortfolioTransaction;
 import WealthEntity.Product;
 import WealthEntity.Session.WealthApplicationSessionBeanLocal;
 import WealthEntity.Session.WealthSessionBeanLocal;
@@ -96,6 +97,10 @@ public class CustomerWealthManagedBean implements Serializable {
     private BigDecimal withdrawAmount;
     private Long selectedSavingAcctId;
     private List<Long> allSavingId;
+    
+    private Date viewStartDate;
+    private Date viewEndDate;
+    private List<PortfolioTransaction> onePortfolioAllTransactions;
 
     public UploadedFile getFile() {
         return file;
@@ -133,7 +138,7 @@ public class CustomerWealthManagedBean implements Serializable {
         wealthTypes = new HashMap<String, String>();
         onePortAllProducts = new ArrayList<>();
         allSavingId = new ArrayList<>();
-
+onePortfolioAllTransactions = new ArrayList<>();
         wealthProducts.put("Predefined Products", "Predefined Products");
         wealthProducts.put("Tailored Product", "Tailored Product");
 
@@ -249,6 +254,19 @@ public class CustomerWealthManagedBean implements Serializable {
         }
 
     }
+    
+     public void goToDisplayAllMyWealthAccountsForPortfolioSystem(ActionEvent event) throws IOException {
+        try {
+            allWealthAccounts = wsbl.displayAllDiscretionaryAccounts(logInManagedBean.getCustomerId());
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/PortfolioManagement/viewAllDiscretionaryAccount.xhtml");
+
+        } catch (ListEmptyException | IOException ex) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+
+    }
+    
  
     public void fileUploadListener(FileUploadEvent e) throws IOException {
 
@@ -291,7 +309,7 @@ public class CustomerWealthManagedBean implements Serializable {
 
     public void customerCreateWealthAcct(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
-            customer = wasbl.createDiscretionaryAccount(customerIc, customerName, customerGender, customerDateOfBirth, password, customerEmail, customerName, customerOccupation, customerFamilyInfo);
+            customer = wasbl.createDiscretionaryAccount(customerIc, customerName, customerGender, customerDateOfBirth, password, customerEmail,customerPhoneNumber , customerOccupation, customerFamilyInfo);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Discretionary Account has been successfully created! Detailed informaiton has been sent to your email!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/WealthManagement/uploadFileForWealth.xhtml");
@@ -474,6 +492,19 @@ public class CustomerWealthManagedBean implements Serializable {
         }
 
     }
+    
+     public void customerDisplayPortfoliosForPortfolioSystem(ActionEvent event) {
+        selectedWealth = (DiscretionaryAccount) event.getComponent().getAttributes().get("selectedWealth");
+
+        oneCustomerAllPortfolios = wsbl.displayAllPortfolios(selectedWealth.getId());
+        System.out.println("*****Display portfolio now!");
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/PortfolioManagement/portfolioManagement.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(CustomerWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 
     public void customerAcceptPlan(Long portfolioId) {
         //   selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
@@ -505,7 +536,15 @@ public class CustomerWealthManagedBean implements Serializable {
         bond = onePortAllProducts.get(2).getPercentage();
 
     }
+public void selectPorfolioToViewTransactions(ActionEvent event){
+        selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/PortfolioManagement/viewTransactions.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(CustomerWealthManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+}
     public void customerModifyPortfolio(RowEditEvent event) {
         selectedPort = (Portfolio) event.getObject();
         System.out.println("Selected Portfolio to edit - id: " + selectedPort.getId());
@@ -566,6 +605,24 @@ public class CustomerWealthManagedBean implements Serializable {
                 RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
         }
+    }
+    
+    public void customerViewAllTransactions(ActionEvent event){
+         //   selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+            System.out.println("******Selected Discretionary Account to view transaction is "+selectedPort.getId());
+            
+onePortfolioAllTransactions = wsbl.viewtransactionHistory(selectedPort.getId(), viewStartDate, viewEndDate);
+    
+    }
+    public void customerEarlyWithdrawPortfolio(ActionEvent event){
+     selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+                 System.out.println("******Selected portfolio to withdraw is "+selectedPort.getId());
+                 oneCustomerAllPortfolios = wsbl.portfolioEarlyWithdraw(selectedPort.getId());
+                   FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully withdraw the portfolio!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                 
+
+
     }
  
     public Customer getCustomer() {
@@ -903,5 +960,30 @@ public class CustomerWealthManagedBean implements Serializable {
     public void setAllSavingId(List<Long> allSavingId) {
         this.allSavingId = allSavingId;
     }
+
+    public Date getViewStartDate() {
+        return viewStartDate;
+    }
+
+    public void setViewStartDate(Date viewStartDate) {
+        this.viewStartDate = viewStartDate;
+    }
+
+    public Date getViewEndDate() {
+        return viewEndDate;
+    }
+
+    public void setViewEndDate(Date viewEndDate) {
+        this.viewEndDate = viewEndDate;
+    }
+
+    public List<PortfolioTransaction> getOnePortfolioAllTransactions() {
+        return onePortfolioAllTransactions;
+    }
+
+    public void setOnePortfolioAllTransactions(List<PortfolioTransaction> onePortfolioAllTransactions) {
+        this.onePortfolioAllTransactions = onePortfolioAllTransactions;
+    }
+    
 
 }

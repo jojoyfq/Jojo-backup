@@ -7,11 +7,11 @@ package PortfolioManagedBean;
 
 import Exception.NotEnoughAmountException;
 import StaffManagement.staffLogInManagedBean;
-import WealthEntity.DiscretionaryAccount;
 import WealthEntity.Good;
 import WealthEntity.Portfolio;
 import WealthEntity.Product;
 import WealthEntity.Session.WealthManagementSessionBeanLocal;
+import WealthManagedBean.StaffWealthManagedBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,6 +28,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
+import org.primefaces.model.chart.PieChartModel;
 
 /**
  *
@@ -47,6 +48,8 @@ public class PortfolioManagedBean implements Serializable {
     WealthManagementSessionBeanLocal wmsbl;
     @Inject
     staffLogInManagedBean slimb;
+     @Inject
+     StaffWealthManagedBean swmb;
 
     private Long staffId;
     private Long productId;
@@ -60,6 +63,7 @@ public class PortfolioManagedBean implements Serializable {
     private Good selectedGood;
     private Product selectedProduct;
     private String productName;
+    private PieChartModel pieModel1;
 
     @PostConstruct
     public void init() {
@@ -70,6 +74,7 @@ public class PortfolioManagedBean implements Serializable {
         selectedPort = new Portfolio();
         selectedGood = new Good();
         selectedProduct = new Product();
+         pieModel1 = new PieChartModel();
     }
 
     public void goToViewAllPortfolios(ActionEvent event) {
@@ -93,7 +98,6 @@ public class PortfolioManagedBean implements Serializable {
             Logger.getLogger(PortfolioManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-
     }
 
     public void viewGoods(ActionEvent event) {
@@ -109,10 +113,7 @@ public class PortfolioManagedBean implements Serializable {
         }
 
     }
-    public void selectGood(ActionEvent event){
-            selectedGood = (Good) event.getComponent().getAttributes().get("selectedGood");
 
-    }
 
     public void staffBuyExistingGood(ActionEvent event) {
         System.out.println("Selected Good to buy is " + selectedGood.getName());
@@ -132,7 +133,7 @@ public class PortfolioManagedBean implements Serializable {
 //        selectedGood = (Good) event.getComponent().getAttributes().get("selectedGood");
         try {
             oneProductAllGoods = wmsbl.buyNewGood(staffId, productId, productName, unitPrice, numOfUnits);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully bought  " + goodId + "!");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully bought  " + oneProductAllGoods.get(oneProductAllGoods.size()).getName() + "!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         } catch (NotEnoughAmountException ex) {
@@ -146,12 +147,45 @@ public class PortfolioManagedBean implements Serializable {
         System.out.println("Selected Good to sell is " + selectedGood.getName());
         try {
             oneProductAllGoods = wmsbl.sellGood(staffId, productId, selectedGood.getId(), unitPrice, numOfUnits);
-             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully sold  " + selectedGood.getName() + "!");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully sold  " + selectedGood.getName() + "!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (NotEnoughAmountException ex) {
- FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
-            RequestContext.getCurrentInstance().showMessageInDialog(message);        }
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
 
+    }
+
+    public void createPieModel1(ActionEvent event) {
+     //   selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
+       
+        System.out.println("Selected portfolio to view chart is " +  swmb.getSelectedPort());
+
+       
+        BigDecimal equityProp = new BigDecimal("0");
+        BigDecimal fxProp = new BigDecimal("0");
+        BigDecimal bondProp = new BigDecimal("0");
+        equityProp =  swmb.getSelectedPort().getProducts().get(1).getCurrentAmount();
+        fxProp =  swmb.getSelectedPort().getProducts().get(0).getCurrentAmount();
+        bondProp =  swmb.getSelectedPort().getProducts().get(2).getCurrentAmount();
+        System.out.println("Investment proportion for fx,eq,and bond are "+fxProp+" "+equityProp+" "+bondProp);
+//        for (int i = 0; i < selectedPort.getPortfolioTransactions().size(); i++) {
+//            if (selectedPort.getPortfolioTransactions().get(i).getProductName().equals("Equity")) {
+//                equityProp.add(selectedPort.getPortfolioTransactions().get(i).getCredit());
+//            } else if (selectedPort.getPortfolioTransactions().get(i).getProductName().equals("Bond")) {
+//                bondProp.add(selectedPort.getPortfolioTransactions().get(i).getCredit());
+//            } else {
+//                fxProp.add(selectedPort.getPortfolioTransactions().get(i).getCredit());
+//
+//            }
+//        }
+        pieModel1.set("Equity", equityProp);
+        pieModel1.set("Bond", bondProp);
+        pieModel1.set("FX", fxProp);
+
+        pieModel1.setTitle("Investment Weightage By Instrument Type");
+        pieModel1.setLegendPosition("w");
+        pieModel1.setShowDataLabels(true);
     }
 
     public WealthManagementSessionBeanLocal getWmsbl() {
@@ -264,6 +298,14 @@ public class PortfolioManagedBean implements Serializable {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public PieChartModel getPieModel1() {
+        return pieModel1;
+    }
+
+    public void setPieModel1(PieChartModel pieModel1) {
+        this.pieModel1 = pieModel1;
     }
 
 }

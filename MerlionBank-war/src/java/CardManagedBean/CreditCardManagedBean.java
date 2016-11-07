@@ -10,11 +10,13 @@ import CardEntity.Session.CreditCardSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
+import Exception.ChargebackException;
 import Exception.CreditCardException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -76,6 +78,13 @@ public class CreditCardManagedBean implements Serializable {
     private Long creditCardSelectedLong;
     private String cancelReason;
     private CreditCard creditCardForClose;
+    //for chargeback requests
+    private String creditCardNo;
+    private String merchantName;
+    private Date transactionDate;
+    private String transactionAmount;
+    private String chargebackDescription;
+            
 
     @PostConstruct
     public void init() {
@@ -131,6 +140,16 @@ public class CreditCardManagedBean implements Serializable {
             System.out.print("dashboard to cancel Credit card encounter error!");
         }
     }
+    
+    public void dashboardToChargeback(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardChargeback.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to Credit Card Chargeback encounter error!");
+        }
+    }
+
 
     public void creditApplyEnterDetail(ActionEvent event) throws IOException {
         if (identitySelected == null) {
@@ -323,6 +342,23 @@ public class CreditCardManagedBean implements Serializable {
         }
     }
     
+    public void chargeback(ActionEvent event) throws ChargebackException, IOException {
+        if ((merchantName != null) && (transactionDate != null) && (transactionAmount != null) && (chargebackDescription != null) && (creditCardNo != null)) {
+            BigDecimal amount = new BigDecimal(transactionAmount);
+            try {
+                ccsb.createChargeback(merchantName, transactionDate, amount, chargebackDescription, creditCardNo);
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/CardManagement/creditCardChargebackSuccess.xhtml");
+            } catch (ChargebackException e) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", e.getMessage());
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in the blank box!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+    
     public Long getCustomerID() {
         return customerID;
     }
@@ -498,6 +534,45 @@ public class CreditCardManagedBean implements Serializable {
     public void setCreditCardForClose(CreditCard creditCardForClose) {
         this.creditCardForClose = creditCardForClose;
     }
-    
+
+    public String getCreditCardNo() {
+        return creditCardNo;
+    }
+
+    public void setCreditCardNo(String creditCardNo) {
+        this.creditCardNo = creditCardNo;
+    }
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    public String getTransactionAmount() {
+        return transactionAmount;
+    }
+
+    public void setTransactionAmount(String transactionAmount) {
+        this.transactionAmount = transactionAmount;
+    }
+
+    public String getChargebackDescription() {
+        return chargebackDescription;
+    }
+
+    public void setChargebackDescription(String chargebackDescription) {
+        this.chargebackDescription = chargebackDescription;
+    }
+
+    public Date getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
        
 }
