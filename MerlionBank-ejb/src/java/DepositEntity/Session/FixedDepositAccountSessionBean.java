@@ -8,6 +8,7 @@ package DepositEntity.Session;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.Staff;
+import CounterCashEntity.CashServiceRecord;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.FixedDepositAccount;
 import DepositEntity.FixedDepositRate;
@@ -63,6 +64,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
     private Integer rateIdInt;
     private Customer customer;
     private BigDecimal interest;
+
+    private CashServiceRecord cashServiceRecord;
 
     public BigDecimal getInterest() {
         return interest;
@@ -234,7 +237,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
             String description1 = "Transfer to fixed deposit " + fixedDepositAccountNum;
             Date currentTime = Calendar.getInstance().getTime();
             java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-            TransactionRecord transactionRecord = new TransactionRecord("TFF", amount,null, "settled", description1, currentTimestamp, savingAccountNum, null,savingAccounts,  "MerlionBank", "MerlionBank");
+            TransactionRecord transactionRecord = new TransactionRecord("TFF", amount, null, "settled", description1, currentTimestamp, savingAccountNum, null, savingAccounts, "MerlionBank", "MerlionBank");
             savingAccounts.getTransactionRecord().add(transactionRecord);
             em.persist(transactionRecord);
             em.flush();
@@ -266,7 +269,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         List<StaffAction> actions = new ArrayList<>();
         System.out.print(customerId);
         System.out.print(staffId);
-        
+
         Staff staff = em.find(Staff.class, staffId);
         StaffAction action = new StaffAction(Calendar.getInstance().getTime(), description, customerId, staff);
         em.persist(action);
@@ -378,7 +381,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         BigDecimal newBalance = savingAccount.getAvailableBalance().add(interest);
         newBalance = newBalance.add(account.getBalance());
         savingAccount.setAvailableBalance(newBalance);
-        savingAccount.setBalance(newBalance); 
+        savingAccount.setBalance(newBalance);
         System.out.print(savingAccount.getAvailableBalance().toString());
         //close fixed deposit
         account.setBalance(BigDecimal.valueOf(0));
@@ -389,7 +392,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-        TransactionRecord transactionRecord = new TransactionRecord("TFF", null,totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, savingAccount, "MerlionBank", "MerlionBank");
+        TransactionRecord transactionRecord = new TransactionRecord("TFF", null, totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, savingAccount, "MerlionBank", "MerlionBank");
         savingAccount.getTransactionRecord().add(transactionRecord);
         em.persist(transactionRecord);
 
@@ -417,6 +420,12 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account.setBalance(BigDecimal.valueOf(0));
         account.setStatus("terminated");
         em.flush();
+
+        //create cash service record 
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        cashServiceRecord = new CashServiceRecord("Fixed Deposit Account Early Withdraw", "customer ID" + account.getCustomer().getIc(), false, currentTimestamp, totalAmount);
+        em.persist(cashServiceRecord);
         return amountsToDisplay;
     }
 
@@ -446,7 +455,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         String description1 = "Withdraw fixed deposit " + fixedAccountNum;
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-        TransactionRecord transactionRecord = new TransactionRecord("TFF",null, totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, savingAccount, "MerlionBank", "MerlionBank");
+        TransactionRecord transactionRecord = new TransactionRecord("TFF", null, totalAmount, "settled", description1, currentTimestamp, null, savingAccountNum, savingAccount, "MerlionBank", "MerlionBank");
         savingAccount.getTransactionRecord().add(transactionRecord);
         em.persist(transactionRecord);
         em.flush();
@@ -468,6 +477,12 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         account.setStatus("terminated");
         System.out.print("set status to termianted");
         em.flush();
+
+        //create cash service record 
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        cashServiceRecord = new CashServiceRecord("Fixed Deposit Account Early Withdraw", "customer ID" + account.getCustomer().getIc(), false, currentTimestamp, totalAmount);
+        em.persist(cashServiceRecord);
         return amountsToDisplay;
     }
 
@@ -646,8 +661,8 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
 
                         try {
                             System.out.print(fixedDepositAccountNum);
-                            SendEmailToWithdraw(customerName, email, fixedDepositAccountNum); 
-                        } catch (MessagingException ex3){
+                            SendEmailToWithdraw(customerName, email, fixedDepositAccountNum);
+                        } catch (MessagingException ex3) {
                             System.out.println("Error sending email.");
                             try {
                                 throw new EmailNotSendException("Error sending email");
@@ -655,12 +670,11 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
                                 Logger.getLogger(FixedDepositAccountSessionBean.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                     }
-                    else{
+                    } else {
                         System.out.print("Account balance is zero and close strict away.");
+                    }
                 }
-            }
-         }//3 days before, check whether to send the email to notify renew
+            }//3 days before, check whether to send the email to notify renew
             else if (accountEndDay.equals(newstring2) && fixedDepositAccounts.get(i).getStatus().equals("active")) {
                 System.out.println("hey, you are here !!!!");
                 Date accountMatureDate = fixedDepositAccounts.get(i).getEndDate();
@@ -744,7 +758,7 @@ public class FixedDepositAccountSessionBean implements FixedDepositAccountSessio
         sendEmail.run(email, subject, content);
     }
 
-    private void SendEmailToWithdraw(String name, String email, Long fixedDepositAccountNum) throws MessagingException{
+    private void SendEmailToWithdraw(String name, String email, Long fixedDepositAccountNum) throws MessagingException {
         String subject = "Merlion Bank - " + name + "Fixed Deposit Account Maturity Notification";
         System.out.println("Inside send email to withdraw the amount");
         System.out.println("the email address is " + email);
