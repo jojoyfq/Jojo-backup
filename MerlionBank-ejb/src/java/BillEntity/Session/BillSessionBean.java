@@ -15,7 +15,9 @@ import CommonEntity.CustomerAction;
 import CommonEntity.Staff;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
+
 import DepositEntity.TransactionRecord;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -305,6 +307,7 @@ public class BillSessionBean implements BillSessionBeanLocal {
             System.out.print("balance after payment " + savingAccount.getAvailableBalance());
             Date todayDate = new Date();
             BillRecord bill = new BillRecord(bo, billReference, "BI", amount, null, "settled", "Bill payment to " + boName, todayDate, accountNumber, bo.getAccountNumber(), savingAccount, "Merlion", bo.getBank().getName());
+
             em.persist(bill);
             savingAccount.getTransactionRecord().add(bill);
             //invoke webservice to send bill
@@ -422,11 +425,13 @@ public class BillSessionBean implements BillSessionBeanLocal {
             if(transactions.get(i).split(",")[4].equalsIgnoreCase("INTF") || transactions.get(i).split(",")[4].equalsIgnoreCase("INCR")){
                 if(this.checkValid(transactions.get(i).split(",")[4], transactions.get(i).split(",")[3]) == false){
                     wrong.add(transactions.get(i));
+
                 }
             }
         }
         return wrong;
     }
+
 
     private boolean checkValid(String code, String acctNum) {
         if (code.equalsIgnoreCase("INTF")) {
@@ -446,6 +451,24 @@ public class BillSessionBean implements BillSessionBeanLocal {
         }else{
             return true;
         }
+    }
+
+    @Override
+    public List<RecurrentBillArrangement> viewableRecurrent(Long customerId) {
+        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
+        return oneCustomerAllRecurrents;
+    }
+
+    @Override
+    public List<GIROArrangement> deleteGIRO(Long giroId) {
+        List<GIROArrangement> oneCustomerAllGiros = new ArrayList<>();
+        return oneCustomerAllGiros;
+    }
+
+    @Override
+    public List<RecurrentBillArrangement> deleteRecurrent(Long recurrentBillId) {
+        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
+        return oneCustomerAllRecurrents;
     }
 
 }
