@@ -37,7 +37,7 @@ public class TransactionRecord implements Serializable {
     private BigDecimal credit;
     private String status;
     private String description;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date transactionTime;
     private Long giverAccountNum;
     private Long recipientAccountNum;

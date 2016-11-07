@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
+import javax.mail.MessagingException;
 
 /**
  *
@@ -39,4 +40,6 @@ public interface CreditCardSessionBeanLocal {
     public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String creditCardNo) throws ChargebackException ;
     public List<CreditChargeback> getPendingCreditChargeback();
     public void setChargebackStatus(CreditChargeback chargeback, String status);
+    public BigDecimal getOutStandAmount(String creditCardString);
+    public boolean payBySavingAccount(String savingAccount, String creditCardString, String amount) throws CreditCardException;
 }
