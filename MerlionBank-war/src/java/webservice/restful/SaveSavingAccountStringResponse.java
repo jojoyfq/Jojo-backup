@@ -15,31 +15,28 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement
 @XmlType(propOrder = {
-    "phoneNumber"
+    "success"
 })
-
-public class GetPhoneNumberResponse extends Response implements Serializable {
-
-    public String phoneNumber;
-
+public class SaveSavingAccountStringResponse extends Response implements Serializable {
     
-    public GetPhoneNumberResponse() {
+    public boolean success;
+
+    public SaveSavingAccountStringResponse() {
         super();
     }
-
-    public GetPhoneNumberResponse(int status, String errorMessage, String phoneNumber) {
+    
+    public SaveSavingAccountStringResponse(int status, String errorMessage, boolean success) {
         super(status, errorMessage);
-        this.phoneNumber = phoneNumber;
-
+        this.success = success;
+    } 
+        
+    public boolean getSuccess() {
+        return success;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-
+       
+    
 }

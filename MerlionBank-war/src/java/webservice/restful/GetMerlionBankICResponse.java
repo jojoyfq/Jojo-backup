@@ -15,31 +15,29 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement
 @XmlType(propOrder = {
-    "phoneNumber"
+    "merlionBankIC"
 })
 
-public class GetPhoneNumberResponse extends Response implements Serializable {
+public class GetMerlionBankICResponse extends Response implements Serializable {
 
-    public String phoneNumber;
+    public String merlionBankIC;
 
     
-    public GetPhoneNumberResponse() {
+    public GetMerlionBankICResponse() {
         super();
     }
 
-    public GetPhoneNumberResponse(int status, String errorMessage, String phoneNumber) {
+    public GetMerlionBankICResponse(int status, String errorMessage, String merlionBankIC) {
         super(status, errorMessage);
-        this.phoneNumber = phoneNumber;
-
+        this.merlionBankIC = merlionBankIC;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getMerlionBankIC() {
+        return merlionBankIC;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setMerlionBankIC(String merlionBankIC) {
+        this.merlionBankIC = merlionBankIC;
     }
-
 
 }
