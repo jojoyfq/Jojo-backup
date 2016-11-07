@@ -74,9 +74,9 @@
                     <p:submenu id="bill" label="Bill" icon="icon-plus">
 
                         <p:menuitem id="addGIRO" value="Add GIRO Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddGIROArrangement(event)}" /> 
-                        <p:menuitem id="viewGIRO" value="View GIRO Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />     
+                        <p:menuitem id="viewGIRO" value="View GIRO Arrangement" actionListener="#{billCustomerManagedBean.viewGiro}" />     
                         <p:menuitem id="addRecurrent" value="Add Recurrent Bill Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddRecurrentArrangement(event)}" /> 
-                        <p:menuitem id="viewRecurrent" value="View Recurrent Bill Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" /> 
+                        <p:menuitem id="viewRecurrent" value="View Recurrent Bill Arrangement" actionListener="#{billCustomerManagedBean.viewRecurrent}" /> 
                         <p:menuitem id="payAdhoc" value="Pay Bill" actionListener="#{billCustomerManagedBean.dashoboardAdhocBill(event)}" />    
 
                     </p:submenu>
