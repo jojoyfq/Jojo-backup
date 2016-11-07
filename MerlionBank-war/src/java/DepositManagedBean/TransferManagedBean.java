@@ -44,6 +44,7 @@ public class TransferManagedBean implements Serializable {
     private BigDecimal transferLimitBD;
     private Long recipientAccountNumLong;
     private String recipientAccountNumString;
+    private String giverAccountNumString;
     private Long giverAccountNumLong;
     private Long payeeAccount;
     private String payeeAccountString;
@@ -166,6 +167,7 @@ public class TransferManagedBean implements Serializable {
         try {
             if (payeeTransferAccount != null) {
                 amountBD = new BigDecimal(amountString);
+                giverAccountNumLong = Long.parseLong(giverAccountNumString.split(",")[0]);
                 tfsb.payeeTransferCheck(customerID, giverAccountNumLong, payeeSelectedLong, amountBD);
 
                 FacesContext.getCurrentInstance().getExternalContext()
@@ -187,6 +189,7 @@ public class TransferManagedBean implements Serializable {
             recipientAccountNumLong = Long.parseLong(recipientAccountNumString);
             System.out.print(amountBD);
             System.out.print(recipientAccountNumLong);
+            giverAccountNumLong = Long.parseLong(giverAccountNumString.split(",")[0]);
             tfsb.intraOneTimeTransferCheck(customerID, giverAccountNumLong, recipientAccountNumLong, amountBD);
 
             FacesContext.getCurrentInstance().getExternalContext()
@@ -254,7 +257,7 @@ public class TransferManagedBean implements Serializable {
 
     public void goToIntraTransferPage(ActionEvent event) {
         try {
-            if (giverAccountNumLong != null) {
+            if (giverAccountNumString != null) {
                 FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBank-war/TransferManagement/intraTransfer.xhtml");
             } else {
@@ -332,14 +335,6 @@ public class TransferManagedBean implements Serializable {
 
     public void setRecipientAccountNumLong(Long recipientAccountNumLong) {
         this.recipientAccountNumLong = recipientAccountNumLong;
-    }
-
-    public Long getGiverAccountNumLong() {
-        return giverAccountNumLong;
-    }
-
-    public void setGiverAccountNumLong(Long giverAccountNumLong) {
-        this.giverAccountNumLong = giverAccountNumLong;
     }
 
     public Long getPayeeAccount() {
@@ -454,6 +449,23 @@ public class TransferManagedBean implements Serializable {
     public void setPayeeDeleteName(String payeeDeleteName) {
         this.payeeDeleteName = payeeDeleteName;
     }
+
+    public String getGiverAccountNumString() {
+        return giverAccountNumString;
+    }
+
+    public void setGiverAccountNumString(String giverAccountNumString) {
+        this.giverAccountNumString = giverAccountNumString;
+    }
+
+    public Long getGiverAccountNumLong() {
+        return giverAccountNumLong;
+    }
+
+    public void setGiverAccountNumLong(Long giverAccountNumLong) {
+        this.giverAccountNumLong = giverAccountNumLong;
+    }
+    
     
     
 }

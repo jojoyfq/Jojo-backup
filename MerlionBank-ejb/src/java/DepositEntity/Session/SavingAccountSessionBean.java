@@ -9,7 +9,6 @@ import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.OnlineAccount;
 import CommonEntity.Staff;
-import CounterCash.CashServiceRecord;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
@@ -51,7 +50,6 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     private EntityManager em;
     private Customer customer;
     private Object cal;
-    private CashServiceRecord cashServiceRecord;
 
     @Override
     public List<SavingAccount> getSavingAccount(Long customerID) throws UserHasNoSavingAccountException {
@@ -128,8 +126,9 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     }
 
     @Override
-    public List<Long> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
-        List<Long> savingAccountNumbers = new ArrayList();
+    public List<String> getSavingAccountNumbers(Long customerID) throws UserHasNoSavingAccountException {
+        String savingString;
+        List<String> savingAccountNumbers = new ArrayList();
         Customer customer = em.find(Customer.class, customerID);
 
         if (customer.getSavingAccounts().isEmpty()) {
@@ -137,7 +136,8 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         } else {
             for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
                 if (customer.getSavingAccounts().get(i).getStatus().equals("active")) {
-                    savingAccountNumbers.add(customer.getSavingAccounts().get(i).getAccountNumber());
+                    savingString = customer.getSavingAccounts().get(i).getAccountNumber()+","+customer.getSavingAccounts().get(i).getSavingAccountType().getAccountType();
+                    savingAccountNumbers.add(savingString);
                 }
             }
             return savingAccountNumbers;
@@ -276,10 +276,6 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             TransactionRecord transactionRecord = new TransactionRecord("CW", withdrawAmount,null, "settled", "Cash Withdraw", currentTimestamp, accountNum, null,savingAccount,"MerlionBank","MerlionBank");
             em.persist(transactionRecord);
             em.flush();
-            
-            cashServiceRecord = new CashServiceRecord("Cash withdraw", "customer ID" + savingAccount.getCustomer().getIc(), false, currentTimestamp, withdrawAmount);
-            em.persist(cashServiceRecord);
-            em.flush();
         } else {
             throw new UserNotEnoughBalanceException("This Saving Account Does not Have Enough Balance!");
         }
@@ -304,10 +300,6 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         TransactionRecord transactionRecord = new TransactionRecord("CD", null, depositAmount, "settled", "Cash Deposit", currentTimestamp, null, accountNum,savingAccount,"MerlionBank","MerlionBank");
         em.persist(transactionRecord);
         em.flush();
-        
-        //create cash service record 
-        cashServiceRecord = new CashServiceRecord("Cash Deposit", "customer ID" + savingAccount.getCustomer().getIc(), true, currentTimestamp, depositAmount);
-        em.persist(cashServiceRecord);
     }
 
     @Override

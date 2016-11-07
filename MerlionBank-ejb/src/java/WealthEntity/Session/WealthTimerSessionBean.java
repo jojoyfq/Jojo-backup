@@ -47,7 +47,6 @@ public class WealthTimerSessionBean implements WealthTimerSessionBeanLocal {
    
    @Override
    public void interestCrediting(){
-       System.out.println("********** inside the interest crediting method");
        Query query = em.createQuery("SELECT a FROM DiscretionaryAccount a");
         List<DiscretionaryAccount> currentAccounts = new ArrayList(query.getResultList()); 
        List<DiscretionaryAccount>  accounts=new ArrayList<DiscretionaryAccount>();
@@ -56,16 +55,11 @@ public class WealthTimerSessionBean implements WealthTimerSessionBeanLocal {
        DateTime today=new DateTime(currentTime);
        DateTime accountDate=new DateTime();
        
-       System.out.println("********** size of current accont" + currentAccounts.size());
-       System.out.println("********** today is" + today.getDayOfMonth());
-       System.out.println("********** account start day is" + accountDate.getDayOfMonth());
        for (int i=0;i<currentAccounts.size();i++){
-           System.out.println("inside the for loop");
             accountDate=new DateTime(currentAccounts.get(i).getStartDate());
-//            System.out.println("********** status of the account" + currentAccounts.get(i).getStatus());
+       
           if (currentAccounts.get(i).getStatus().equals("active") && accountDate.getDayOfMonth()==today.getDayOfMonth())
              accounts.add(currentAccounts.get(i));
-             System.out.println("********** current account number" + currentAccounts.get(i).getAccountNumber());
       }
           for (int j=0;j<accounts.size();j++){
               BigDecimal balance=accounts.get(j).getBalance();
@@ -237,7 +231,6 @@ public class WealthTimerSessionBean implements WealthTimerSessionBeanLocal {
     
     @Override
     public void preDefinedPlanInterestCrediting(){
-        System.out.println("inside the preDefinedPlanInterestCrediting method");
          Query query = em.createQuery("SELECT a FROM Portfolio a");
         List<Portfolio> portfolios = new ArrayList(query.getResultList()); 
        List<Portfolio>  selected=new ArrayList<Portfolio>();

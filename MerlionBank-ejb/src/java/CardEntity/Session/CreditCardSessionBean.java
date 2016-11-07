@@ -8,8 +8,11 @@ package CardEntity.Session;
 import CardEntity.CreditCard;
 import CardEntity.CreditCardApplication;
 import CardEntity.CreditCardType;
+import CardEntity.CreditChargeback;
 import CommonEntity.Customer;
+import Exception.ChargebackException;
 import Exception.CreditCardException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,6 +28,8 @@ import java.util.Random;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -137,7 +142,8 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
                 m.setParameter("cardType", cardType);
                 CreditCardType creditCardType = (CreditCardType)m.getSingleResult();
 
-                CreditCard creditCard = new CreditCard(cardNumber,cardHolder,startDate,expiryDate,cvv,creditCardType,customer);
+                BigDecimal initialBalance = new BigDecimal("0");
+                CreditCard creditCard = new CreditCard(cardNumber,cardHolder,startDate,expiryDate,cvv,creditCardType,customer,initialBalance);
                 em.persist(creditCard);
                 customer.getCreditCard().add(creditCard);
                 em.persist(customer);
@@ -240,5 +246,103 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
         return md5;
     }
     
+    @Override
+    public List<String> getCreditCardNumbers(Long customerID){
+        List<String> creditCardNumbers = new ArrayList();
+        String creditString;
+        
+        Customer customer = em.find(Customer.class, customerID);
+        List<CreditCard> creditCard = customer.getCreditCard();
+        if(creditCard == null){
+            return null;
+        }else{
+            for(int i=0; i<creditCard.size();i++){
+                creditString = creditCard.get(i).getCardNumber()+","+creditCard.get(i).getCreditCardType().getCreditCardType();
+                creditCardNumbers.add(creditString);
+            }
+        }
+        return creditCardNumbers;
+    }
+    
+    @Override
+    public boolean cancelCreditCard(String cardNo) throws CreditCardException {
+        String[] cardString = cardNo.split(",");
+        String card = cardString[0];
+        Long cardL = Long.parseLong(card);
+
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNoL");
+        m.setParameter("cardNoL", cardL);
+        CreditCard creditCard = (CreditCard) m.getSingleResult();
+
+        if ( creditCard.getCreditCardTransactions() == null) {
+            return true;
+        }else if(creditCard.getBalance().compareTo(BigDecimal.ZERO) == -1){
+              throw new CreditCardException("credit card selected has debt, please make payment to your debt first!");      
+                    
+        }else if(creditCard.getBalance().compareTo(BigDecimal.ZERO) == 1){
+              throw new CreditCardException("credit card selected has prepaid balance, please transfer your amount first!");     
+        }else {
+            for (int i = 0; i < creditCard.getCreditCardTransactions().size(); i++) {
+                if (creditCard.getCreditCardTransactions().get(i).getStatus().equals("pending")) {
+                    throw new CreditCardException("credit card selected has pending transaction, cannot be cancelled!");
+                }
+            }
+            creditCard.setStatus("terminated");
+            em.flush();
+            return true;
+        }
+    }
+    
+    @Override
+    public CreditCard getCreditCardForClose(String cardNo) {
+        Long cardL = Long.parseLong(cardNo.split(",")[0]);
+
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNoL");
+        m.setParameter("cardNoL", cardL);
+        CreditCard creditCard = (CreditCard) m.getSingleResult();
+
+        if (creditCard.getStatus().equals("terminated")) {
+            return null;
+        } else {
+            return creditCard;
+        }
+    }
+    
+    @Override
+    public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String creditCardNo) throws ChargebackException {
+        Long debitCardNoL = Long.parseLong(creditCardNo);
+        Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :debitCardNoL");
+        m.setParameter("debitCardNoL", debitCardNoL);
+        CreditCard creditCard = (CreditCard) m.getSingleResult();
+        if (creditCard == null) {
+            throw new ChargebackException("The Card Number Entered is not valid!");
+        } else {
+            Date currentTime = Calendar.getInstance().getTime();
+            //chargeback has 5 status: staff unverified, VISA/MasterCard unverified, Merchant Bank unverified, rejected, approved
+            CreditChargeback chargeback = new CreditChargeback(merchantName, transactionDate, transactionAmount, chargebackDescription, currentTime, "staff unverified", creditCard);
+            creditCard.getChargeback().add(chargeback);
+            em.persist(chargeback);
+            em.persist(creditCard);
+            em.flush();
+        }
+    }
+    
+    @Override
+    public List<CreditChargeback> getPendingCreditChargeback() {
+        String status = "staff unverified";
+        Query m = em.createQuery("SELECT b FROM CreditChargeback b WHERE b.status = :status");
+        m.setParameter("status", status);
+        List<CreditChargeback> creditChargeback = m.getResultList();
+        return creditChargeback;
+    }
+    
+    @Override
+    public void setChargebackStatus(CreditChargeback chargeback, String status) {
+        Long cid = chargeback.getId();
+        CreditChargeback cChargeback = em.find(CreditChargeback.class, cid);
+        cChargeback.setStatus(status);
+        em.persist(cChargeback);
+        em.flush();
+    }
     
 }
