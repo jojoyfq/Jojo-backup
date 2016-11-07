@@ -51,6 +51,6 @@ public interface TransferSessionBeanLocal {
 
     public List<OtherBank> viewOtherBank();
 
-    public void intraOneTimeTransferCheckMobile(String customerIC, String giverBankAccountString, String recipientBankAccountString, String transferAmountStr) throws TransferException;
+    public boolean intraOneTimeTransferCheckMobile(String customerIC, String giverBankAccountString, String recipientBankAccountString, String transferAmountStr) throws TransferException;
 
     }

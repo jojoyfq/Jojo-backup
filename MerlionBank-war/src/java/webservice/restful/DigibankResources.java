@@ -5,13 +5,17 @@
  */
 package webservice.restful;
 
+import DepositEntity.Session.TransferSessionBeanLocal;
 import Exception.PasswordNotMatchException;
+import Exception.TransferException;
 import Exception.UserHasNoSavingAccountException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import PayMeEntity.Session.PayMeSessionBeanLocal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -28,9 +32,13 @@ public class DigibankResources {
 
     @EJB
     PayMeSessionBeanLocal payMeSessionBeanLocal;
+    
+    @EJB
+    TransferSessionBeanLocal transferSessionBeanLocal;
 
     IsExistingCustomerResponse isExistingCustomerResponse;
     static String merlionBankIC;
+    static String savingAccountString;
 
     public DigibankResources() {
     }
@@ -73,8 +81,7 @@ public class DigibankResources {
             return new GetMerlionBankICResponse(1, "No IC Available", "");
         }
     }
-    
-    
+
     @POST
     @Path(value = "getSavingAccountList")
     @Produces(MediaType.APPLICATION_JSON)
@@ -88,7 +95,46 @@ public class DigibankResources {
         }
         return new GetSavingAccountsResponse(0, "", savingAccountsList);
     }
-    
-    
 
+    @POST
+    @Path(value = "saveSavingAccountString")
+    @Produces(MediaType.APPLICATION_JSON)
+    public SaveSavingAccountStringResponse saveSavingAccountString(@FormParam("savingAccountStr") String savingAccStr) {
+        savingAccountString = savingAccStr;
+        System.out.println("saving account is " + savingAccountString + "*********");
+        if (savingAccountString.isEmpty() == false) {
+            return new SaveSavingAccountStringResponse(0, "", true);
+        } else {
+            return new SaveSavingAccountStringResponse(1, "Does Not Get Saving Account", false);
+        }
+    }
+
+    
+    @POST
+    @Path(value = "oneTimeTransfer")
+    @Produces(MediaType.APPLICATION_JSON)
+    public OneTimeTransferResponse oneTimeTransfer(@FormParam("recipientAccountStr") String recipientAccStr,
+            @FormParam("amount") String amountStr){
+        
+        boolean isTransferSuccess;
+        String giverBankAccountString = savingAccountString.split("-")[0].trim();
+        try {
+            isTransferSuccess = transferSessionBeanLocal.intraOneTimeTransferCheckMobile(merlionBankIC, giverBankAccountString, recipientAccStr, amountStr);
+            System.out.println("success: " + isTransferSuccess);
+            return new OneTimeTransferResponse(0, "", true);
+        } catch (TransferException ex) {
+            if(ex.getMessage().contains("Transfer Limit")){
+                return new OneTimeTransferResponse(1, "You have exceeded your daily transfer limit", false);
+            }else if(ex.getMessage().contains("enough fund")){
+                return new OneTimeTransferResponse(1, "Your account does not have enough balance", false);
+            }else if(ex.getMessage().contains("incorrect")){
+                return new OneTimeTransferResponse(1, "invalid recipient account number", false);
+            }else{
+                return new OneTimeTransferResponse(1, "error", false);
+            }
+        }        
+    }
+    
+    
+    
 }

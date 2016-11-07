@@ -414,7 +414,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
     }
     
     @Override
-    public void intraOneTimeTransferCheckMobile(String customerIC, String giverBankAccountString, String recipientBankAccountString, String transferAmountStr) throws TransferException {
+    public boolean intraOneTimeTransferCheckMobile(String customerIC, String giverBankAccountString, String recipientBankAccountString, String transferAmountStr) throws TransferException {
 
         BigDecimal giverAvailableBalance;
         BigDecimal giverBalance;
@@ -491,6 +491,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 logAction("Transfer to " + recipientBankAccountNum1, customerID);
 
                 System.out.println("transfer successfully!");
+                return true;
             }
         }
 
