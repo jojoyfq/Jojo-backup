@@ -20,13 +20,13 @@
         <div class="Container90 NoPadding Responsive50">
             <div class="Container100">
                 <div class="Card Flex FlexWrap">
-                    <div class="CardBigTopic"> Wealth Management System </div>
+                    <div class="CardBigTopic"> Portfolio Management System </div>
                     <div class="Separator"></div>
 
                     <div class="Container100 NoPadding Responsive50 ui-fluid">
 
                         <h:form id="form">
-                            <p:panel id="panel" header="Wealth Management Payment System - My Dicretionary Accounts" >
+                            <p:panel id="panel" header="Portfolio Management - My Dicretionary Accounts" >
 
                                 <p:messages id="msgs" />
 
@@ -82,25 +82,11 @@
 
 
 
-                                        <p:column headerText="Transfer by Saving Account" style="width: 80px;" >
-                                            <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
-                                                    <f:attribute name="selectedWealth" value="#{Wealth}"  />
-                                                </p:commandButton>
-                                            </center>
-                                        </p:column>
-
-                                        <p:column headerText="Early Payoff" style="width: 80px;" >
-                                            <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerLoanManagedBean.customerDisplaySavingAccounts}" update=":form:panel" ajax="false" type="submit" >
-                                                    <f:attribute name="selectedWealth" value="#{Wealth}"  />
-                                                </p:commandButton>
-                                            </center>
-                                        </p:column>
+                                       
                                         
                                          <p:column headerText="View Portfolio" style="width: 80px;" >
                                             <center>
-                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplayPortfolios}" update=":form:panel" ajax="false" type="submit" >
+                                                <p:commandButton icon="fa fa-money" styleClass="Fleft Fs14 White" actionListener="#{customerWealthManagedBean.customerDisplayPortfoliosForPortfolioSystem}" update=":form:panel" ajax="false" type="submit" >
                                                     <f:attribute name="selectedWealth" value="#{Wealth}"  />
                                                 </p:commandButton>
                                             </center>

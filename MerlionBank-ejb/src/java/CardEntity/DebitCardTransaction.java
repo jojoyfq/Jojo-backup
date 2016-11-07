@@ -10,6 +10,7 @@ import DepositEntity.TransactionRecord;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -17,25 +18,27 @@ import javax.persistence.Entity;
  */
 @Entity
 public class DebitCardTransaction extends TransactionRecord {
-    private Long cardNumber;
+    @ManyToOne
+    private DebitCard debitCard;
     private String emv; // VISA, MASTERCARD, NETS
 
     
     public DebitCardTransaction(){}
     
-    public DebitCardTransaction(String code, BigDecimal debit, BigDecimal credit, String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,SavingAccount savingAccount, String giverBank, String recipientBank, Long cardNumber, String emv){
+    public DebitCardTransaction(String code, BigDecimal debit, BigDecimal credit, String status, String description,Date transactionTime,Long giverAccountNum,Long recipientAccountNum,SavingAccount savingAccount, String giverBank, String recipientBank, DebitCard debitCard, String emv){
         super(code,debit,credit,status,description,transactionTime,giverAccountNum,recipientAccountNum,savingAccount, giverBank, recipientBank);
-        this.cardNumber = cardNumber;
+        this.debitCard = debitCard;
         this.emv = emv;
     }
 
-    public Long getCardNumber() {
-        return cardNumber;
+    public DebitCard getDebitCard() {
+        return debitCard;
     }
 
-    public void setCardNumber(Long cardNumber) {
-        this.cardNumber = cardNumber;
+    public void setDebitCard(DebitCard debitCard) {
+        this.debitCard = debitCard;
     }
+
     
     public String getEmv() {
         return emv;
