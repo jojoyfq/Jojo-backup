@@ -1,0 +1,129 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container60 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Portfolio Management System </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 NoPadding Responsive50 ui-fluid">
+
+                        <h:form id="form">
+                            <p:panel id="panel" header="Portfolio Management  - All Transactions" >
+
+                                <p:messages id="msgs" />
+
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <h:outputLabel value="From: "/>
+                                    <p:calendar id="from" value="#{staffWealthManagedBean.viewStartDate}" pattern="dd.MM.yyyy" locale="de" navigator="true" required="true" />
+
+                                    <h:outputLabel value="To:  "/>
+                                    <p:calendar id="to" value="#{staffWealthManagedBean.viewEndDate}" pattern="dd.MM.yyyy" locale="de" navigator="true" required="true" />
+
+                                    <p:commandButton  value="View Transactions" actionListener="#{staffWealthManagedBean.staffViewAllTransactions}" update=":form" oncomplete="PF('carOP').show('#{component.clientId}')" />
+
+                                    <p:overlayPanel widgetVar="carOP" showEffect="fade" hideEffect="fade" dismissable="true" showCloseIcon="false" >
+
+                                        <p:dataTable var="Wealth" value="#{staffWealthManagedBean.onePortfolioAllTransactions}"  rows="10"
+                                                     paginator="true"
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="5,10,15" >
+                                            <f:facet name="header">
+                                                All Transactions
+                                            </f:facet>
+
+
+                                            <p:column headerText="Transaction ID" style="width: 70px;">
+
+                                                <h:outputText value="#{Wealth.id}" />
+                                            </p:column>
+
+                                            <p:column headerText="Transaction Date">
+
+                                                <h:outputText value="#{Wealth.transactionTime}" >
+                                                    <f:convertDateTime pattern="yyyy. MM. dd 'at' HH:mm:ss z" />
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="Buy Principal">
+                                                <h:outputText value="#{Wealth.debit}" >
+                                                    <f:convertNumber locale="en-US" />
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Sell Principal">
+                                                <h:outputText value="#{Wealth.credit}" >
+                                                    <f:convertNumber locale="en-US" />
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="Amount">
+                                                <h:outputText value="#{Wealth.numOfUnits}" >
+                                                    <f:convertNumber locale="en-US" />
+                                                </h:outputText>
+                                            </p:column>
+
+
+                                            <p:column headerText="Price">
+                                                <h:outputText value="#{Wealth.unitPrice}" > 
+                                                    <f:convertNumber locale="en-US" maxFractionDigits="2"/>
+                                                </h:outputText>
+                                            </p:column>
+
+                                        </p:dataTable>
+
+                                    </p:overlayPanel>
+
+
+                                </h:panelGrid>
+
+
+                            </p:panel>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+
+            <div class="Card ui-fluid">
+                <i class="icon-qq Cyan Fs40 Fleft MarRight10"></i>
+                <span class="Cyan Fs20 FontDosisSemiBold">Charts Generator</span>
+                <div class="EmptyBox10"></div>
+                <div class="EmptyBox10"></div>
+                <h:form>
+                    <p:commandButton value="View" actionListener="#{portfolioManagedBean.createPieModel1}" oncomplete="PF('carOP1').show('#{component.clientId}')"  >
+
+                    </p:commandButton>
+                </h:form>
+            </div>
+
+            <p:overlayPanel widgetVar="carOP1" showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true">
+                <p:chart type="pie" model="#{portfolioManagedBean.pieModel1}" style="width:400px;height:300px" />
+
+            </p:overlayPanel>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

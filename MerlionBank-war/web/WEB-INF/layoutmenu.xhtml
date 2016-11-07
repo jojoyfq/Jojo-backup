@@ -68,15 +68,16 @@
                     <p:submenu id="transfer" label="Transfer" icon="icon-plus">
 
                         <p:menuitem id="intraTransfer" value="To Merlion Account" actionListener="#{transferManagedBean.dashboardIntraTransfer}" /> 
+                        <p:menuitem id="interTransfer" value="To Other Bank Account" outcome="/TransferManagement/interOneTimeTransfer" /> 
                         <p:menuitem id="changeLimit" value="Change Transfer Limit" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />           
 
                     </p:submenu>
                     <p:submenu id="bill" label="Bill" icon="icon-plus">
 
                         <p:menuitem id="addGIRO" value="Add GIRO Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddGIROArrangement(event)}" /> 
-                        <p:menuitem id="viewGIRO" value="View GIRO Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" />     
+                        <p:menuitem id="viewGIRO" value="View GIRO Arrangement" actionListener="#{billCustomerManagedBean.viewGiro}" />     
                         <p:menuitem id="addRecurrent" value="Add Recurrent Bill Arrangement" actionListener="#{billCustomerManagedBean.dashboardAddRecurrentArrangement(event)}" /> 
-                        <p:menuitem id="viewRecurrent" value="View Recurrent Bill Arrangement" actionListener="#{transferManagedBean.dashboardChangeTransferLimit}" /> 
+                        <p:menuitem id="viewRecurrent" value="View Recurrent Bill Arrangement" actionListener="#{billCustomerManagedBean.viewRecurrent}" /> 
                         <p:menuitem id="payAdhoc" value="Pay Bill" actionListener="#{billCustomerManagedBean.dashoboardAdhocBill(event)}" />    
 
                     </p:submenu>
@@ -85,7 +86,7 @@
                 <p:submenu id="wealth_management" label="Wealth Management">
                     <p:submenu id="wealthApplication" label="Application and Activation" icon="icon-plus">
                         <p:menuitem id="create_wealthForExisting" value="Apply Discretionary Account" actionListener="#{customerWealthManagedBean.goToApplyWealthAccountExistCustomer}" /> 
-                        <p:menuitem id="activate_onlineForNew" value="Activate Tailored Plan" actionListener="#{customerWealthManagedBean.goToAcitivateWealthAccount}" /> 
+                        <p:menuitem id="activate_onlineForNew" value="Activate Tailored Plan" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForPortfolio}" /> 
                         <p:menuitem id="activate_wealthForExisting" value="Activate Discretionary Account" actionListener="#{customerWealthManagedBean.goToAcitivateWealthAccount}" /> 
                     </p:submenu>
                     <p:submenu id="wealth1" label="Investment Plan and Product" icon="icon-plus">
@@ -98,7 +99,7 @@
                     </p:submenu>
                 </p:submenu>
                     <p:submenu id="pa_docs" label="Portfolio Management">
-                        <p:menuitem id="view_portfolio" value="View My Portfolio" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsPortfolio}"/>
+                        <p:menuitem id="view_portfolio" value="View My Portfolio" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForPortfolioSystem}"/>
 
                     </p:submenu>
 

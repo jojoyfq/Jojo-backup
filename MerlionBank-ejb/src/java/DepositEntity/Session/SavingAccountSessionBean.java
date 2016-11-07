@@ -9,6 +9,7 @@ import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.OnlineAccount;
 import CommonEntity.Staff;
+import CounterCashEntity.CashServiceRecord;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
 import DepositEntity.SavingAccountType;
@@ -50,6 +51,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     private EntityManager em;
     private Customer customer;
     private Object cal;
+    private CashServiceRecord cashServiceRecord;
 
     @Override
     public List<SavingAccount> getSavingAccount(Long customerID) throws UserHasNoSavingAccountException {
@@ -136,7 +138,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         } else {
             for (int i = 0; i < customer.getSavingAccounts().size(); i++) {
                 if (customer.getSavingAccounts().get(i).getStatus().equals("active")) {
-                    savingString = customer.getSavingAccounts().get(i).getAccountNumber()+","+customer.getSavingAccounts().get(i).getSavingAccountType().getAccountType();
+                    savingString = customer.getSavingAccounts().get(i).getAccountNumber() + "," + customer.getSavingAccounts().get(i).getSavingAccountType().getAccountType();
                     savingAccountNumbers.add(savingString);
                 }
             }
@@ -204,13 +206,13 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     @Override
     public List<TransactionRecord> getTransactionRecord(Long savingAccountNumber) {
         List<TransactionRecord> displayList = new ArrayList();
-        
+
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNumber");
         q.setParameter("savingAccountNumber", savingAccountNumber);
         SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
         displayList = savingAccount.getTransactionRecord();
-        
-        return displayList;   
+
+        return displayList;
     }
 
     @Override
@@ -218,25 +220,25 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         Query t = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :savingAccountNum");
         t.setParameter("savingAccountNum", savingAccountNum);
         SavingAccount savingAccount = (SavingAccount) t.getSingleResult();
-        
+
         if (savingAccount.getAvailableBalance().compareTo(BigDecimal.ZERO) != 0) {
             throw new UserCloseAccountException("Please transfer the remaining amount to another account before close this account!");
         } else {
             String status = "pending";
-            
+
             List<TransactionRecord> record = savingAccount.getTransactionRecord();
-            if(record.isEmpty()){
+            if (record.isEmpty()) {
                 System.out.print("User has no pending transaction!");
                 savingAccount.setStatus("terminated");
                 em.flush();
-            }else{
-                for(int i=0;i<record.size();i++){
-                    if(record.get(i).getStatus().equals(status)){
+            } else {
+                for (int i = 0; i < record.size(); i++) {
+                    if (record.get(i).getStatus().equals(status)) {
                         throw new UserHasPendingTransactionException("This Saving Account Has pending Transactions!");
                     }
                 }
             }
-           
+
         }
     }
 
@@ -260,7 +262,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     public void cashWithdraw(Long accountNum, BigDecimal withdrawAmount) throws UserNotEnoughBalanceException {
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :accountNum");
         q.setParameter("accountNum", accountNum);
-        SavingAccount savingAccount = (SavingAccount)q.getSingleResult();
+        SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
 
         if (savingAccount.deductAmt(withdrawAmount)) {
             BigDecimal updatedBalance = savingAccount.getAvailableBalance().subtract(withdrawAmount);
@@ -273,8 +275,13 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
 
             Date currentTime = Calendar.getInstance().getTime();
             java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-            TransactionRecord transactionRecord = new TransactionRecord("CW", withdrawAmount,null, "settled", "Cash Withdraw", currentTimestamp, accountNum, null,savingAccount,"MerlionBank","MerlionBank");
+            TransactionRecord transactionRecord = new TransactionRecord("CW", withdrawAmount, null, "settled", "Cash Withdraw", currentTimestamp, accountNum, null, savingAccount, "MerlionBank", "MerlionBank");
             em.persist(transactionRecord);
+            em.flush();
+
+            //create cash service record 
+            cashServiceRecord = new CashServiceRecord("Cash Withdraw", "customer ID" + savingAccount.getCustomer().getIc(), false, currentTimestamp, withdrawAmount);
+            em.persist(cashServiceRecord);
             em.flush();
         } else {
             throw new UserNotEnoughBalanceException("This Saving Account Does not Have Enough Balance!");
@@ -285,7 +292,7 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
     public void cashDeposit(Long accountNum, BigDecimal depositAmount) {
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :accountNum");
         q.setParameter("accountNum", accountNum);
-        SavingAccount savingAccount = (SavingAccount)q.getSingleResult();
+        SavingAccount savingAccount = (SavingAccount) q.getSingleResult();
 
         BigDecimal updatedBalance = savingAccount.getAvailableBalance().add(depositAmount);
         savingAccount.setAvailableBalance(updatedBalance);
@@ -297,8 +304,13 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
 
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
-        TransactionRecord transactionRecord = new TransactionRecord("CD", null, depositAmount, "settled", "Cash Deposit", currentTimestamp, null, accountNum,savingAccount,"MerlionBank","MerlionBank");
+        TransactionRecord transactionRecord = new TransactionRecord("CD", null, depositAmount, "settled", "Cash Deposit", currentTimestamp, null, accountNum, savingAccount, "MerlionBank", "MerlionBank");
         em.persist(transactionRecord);
+        em.flush();
+
+        //create cash service record 
+        cashServiceRecord = new CashServiceRecord("Cash Deposit", "customer ID" + savingAccount.getCustomer().getIc(), true, currentTimestamp, depositAmount);
+        em.persist(cashServiceRecord);
         em.flush();
     }
 
@@ -597,10 +609,9 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
         Date dateOfBirth;
         Query query1 = em.createQuery("SELECT a FROM SavingAccount a");
         List<SavingAccount> savingAccounts = new ArrayList(query1.getResultList());
-        
+
         Query query2 = em.createQuery("SELECT b FROM SavingAccountType b");
         List<SavingAccountType> savingAccountTypes = new ArrayList(query2.getResultList());
-        
 
         for (int i = 0; i < savingAccounts.size(); i++) {
             System.out.println("***** inside the loop *****");
@@ -608,9 +619,9 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
             if (status.equals("active")) {
                 savingAccountType = savingAccounts.get(i).getSavingAccountType().getId();
                 System.out.println("***** saving account type is: " + savingAccountType);
-                
-                if(savingAccountType == 12){
-                    dateOfBirth = savingAccounts.get(i).getCustomer().getDateOfBirth();              
+
+                if (savingAccountType == 12) {
+                    dateOfBirth = savingAccounts.get(i).getCustomer().getDateOfBirth();
                     DateTime birthday = new DateTime(dateOfBirth);
                     Calendar cal = GregorianCalendar.getInstance();
                     DateTime today = new DateTime(cal.getTime());
@@ -618,8 +629,8 @@ public class SavingAccountSessionBean implements SavingAccountSessionBeanLocal {
                     Period period = new Period(today, birthday);
                     System.out.print(period.getYears() + " years, ");
                     System.out.print(period.getMonths() + " months, ");
-                    
-                    if(period.getYears() >= 25){
+
+                    if (period.getYears() >= 25) {
                         //change the youth account to everyday saving account
                         SavingAccountType type = new SavingAccountType();
                         type = savingAccountTypes.get(2);
