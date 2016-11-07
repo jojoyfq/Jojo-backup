@@ -51,4 +51,6 @@ public interface LoanManagementSessionBeanLocal {
    
    public List<GIROArrangement> displayGIROArrangement()throws EmailNotSendException;
    public List<GIROArrangement> manageGIROArrangement(Long staffId,Long GIROArrangementId,String decision)throws EmailNotSendException;
+   
+    public BigDecimal loanPayByCash(Long customerId, Long staffId, Long loanId);
 }

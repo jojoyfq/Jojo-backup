@@ -51,7 +51,7 @@ public class Customer implements Serializable {
     private String ic;
     private String name;
     private String gender;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date dateOfBirth;
     private String address;
 

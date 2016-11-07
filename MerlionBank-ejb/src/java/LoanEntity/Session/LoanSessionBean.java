@@ -179,7 +179,7 @@ public List<Loan> customerCancelLoan(Long customerId, Long loanId){
          if (amount.compareTo(savingAccount.getAvailableBalance())== 1)
              throw new NotEnoughAmountException("There is not enough amount of money in this savingAccount");
          
-         BigDecimal temp=new BigDecimal("0");
+         BigDecimal temp=new BigDecimal(0);
          loan.setOutstandingBalance(loan.getOutstandingBalance().subtract(loan.getMonthlyPayment()));
          loan.setMonthlyPayment(temp);
          loan.setLatePayment(temp);
@@ -206,7 +206,7 @@ public List<Loan> customerCancelLoan(Long customerId, Long loanId){
      public BigDecimal displayRedemptionInterest(Long loanId){
          Loan loan=em.find(Loan.class,loanId);
          BigDecimal amount=loan.getOutstandingBalance();
-         BigDecimal redemptionRate=new BigDecimal("1.015");
+         BigDecimal redemptionRate=new BigDecimal(1.015);
          amount=amount.multiply(redemptionRate);
          return amount;
          
@@ -220,13 +220,13 @@ public List<Loan> customerCancelLoan(Long customerId, Long loanId){
          SavingAccount savingAccount=em.find(SavingAccount.class,savingAccountId);
          
          BigDecimal amount=loan.getOutstandingBalance();
-         BigDecimal redemptionRate=new BigDecimal("1.015");
+         BigDecimal redemptionRate=new BigDecimal(1.015);
          amount=amount.multiply(redemptionRate);
          
          if (amount.compareTo(savingAccount.getAvailableBalance())== 1)
              throw new NotEnoughAmountException("There is not enough amount of money in this savingAccount");
          
-         BigDecimal temp=new BigDecimal("0");
+         BigDecimal temp=new BigDecimal(0);
          loan.setLoanAmount(temp);
          loan.setMonthlyPayment(temp);
          loan.setLatePayment(temp);

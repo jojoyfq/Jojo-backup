@@ -10,9 +10,12 @@ import CommonEntity.Customer;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
+import DepositEntity.SavingAccount;
+import DepositEntity.TransactionRecord;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Exception.LoanTermInvalidException;
+import Exception.NotEnoughAmountException;
 import Exception.UserNotActivatedException;
 import Exception.UserNotExistException;
 import LoanEntity.Instance;
@@ -476,6 +479,27 @@ public class LoanManagementSessionBean implements LoanManagementSessionBeanLocal
         System.out.println(content);
         sendEmail.run(email, subject, content);
     }
+    
+    @Override
+     public BigDecimal loanPayByCash(Long customerId, Long staffId, Long loanId){
+         Customer customer=em.find(Customer.class,customerId);
+        
+         Loan loan=em.find(Loan.class, loanId);
+         
+         BigDecimal amount=loan.getMonthlyPayment().add(loan.getLatePayment());
+        
+         
+         BigDecimal temp=new BigDecimal(0);
+         loan.setOutstandingBalance(loan.getOutstandingBalance().subtract(loan.getMonthlyPayment()));
+         loan.setMonthlyPayment(temp);
+         loan.setLatePayment(temp);
+         loan.setPaidTerm(loan.getPaidTerm()+1);
+         
+         smsbl.recordStaffAction(staffId, "Monthly Loan payment " + loan.getAccountNumber(), loan.getCustomer().getId());
+                
+                return amount;
+     }
+     
     
     
 }

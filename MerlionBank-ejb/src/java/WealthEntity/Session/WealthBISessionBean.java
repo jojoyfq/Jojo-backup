@@ -29,7 +29,7 @@ public class WealthBISessionBean implements WealthBISessionBeanLocal {
 // Number of steps of the efficient frontier
 		int steps = 10;
 		// Use the provided path or the default one
-		String modelDirectory = "C:\\Users\\a0113893\\Desktop\\models";
+		String modelDirectory = "C:\\Users\\a0113893\\Desktop\\models\\qpmv";
  System.out.println("In Session Bean");
 
 		AMPL ampl = null;

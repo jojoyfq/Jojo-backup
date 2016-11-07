@@ -33,6 +33,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import javax.ejb.EJB;
 import javax.mail.MessagingException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -466,7 +469,5 @@ public List<DiscretionaryAccount> updateAccountStatus(Long discretionaryAccountI
         return customer.getDiscretionaryAccounts();
 
 }
-        
-     
 
 }

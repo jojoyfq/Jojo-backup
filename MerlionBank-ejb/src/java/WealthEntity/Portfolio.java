@@ -34,9 +34,9 @@ public class Portfolio implements Serializable {
     private BigDecimal presentValue;
     private Double monthlyInterestRate;
     private Double expectedRateOfReturn;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date startDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date endDate;
     private String status;
   private Integer term;

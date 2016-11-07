@@ -36,7 +36,7 @@ public class CaseEntity implements Serializable {
     private String status;
     @Temporal(TemporalType.TIMESTAMP)
     private Date caseCreatedTime;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date caseClosedTime;
     
     @ManyToOne

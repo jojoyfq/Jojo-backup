@@ -31,14 +31,14 @@ public class Loan implements Serializable {
     private BigDecimal downpayment;
     private Integer loanTerm;
     private BigDecimal outstandingBalance;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date startDate;
     private String status;
     private BigDecimal monthlyPayment;
     private BigDecimal latePayment;
     private Integer paidTerm;
     private BigDecimal loanAmount;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date loanDate;
     private Double interestRate1;
     private Double interestRate2;
@@ -48,7 +48,7 @@ public class Loan implements Serializable {
     private String carMode;
     private String institution;
     private String major;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date graduationDate;
     //private Integer payTime;
 

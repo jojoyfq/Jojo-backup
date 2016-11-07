@@ -30,9 +30,9 @@ public class DiscretionaryAccount implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long accountNumber;
-     @Temporal(javax.persistence.TemporalType.DATE)
+     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date startDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date endDate;
     private BigDecimal balance;
     private BigDecimal totalBalance;
