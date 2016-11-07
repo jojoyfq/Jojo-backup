@@ -46,6 +46,7 @@ public class SpendingSegmentationManagementSessionBean implements SpendingSegmen
                 result.add(shops.get(i));
             }
         }
+        System.out.println("In session bean"+result.size());
         return result;
     }
 
@@ -60,6 +61,11 @@ public class SpendingSegmentationManagementSessionBean implements SpendingSegmen
         Shop shop = new Shop(shopName, "active", category);
         em.persist(shop);
         em.flush();
+       
+        List<Shop> current=category.getShops();
+        current.add(shop);
+        category.setShops(current);
+        
 
         return displayShop(categoryId);
 
@@ -163,6 +169,11 @@ public class SpendingSegmentationManagementSessionBean implements SpendingSegmen
         Category category = em.find(Category.class, categoryId);
         Coupon coupon = new Coupon(shopName, description, couponCode, "active", category);
         em.persist(coupon);
+        em.flush();
+        
+        List<Coupon> current=category.getCoupons();
+        current.add(coupon);
+        category.setCoupons(current);
         em.flush();
 
         return viewAllCoupons(categoryId);

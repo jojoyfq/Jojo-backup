@@ -41,9 +41,12 @@
 
                                     <p:commandButton  value="View Transactions" actionListener="#{staffWealthManagedBean.staffViewAllTransactions}" update=":form" oncomplete="PF('carOP').show('#{component.clientId}')" />
 
-                <p:overlayPanel widgetVar="carOP" showEffect="fade" hideEffect="fade" dismissable="true" showCloseIcon="false" >
- 
-                                        <p:dataTable var="Wealth" value="#{staffWealthManagedBean.onePortfolioAllTransactions}"  editable="true" >
+                                    <p:overlayPanel widgetVar="carOP" showEffect="fade" hideEffect="fade" dismissable="true" showCloseIcon="false" >
+
+                                        <p:dataTable var="Wealth" value="#{staffWealthManagedBean.onePortfolioAllTransactions}"  rows="10"
+                                                     paginator="true"
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="5,10,15" >
                                             <f:facet name="header">
                                                 All Transactions
                                             </f:facet>
@@ -103,22 +106,22 @@
         <!-- Right Column -->
         <div class="Container20 NoPadding Responsive50">
 
-                <div class="Card ui-fluid">
-                    <i class="icon-qq Cyan Fs40 Fleft MarRight10"></i>
-                    <span class="Cyan Fs20 FontDosisSemiBold">Charts Generator</span>
-                    <div class="EmptyBox10"></div>
-                    <div class="EmptyBox10"></div>
-                    <h:form>
-                        <p:commandButton value="View" actionListener="#{portfolioManagedBean.createPieModel1}" oncomplete="PF('carOP1').show('#{component.clientId}')"  >
+            <div class="Card ui-fluid">
+                <i class="icon-qq Cyan Fs40 Fleft MarRight10"></i>
+                <span class="Cyan Fs20 FontDosisSemiBold">Charts Generator</span>
+                <div class="EmptyBox10"></div>
+                <div class="EmptyBox10"></div>
+                <h:form>
+                    <p:commandButton value="View" actionListener="#{portfolioManagedBean.createPieModel1}" oncomplete="PF('carOP1').show('#{component.clientId}')"  >
 
-                        </p:commandButton>
-                    </h:form>
-                </div>
+                    </p:commandButton>
+                </h:form>
+            </div>
 
-                <p:overlayPanel widgetVar="carOP1" showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true">
-                    <p:chart type="pie" model="#{portfolioManagedBean.pieModel1}" style="width:400px;height:300px" />
+            <p:overlayPanel widgetVar="carOP1" showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true">
+                <p:chart type="pie" model="#{portfolioManagedBean.pieModel1}" style="width:400px;height:300px" />
 
-                </p:overlayPanel>
+            </p:overlayPanel>
         </div>
 
     </ui:define>

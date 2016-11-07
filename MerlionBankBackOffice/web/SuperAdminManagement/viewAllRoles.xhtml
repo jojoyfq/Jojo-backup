@@ -19,7 +19,10 @@
                             <p:panel id="panel" header="Role Management System" >
                                 <p:messages id="msgs" />
                                 <h:panelGrid columns="4" cellpadding="5">
-                                    <p:dataTable var="roleEntity" value="#{roleManagementManagedBean.staffRoles}">
+                                    <p:dataTable var="roleEntity" value="#{roleManagementManagedBean.staffRoles}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
                                         <p:column headerText="Role ID" style="width: 80px;">
                                             <h:outputText value="#{roleEntity.id}" />
                                         </p:column>
@@ -52,7 +55,10 @@
                                 <p:dialog id="dialogMessage"  appendTo="@(body)" header="Message Info" widgetVar="replyDialog" showEffect="fade" hideEffect="fade" resizable="true">
                                     <p:outputPanel id="msgDetail" style="text-align:center;">
                                         <p:panelGrid  columns="5"  >
-                                            <p:dataTable  var="permission" value="#{roleManagementManagedBean.permissions}">
+                                            <p:dataTable  var="permission" value="#{roleManagementManagedBean.permissions}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
                                                 <p:column headerText="Permission ID" style="width: 80px;">
                                                     <h:outputText value="#{permission.id}" />
                                                 </p:column>
