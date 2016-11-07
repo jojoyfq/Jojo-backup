@@ -33,7 +33,7 @@ public class DebitChargeback implements Serializable {
     private BigDecimal transactionAmount;
     private String chargebackDescription;
     //chargeback variables
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date chargebackDate;
     private String status;
     //link to card

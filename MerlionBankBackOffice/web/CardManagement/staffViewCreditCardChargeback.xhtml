@@ -27,11 +27,7 @@
                                     <f:facet name="header">
                                         Pending Credit Card Chargeback Requests
                                     </f:facet>
-                                    <p:column selectionMode="single"/>
-                                    
-                                    <p:column headerText="Chargeback ID" >
-                                        <h:outputText value="#{pendingCreditChargeback.id}" />
-                                    </p:column>
+                                    <p:column style="width:50px" selectionMode="single"/>
 
                                     <p:column headerText="Card Holder" >
                                         <h:outputText value="#{pendingCreditChargeback.creditCard.cardHolder}" />
@@ -50,12 +46,19 @@
                                     </p:column>
                                     
                                     <p:column headerText="Transaction Date" >
-                                        <h:outputText value="#{pendingCreditChargeback.transactionDate}" />
+                                        <h:outputText value="#{pendingCreditChargeback.transactionDate}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Search Link" >
+                                        <p:commandButton style="width:80px;height:37px" value="Quick Search" actionListener="#{searchManagedBean.dashboardToSearchByCardNo}"/>
                                     </p:column>
 
                                     <f:facet name="footer">
-                                        <p:commandButton process="radioDT"   icon="ui-icon-search" value="Approve" actionListener="#{creditCardManagedBean.verifyCreditChargebackApprove}" oncomplete="PF('carDialog').show()" />
-                                        <p:commandButton process="radioDT"   icon="ui-icon-search" value="Reject" actionListener="#{creditCardManagedBean.verifyCreditChargebackReject}" oncomplete="PF('carDialog').show()" />
+                                        <p:commandButton style="width:200px;height:37px" process="radioDT"   icon="ui-icon-search" value="Approve" actionListener="#{creditCardManagedBean.verifyCreditChargebackApprove}" oncomplete="PF('carDialog').show()" />
+                                        <div class="EmptyBox5"></div>
+                                        <p:commandButton style="width:200px;height:37px" process="radioDT"   icon="ui-icon-search" value="Reject" actionListener="#{creditCardManagedBean.verifyCreditChargebackReject}" oncomplete="PF('carDialog').show()" />
                                     </f:facet>
                                 </p:dataTable>
 
