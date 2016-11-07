@@ -27,69 +27,74 @@
                             <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
                                 <p:messages id="msgs" />
 
-                                <p:dataTable var="giro" value="#{billCustomerManagedBean.oneCustomerAllGiros}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}" rows="10"
+                                <p:dataTable var="rec" value="#{billCustomerManagedBean.oneCustomerAllRecurrents}" editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}" rows="10"
                                              paginator="true"
                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                              rowsPerPageTemplate="5,10,15" tableStyle="width:auto" >
-                                   
+
                                     <f:facet name="header">
-                                        View All GIRO Arrangements
+                                        View All Recurrent Bill Arrangements
                                     </f:facet>
 
-                                     <p:column headerText="Customer Name" style="width:40px" >
-                                         <h:outputText value="#{giro.customerName}" />
+                                    <p:column headerText="Recurrent Bill ID" style="width:40px" >
+                                        <h:outputText value="#{rec.id}" />
                                     </p:column>
-                                    
+
                                     <p:column headerText="GIRO ID" style="width:40px" >
                                         <h:outputText value="#{giro.id}" />
                                     </p:column>
 
 
-                                    <p:column headerText="Bill Reference">
-                                        <h:outputText value="#{giro.billReference}" />
-                                    </p:column>
-
                                     <p:column headerText="Bill Organization">
-                                        <h:outputText value="#{giro.billingOrganization}" />
+                                        <h:outputText value="#{rec.billingOrganization}" />
                                     </p:column>
 
-                                    <p:column headerText="Deduction Date ">
-                                        <h:outputText value="#{giro.deductionDay}" >
-                                        <f:convertDateTime pattern="MM/dd/yyyy" />
-                                        </h:outputText> 
-                                    </p:column>
-                                    
-                                    
-                                    <p:column headerText="Deduction Limit ">
-                                        <h:outputText value="#{giro.deductionLimit}" >
+                                    <p:column headerText="Amount S($)">
+                                        <h:outputText value="#{rec.amount}">
                                             <f:convertNumber locale="en-US" />
                                         </h:outputText>
                                     </p:column>
 
-                                    <p:column headerText="Bill Status">
-                                        <h:outputText value="#{giro.status}" />
+                                    <p:column headerText="Frequency(In Weeks) ">
+                                        <h:outputText value="#{rec.billInterval}" />
+                                    </p:column>
+                                    
+                                     <p:column headerText="No. of Payment(s) ">
+                                         <h:outputText value="#{rec.billTimes}" />
+                                    </p:column>
+
+                                    <p:column headerText="Start Date ">
+                                        <h:outputText value="#{rec.startDate}"  >
+                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                        </h:outputText> 
                                     </p:column>
 
                                     <p:column headerText="Saving Account Number" >
                                         <h:outputText value="#{giro.savingAccount.accountNumber}" />
                                     </p:column>
 
+                                    <p:column headerText="Bill Status">
+                                        <h:outputText value="#{rec.status}" />
+                                    </p:column>
+
+
+
                                     <p:column headerText="Delete" style="width: 80px;" >
                                         <center>
-                                            <p:commandButton icon="ui-icon-trash" actionListener="#{billCustomerManagedBean.deleteGiro(giro.id)}" update=":form" ajax="false" type="submit" 
-                                                             onclick="if (!confirm('Are you sure you want to delete this GIRO arrangement?'))
+                                            <p:commandButton icon="ui-icon-trash" actionListener="#{billCustomerManagedBean.deleteRecurrentBill(rec.id)}" update=":form" ajax="false" type="submit" 
+                                                             onclick="if (!confirm('Are you sure you want to delete this recurrent bill arrangement?'))
                                                                          return false;"/>
                                         </center>
                                     </p:column>
 
 
-                                 
+
                                 </p:dataTable>
 
                             </h:panelGrid>
 
                         </h:form>
-                       
+
                     </div>
                 </div>
             </div> 
