@@ -137,12 +137,8 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
 
         BigDecimal giverAvailableBalance;
         BigDecimal giverBalance;
-        BigDecimal recipientAvailableBalance;
-        BigDecimal recipientBalance;
         BigDecimal updatedGiverAvailableBalance;
         BigDecimal updatedGiverBalance;
-        BigDecimal updatedRecipientAvailableBalance;
-        BigDecimal updatedRecipientBalance;
 
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :giverBankAccountNum");
         q.setParameter("giverBankAccountNum", giverBankAccountNum);
@@ -178,7 +174,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
                 em.persist(transaction1);
                 em.flush();
 
-                
+                //if fast, call webservice
                 logAction("Transfer to "+recipientBankAccountNum, customerID);
 
                 System.out.println("transfer successfully!"); 

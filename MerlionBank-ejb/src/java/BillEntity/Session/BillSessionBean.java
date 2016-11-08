@@ -372,7 +372,42 @@ public class BillSessionBean implements BillSessionBeanLocal {
             return "Deduction fail! amount more than limit.";
         }
     }
+    
+    @Override
+    public List<RecurrentBillArrangement> viewableRecurrent(Long customerId) {
+        Customer customer = em.find(Customer.class, customerId);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
+         for (int i = 0; i < savingAccounts.size(); i++) {
+            for (int j = 0; j < savingAccounts.get(i).getRecurrentBillArrangement().size(); j++) {
+                if (!savingAccounts.get(i).getRecurrentBillArrangement().get(j).getStatus().equalsIgnoreCase("terminated")) {
+                    oneCustomerAllRecurrents.add(savingAccounts.get(i).getRecurrentBillArrangement().get(j));
+                }
+            }
+        }
+        return oneCustomerAllRecurrents;
+    }
+    
 
+    @Override
+    public List<GIROArrangement> deleteGIRO(Long giroId) {
+        List<GIROArrangement> oneCustomerAllGiros = new ArrayList<>();
+        GIROArrangement delete = em.find(GIROArrangement.class, giroId);
+        delete.setStatus("terminated");
+        Long customerId = delete.getSavingAccount().getCustomer().getId();
+        oneCustomerAllGiros = this.viewableGIRO(customerId);
+        return oneCustomerAllGiros;
+    }
+
+    @Override
+    public List<RecurrentBillArrangement> deleteRecurrent(Long recurrentBillId) {
+        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
+        RecurrentBillArrangement delete = em.find(RecurrentBillArrangement.class, recurrentBillId);
+        delete.setStatus("terminated");
+        Long customerId = delete.getSavingAccount().getCustomer().getId();
+        oneCustomerAllRecurrents = this.viewableRecurrent(customerId);
+        return oneCustomerAllRecurrents;
+    }
 //for webservice
 //for webservice
 // webservice lala
@@ -453,22 +488,6 @@ public class BillSessionBean implements BillSessionBeanLocal {
         }
     }
 
-    @Override
-    public List<RecurrentBillArrangement> viewableRecurrent(Long customerId) {
-        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
-        return oneCustomerAllRecurrents;
-    }
 
-    @Override
-    public List<GIROArrangement> deleteGIRO(Long giroId) {
-        List<GIROArrangement> oneCustomerAllGiros = new ArrayList<>();
-        return oneCustomerAllGiros;
-    }
-
-    @Override
-    public List<RecurrentBillArrangement> deleteRecurrent(Long recurrentBillId) {
-        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
-        return oneCustomerAllRecurrents;
-    }
 
 }
