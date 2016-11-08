@@ -5,19 +5,14 @@
  */
 package session.ws;
 
-import BillEntity.GIROArrangement;
 import BillEntity.Session.BillSessionBeanLocal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
-import org.joda.time.DateTime;
 
 /**
  *

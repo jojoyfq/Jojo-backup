@@ -133,18 +133,13 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         return accounts;
     }
 
-
-    @Override
-    public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName, BigDecimal transferAmount) throws TransferException {
-
+    
+     @Override
+    public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName,BigDecimal transferAmount, boolean isFast) throws TransferException {
         BigDecimal giverAvailableBalance;
         BigDecimal giverBalance;
-        BigDecimal recipientAvailableBalance;
-        BigDecimal recipientBalance;
         BigDecimal updatedGiverAvailableBalance;
         BigDecimal updatedGiverBalance;
-        BigDecimal updatedRecipientAvailableBalance;
-        BigDecimal updatedRecipientBalance;
 
         Query q = em.createQuery("SELECT a FROM SavingAccount a WHERE a.accountNumber = :giverBankAccountNum");
         q.setParameter("giverBankAccountNum", giverBankAccountNum);
@@ -173,12 +168,14 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-        TransactionRecord transaction1 = new TransactionRecord("INTF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "MerlionBank", recipientBankAccountName);
+        TransactionRecord transaction1 = new TransactionRecord("INTF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "Merlion", recipientBankAccountName);
         giverSavingAccount.getTransactionRecord().add(transaction1);
         em.persist(transaction1);
         em.flush();
 
-        logAction("Transfer to " + recipientBankAccountNum, customerID);
+                //if fast, call webservice
+                logAction("Transfer to "+recipientBankAccountNum, customerID);
+
 
         System.out.println("transfer successfully!");
 
