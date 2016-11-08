@@ -335,7 +335,6 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
         for (int j = 0; j < creditCards.size(); j++) {
             System.out.print("********** inside the loans loop");
             card = creditCards.get(j);
-            
             Date todayDate = Calendar.getInstance().getTime();
             DateTime payDate = new DateTime(card.get);
             DateTime compareDate = payDate.plusMonths(1);

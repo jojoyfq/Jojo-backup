@@ -50,9 +50,7 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
     public static final int SALT_LENGTH = 8;
     @EJB
     private StaffManagementSessionBeanLocal smsbl;
-    @EJB
-    private WealthBISessionBeanLocal wbisbl;
-
+   
     @Override
     public Customer createDiscretionaryAccount(String ic, String name, String gender, Date dateOfBirth, String address, String email, String phoneNumber, String occupation, String familyInfo) throws UserExistException, EmailNotSendException {
         String salt = "";
@@ -195,8 +193,7 @@ public class WealthApplicationSessionBean implements WealthApplicationSessionBea
         em.flush();
         
         //To be deleted
-        wbisbl.calculateCombination();
-        
+       
 
         System.out.println("Discretionary Account successfully created");
 

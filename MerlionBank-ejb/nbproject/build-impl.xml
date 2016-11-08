@@ -798,21 +798,18 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.Joda_Time.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${libs.atlas.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${libs.FileUtils.classpath}" todir="${build.classes.dir}"/>
-        <copyfiles files="${libs.ampl.classpath}" todir="${build.classes.dir}"/>
     </target>
     <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
         <basename file="${libs.twilio-java-sdk_5.11.0.classpath}" property="manifest.libs.twilio-java-sdk_5.11.0.classpath"/>
         <basename file="${libs.Joda_Time.classpath}" property="manifest.libs.Joda_Time.classpath"/>
         <basename file="${libs.atlas.classpath}" property="manifest.libs.atlas.classpath"/>
         <basename file="${libs.FileUtils.classpath}" property="manifest.libs.FileUtils.classpath"/>
-        <basename file="${libs.ampl.classpath}" property="manifest.libs.ampl.classpath"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 "/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.libs.twilio-java-sdk_5.11.0.classpath}"/>
             <attribute name="jar-2-Extension-Name" value="${manifest.libs.Joda_Time.classpath}"/>
             <attribute name="jar-3-Extension-Name" value="${manifest.libs.atlas.classpath}"/>
             <attribute name="jar-4-Extension-Name" value="${manifest.libs.FileUtils.classpath}"/>
-            <attribute name="jar-5-Extension-Name" value="${manifest.libs.ampl.classpath}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
@@ -820,7 +817,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.Joda_Time.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.atlas.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.FileUtils.classpath}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.ampl.classpath}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">
