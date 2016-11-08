@@ -48,10 +48,10 @@ public interface TransferSessionBeanLocal {
 
     public boolean checkPayeeValidity(Long payeeAccount);
 
-    public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName, BigDecimal transferAmount) throws TransferException;
-
     public List<OtherBank> viewOtherBank();
 
     public boolean intraOneTimeTransferCheckMobile(String customerIC, String giverBankAccountString, String recipientBankAccountString, String transferAmountStr) throws TransferException;
+
+    public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName, BigDecimal transferAmount, boolean isFast) throws TransferException;
 
     }
