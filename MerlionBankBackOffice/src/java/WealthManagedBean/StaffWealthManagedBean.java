@@ -383,6 +383,7 @@ public class StaffWealthManagedBean implements Serializable {
         foreignExchange = onePortAllProducts.get(0).getPercentage();
         equity = onePortAllProducts.get(1).getPercentage();
         bond = onePortAllProducts.get(2).getPercentage();
+        System.out.println("FX-equity-bond: "+foreignExchange+"-"+equity+"-"+bond);
 
     }
 
@@ -394,8 +395,12 @@ public class StaffWealthManagedBean implements Serializable {
 ////            foreignExchange = selectedPort.getProducts().get(0).getPercentage();
 ////            equity = selectedPort.getProducts().get(1).getPercentage();
 ////            bond = selectedPort.getProducts().get(2).getPercentage();
-//            term = selectedPort.getTerm();
+//            term = selectedPort.getTerm();           
             oneCustomerAllPortfolios = wmsbl.staffModifyPortfolioProduct(staffId, selectedPort.getId(), foreignExchange, equity, bond);
+           foreignExchange = onePortAllProducts.get(0).getPercentage();
+        equity = onePortAllProducts.get(1).getPercentage();
+        bond = onePortAllProducts.get(2).getPercentage();
+
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Modified Successfully!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 

@@ -1,0 +1,89 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Pay Bill </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <div class="Card">
+                                <div class="Container10"></div>
+                                <div class="Container80">
+                                    <p:panel id="panel" header="Pay Bill Counter- Adhoc">
+                                        <p:messages id="msgs" />                      
+                                        <h:panelGrid columns="2" id="payBillPanel" cellpadding="5"> 
+
+                                            <h:outputLabel for="bo" value="Billing Organization:" />
+                                            <p:selectOneMenu id="boSelect" value="#{billStaffManagedBean.boName}" required="true" >
+                                                <f:selectItem itemLabel="Select One" itemValue="" noSelectionOption="false"  />
+                                                <f:selectItems value="#{billStaffManagedBean.boNames}" />
+                                            </p:selectOneMenu>
+
+                                            <h:outputLabel for="billReference" value="Bill Referrence:" />
+                                            <p:inputText id="billReference" value="#{billStaffManagedBean.billReference}" label="billReference" required="true" >
+                                            </p:inputText>
+
+                                            <h:outputLabel for="amount" value="Payment amount(S$):" />
+                                            <p:inputNumber id="amount" value="#{billStaffManagedBean.adhocAmount}"  required="true" decimalPlaces="2" thousandSeparator=",">
+                                             
+                                            </p:inputNumber>
+
+                                          
+
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </div>
+                                <div class="Container10"></div>
+
+                                <div class="EmptyBox20"></div>
+                                <div class="Container30"></div>
+                                <div class="Container40">
+                                    <p:commandButton update = "panel" actionListener="#{billStaffManagedBean.adHocBillCounter}" value="Submit" />
+                                </div>
+                                <div class="Container30"></div>
+                                <div class="EmptyBox20"></div>
+
+                            </div>
+                        </h:form>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition> 
+
+
+

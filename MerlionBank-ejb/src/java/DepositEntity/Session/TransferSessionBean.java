@@ -133,6 +133,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         return accounts;
     }
 
+
     @Override
     public void interOneTimeTransferCheck(Long customerID, Long giverBankAccountNum, Long recipientBankAccountNum, String recipientBankAccountName, BigDecimal transferAmount) throws TransferException {
 

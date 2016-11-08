@@ -470,5 +470,9 @@ public class BillSessionBean implements BillSessionBeanLocal {
         List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
         return oneCustomerAllRecurrents;
     }
+    @Override
+     public boolean adhocBillCounter (String boName, String billReference, BigDecimal amount ){
+    return true;
+     }
 
 }

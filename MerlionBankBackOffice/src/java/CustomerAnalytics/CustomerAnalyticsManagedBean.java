@@ -7,9 +7,13 @@ package CustomerAnalytics;
 
 import BusinessIntelligenceEntity.Category;
 import BusinessIntelligenceEntity.Coupon;
+import BusinessIntelligenceEntity.Interest;
 import BusinessIntelligenceEntity.Session.SpendingSegmentationManagementSessionBeanLocal;
 import BusinessIntelligenceEntity.Shop;
 import Exception.ShopAlreadyExistedException;
+import Exception.UserNotActivatedException;
+import Exception.UserNotExistException;
+import WealthEntity.Session.WealthApplicationSessionBeanLocal;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,6 +39,8 @@ public class CustomerAnalyticsManagedBean implements Serializable {
 
     @EJB
     SpendingSegmentationManagementSessionBeanLocal ssmsbl;
+      @EJB
+    private WealthApplicationSessionBeanLocal wasbl;
 
     /**
      * Creates a new instance of CustomerAnalytics
@@ -61,6 +67,11 @@ public class CustomerAnalyticsManagedBean implements Serializable {
     private Coupon selectedCoupon;
     private Long selectedShopId;
     private Long selectedCouponId;
+    private List<Interest>  oneCustomerAllInterest;
+    private Boolean searchResult;
+    private String customerIc;
+    private Interest selectedInterest;
+   private Long selectedInterestId;
 
     @PostConstruct
     public void init() {
@@ -73,6 +84,8 @@ public class CustomerAnalyticsManagedBean implements Serializable {
         categoryNames = new ArrayList<>();
         splitedCategoryId = new ArrayList<>();
         selectedCoupon = new Coupon();
+        oneCustomerAllInterest = new ArrayList<>();
+        selectedInterest = new Interest();
 
         allCategories = ssmsbl.displayAllCategory();
         for (int i = 0; i < allCategories.size(); i++) {
@@ -230,6 +243,28 @@ public class CustomerAnalyticsManagedBean implements Serializable {
         RequestContext.getCurrentInstance().showMessageInDialog(message);
 
     }
+    public void searchCustomer(ActionEvent event) throws IOException{
+        try {
+            customerId = wasbl.searchCustomer(customerIc);
+            System.out.println("Searched customer ID is "+customerId);
+            searchResult = true;
+        } catch (UserNotExistException ex) {
+ FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+        } catch (UserNotActivatedException ex) {
+ FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+       oneCustomerAllInterest = ssmsbl.viewCustomerSegmentation(customerId);
+        //    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/CustomerAnalytics/viewAllInterests.xhtml");
+
+    }
+    public void selectCustomer(ActionEvent event){
+    selectedInterest = (Interest) event.getComponent().getAttributes().get("selectedInterest") ;
+    selectedInterestId = selectedInterest.getId();
+    System.out.println("******Selected interest Id is "+selectedInterestId);
+    }
+    
 
     public SpendingSegmentationManagementSessionBeanLocal getSsmsbl() {
         return ssmsbl;
@@ -397,6 +432,54 @@ public class CustomerAnalyticsManagedBean implements Serializable {
 
     public void setSelectedCouponId(Long selectedCouponId) {
         this.selectedCouponId = selectedCouponId;
+    }
+
+    public WealthApplicationSessionBeanLocal getWasbl() {
+        return wasbl;
+    }
+
+    public void setWasbl(WealthApplicationSessionBeanLocal wasbl) {
+        this.wasbl = wasbl;
+    }
+
+    public List<Interest> getOneCustomerAllInterest() {
+        return oneCustomerAllInterest;
+    }
+
+    public void setOneCustomerAllInterest(List<Interest> oneCustomerAllInterest) {
+        this.oneCustomerAllInterest = oneCustomerAllInterest;
+    }
+
+    public Boolean getSearchResult() {
+        return searchResult;
+    }
+
+    public void setSearchResult(Boolean searchResult) {
+        this.searchResult = searchResult;
+    }
+
+    public String getCustomerIc() {
+        return customerIc;
+    }
+
+    public void setCustomerIc(String customerIc) {
+        this.customerIc = customerIc;
+    }
+
+    public Interest getSelectedInterest() {
+        return selectedInterest;
+    }
+
+    public void setSelectedInterest(Interest selectedInterest) {
+        this.selectedInterest = selectedInterest;
+    }
+
+    public Long getSelectedInterestId() {
+        return selectedInterestId;
+    }
+
+    public void setSelectedInterestId(Long selectedInterestId) {
+        this.selectedInterestId = selectedInterestId;
     }
 
 }

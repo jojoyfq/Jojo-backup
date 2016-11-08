@@ -90,7 +90,7 @@
                         <p:menuitem id="activate_wealthForExisting" value="Activate Discretionary Account" actionListener="#{customerWealthManagedBean.goToAcitivateWealthAccount}" /> 
                     </p:submenu>
                     <p:submenu id="wealth1" label="Investment Plan and Product" icon="icon-plus">
-                        <p:menuitem id="view_wealth_account2" value="Plan Management" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForPortfolio}"/>
+                        <p:menuitem id="view_wealth_account2" value="Plan Management" actionListener="#{customerWealthManagedBean.customerDisplayPortfolios}"/>
                         <p:menuitem id="buy" value="Buy Wealth Product" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForBuyProduct}" /> 
                     </p:submenu>
                     <p:submenu id="wealth2" label="Account Managment and Other Services" icon="icon-plus">
@@ -100,6 +100,10 @@
                 </p:submenu>
                     <p:submenu id="pa_docs" label="Portfolio Management">
                         <p:menuitem id="view_portfolio" value="View My Portfolio" actionListener="#{customerWealthManagedBean.goToDisplayAllMyWealthAccountsForPortfolioSystem}"/>
+
+                    </p:submenu>
+                 <p:submenu id="bi" label="Customer Analytics">
+                     <p:menuitem id="view_spending" value="View My Spending Segmentation" actionListener="#{buisinessIntelligenceManagedBean.searchCustomer}"/>
 
                     </p:submenu>
 

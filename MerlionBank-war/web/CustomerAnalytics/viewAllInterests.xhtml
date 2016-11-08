@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container70 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5" style="width:65%" >
+                                <p:messages id="msgs" />
+
+                                <p:dataTable var="pendingLoan" value="#{buisinessIntelligenceManagedBean.oneCustomerAllInterest}"  editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}" rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15" style="width: 150%"  >
+
+                                    <f:facet name="header">
+                                        View My Spending Segmentations
+                                    </f:facet>
+
+                                    <p:column headerText="Interest ID" style="width:40px" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+
+                                    <p:column headerText="Category Name" style="width:70px" >
+                                        <h:outputText value="#{pendingLoan.category.name}" />
+                                    </p:column>
+
+                                    <p:column headerText="Spending Amount S($)" style="width:100px">
+                                        <h:outputText value="#{pendingLoan.amount}" >
+                                            <f:convertNumber locale="en-US" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                </p:dataTable>
+
+                            </h:panelGrid>
+                            <p:chart type="bar" model="#{buisinessIntelligenceManagedBean.barModel}" style="height:300px"/>
+                        </h:form>
+
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>
