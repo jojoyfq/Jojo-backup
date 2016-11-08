@@ -10,6 +10,7 @@ import BillEntity.BillingOrganization;
 import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
 import BillEntity.RecurrentBillArrangement;
+import CardEntity.CreditCard;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.Staff;
@@ -372,13 +373,13 @@ public class BillSessionBean implements BillSessionBeanLocal {
             return "Deduction fail! amount more than limit.";
         }
     }
-    
+
     @Override
     public List<RecurrentBillArrangement> viewableRecurrent(Long customerId) {
         Customer customer = em.find(Customer.class, customerId);
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
         List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
-         for (int i = 0; i < savingAccounts.size(); i++) {
+        for (int i = 0; i < savingAccounts.size(); i++) {
             for (int j = 0; j < savingAccounts.get(i).getRecurrentBillArrangement().size(); j++) {
                 if (!savingAccounts.get(i).getRecurrentBillArrangement().get(j).getStatus().equalsIgnoreCase("terminated")) {
                     oneCustomerAllRecurrents.add(savingAccounts.get(i).getRecurrentBillArrangement().get(j));
@@ -387,7 +388,6 @@ public class BillSessionBean implements BillSessionBeanLocal {
         }
         return oneCustomerAllRecurrents;
     }
-    
 
     @Override
     public List<GIROArrangement> deleteGIRO(Long giroId) {
@@ -408,6 +408,17 @@ public class BillSessionBean implements BillSessionBeanLocal {
         oneCustomerAllRecurrents = this.viewableRecurrent(customerId);
         return oneCustomerAllRecurrents;
     }
+
+    @Override
+    public boolean adhocBillCounter(String boName, String billReference, BigDecimal amount) {
+        BillingOrganization bo = em.find(BillingOrganization.class, boName);
+        Date todayDate = new Date();
+        BillRecord bill = new BillRecord(bo, billReference, "BI", amount, null, "settled", "Bill payment to " + boName, todayDate, null, bo.getAccountNumber(), null, "Merlion", bo.getBank().getName());
+        //add counter cash record
+
+        return true;
+    }
+
 //for webservice
 //for webservice
 // webservice lala
@@ -448,8 +459,35 @@ public class BillSessionBean implements BillSessionBeanLocal {
     }
 
     //receive transactions from other banks to merlion from sach
+    @Override
     public void processReceivedTransactions(List<String> transactions) {
+        Date today = new Date();
+        for (int i = 0; i < transactions.size(); i++) {
+            String oneTrans = transactions.get(i);
+            if (oneTrans.split(",")[4].equalsIgnoreCase("INTF")) {
+                //receipient account number
+                Long accountNumber = Long.valueOf(oneTrans.split(",")[3]);
+                BigDecimal amount = BigDecimal.valueOf(Double.valueOf(oneTrans.split(",")[5]));
+                SavingAccount savingAccount = this.findSavingAccount(accountNumber);
+                savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().add(amount));
+                savingAccount.setBalance(savingAccount.getBalance().add(amount));
+                TransactionRecord trans = new TransactionRecord("INTFR", null, amount, "settled", "Transafer from " + oneTrans.split(",")[0] + oneTrans.split(",")[1] + "to saving account " + accountNumber, today, Long.valueOf(oneTrans.split(",")[1]), accountNumber, savingAccount, oneTrans.split(",")[0], "Merlion");
+                em.persist(trans);
+                savingAccount.getTransactionRecord().add(trans);
+                em.flush();
 
+            } else if (oneTrans.split(",")[4].equalsIgnoreCase("INCR")) {
+                Long cardNumber = Long.valueOf(oneTrans.split(",")[3]);
+                BigDecimal amount = BigDecimal.valueOf(Double.valueOf(oneTrans.split(",")[5]));
+                Query m = em.createQuery("SELECT a FROM CreditCard a WHERE a.cardNumber = :cardNumber");
+                m.setParameter("cardNumber", cardNumber);
+                CreditCard card = (CreditCard) m.getSingleResult();
+                card.setBalance(card.getBalance().add(amount));
+                TransactionRecord trans = new TransactionRecord("INCRR", null, amount, "settled", "Pay credit card", today, Long.valueOf(oneTrans.split(",")[1]), cardNumber, null, oneTrans.split(",")[0], "Merlion");
+                em.persist(trans);
+                em.flush();
+            }
+        }
     }
 
     //check transactions from other banks to merlion 
@@ -457,8 +495,8 @@ public class BillSessionBean implements BillSessionBeanLocal {
     public List<String> checkReceivedTransactions(List<String> transactions) {
         List<String> wrong = new ArrayList<>();
         for (int i = 0; i < transactions.size(); i++) {
-            if(transactions.get(i).split(",")[4].equalsIgnoreCase("INTF") || transactions.get(i).split(",")[4].equalsIgnoreCase("INCR")){
-                if(this.checkValid(transactions.get(i).split(",")[4], transactions.get(i).split(",")[3]) == false){
+            if (transactions.get(i).split(",")[4].equalsIgnoreCase("INTF") || transactions.get(i).split(",")[4].equalsIgnoreCase("INCR")) {
+                if (this.checkValid(transactions.get(i).split(",")[4], transactions.get(i).split(",")[3]) == false) {
                     wrong.add(transactions.get(i));
 
                 }
@@ -467,31 +505,24 @@ public class BillSessionBean implements BillSessionBeanLocal {
         return wrong;
     }
 
-
     private boolean checkValid(String code, String acctNum) {
         if (code.equalsIgnoreCase("INTF")) {
             Query m = em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :accountNumber");
             m.setParameter("accountNumber", Long.valueOf(acctNum));
-            if(m.getResultList().isEmpty()){
+            if (m.getResultList().isEmpty()) {
                 return false;
             }
             return true;
-        }else if(code.equalsIgnoreCase("INCR")){
+        } else if (code.equalsIgnoreCase("INCR")) {
             Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNumber");
             m.setParameter("cardNumber", Long.valueOf(acctNum));
-            if(m.getResultList().isEmpty()){
+            if (m.getResultList().isEmpty()) {
                 return false;
             }
             return true;
-        }else{
+        } else {
             return true;
         }
     }
-
-
-    @Override
-     public boolean adhocBillCounter (String boName, String billReference, BigDecimal amount ){
-    return true;
-     }
 
 }

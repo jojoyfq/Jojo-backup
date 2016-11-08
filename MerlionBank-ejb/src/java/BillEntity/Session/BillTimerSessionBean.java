@@ -89,7 +89,7 @@ public class BillTimerSessionBean implements BillTimerSessionBeanLocal {
                             
                             //set the bo account number here
                             BillRecord bill = new BillRecord(billingOrganization, billReference, "BI", recurrentAmt, null, "settled", "Bill payment to " + boName, 
-                                    todayDate, accountNumber, null, null, null, null);
+                                    todayDate, accountNumber,recurrentBillArrangements.get(i).getBillingOrganization().getAccountNumber() , savingAccount, "Merlion",recurrentBillArrangements.get(i).getBillingOrganization().getBank().getName());
                             em.persist(bill);
                             savingAccount.getTransactionRecord().add(bill);
                             em.flush();

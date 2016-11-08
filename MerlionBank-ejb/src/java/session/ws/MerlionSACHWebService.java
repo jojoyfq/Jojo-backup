@@ -34,6 +34,16 @@ public class MerlionSACHWebService {
         //TODO write your implementation code here:
         return bsbl.checkReceivedTransactions(transactions);
     }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "receiveTransactionsFromSACH")
+    public boolean receiveTransactionsFromSACH(@WebParam(name = "transactions") List<String> transactions) {
+        //TODO write your implementation code here:
+        bsbl.processReceivedTransactions(transactions);
+        return true;
+    }
     
     
  

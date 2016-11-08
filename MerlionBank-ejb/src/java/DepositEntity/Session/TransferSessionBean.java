@@ -168,7 +168,7 @@ public class TransferSessionBean implements TransferSessionBeanLocal {
         Date currentTime = Calendar.getInstance().getTime();
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
 
-        TransactionRecord transaction1 = new TransactionRecord("INTF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "MerlionBank", recipientBankAccountName);
+        TransactionRecord transaction1 = new TransactionRecord("INTF", transferAmount, null, "settled", "iBanking Transfer", currentTimestamp, giverBankAccountNum, recipientBankAccountNum, giverSavingAccount, "Merlion", recipientBankAccountName);
         giverSavingAccount.getTransactionRecord().add(transaction1);
         em.persist(transaction1);
         em.flush();

@@ -75,4 +75,6 @@ public interface BillSessionBeanLocal {
     public List<GIROArrangement> deleteGIRO(Long giroId);
     public List<RecurrentBillArrangement> deleteRecurrent(Long recurrentBillId);
 
+    public void processReceivedTransactions(List<String> transactions);
+
 }

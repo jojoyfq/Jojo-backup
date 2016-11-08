@@ -10,6 +10,7 @@ import BillEntity.OtherBank;
 import BillEntity.Session.BillSessionBeanLocal;
 import CommonEntity.Staff;
 import StaffManagement.staffLogInManagedBean;
+import TellerManagedBean.ServiceCustomerManagedBean;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -68,9 +69,12 @@ public class BillStaffManagedBean implements Serializable {
     private Long boIdSelected;
     private BigDecimal adhocAmount;
     private String billReference;
+    private Long customerId;
 
     @Inject
     private staffLogInManagedBean staffLogInManagedBean;
+    @Inject
+    private ServiceCustomerManagedBean serviceCustomerManagedBean;
 
     @PostConstruct
     public void init() {
@@ -254,23 +258,30 @@ public class BillStaffManagedBean implements Serializable {
 
         }
     }
-public void adHocBillCounter(ActionEvent event){
-    System.out.println("Adhoc bill counter--boName "+boName);
-            System.out.println("Adhoc bill counter--billReference "+billReference);
-                System.out.println("Adhoc bill counter--adhocAmount "+adhocAmount);
 
-    boolean result = bsbl.adhocBillCounter(boName,billReference, adhocAmount);
-   ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+    public void adHocBillCounter(ActionEvent event) {
+        System.out.println("Adhoc bill counter--boName " + boName);
+        System.out.println("Adhoc bill counter--billReference " + billReference);
+        System.out.println("Adhoc bill counter--adhocAmount " + adhocAmount);
+
+        boolean result = bsbl.adhocBillCounter(boName, billReference, adhocAmount);
+        String description = "Staff" + staffLogInManagedBean.getStaffIc() + " pay bill for " + customerId;
+        bsbl.logStaffAction(description, customerId, staffId);
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         try {
             ec.redirect("/MerlionBankBackOffice/BillManagement/adhocBillCounterSuccess.xhtml");
         } catch (IOException ex) {
-             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         }
-}
- public void dashboardToAdhocOTC(ActionEvent event) throws IOException {
+    }
+
+    public void dashboardToAdhocOTC(ActionEvent event) throws IOException {
+        boNames = bsbl.viewBOName();
+        customerId = serviceCustomerManagedBean.getCustomerId();
         try {
+
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/MerlionBankBackOffice/TransferManagement/adhocBillCounter.xhtml");
         } catch (IOException ex) {
