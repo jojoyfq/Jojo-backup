@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="content">
+
+        <div class="Container5 NoPadding Responsive100">
+        </div>
+
+        <div class="Container90 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable id="radioDT" var="pendingCreditChargeback" value="#{creditCardManagedBean.pendingCreditChargebackList}" selectionMode="single" selection="#{creditCardManagedBean.selectedChargeback}" rowKey="#{pendingCreditChargeback.id}">
+                                    <f:facet name="header">
+                                        Pending Credit Card Chargeback Requests
+                                    </f:facet>
+                                    <p:column style="width:50px" selectionMode="single"/>
+
+                                    <p:column headerText="Card Holder" >
+                                        <h:outputText value="#{pendingCreditChargeback.creditCard.cardHolder}" />
+                                    </p:column>
+
+                                    <p:column headerText="Card Number" >
+                                        <h:outputText value="#{pendingCreditChargeback.creditCard.cardNumber}" />
+                                    </p:column>
+
+                                    <p:column headerText="Transaction Amount" >
+                                        <h:outputText value="#{pendingCreditChargeback.transactionAmount}" />
+                                    </p:column>
+
+                                    <p:column headerText="Merchat Name" >
+                                        <h:outputText value="#{pendingCreditChargeback.merchantName}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="Transaction Date" >
+                                        <h:outputText value="#{pendingCreditChargeback.transactionDate}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Search Link" >
+                                        <p:commandButton style="width:80px;height:37px" value="Quick Search" actionListener="#{searchManagedBean.dashboardToSearchByCardNo}"/>
+                                    </p:column>
+
+                                    <f:facet name="footer">
+                                        <p:commandButton style="width:200px;height:37px" process="radioDT"   icon="ui-icon-search" value="Approve" actionListener="#{creditCardManagedBean.verifyCreditChargebackApprove}" oncomplete="PF('carDialog').show()" />
+                                        <div class="EmptyBox5"></div>
+                                        <p:commandButton style="width:200px;height:37px" process="radioDT"   icon="ui-icon-search" value="Reject" actionListener="#{creditCardManagedBean.verifyCreditChargebackReject}" oncomplete="PF('carDialog').show()" />
+                                    </f:facet>
+                                </p:dataTable>
+
+                            </h:panelGrid>
+
+
+
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+
+        <div class="Container5 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>

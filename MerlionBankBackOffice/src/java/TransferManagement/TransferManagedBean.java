@@ -54,16 +54,16 @@ public class TransferManagedBean implements Serializable {
     public TransferManagedBean() {
     }
 
-    public void dashboardToIntraTransfer(ActionEvent event) {
+    public void dashboardToIntraTransfer(ActionEvent event) throws IOException {
         try {
             customerID = serviceCustomerManagedBean.getCustomer().getId();
             if (customerID != null) {
                 setCustomerID(serviceCustomerManagedBean.getCustomer().getId());
                 this.getSavingAccountNumbers();
-                 FacesContext.getCurrentInstance().getExternalContext()
+                FacesContext.getCurrentInstance().getExternalContext()
                         .redirect("/MerlionBankBackOffice/TransferManagement/intraTransfer.xhtml");
             } else {
-              FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
+                FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a customer first!");
                 RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
             }
 
@@ -72,6 +72,7 @@ public class TransferManagedBean implements Serializable {
         }
     }
 
+   
     public void getSavingAccountNumbers() throws IOException, UserHasNoSavingAccountException {
         try {
             savingAccountList = tfsb.getSavingAccountNumbers(customerID);
@@ -177,7 +178,6 @@ public class TransferManagedBean implements Serializable {
         this.customerID = customerID;
     }
 
-
     public String getGiverAccountNumString() {
         return giverAccountNumString;
     }
@@ -185,6 +185,5 @@ public class TransferManagedBean implements Serializable {
     public void setGiverAccountNumString(String giverAccountNumString) {
         this.giverAccountNumString = giverAccountNumString;
     }
-    
-    
+
 }

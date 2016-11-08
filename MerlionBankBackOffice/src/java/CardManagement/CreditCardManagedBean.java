@@ -6,17 +6,20 @@
 package CardManagement;
 
 import CardEntity.CreditCardApplication;
+import CardEntity.CreditChargeback;
 import CardEntity.Session.CreditCardSessionBeanLocal;
 import CommonEntity.Customer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import org.primefaces.context.RequestContext;
 
@@ -34,6 +37,9 @@ public class CreditCardManagedBean implements Serializable {
     private CreditCardApplication selectedCreditApplication;
     private String path;
     private String fileSelected;
+    //staff view chargeback
+    private List<CreditChargeback> pendingCreditChargebackList = new ArrayList();
+    private CreditChargeback selectedChargeback;
 
     @PostConstruct
     public void init() {
@@ -41,6 +47,18 @@ public class CreditCardManagedBean implements Serializable {
     }
 
     public CreditCardManagedBean() {
+    }
+
+    public void dashboardToViewCreditChargeback() throws IOException {
+        pendingCreditChargebackList = ccsb.getPendingCreditChargeback();
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/MerlionBankBackOffice/CardManagement/staffViewCreditCardChargeback.xhtml");
+    }
+
+    public void dashboardToVerifyCreditCardApplication() throws IOException {
+        this.getPendingApplication();
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/MerlionBankBackOffice/CardManagement/staffVerifyCreditCard.xhtml");
     }
 
     public void getPendingApplication() {
@@ -51,21 +69,33 @@ public class CreditCardManagedBean implements Serializable {
         }
     }
 
-    public void approveCardApplication(ActionEvent event) throws ParseException {
-        if(selectedCreditApplication != null){
+    public void approveCardApplication(ActionEvent event) throws ParseException, IOException {
+        if (selectedCreditApplication != null) {
+            String customerName = selectedCreditApplication.getCustomerName();
+            //execute approve credit card method
             ccsb.approveCreditCardApplication(selectedCreditApplication);
-        }else{
+
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer " + customerName + " application of credit card has been approved!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            this.getPendingApplication();
+        } else {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select an application to approve!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
 
-    public void rejectCardApplication(ActionEvent event) {
-        if(selectedCreditApplication != null){
+    public void rejectCardApplication(ActionEvent event) throws IOException {
+        if (selectedCreditApplication != null) {
+            String customerName = selectedCreditApplication.getCustomerName();
+            //execute approve credit card method
             ccsb.rejectCreditCardApplication(selectedCreditApplication);
-        }else{
+
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer " + customerName + " application of credit card has been approved!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            this.getPendingApplication();
+        } else {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select an application to reject!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
 
@@ -77,6 +107,38 @@ public class CreditCardManagedBean implements Serializable {
         System.out.println("File Path From customer is " + fileSelected);
         System.out.println("File Path is " + path);
 
+    }
+
+    public void verifyCreditChargebackApprove() {
+        try {
+            if (selectedChargeback != null) {
+                ccsb.setChargebackStatus(selectedChargeback, "staff approved");
+                pendingCreditChargebackList = ccsb.getPendingCreditChargeback();
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/CardManagement/staffViewCreditCardChargeback.xhtml");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a chargeback to verify! ");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } catch (Exception e) {
+            System.out.print("Verify Debit Chargeback approve encounter error");
+        }
+    }
+
+    public void verifyCreditChargebackReject() {
+        try {
+            if (selectedChargeback != null) {
+                ccsb.setChargebackStatus(selectedChargeback, "staff rejected");
+                pendingCreditChargebackList = ccsb.getPendingCreditChargeback();
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBankBackOffice/CardManagement/staffViewCreditCardChargeback.xhtml");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a chargeback to verify! ");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } catch (Exception e) {
+            System.out.print("Verify Credit Chargeback reject encounter error");
+        }
     }
 
     public List<CreditCardApplication> getPendingCreditCardApplications() {
@@ -109,6 +171,22 @@ public class CreditCardManagedBean implements Serializable {
 
     public void setFileSelected(String fileSelected) {
         this.fileSelected = fileSelected;
+    }
+
+    public List<CreditChargeback> getPendingCreditChargebackList() {
+        return pendingCreditChargebackList;
+    }
+
+    public void setPendingCreditChargebackList(List<CreditChargeback> pendingCreditChargebackList) {
+        this.pendingCreditChargebackList = pendingCreditChargebackList;
+    }
+
+    public CreditChargeback getSelectedChargeback() {
+        return selectedChargeback;
+    }
+
+    public void setSelectedChargeback(CreditChargeback selectedChargeback) {
+        this.selectedChargeback = selectedChargeback;
     }
 
 }

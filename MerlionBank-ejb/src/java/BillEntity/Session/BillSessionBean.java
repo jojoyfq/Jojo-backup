@@ -10,14 +10,16 @@ import BillEntity.BillingOrganization;
 import BillEntity.GIROArrangement;
 import BillEntity.OtherBank;
 import BillEntity.RecurrentBillArrangement;
+import CardEntity.CreditCard;
 import CommonEntity.Customer;
 import CommonEntity.CustomerAction;
 import CommonEntity.Staff;
 import CustomerRelationshipEntity.StaffAction;
 import DepositEntity.SavingAccount;
-import Exception.NotEnoughAmountException;
+
+import DepositEntity.TransactionRecord;
+
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,9 +31,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 
 /**
  *
@@ -299,91 +298,231 @@ public class BillSessionBean implements BillSessionBeanLocal {
     }
 
     @Override
-    public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount){
-         SavingAccount savingAccount = this.findSavingAccount(accountNumber);
-         BillingOrganization bo = this.findBO(boName);
-         System.out.print("balance before payment "+ savingAccount.getAvailableBalance());
-         if(savingAccount.getAvailableBalance().compareTo(amount) != -1){
-           savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
-           savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
-           System.out.print("balance after payment "+ savingAccount.getAvailableBalance());
-            Date todayDate=  new Date();
-           BillRecord bill = new BillRecord(bo,billReference,"BI",amount,null, "settled","Bill payment to "+boName, todayDate, accountNumber, null, savingAccount,null,null);
-             em.persist(bill);
-             savingAccount.getTransactionRecord().add(bill);
-             //invoke webservice to send bill
-             String description = "Bill payment to "+boName;
-             this.logAction(description, savingAccount.getCustomer().getId());
-             em.flush();
-             return true;
-         }else{
-             return false;
-         }
-        
+    public boolean adHocBill(String boName, Long accountNumber, String billReference, BigDecimal amount) {
+        SavingAccount savingAccount = this.findSavingAccount(accountNumber);
+        BillingOrganization bo = this.findBO(boName);
+        System.out.print("balance before payment " + savingAccount.getAvailableBalance());
+        if (savingAccount.getAvailableBalance().compareTo(amount) != -1) {
+            savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().subtract(amount));
+            savingAccount.setBalance(savingAccount.getBalance().subtract(amount));
+            System.out.print("balance after payment " + savingAccount.getAvailableBalance());
+            Date todayDate = new Date();
+            BillRecord bill = new BillRecord(bo, billReference, "BI", amount, null, "settled", "Bill payment to " + boName, todayDate, accountNumber, bo.getAccountNumber(), savingAccount, "Merlion", bo.getBank().getName());
+
+            em.persist(bill);
+            savingAccount.getTransactionRecord().add(bill);
+            //invoke webservice to send bill
+            String description = "Bill payment to " + boName;
+            this.logAction(description, savingAccount.getCustomer().getId());
+            em.flush();
+            return true;
+        } else {
+            return false;
+        }
+
     }
+//for webservice
 
     @Override
-    public List<String> getPendingGIRO (String boName){
-        System.out.print("GIRO Organization name is: "+boName);
-        
+    public List<String> getPendingGIRO(String boName) {
+        System.out.print("GIRO Organization name is: " + boName);
+
         Query m = em.createQuery("SELECT b FROM GIROArrangement b WHERE b.status = :status");
         m.setParameter("status", "pending");
         List<GIROArrangement> allGIRO = m.getResultList();
         List<String> giroInfo = new ArrayList<>();
         String oneGIRO = new String();
-        for(int i=0; i< allGIRO.size(); i++){
-            if(allGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)){
-                String concat = oneGIRO.concat(allGIRO.get(i).getId().toString()+","+allGIRO.get(i).getBillReference()+","+allGIRO.get(i).getCustomerName()+","+allGIRO.get(i).getDeductionLimit().toString());
+        for (int i = 0; i < allGIRO.size(); i++) {
+            if (allGIRO.get(i).getBillingOrganization().getName().equalsIgnoreCase(boName)) {
+                String concat = oneGIRO.concat(allGIRO.get(i).getId().toString() + "," + allGIRO.get(i).getBillReference() + "," + allGIRO.get(i).getCustomerName() + "," + allGIRO.get(i).getDeductionLimit().toString());
                 giroInfo.add(concat);
             }
         }
-        
+
         return giroInfo;
-    }
-        
-    public String deductGIRO(Long id,Double amount){
-        System.out.print("giro id is"+id);
-        GIROArrangement giro = em.find(GIROArrangement.class, id);
-        BigDecimal deductAmount = BigDecimal.valueOf(amount);
-        if(giro.getDeductionLimit().compareTo(deductAmount) != -1){
-            if(giro.getSavingAccount().getAvailableBalance().compareTo(deductAmount) != -1){
-                giro.getSavingAccount().setAvailableBalance(giro.getSavingAccount().getAvailableBalance().subtract(deductAmount));
-                  giro.getSavingAccount().setBalance(giro.getSavingAccount().getBalance().subtract(deductAmount)); 
-                  return "Deduction success!";
-            }else{
-                return "Deduction fail! not enough balance";
-            }
-        }else{
-            return "Deduction fail! amount more than limit.";
-        }
     }
 
     @Override
-    public boolean approveGIRO(Long id,String status,String deductDay) throws ParseException{
-        System.out.print("giro id is "+id);
-        
-        GIROArrangement giro = em.find(GIROArrangement.class, id);
-        giro.setStatus(status);
-        SimpleDateFormat dateFormator = new SimpleDateFormat("dd-MM-yyyy");
-        DateTime deductDate = new DateTime(dateFormator.parse(deductDay));
-        System.out.print(deductDate);
-        giro.setDeductionDay(deductDate);
-        return true;     
-    }
-    
-    @Override
-    public List<GIROArrangement> viewableGIRO (Long customerId){
+    public List<GIROArrangement> viewableGIRO(Long customerId) {
         Customer customer = em.find(Customer.class, customerId);
         List<SavingAccount> savingAccounts = customer.getSavingAccounts();
         List<GIROArrangement> viewable = new ArrayList<GIROArrangement>();
-        for(int i=0;i<savingAccounts.size();i++){
-            for(int j=0;j<savingAccounts.get(i).getGiroArrangement().size();j++){
-                if(!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")){
+        for (int i = 0; i < savingAccounts.size(); i++) {
+            for (int j = 0; j < savingAccounts.get(i).getGiroArrangement().size(); j++) {
+                if (!savingAccounts.get(i).getGiroArrangement().get(j).getStatus().equalsIgnoreCase("terminated")) {
                     viewable.add(savingAccounts.get(i).getGiroArrangement().get(j));
                 }
             }
         }
         return viewable;
     }
+
+    public String deductGIRO(Long id, Double amount) {
+        System.out.print("giro id is" + id);
+        GIROArrangement giro = em.find(GIROArrangement.class, id);
+        BigDecimal deductAmount = BigDecimal.valueOf(amount);
+        if (giro.getDeductionLimit().compareTo(deductAmount) != -1) {
+            if (giro.getSavingAccount().getAvailableBalance().compareTo(deductAmount) != -1) {
+                giro.getSavingAccount().setAvailableBalance(giro.getSavingAccount().getAvailableBalance().subtract(deductAmount));
+                giro.getSavingAccount().setBalance(giro.getSavingAccount().getBalance().subtract(deductAmount));
+                return "Deduction success!";
+            } else {
+                return "Deduction fail! not enough balance";
+            }
+        } else {
+            return "Deduction fail! amount more than limit.";
+        }
     }
 
+    @Override
+    public List<RecurrentBillArrangement> viewableRecurrent(Long customerId) {
+        Customer customer = em.find(Customer.class, customerId);
+        List<SavingAccount> savingAccounts = customer.getSavingAccounts();
+        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
+        for (int i = 0; i < savingAccounts.size(); i++) {
+            for (int j = 0; j < savingAccounts.get(i).getRecurrentBillArrangement().size(); j++) {
+                if (!savingAccounts.get(i).getRecurrentBillArrangement().get(j).getStatus().equalsIgnoreCase("terminated")) {
+                    oneCustomerAllRecurrents.add(savingAccounts.get(i).getRecurrentBillArrangement().get(j));
+                }
+            }
+        }
+        return oneCustomerAllRecurrents;
+    }
+
+    @Override
+    public List<GIROArrangement> deleteGIRO(Long giroId) {
+        List<GIROArrangement> oneCustomerAllGiros = new ArrayList<>();
+        GIROArrangement delete = em.find(GIROArrangement.class, giroId);
+        delete.setStatus("terminated");
+        Long customerId = delete.getSavingAccount().getCustomer().getId();
+        oneCustomerAllGiros = this.viewableGIRO(customerId);
+        return oneCustomerAllGiros;
+    }
+
+    @Override
+    public List<RecurrentBillArrangement> deleteRecurrent(Long recurrentBillId) {
+        List<RecurrentBillArrangement> oneCustomerAllRecurrents = new ArrayList<>();
+        RecurrentBillArrangement delete = em.find(RecurrentBillArrangement.class, recurrentBillId);
+        delete.setStatus("terminated");
+        Long customerId = delete.getSavingAccount().getCustomer().getId();
+        oneCustomerAllRecurrents = this.viewableRecurrent(customerId);
+        return oneCustomerAllRecurrents;
+    }
+
+    @Override
+    public boolean adhocBillCounter(String boName, String billReference, BigDecimal amount) {
+        BillingOrganization bo = em.find(BillingOrganization.class, boName);
+        Date todayDate = new Date();
+        BillRecord bill = new BillRecord(bo, billReference, "BI", amount, null, "settled", "Bill payment to " + boName, todayDate, null, bo.getAccountNumber(), null, "Merlion", bo.getBank().getName());
+        //add counter cash record
+
+        return true;
+    }
+
+//for webservice
+//for webservice
+// webservice lala
+// simulation lalallalal
+//for BO to approve GIRO
+    @Override
+    public boolean approveGIRO(Long id, String status, String deductDay) throws ParseException {
+        System.out.print("giro id is " + id);
+        GIROArrangement giro = em.find(GIROArrangement.class, id);
+        giro.setStatus(status);
+        if (status.equalsIgnoreCase("active")) {
+            SimpleDateFormat dateFormator = new SimpleDateFormat("dd-MM-yyyy");
+            DateTime deductDate = new DateTime(dateFormator.parse(deductDay));
+            System.out.print(deductDate);
+            giro.setDeductionDay(deductDate);
+        }
+        return true;
+    }
+
+    //send today's interbank transactions to SACH
+    //codes: BI, INTF, INCR, GIRO
+    @Override
+    public List<TransactionRecord> sendInterbankTransactions() {
+        Date todayDate = new Date();
+        SimpleDateFormat dateFormator = new SimpleDateFormat("dd-MM-yyyy");
+        String todayDateStr = dateFormator.format(todayDate);
+        List<TransactionRecord> records = new ArrayList<>();
+        Query m = em.createQuery("SELECT a FROM TransactionRecord a");
+        List<TransactionRecord> allRecords = m.getResultList();
+        for (int i = 0; i < allRecords.size(); i++) {
+            if (dateFormator.format(allRecords.get(i).getTransactionTime()).equalsIgnoreCase(todayDateStr)) {
+                if (allRecords.get(i).getCode().equalsIgnoreCase("INTF") || allRecords.get(i).getCode().equalsIgnoreCase("BI") || allRecords.get(i).getCode().equalsIgnoreCase("INCR") || allRecords.get(i).getCode().equalsIgnoreCase("GIRO")) {
+                    records.add(allRecords.get(i));
+                }
+            }
+        }
+        return records;
+    }
+
+    //receive transactions from other banks to merlion from sach
+    @Override
+    public void processReceivedTransactions(List<String> transactions) {
+        Date today = new Date();
+        for (int i = 0; i < transactions.size(); i++) {
+            String oneTrans = transactions.get(i);
+            if (oneTrans.split(",")[4].equalsIgnoreCase("INTF")) {
+                //receipient account number
+                Long accountNumber = Long.valueOf(oneTrans.split(",")[3]);
+                BigDecimal amount = BigDecimal.valueOf(Double.valueOf(oneTrans.split(",")[5]));
+                SavingAccount savingAccount = this.findSavingAccount(accountNumber);
+                savingAccount.setAvailableBalance(savingAccount.getAvailableBalance().add(amount));
+                savingAccount.setBalance(savingAccount.getBalance().add(amount));
+                TransactionRecord trans = new TransactionRecord("INTFR", null, amount, "settled", "Transafer from " + oneTrans.split(",")[0] + oneTrans.split(",")[1] + "to saving account " + accountNumber, today, Long.valueOf(oneTrans.split(",")[1]), accountNumber, savingAccount, oneTrans.split(",")[0], "Merlion");
+                em.persist(trans);
+                savingAccount.getTransactionRecord().add(trans);
+                em.flush();
+
+            } else if (oneTrans.split(",")[4].equalsIgnoreCase("INCR")) {
+                Long cardNumber = Long.valueOf(oneTrans.split(",")[3]);
+                BigDecimal amount = BigDecimal.valueOf(Double.valueOf(oneTrans.split(",")[5]));
+                Query m = em.createQuery("SELECT a FROM CreditCard a WHERE a.cardNumber = :cardNumber");
+                m.setParameter("cardNumber", cardNumber);
+                CreditCard card = (CreditCard) m.getSingleResult();
+                card.setBalance(card.getBalance().add(amount));
+                TransactionRecord trans = new TransactionRecord("INCRR", null, amount, "settled", "Pay credit card", today, Long.valueOf(oneTrans.split(",")[1]), cardNumber, null, oneTrans.split(",")[0], "Merlion");
+                em.persist(trans);
+                em.flush();
+            }
+        }
+    }
+
+    //check transactions from other banks to merlion 
+    @Override
+    public List<String> checkReceivedTransactions(List<String> transactions) {
+        List<String> wrong = new ArrayList<>();
+        for (int i = 0; i < transactions.size(); i++) {
+            if (transactions.get(i).split(",")[4].equalsIgnoreCase("INTF") || transactions.get(i).split(",")[4].equalsIgnoreCase("INCR")) {
+                if (this.checkValid(transactions.get(i).split(",")[4], transactions.get(i).split(",")[3]) == false) {
+                    wrong.add(transactions.get(i));
+
+                }
+            }
+        }
+        return wrong;
+    }
+
+    private boolean checkValid(String code, String acctNum) {
+        if (code.equalsIgnoreCase("INTF")) {
+            Query m = em.createQuery("SELECT b FROM SavingAccount b WHERE b.accountNumber = :accountNumber");
+            m.setParameter("accountNumber", Long.valueOf(acctNum));
+            if (m.getResultList().isEmpty()) {
+                return false;
+            }
+            return true;
+        } else if (code.equalsIgnoreCase("INCR")) {
+            Query m = em.createQuery("SELECT b FROM CreditCard b WHERE b.cardNumber = :cardNumber");
+            m.setParameter("cardNumber", Long.valueOf(acctNum));
+            if (m.getResultList().isEmpty()) {
+                return false;
+            }
+            return true;
+        } else {
+            return true;
+        }
+    }
+
+}

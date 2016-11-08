@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container10 NoPadding Responsive100">
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container80 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+       
+                    <div class="Container100 ui-fluid">
+                        <h:form>
+                            <p:panel id="panel" header="Detailed Information of the Card">
+
+                                <div class="Container100 ui-fluid">
+                                <h:panelGrid columns="4" cellpadding="5">
+                                    <p:dataTable  var="card" value="#{searchManagedBean.cardInfos}">
+                                        <p:column headerText="Card Holder">
+                                            <h:outputText value="#{card.get(0)}" />
+                                        </p:column>
+
+                                        <p:column headerText="Card Number">
+                                            <h:outputText value="#{card.get(1)}" />
+                                        </p:column>
+
+                                        <p:column headerText="Card Type">
+                                            <h:outputText value="#{card.get(2)}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{card.get(4)}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </h:panelGrid>
+                                </div>
+                                
+                                <div class="Container100 ui-fluid">
+                                    <div class="Container30 Responsive50"></div>
+                                    <div class="Container40 Responsive50">
+                                        <p:commandButton value="View Transaction History" id="transHis"
+                                                         actionListener="#{searchManagedBean.viewTransHistory}"/> 
+                                    </div>
+
+                                    <div class="Container30 Responsive50"></div>
+                                </div>
+
+                                <div class="EmptyBox20"></div>     
+                            </p:panel>
+                        </h:form>
+                    </div>
+
+
+
+
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container10 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

@@ -10,11 +10,15 @@ import CardEntity.Session.CreditCardSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
+import DepositEntity.Session.SavingAccountSessionBeanLocal;
+import Exception.ChargebackException;
 import Exception.CreditCardException;
+import Exception.UserHasNoSavingAccountException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +50,8 @@ public class CreditCardManagedBean implements Serializable {
     CreditCardSessionBeanLocal ccsb;
     @EJB
     AccountManagementSessionBeanLocal amsbl;
+    @EJB
+    SavingAccountSessionBeanLocal sasbl;
 
     @Inject
     LogInManagedBean logInManagedBean;
@@ -76,6 +82,17 @@ public class CreditCardManagedBean implements Serializable {
     private Long creditCardSelectedLong;
     private String cancelReason;
     private CreditCard creditCardForClose;
+    //for chargeback requests
+    private String creditCardNo;
+    private String merchantName;
+    private Date transactionDate;
+    private String transactionAmount;
+    private String chargebackDescription;
+    //pay credit card
+    private BigDecimal outstandAmount;
+    private String paymentAmount;
+    private List<String> savingAccountList;
+    private String savingAccountSelected;
 
     @PostConstruct
     public void init() {
@@ -93,7 +110,7 @@ public class CreditCardManagedBean implements Serializable {
 
     public CreditCardManagedBean() {
     }
-    
+
     public void goBackToHomePage(ActionEvent event) {
         try {
             FacesContext.getCurrentInstance().getExternalContext()
@@ -112,7 +129,7 @@ public class CreditCardManagedBean implements Serializable {
             System.out.print("dashboard to create credit card encounter error!");
         }
     }
-    
+
     public void dashboardToActivateCreditCard(ActionEvent event) {
         try {
             FacesContext.getCurrentInstance().getExternalContext()
@@ -121,7 +138,7 @@ public class CreditCardManagedBean implements Serializable {
             System.out.print("dashboard to activate Credit card encounter error!");
         }
     }
-    
+
     public void dashboardToCancelCreditCard(ActionEvent event) {
         try {
             creditCardList = ccsb.getCreditCardNumbers(customerID);
@@ -132,16 +149,45 @@ public class CreditCardManagedBean implements Serializable {
         }
     }
 
+    public void dashboardToChargeback(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardChargeback.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to Credit Card Chargeback encounter error!");
+        }
+    }
+
+    public void dashboardToPayCreditCard(ActionEvent event) {
+        try {
+            creditCardList = ccsb.getCreditCardNumbers(customerID);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardPay_selectCard.xhtml");
+        } catch (Exception e) {
+            System.out.print("dashboard to pay credit card encounter error!");
+        }
+    }
+
     public void creditApplyEnterDetail(ActionEvent event) throws IOException {
-        if (identitySelected == null) {
+
+//        if (identitySelected == null) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select your citizenship!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        } else if (identitySelected.equals("Singaporean") || identitySelected.equals("Permanent Resident")) {
+//            FacesContext.getCurrentInstance().getExternalContext()
+//                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileSingaporean.xhtml");
+//        } else {
+//            FacesContext.getCurrentInstance().getExternalContext()
+//                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileForeigner.xhtml");
+//        }
+        //the following is used for testing
+        if (identitySelected != null) {
+            creditCardTypeList = ccsb.getCreditCardType();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_selectCard.xhtml");
+        } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select your citizenship!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
-        } else if (identitySelected.equals("Singaporean") || identitySelected.equals("Permanent Resident")) {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileSingaporean.xhtml");
-        } else {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileForeigner.xhtml");
         }
     }
 
@@ -270,7 +316,7 @@ public class CreditCardManagedBean implements Serializable {
         }
     }
 
-    public void verifyCreditCard(ActionEvent event) throws IOException,CreditCardException {
+    public void verifyCreditCard(ActionEvent event) throws IOException, CreditCardException {
         try {
             Long cardNoL = Long.parseLong(cardNo);
             Long cvvL = Long.parseLong(cvv);
@@ -287,7 +333,7 @@ public class CreditCardManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
+
     public void setCreditCardPassword(ActionEvent event) throws IOException {
         if (!newPassword.equals(confirmedPassword)) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Confirmed Password does not match!! ");
@@ -299,7 +345,7 @@ public class CreditCardManagedBean implements Serializable {
                     .redirect("/MerlionBank-war/CardManagement/creditCardActivateSuccess.xhtml");
         }
     }
-    
+
     public void showCreditCardDetail(ActionEvent event) throws IOException {
         if (creditCardSelected != null && cancelReason != null) {
             creditCardForClose = ccsb.getCreditCardForClose(creditCardSelected);
@@ -311,7 +357,6 @@ public class CreditCardManagedBean implements Serializable {
         }
     }
 
-    
     public void cancelDebitCard(ActionEvent event) throws CreditCardException, IOException {
         try {
             ccsb.cancelCreditCard(creditCardSelected);
@@ -322,7 +367,64 @@ public class CreditCardManagedBean implements Serializable {
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    
+
+    public void chargeback(ActionEvent event) throws ChargebackException, IOException {
+        if ((merchantName != null) && (transactionDate != null) && (transactionAmount != null) && (chargebackDescription != null) && (creditCardNo != null)) {
+            BigDecimal amount = new BigDecimal(transactionAmount);
+            try {
+                ccsb.createChargeback(merchantName, transactionDate, amount, chargebackDescription, creditCardNo);
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .redirect("/MerlionBank-war/CardManagement/creditCardChargebackSuccess.xhtml");
+            } catch (ChargebackException e) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", e.getMessage());
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in the blank box!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void showOutstandAmount(ActionEvent event) throws IOException {
+        if (creditCardSelected != null) {
+            outstandAmount = ccsb.getOutStandAmount(creditCardSelected);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardPay_displayOutstand.xhtml");
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select a credit card!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void selectSavingAccount(ActionEvent event) throws IOException, UserHasNoSavingAccountException {
+        if (paymentAmount != null) {
+            savingAccountList = sasbl.getSavingAccountNumbers(customerID);
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardPay_payBySavingAccount.xhtml");
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please enter the payment amount!");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
+    public void payBySavingAccount(ActionEvent event) throws CreditCardException, IOException {
+        try {
+            if (savingAccountSelected != null) {
+                boolean result = ccsb.payBySavingAccount(savingAccountSelected, creditCardSelected, paymentAmount);
+                if (result) {
+                    FacesContext.getCurrentInstance().getExternalContext()
+                            .redirect("/MerlionBank-war/CardManagement/creditCardPay_payBySavingAccountSuccess.xhtml");
+                }
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select saving account!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
+        } catch (CreditCardException e) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", e.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
+    }
+
     public Long getCustomerID() {
         return customerID;
     }
@@ -498,6 +600,77 @@ public class CreditCardManagedBean implements Serializable {
     public void setCreditCardForClose(CreditCard creditCardForClose) {
         this.creditCardForClose = creditCardForClose;
     }
-    
-       
+
+    public String getCreditCardNo() {
+        return creditCardNo;
+    }
+
+    public void setCreditCardNo(String creditCardNo) {
+        this.creditCardNo = creditCardNo;
+    }
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    public String getTransactionAmount() {
+        return transactionAmount;
+    }
+
+    public void setTransactionAmount(String transactionAmount) {
+        this.transactionAmount = transactionAmount;
+    }
+
+    public String getChargebackDescription() {
+        return chargebackDescription;
+    }
+
+    public void setChargebackDescription(String chargebackDescription) {
+        this.chargebackDescription = chargebackDescription;
+    }
+
+    public Date getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public BigDecimal getOutstandAmount() {
+        return outstandAmount;
+    }
+
+    public void setOutstandAmount(BigDecimal outstandAmount) {
+        this.outstandAmount = outstandAmount;
+    }
+
+    public String getPaymentAmount() {
+        return paymentAmount;
+    }
+
+    public void setPaymentAmount(String paymentAmount) {
+        this.paymentAmount = paymentAmount;
+    }
+
+    public List<String> getSavingAccountList() {
+        return savingAccountList;
+    }
+
+    public void setSavingAccountList(List<String> savingAccountList) {
+        this.savingAccountList = savingAccountList;
+    }
+
+    public String getSavingAccountSelected() {
+        return savingAccountSelected;
+    }
+
+    public void setSavingAccountSelected(String savingAccountSelected) {
+        this.savingAccountSelected = savingAccountSelected;
+    }
+
 }

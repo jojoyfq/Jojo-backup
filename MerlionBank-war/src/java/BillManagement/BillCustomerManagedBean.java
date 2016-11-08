@@ -5,6 +5,8 @@
  */
 package BillManagement;
 
+import BillEntity.GIROArrangement;
+import BillEntity.RecurrentBillArrangement;
 import BillEntity.Session.BillSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
@@ -16,6 +18,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -42,7 +45,7 @@ public class BillCustomerManagedBean implements Serializable {
 
     private String boName;
     private String billReference;
-    private Long savingAcctNum;
+    private String savingAcctNum;
     private BigDecimal limit;
     private Long customerId;
     private List<String> boNames;
@@ -55,6 +58,8 @@ public class BillCustomerManagedBean implements Serializable {
     private Date startDate;
     private Integer times;
     private Integer frequency;
+    private List<GIROArrangement> oneCustomerAllGiros;
+    private List<RecurrentBillArrangement> oneCustomerAllRecurrents;
 
     @Inject
     private LogInManagedBean logInManagedBean;
@@ -67,7 +72,7 @@ public class BillCustomerManagedBean implements Serializable {
     }
 
     public void dashboardAddGIROArrangement(ActionEvent event) throws IOException {
-        customerName = null; 
+        customerName = null;
         boName = null;
         limit = null;
         savingAcctNum = null;
@@ -78,10 +83,11 @@ public class BillCustomerManagedBean implements Serializable {
         customerIc = logInManagedBean.getIc();
         boNames = bsbl.viewBOName();
         savingAccountManagedBean.init();
+        oneCustomerAllGiros = new ArrayList<>();
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBank-war/BillManagement/addGIRO.xhtml");
         otpSuccessRedirect = "/MerlionBank-war/BillManagement/addGIROSuccess.xhtml";
-        
+
     }
 
     public void dashboardAddRecurrentArrangement(ActionEvent event) throws IOException {
@@ -100,8 +106,8 @@ public class BillCustomerManagedBean implements Serializable {
                 .redirect("/MerlionBank-war/BillManagement/addRecurrent.xhtml");
         otpSuccessRedirect = "/MerlionBank-war/BillManagement/addRecurrentSuccess.xhtml";
     }
-    
-    public void dashoboardAdhocBill(ActionEvent event)throws IOException{
+
+    public void dashoboardAdhocBill(ActionEvent event) throws IOException {
         boName = null;
         amount = null;
         savingAcctNum = null;
@@ -111,7 +117,7 @@ public class BillCustomerManagedBean implements Serializable {
         boNames = bsbl.viewBOName();
         savingAccountManagedBean.init();
         FacesContext.getCurrentInstance().getExternalContext()
-                .redirect("/MerlionBank-war/BillManagement/adhocBill.xhtml");  
+                .redirect("/MerlionBank-war/BillManagement/adhocBill.xhtml");
         otpSuccessRedirect = "/MerlionBank-war/BillManagement/adhocBillSuccess.xhtml";
     }
 
@@ -121,8 +127,8 @@ public class BillCustomerManagedBean implements Serializable {
             DateTime today = new DateTime().withTimeAtStartOfDay();
             System.out.print("today time ..." + today);
             DateTime chosenDate = new DateTime(startDate);
-            System.out.print("start date ..."+startDate);
-            System.out.print("chosenDate ..."+chosenDate);
+            System.out.print("start date ..." + startDate);
+            System.out.print("chosenDate ..." + chosenDate);
             if (!chosenDate.isBefore(today)) {
                 System.out.print("start date checked");
                 amsbl.sendTwoFactorAuthentication(customerIc);
@@ -130,8 +136,8 @@ public class BillCustomerManagedBean implements Serializable {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/OTP.xhtml");
             } else {
                 System.out.print("start date cannot be before today");
-                  FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Start date cannot be before today. Please try again.");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Start date cannot be before today. Please try again.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
             }
 
         } else {
@@ -159,9 +165,9 @@ public class BillCustomerManagedBean implements Serializable {
         if (this.verify2FA(input2FA) == true) {
             if (otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/addGIROSuccess.xhtml")) {
                 this.addGIRO();
-            }else if(otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/addRecurrentSuccess.xhtml")){
+            } else if (otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/addRecurrentSuccess.xhtml")) {
                 this.addRecurrent();
-            }else if(otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/adhocBillSuccess.xhtml")){
+            } else if (otpSuccessRedirect.equalsIgnoreCase("/MerlionBank-war/BillManagement/adhocBillSuccess.xhtml")) {
                 this.adhocBill();
             }
 
@@ -173,24 +179,23 @@ public class BillCustomerManagedBean implements Serializable {
     }
 
     private void addRecurrent() throws IOException {
-        bsbl.addRecurrentArrangement(boName, amount, savingAcctNum, billReference, times, frequency, startDate);
+        bsbl.addRecurrentArrangement(boName, amount, Long.parseLong((savingAcctNum.split(","))[0]), billReference, times, frequency, startDate);
         System.out.print("add recurrent success");
         FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
     }
-    
+
     private void adhocBill() throws IOException {
-       if(bsbl.adHocBill(boName, savingAcctNum, billReference, amount)==true){
+       if(bsbl.adHocBill(boName, Long.parseLong((savingAcctNum.split(","))[0]), billReference, amount)==true){
           FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);  
        }
        else{
           FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Saving account does not have enough balance.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);  
        }
-       
     }
 
     private void addGIRO() throws IOException {
-        if (bsbl.addGIROArrangement(customerName, boName, limit, savingAcctNum, billReference) == true) {
+        if (bsbl.addGIROArrangement(customerName, boName, limit, Long.parseLong((savingAcctNum.split(","))[0]), billReference) == true) {
             System.out.print("add giro success");
             FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
         } else {
@@ -207,6 +212,32 @@ public class BillCustomerManagedBean implements Serializable {
         } catch (Exception e) {
             System.out.print("Redirect to Home page fails");
         }
+    }
+
+    public void viewGiro(ActionEvent event) throws IOException {
+        System.out.println("******Go into view giro----customer Id is " + logInManagedBean.getCustomerId());
+        oneCustomerAllGiros = bsbl.viewableGIRO(logInManagedBean.getCustomerId());
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/viewGIRO.xhtml");
+
+    }
+
+    public void viewRecurrent(ActionEvent event) throws IOException {
+        System.out.println("******Go into view recurrent----customer Id is " + logInManagedBean.getCustomerId());
+        oneCustomerAllRecurrents = bsbl.viewableRecurrent(logInManagedBean.getCustomerId());
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/viewRecurrentBills.xhtml");
+
+    }
+
+    public void deleteGiro(Long giroId) {
+        oneCustomerAllGiros = bsbl.deleteGIRO(giroId);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully deleted GIRO (ID:" + giroId + ")!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
+    }
+
+    public void deleteRecurrentBill(Long recurrentBillId) {
+        oneCustomerAllRecurrents = bsbl.deleteRecurrent(recurrentBillId);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully deleted Recurrent Bill Arrangement (Bill ID:" + recurrentBillId + ")!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
     }
 
     public BigDecimal getAmount() {
@@ -311,11 +342,11 @@ public class BillCustomerManagedBean implements Serializable {
         this.billReference = billReference;
     }
 
-    public Long getSavingAcctNum() {
+    public String getSavingAcctNum() {
         return savingAcctNum;
     }
 
-    public void setSavingAcctNum(Long savingAcctNum) {
+    public void setSavingAcctNum(String savingAcctNum) {
         this.savingAcctNum = savingAcctNum;
     }
 
@@ -357,6 +388,30 @@ public class BillCustomerManagedBean implements Serializable {
 
     public void setOtpSuccessRedirect(String otpSuccessRedirect) {
         this.otpSuccessRedirect = otpSuccessRedirect;
+    }
+
+    public AccountManagementSessionBeanLocal getAmsbl() {
+        return amsbl;
+    }
+
+    public void setAmsbl(AccountManagementSessionBeanLocal amsbl) {
+        this.amsbl = amsbl;
+    }
+
+    public List<GIROArrangement> getOneCustomerAllGiros() {
+        return oneCustomerAllGiros;
+    }
+
+    public void setOneCustomerAllGiros(List<GIROArrangement> oneCustomerAllGiros) {
+        this.oneCustomerAllGiros = oneCustomerAllGiros;
+    }
+
+    public List<RecurrentBillArrangement> getOneCustomerAllRecurrents() {
+        return oneCustomerAllRecurrents;
+    }
+
+    public void setOneCustomerAllRecurrents(List<RecurrentBillArrangement> oneCustomerAllRecurrents) {
+        this.oneCustomerAllRecurrents = oneCustomerAllRecurrents;
     }
 
 }

@@ -7,13 +7,16 @@ package CardEntity.Session;
 
 import CardEntity.CreditCard;
 import CardEntity.CreditCardApplication;
+import CardEntity.CreditChargeback;
 import CommonEntity.Customer;
+import Exception.ChargebackException;
 import Exception.CreditCardException;
-import Exception.EmailNotSendException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
+import javax.mail.MessagingException;
 
 /**
  *
@@ -34,7 +37,9 @@ public interface CreditCardSessionBeanLocal {
     public List<String> getCreditCardNumbers(Long customerID);
     public boolean cancelCreditCard(String cardNo) throws CreditCardException;
     public CreditCard getCreditCardForClose(String cardNo);
-    
-    //Timer credit late interest
-    public void creditCardLatePayment() throws EmailNotSendException;
+    public void createChargeback(String merchantName, Date transactionDate, BigDecimal transactionAmount, String chargebackDescription, String creditCardNo) throws ChargebackException ;
+    public List<CreditChargeback> getPendingCreditChargeback();
+    public void setChargebackStatus(CreditChargeback chargeback, String status);
+    public BigDecimal getOutStandAmount(String creditCardString);
+    public boolean payBySavingAccount(String savingAccount, String creditCardString, String amount) throws CreditCardException;
 }

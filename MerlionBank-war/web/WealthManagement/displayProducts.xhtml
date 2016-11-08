@@ -32,7 +32,7 @@
                     <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 
                         <p:outputLabel for="category" value="Product Category: " />
-                        <p:selectOneMenu id="category" value="#{customerWealthManagedBean.typeName}" style="width:250px">
+                        <p:selectOneMenu id="category" value="#{customerWealthManagedBean.typeName}" style="width:250px" required="true">
                             <p:ajax listener="#{customerWealthManagedBean.onLoanChange()}" update="city" />
                             <f:selectItem itemLabel="Select Product Category" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{customerWealthManagedBean.wealthProducts}" />
@@ -40,7 +40,7 @@
                         </p:selectOneMenu>
 
                         <p:outputLabel for="city" value="Product Name: " />
-                        <p:selectOneMenu id="city" value="#{customerWealthManagedBean.type}" style="width:250px">
+                        <p:selectOneMenu id="city" value="#{customerWealthManagedBean.type}" style="width:250px" required="true">
                             <f:selectItem itemLabel="Select Specific Product Name" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{customerWealthManagedBean.wealthTypes}" />
                         </p:selectOneMenu>

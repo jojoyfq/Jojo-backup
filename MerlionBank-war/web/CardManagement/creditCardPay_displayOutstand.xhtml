@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="content">
+        <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Your Credit Card Outstanding Amount </div>
+                    <div class="Separator"></div>
+
+                    <div class="Container100">
+                        <h:form id="form">
+
+                            <p:panel style="margin-bottom:10px;" id="panel">
+                                <p:messages id="msgs" />
+                                <h:panelGrid columns="3" cellpadding="5">
+
+                                    <h:outputLabel for="creditCardNumber" value="Credit Card Number:" /> 
+                                    <h:outputLabel for="creditCardNumber" value="#{creditCardManagedBean.creditCardSelected.split(",")[0]}" />
+                                    <p:message for="creditCardNumber" display="icon" />
+                                    
+                                    <h:outputLabel for="creditCardType" value="Credit Card Type" /> 
+                                    <h:outputLabel for="creditCardType" value="#{creditCardManagedBean.creditCardSelected.split(",")[1]}" />
+                                    <p:message for="creditCardType" display="icon" />
+                                    
+                                    <h:outputLabel for="outstandAmount" value="Outstanding Amount: " /> 
+                                    <h:outputLabel for="outstandAmount" value="#{creditCardManagedBean.outstandAmount}" />
+                                    <p:message for="outstandAmount" display="icon" />
+
+                                    <h:outputLabel for="paymentAmount" value="Payment Amount:" /> 
+                                    <p:inputText id="paymentAmount" value="#{creditCardManagedBean.paymentAmount}"   required="true" requiredMessage="Please fill in the amount!"/>
+                                    <p:message for="paymentAmount" display="icon" />
+
+
+                                    <p:commandButton  update ="panel" icon="ui-icon-script" actionListener="#{creditCardManagedBean.selectSavingAccount}" value="Pay" rendered="true" />
+                                </h:panelGrid>
+                            </p:panel>
+
+                        </h:form>
+                    </div>
+
+
+                </div>
+            </div> 
+
+
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

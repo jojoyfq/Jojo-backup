@@ -8,6 +8,7 @@ package LoanManagedBean;
 import BillEntity.Session.BillSessionBeanLocal;
 import CommonEntity.Customer;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
+import CommonManagedBean.CommonInfraManagedBean;
 //import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import CommonManagedBean.LogInManagedBean;
 import DepositEntity.SavingAccount;
@@ -65,6 +66,8 @@ public class CustomerLoanManagedBean implements Serializable {
     AccountManagementSessionBeanLocal amsbl;
     @EJB
     BillSessionBeanLocal bsbl;
+    @Inject
+    CommonInfraManagedBean cimb;
 
     @Inject
     private LogInManagedBean logInManagedBean;
@@ -257,10 +260,33 @@ public class CustomerLoanManagedBean implements Serializable {
 
     public void customerCreateLoanAcct(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
-            customer = lasbl.createNewLoanAccount(customerIc, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
+            boolean result;
+            result = cimb.checkNRIC(customerIc);
+
+            System.out.println("******Check NRIC result is " + result);
+
+            //check age    
+            Date todayDate = new Date();
+            long diff = todayDate.getTime() - customerDateOfBirth.getTime();
+            long diffDays = diff / (24 * 60 * 60 * 1000);
+            System.out.println("Age check " + (diffDays));
+            if (result == true) {
+                if (diffDays >= 5840) {
+                    customer = lasbl.createNewLoanAccount(customerIc, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
 //            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Loan Account has been successfully created! Detailed informaiton has been sent to your email!");
 //            RequestContext.getCurrentInstance().showMessageInDialog(message);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/displayLoanTypes.xhtml");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/displayLoanTypes.xhtml");
+                } else {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "The minimum age to apply loan account is 16.");
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                    return;
+                }
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "IC is not valid!");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                return;
+            }
 
         } catch (UserExistException | EmailNotSendException ex) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
@@ -287,11 +313,11 @@ public class CustomerLoanManagedBean implements Serializable {
         System.out.println("*************Customer create loan details - downpayment " + downpayment);
         System.out.println("*************Customer create loan details - loanTerm " + loanTerm);
         System.out.println("*************Customer create loan details - startDate " + startDate);
- System.out.println("*************Customer create loan details - homeType " + homeType);
+        System.out.println("*************Customer create loan details - homeType " + homeType);
         System.out.println("*************Customer create loan details - homeAddress " + homeAddress);
         System.out.println("*************Customer create loan details - propertyLoanAmt " + propertyLoanAmt);
         System.out.println("*************Customer create loan details - carLoanAmt " + carLoanAmt);
-            System.out.println("*************Customer create loan details - educationAmt " + educationAmt);
+        System.out.println("*************Customer create loan details - educationAmt " + educationAmt);
         System.out.println("*************Customer create loan details - personalLoanAmt " + personalLoanAmt);
         System.out.println("*************Customer create loan details - postalCode " + postalCode);
         System.out.println("*************Customer create loan details - postCode " + postCode);
@@ -301,19 +327,19 @@ public class CustomerLoanManagedBean implements Serializable {
 
             loanTypeId = lasbl.findTypeIdByName(loanName);
             System.out.println("*************Customer create loan details - loantypeId " + loanTypeId);
-                  existingDebit = existingDebit.add(propertyLoanAmt).add(carLoanAmt).add(educationAmt).add(personalLoanAmt);
-          //                            existingDebit = existingDebit.add(propertyLoanAmt);
+            existingDebit = existingDebit.add(propertyLoanAmt).add(carLoanAmt).add(educationAmt).add(personalLoanAmt);
+            //                            existingDebit = existingDebit.add(propertyLoanAmt);
 
-System.out.println("*******Existing Debt is "+existingDebit);
+            System.out.println("*******Existing Debt is " + existingDebit);
             if (customer.getId() == null) {
                 customerId = logInManagedBean.getCustomerId();
                 lasbl.createLoanAccountExisting(customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm, homeType, homeAddress, postCode, carModel, existingDebit, postalCode, carMode, institution, major, graduationDate);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/uploadFileExisting.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/uploadFileExisting.xhtml");
 
             } else {
                 customerId = customer.getId();
                 lasbl.createLoanAccount(customerId, monthlyIncome, loanTypeId, principal, downpayment, loanTerm, homeType, homeAddress, postCode, carModel, existingDebit, postalCode, carMode, institution, major, graduationDate);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/uploadFile.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/uploadFile.xhtml");
 
             }
             FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/LoanManagement/uploadFile.xhtml");
@@ -327,7 +353,6 @@ System.out.println("*******Existing Debt is "+existingDebit);
             Logger.getLogger(CustomerLoanManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-
     }
 
     public void fileUploadListener(FileUploadEvent e) throws IOException {
@@ -337,7 +362,7 @@ System.out.println("*******Existing Debt is "+existingDebit);
      //    InputStream input = e.getFile().getInputstream();
 
       //   File inputFile = new File(e.getFile().getFileName());
-         // Get uploaded file from the FileUploadEvent
+        // Get uploaded file from the FileUploadEvent
         //     this.file = e.getFile();
         //                customer.
         //                System.out.println("");
@@ -347,7 +372,7 @@ System.out.println("*******Existing Debt is "+existingDebit);
         System.out.println("Uploade file Customer Ic: " + customer.getIc());
         // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
         String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + customer.getIc() + "\\" + file.getFileName();
-       // String savedFileName = path + "/" + uploadedFile.getFileName();
+        // String savedFileName = path + "/" + uploadedFile.getFileName();
         //    File fileToSave = new File(savedFileName);
         File fileToSave = new File(destPath);
 
@@ -485,26 +510,27 @@ System.out.println("*******Existing Debt is "+existingDebit);
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
-    public void customerApplyGiro (ActionEvent event) throws IOException{
-       FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/addGIRO.xhtml");
+
+    public void customerApplyGiro(ActionEvent event) throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/BillManagement/addGIRO.xhtml");
 
         bsbl.addGIROArrangement(customerName, boName, limit, savingAccountNumber, billReference);
-    
+
     }
-    
-    public void calculateTDSR (ActionEvent event){
+
+    public void calculateTDSR(ActionEvent event) {
         System.out.println("*****TDSR calculator: ");
-         System.out.println("*****monthly income is  "+calMonthlyIncome);
-                System.out.println("*****Exsiting debt is "+calExistingDebt);
+        System.out.println("*****monthly income is  " + calMonthlyIncome);
+        System.out.println("*****Exsiting debt is " + calExistingDebt);
 
         tdsr = lasbl.calculateTDSR(calMonthlyIncome, calExistingDebt);
-    
+
     }
-    
-    public void calculateMSR (ActionEvent event){
+
+    public void calculateMSR(ActionEvent event) {
         System.out.println("*****MSR calculator: ");
-        System.out.println("*****monthly income is  "+calMonthlyIncome);
-        System.out.println("*****Exsiting debt is "+calExistingDebt);
+        System.out.println("*****monthly income is  " + calMonthlyIncome);
+        System.out.println("*****Exsiting debt is " + calExistingDebt);
         msr = lasbl.calculateMSR(calMonthlyIncome, calExistingDebt);
     }
 //    public void customerDisplayLoans(ActionEvent event) {
@@ -1069,6 +1095,14 @@ System.out.println("*******Existing Debt is "+existingDebit);
 
     public void setMonthlyIncome(BigDecimal monthlyIncome) {
         this.monthlyIncome = monthlyIncome;
+    }
+
+    public CommonInfraManagedBean getCimb() {
+        return cimb;
+    }
+
+    public void setCimb(CommonInfraManagedBean cimb) {
+        this.cimb = cimb;
     }
 
 }

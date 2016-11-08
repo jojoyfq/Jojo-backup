@@ -7,12 +7,14 @@ package ejb.session.singleton;
 
 import BillEntity.Session.BillSessionBeanLocal;
 import BillEntity.Session.BillTimerSessionBeanLocal;
+import BusinessIntelligenceEntity.Session.SpendingSegmentationTimerSessionBeanLocal;
 import CommonEntity.Session.AccountManagementSessionBeanLocal;
 import DepositEntity.Session.FixedDepositAccountSessionBeanLocal;
 import DepositEntity.Session.SavingAccountSessionBeanLocal;
 import Exception.EmailNotSendException;
 import Exception.NotEnoughAmountException;
 import LoanEntity.Session.LoanTimerSessionBeanLocal;
+import WealthEntity.Session.WealthTimerSessionBeanLocal;
 import static com.sun.faces.facelets.util.Path.context;
 import java.util.Date;
 import javax.annotation.Resource;
@@ -50,9 +52,15 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
 
     @EJB
     LoanTimerSessionBeanLocal ltsbl;
-    
+
     @EJB
     BillTimerSessionBeanLocal btsbl;
+
+    @EJB
+    WealthTimerSessionBeanLocal wtsbl;
+    
+    @EJB
+    SpendingSegmentationTimerSessionBeanLocal sstsbl;
 
     @Override
     public void createTimers(Date startTime, String timerInfo) {
@@ -72,25 +80,55 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
         } else if (timerInfo.equals("MonthlyInterest-TIMER")) {
             Timer monthlyInterest = timerService.createTimer(startTime, 1 * 60 * 1000, "MonthlyInterest-TIMER");
             System.err.println("********** MonthlyInterest-TIMER TIMER CREATED");
-        }  else if (timerInfo.equals("checkCustomerAge-TIMER")) {
+        } else if (timerInfo.equals("checkCustomerAge-TIMER")) {
             Timer loanStatusTimer = timerService.createTimer(startTime, 1 * 60 * 1000, "checkCustomerAge-TIMER");
             System.err.println("********** checkCustomerAge-TIMER TIMER CREATED");
-        }else if (timerInfo.equals("LoanAccountStatus-TIMER")) {
+        } else if (timerInfo.equals("LoanAccountStatus-TIMER")) {
             Timer loanAccountTimer = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanAccountStatus-TIMER");
             System.err.println("********** LoanAccountStatus-TIMER");
-        }else if (timerInfo.equals("LoanAutoBadDebt-TIMER")){
+        } else if (timerInfo.equals("LoanAutoBadDebt-TIMER")) {
             Timer loanAutoBadDebt = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanAutoBadDebt-TIMER");
             System.err.println("********** LoanAutoBadDebt-TIMER");
-        }else if(timerInfo.equals("LoanLatePayment-TIMER")){
-            Timer loanLatePayment = timerService.createTimer(startTime, 1* 60 * 1000, "LoanLatePayment-TIMER");
+        } else if (timerInfo.equals("LoanLatePayment-TIMER")) {
+            Timer loanLatePayment = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanLatePayment-TIMER");
             System.err.println("********** LoanLatePayment-TIMER");
-        }else if(timerInfo.equals("LoanUpdateMonthlyPayment-TIMER")){
+        } else if (timerInfo.equals("LoanUpdateMonthlyPayment-TIMER")) {
             Timer loanUpdateMonthlyPayment = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanUpdateMonthlyPayment-TIMER");
             System.out.println("********** LoanUpdateMonthlyPayment-TIMER");
-        }else if(timerInfo.equals("LoanPayByGIRO-TIMER")){
+        } else if (timerInfo.equals("LoanPayByGIRO-TIMER")) {
             Timer loanPayByGIRO = timerService.createTimer(startTime, 1 * 60 * 1000, "LoanPayByGIRO-TIMER");
-        }else if(timerInfo.equals("RecurrentBill-TIMER")){
+            System.out.println("********** LoanPayByGIRO-TIMER");
+        } else if (timerInfo.equals("RecurrentBill-TIMER")) {
             Timer recurrentBill = timerService.createTimer(startTime, 1 * 60 * 1000, "RecurrentBill-TIMER");
+            System.out.println("********** RecurrentBill-TIMER");
+        } else if (timerInfo.equals("CloseWealthAccount-TIMER")) {
+            Timer closeWealthAccount = timerService.createTimer(startTime, 1 * 60 * 1000, "CloseWealthAccount-TIMER");
+            System.out.println("********** CloseWealthAccount-TIMER");
+        } else if (timerInfo.equals("WealthAccountInterest-TIMER")) {
+            Timer wealthAccountInterest = timerService.createTimer(startTime, 1 * 60 * 1000, "WealthAccountInterest-TIMER");
+            System.out.println("********** WealthAccountInterest-TIMER");
+        } else if (timerInfo.equals("WealthCommissionFee-TIMER")) {
+            Timer wealthCommission = timerService.createTimer(startTime, 1 * 60 * 1000, "WealthCommissionFee-TIMER");
+            System.out.println("********** WealthCommissionFee-TIMER");
+        } else if (timerInfo.equals("ClosePortfolio-TIMER")) {
+            Timer closePortfolio = timerService.createTimer(startTime, 1 * 60 * 1000, "ClosePortfolio-TIMER");
+            System.out.println("********** ClosePortfolio-TIMER");
+        } else if (timerInfo.equals("UpdateDiscretionaryAccountInterestRate-TIMER")) {
+            Timer updateDiscretionaryAccountInterestRate = timerService.createTimer(startTime, 1 * 60 * 1000, "UpdateDiscretionaryAccountInterestRate-TIMER");
+            System.out.println("********** UpdateDiscretionaryAccountInterestRate-TIMER");
+        } else if (timerInfo.equals("PreDefinedPlanInterestCrediting-TIMER")) {
+            Timer preDefinedPlanInterestCrediting = timerService.createTimer(startTime, 1 * 60 * 1000, "PreDefinedPlanInterestCrediting-TIMER");
+            System.out.println("********** PreDefinedPlanInterestCrediting-TIMER");
+        } else if (timerInfo.equals("DebitCardSegmentation-TIMER")) {
+            Timer preDefinedPlanInterestCrediting = timerService.createTimer(startTime, 1 * 60 * 1000, "DebitCardSegmentation-TIMER");
+            System.out.println("********** DebitCardSegmentation-TIMER");
+        } else if (timerInfo.equals("CreditCardSegmentation-TIMER")) {
+            Timer preDefinedPlanInterestCrediting = timerService.createTimer(startTime, 1 * 60 * 1000, "CreditCardSegmentation-TIMER");
+            System.out.println("********** CreditCardSegmentation-TIMER");
+        } else if (timerInfo.equals("SendBirthdayCoupon-TIMER")) {
+            System.out.println("********** SendBirthdayCoupon-TIMER");
+            Timer preDefinedPlanInterestCrediting = timerService.createTimer(startTime, 1 * 60 * 1000, "SendBirthdayCoupon-TIMER");
+            
         }
     }
 
@@ -131,12 +169,35 @@ public class TimerDemoSessionBean implements TimerDemoSessionBeanLocal {
             ltsbl.calculateLatePayment();
         } else if (timer.getInfo().toString().equals("LoanUpdateMonthlyPayment-TIMER")) {
             ltsbl.updateMonthlyPayment();
-        } else if (timer.getInfo().toString().equals("LoanPayByGIRO-TIMER")){
+        } else if (timer.getInfo().toString().equals("LoanPayByGIRO-TIMER")) {
             ltsbl.loanPayByGIRO();
-        } else if (timer.getInfo().toString().equals("RecurrentBill-TIMER"))
+        } else if (timer.getInfo().toString().equals("RecurrentBill-TIMER")) {
             btsbl.recurrentBillDeduction();
+        } else if (timer.getInfo().toString().equals("CloseWealthAccount-TIMER")) {
+            wtsbl.closeAccount();
+        } else if (timer.getInfo().toString().equals("WealthAccountInterest-TIMER")) {
+            wtsbl.interestCrediting();
+        } else if (timer.getInfo().toString().equals("WealthCommissionFee-TIMER")) {
+            wtsbl.commissionFeeCalculation();
+        } else if (timer.getInfo().toString().equals("ClosePortfolio-TIMER")) {
+            wtsbl.closePortfolio();
+        } else if (timer.getInfo().toString().equals("UpdateDiscretionaryAccountInterestRate-TIMER")) {
+            wtsbl.updateDiscretionaryAccountInterestRate();
+        } else if (timer.getInfo().toString().equals("PreDefinedPlanInterestCrediting-TIMER")) {
+            wtsbl.preDefinedPlanInterestCrediting();
+        } else if (timer.getInfo().toString().equals("DebitCardSegmentation-TIMER")){
+            System.err.println("********** DebitCardSegmentation-TIME go to session bean here!!!!");
+            sstsbl.debitCardSegmentation();
+        } else if (timer.getInfo().toString().equals("CreditCardSegmentation-TIMER")){
+            System.err.println("********** CreditCardSegmentation-TIMER go to session bean here!!!!");
+            sstsbl.creditCardSegmentation();
+        } else if (timer.getInfo().toString().equals("SendBirthdayCoupon-TIMER")){
+            System.err.println("********** SendBirthdayCoupon-TIMER go to session bean here!!!!");
+            sstsbl.sendBirthdayCoupon();
+        }
     }
 
+    @Override
     public void createTimers(Date startTime) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
