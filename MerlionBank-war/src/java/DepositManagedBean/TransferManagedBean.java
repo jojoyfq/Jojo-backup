@@ -65,6 +65,7 @@ public class TransferManagedBean implements Serializable {
     private String recipientBankAccountName;
     private BigDecimal transferAmount;
     private List recipientBankNames;
+    private boolean isFast;
 
     @PostConstruct
     public void init() {
@@ -309,7 +310,9 @@ public class TransferManagedBean implements Serializable {
             System.out.println("*****Inter one time transfer: recipientBankAccountNum " + recipientBankAccountNum);
             System.out.println("*****Inter one time transfer: recipientBankAccountName " + recipientBankAccountName);
             System.out.println("*****Inter one time transfer: transferAmount " + transferAmount);
-            tfsb.interOneTimeTransferCheck(customerId, giverBankAccountNum, recipientBankAccountNum, recipientBankAccountName, transferAmount);
+                        System.out.println("*****Inter one time transfer: isFast " + isFast);
+
+            tfsb.interOneTimeTransferCheck(customerId, giverBankAccountNum, recipientBankAccountNum, recipientBankAccountName, transferAmount,isFast);
              FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully transfered "+transferAmount+" to "+recipientBankAccountNum+" !");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         } catch (TransferException ex) {
@@ -557,6 +560,14 @@ public class TransferManagedBean implements Serializable {
 
     public void setGiverBankAccountNumString(String giverBankAccountNumString) {
         this.giverBankAccountNumString = giverBankAccountNumString;
+    }
+
+    public boolean isIsFast() {
+        return isFast;
+    }
+
+    public void setIsFast(boolean isFast) {
+        this.isFast = isFast;
     }
 
 }

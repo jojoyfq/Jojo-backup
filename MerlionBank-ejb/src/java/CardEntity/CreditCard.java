@@ -55,7 +55,7 @@ public class CreditCard implements Serializable {
 
     public CreditCard(){}
     
-    public CreditCard(Long cardNumber,String cardHolder,Date startDate,Date expiryDate,Long cvv, CreditCardType creditCardType,Customer customer,BigDecimal balance,Date payDate){
+    public CreditCard(Long cardNumber,String cardHolder,Date startDate,Date expiryDate,Long cvv, CreditCardType creditCardType,Customer customer,BigDecimal balance,Date payDate,String status){
         this.cardNumber = cardNumber;
         this.cardHolder = cardHolder;
         this.startDate = startDate;
@@ -65,6 +65,7 @@ public class CreditCard implements Serializable {
         this.customer = customer;
         this.balance = balance;
         this.payDate = payDate;
+        this.status = status;
     }
     
     public Customer getCustomer() {

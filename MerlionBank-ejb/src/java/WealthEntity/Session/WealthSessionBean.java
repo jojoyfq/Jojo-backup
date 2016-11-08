@@ -49,8 +49,8 @@ public class WealthSessionBean implements WealthSessionBeanLocal {
     @Override
     public List<DiscretionaryAccount> existingCustomerActivateAccount(Long customerId, Long accountId) throws NotEnoughAmountException,ListEmptyException {
         DiscretionaryAccount discretionaryAccount = em.find(DiscretionaryAccount.class, accountId);
-         if (!discretionaryAccount.getStatus().equals("active"))
-            throw new NotEnoughAmountException ("Discretionary Account status is not active");
+         if (discretionaryAccount.getStatus().equals("active"))
+            throw new NotEnoughAmountException ("Discretionary Account is aready active!");
          
         Customer customer = em.find(Customer.class, customerId);
         List<DiscretionaryAccount> discretionaryAccounts = customer.getDiscretionaryAccounts();

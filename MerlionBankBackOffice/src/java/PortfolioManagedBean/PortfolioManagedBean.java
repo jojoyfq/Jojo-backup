@@ -86,6 +86,11 @@ public class PortfolioManagedBean implements Serializable {
         }
 
     }
+      public void selectGood(ActionEvent event){
+           selectedGood = (Good) event.getComponent().getAttributes().get("selectedGood");
+  
+   }
+  
 
     public void viewProducts(ActionEvent event) {
         selectedPort = (Portfolio) event.getComponent().getAttributes().get("selectedPort");
@@ -133,7 +138,11 @@ public class PortfolioManagedBean implements Serializable {
 //        selectedGood = (Good) event.getComponent().getAttributes().get("selectedGood");
         try {
             oneProductAllGoods = wmsbl.buyNewGood(staffId, productId, productName, unitPrice, numOfUnits);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully bought  " + oneProductAllGoods.get(oneProductAllGoods.size()).getName() + "!");
+            System.out.println("1. product size is"+oneProductAllGoods.size());
+            oneProductAllGoods=wmsbl.displayGood(productId);
+                        System.out.println("2. product size is"+oneProductAllGoods.size());
+
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "You have successfully bought  " + productName+"!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
         } catch (NotEnoughAmountException ex) {

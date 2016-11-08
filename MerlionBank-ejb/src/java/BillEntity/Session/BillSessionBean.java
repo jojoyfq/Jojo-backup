@@ -489,5 +489,9 @@ public class BillSessionBean implements BillSessionBeanLocal {
     }
 
 
+    @Override
+     public boolean adhocBillCounter (String boName, String billReference, BigDecimal amount ){
+    return true;
+     }
 
 }

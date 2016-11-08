@@ -48,6 +48,7 @@ public class SearchCardSessionBean implements SearchCardSessionBeanLocal {
                 cardInfo.add(creditCard.getCardNumber().toString());
                 cardInfo.add(creditCard.getCreditCardType().getCreditCardType());
                 cardInfo.add("credit card");
+                cardInfo.add(creditCard.getStatus());
                 return cardInfo;
             }
         } else {
@@ -56,6 +57,7 @@ public class SearchCardSessionBean implements SearchCardSessionBeanLocal {
             cardInfo.add(debitCard.getCardNumber().toString());
             cardInfo.add(debitCard.getDebitCardType().getDebitCardType());
             cardInfo.add("debit card");
+            cardInfo.add(debitCard.getStatus());
             return cardInfo;
         }
     }

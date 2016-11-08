@@ -169,15 +169,25 @@ public class CreditCardManagedBean implements Serializable {
     }
 
     public void creditApplyEnterDetail(ActionEvent event) throws IOException {
-        if (identitySelected == null) {
+
+//        if (identitySelected == null) {
+//            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select your citizenship!");
+//            RequestContext.getCurrentInstance().showMessageInDialog(message);
+//        } else if (identitySelected.equals("Singaporean") || identitySelected.equals("Permanent Resident")) {
+//            FacesContext.getCurrentInstance().getExternalContext()
+//                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileSingaporean.xhtml");
+//        } else {
+//            FacesContext.getCurrentInstance().getExternalContext()
+//                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileForeigner.xhtml");
+//        }
+        //the following is used for testing
+        if (identitySelected != null) {
+            creditCardTypeList = ccsb.getCreditCardType();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_selectCard.xhtml");
+        } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select your citizenship!");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
-        } else if (identitySelected.equals("Singaporean") || identitySelected.equals("Permanent Resident")) {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileSingaporean.xhtml");
-        } else {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardApply_UploadFileForeigner.xhtml");
         }
     }
 
@@ -401,9 +411,9 @@ public class CreditCardManagedBean implements Serializable {
         try {
             if (savingAccountSelected != null) {
                 boolean result = ccsb.payBySavingAccount(savingAccountSelected, creditCardSelected, paymentAmount);
-                if(result){
+                if (result) {
                     FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("/MerlionBank-war/CardManagement/creditCardPay_payBySavingAccountSuccess.xhtml");
+                            .redirect("/MerlionBank-war/CardManagement/creditCardPay_payBySavingAccountSuccess.xhtml");
                 }
             } else {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select saving account!");

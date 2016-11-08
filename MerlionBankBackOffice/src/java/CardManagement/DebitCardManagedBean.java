@@ -60,7 +60,7 @@ public class DebitCardManagedBean implements Serializable {
     public void dashboardToViewDebitChargeback() throws IOException {
         pendingDebitChargebackList = dcsb.getPendingDebitChargeback();
         FacesContext.getCurrentInstance().getExternalContext()
-                .redirect("/MerlionBankBackOffice/CardManagement/staffViewChargeback.xhtml");
+                .redirect("/MerlionBankBackOffice/CardManagement/staffViewDebitCardChargeback.xhtml");
     }
     
     public void dashboardToViewDebitCardScheme() {
