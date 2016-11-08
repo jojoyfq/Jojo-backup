@@ -45,7 +45,7 @@ public class BillCustomerManagedBean implements Serializable {
 
     private String boName;
     private String billReference;
-    private Long savingAcctNum;
+    private String savingAcctNum;
     private BigDecimal limit;
     private Long customerId;
     private List<String> boNames;
@@ -179,23 +179,23 @@ public class BillCustomerManagedBean implements Serializable {
     }
 
     private void addRecurrent() throws IOException {
-        bsbl.addRecurrentArrangement(boName, amount, savingAcctNum, billReference, times, frequency, startDate);
+        bsbl.addRecurrentArrangement(boName, amount, Long.parseLong((savingAcctNum.split(","))[0]), billReference, times, frequency, startDate);
         System.out.print("add recurrent success");
         FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
     }
 
     private void adhocBill() throws IOException {
-        if (bsbl.adHocBill(boName, savingAcctNum, billReference, amount) == true) {
-            FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
-        } else {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Saving account does not have enough balance.");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
-        }
-
+       if(bsbl.adHocBill(boName, Long.parseLong((savingAcctNum.split(","))[0]), billReference, amount)==true){
+          FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);  
+       }
+       else{
+          FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Saving account does not have enough balance.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);  
+       }
     }
 
     private void addGIRO() throws IOException {
-        if (bsbl.addGIROArrangement(customerName, boName, limit, savingAcctNum, billReference) == true) {
+        if (bsbl.addGIROArrangement(customerName, boName, limit, Long.parseLong((savingAcctNum.split(","))[0]), billReference) == true) {
             System.out.print("add giro success");
             FacesContext.getCurrentInstance().getExternalContext().redirect(otpSuccessRedirect);
         } else {
@@ -342,11 +342,11 @@ public class BillCustomerManagedBean implements Serializable {
         this.billReference = billReference;
     }
 
-    public Long getSavingAcctNum() {
+    public String getSavingAcctNum() {
         return savingAcctNum;
     }
 
-    public void setSavingAcctNum(Long savingAcctNum) {
+    public void setSavingAcctNum(String savingAcctNum) {
         this.savingAcctNum = savingAcctNum;
     }
 

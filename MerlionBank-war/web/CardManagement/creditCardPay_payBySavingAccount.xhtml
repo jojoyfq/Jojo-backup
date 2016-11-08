@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container15 NoPadding Responsive100">
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container70 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Select saving account to make payment</div>
+                    <div class="Separator"></div>
+
+
+                    <div class="Container100 NoPadding Responsive50 ui-fluid">
+                        <h:form>
+                            <div class="Container70 Responsive50">
+                                <p:selectOneMenu id="debitCardList" value="#{creditCardManagedBean.savingAccountSelected}">
+                                    <f:selectItem itemLabel="Select Debit Card You Want To Cancel ..." itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{creditCardManagedBean.savingAccountList}" />
+                                </p:selectOneMenu>  
+
+                                <h:outputLabel for="paymentAmount" value="Payment Amount:" /> 
+                                <h:outputLabel id="paymentAmount" value="#{creditCardManagedBean.paymentAmount}" />
+                                <p:message for="paymentAmount" display="icon" />
+                            </div>
+                            <div class="Container30 Responsive50">
+                                <p:commandButton value="Submit" id="payBySavingAccount"
+                                                 actionListener="#{creditCardManagedBean.payBySavingAccount}"/>    
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container15 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+</ui:composition>

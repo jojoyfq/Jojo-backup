@@ -48,11 +48,17 @@ public class CreditCardManagedBean implements Serializable {
 
     public CreditCardManagedBean() {
     }
-    
+
     public void dashboardToViewCreditChargeback() throws IOException {
         pendingCreditChargebackList = ccsb.getPendingCreditChargeback();
         FacesContext.getCurrentInstance().getExternalContext()
                 .redirect("/MerlionBankBackOffice/CardManagement/staffViewCreditCardChargeback.xhtml");
+    }
+
+    public void dashboardToVerifyCreditCardApplication() throws IOException {
+        this.getPendingApplication();
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/MerlionBankBackOffice/CardManagement/staffVerifyCreditCard.xhtml");
     }
 
     public void getPendingApplication() {
@@ -63,21 +69,33 @@ public class CreditCardManagedBean implements Serializable {
         }
     }
 
-    public void approveCardApplication(ActionEvent event) throws ParseException {
-        if(selectedCreditApplication != null){
+    public void approveCardApplication(ActionEvent event) throws ParseException, IOException {
+        if (selectedCreditApplication != null) {
+            String customerName = selectedCreditApplication.getCustomerName();
+            //execute approve credit card method
             ccsb.approveCreditCardApplication(selectedCreditApplication);
-        }else{
+
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer " + customerName + " application of credit card has been approved!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            this.getPendingApplication();
+        } else {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select an application to approve!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
 
-    public void rejectCardApplication(ActionEvent event) {
-        if(selectedCreditApplication != null){
+    public void rejectCardApplication(ActionEvent event) throws IOException {
+        if (selectedCreditApplication != null) {
+            String customerName = selectedCreditApplication.getCustomerName();
+            //execute approve credit card method
             ccsb.rejectCreditCardApplication(selectedCreditApplication);
-        }else{
+
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Customer " + customerName + " application of credit card has been approved!");
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            this.getPendingApplication();
+        } else {
             FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please select an application to reject!");
-                    RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
 
@@ -90,7 +108,7 @@ public class CreditCardManagedBean implements Serializable {
         System.out.println("File Path is " + path);
 
     }
-    
+
     public void verifyCreditChargebackApprove() {
         try {
             if (selectedChargeback != null) {
@@ -106,7 +124,7 @@ public class CreditCardManagedBean implements Serializable {
             System.out.print("Verify Debit Chargeback approve encounter error");
         }
     }
-    
+
     public void verifyCreditChargebackReject() {
         try {
             if (selectedChargeback != null) {
@@ -170,6 +188,5 @@ public class CreditCardManagedBean implements Serializable {
     public void setSelectedChargeback(CreditChargeback selectedChargeback) {
         this.selectedChargeback = selectedChargeback;
     }
-    
 
 }

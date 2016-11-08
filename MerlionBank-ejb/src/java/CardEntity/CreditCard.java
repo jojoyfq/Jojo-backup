@@ -41,6 +41,8 @@ public class CreditCard implements Serializable {
     private String salt;
     private String status;
     private BigDecimal balance;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date payDate;
     
     @ManyToOne
     private CreditCardType creditCardType = new CreditCardType();
@@ -53,7 +55,7 @@ public class CreditCard implements Serializable {
 
     public CreditCard(){}
     
-    public CreditCard(Long cardNumber,String cardHolder,Date startDate,Date expiryDate,Long cvv, CreditCardType creditCardType,Customer customer,BigDecimal balance){
+    public CreditCard(Long cardNumber,String cardHolder,Date startDate,Date expiryDate,Long cvv, CreditCardType creditCardType,Customer customer,BigDecimal balance,Date payDate,String status){
         this.cardNumber = cardNumber;
         this.cardHolder = cardHolder;
         this.startDate = startDate;
@@ -62,6 +64,8 @@ public class CreditCard implements Serializable {
         this.creditCardType = creditCardType;
         this.customer = customer;
         this.balance = balance;
+        this.payDate = payDate;
+        this.status = status;
     }
     
     public Customer getCustomer() {
@@ -203,5 +207,14 @@ public class CreditCard implements Serializable {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
+
+    public Date getPayDate() {
+        return payDate;
+    }
+
+    public void setPayDate(Date payDate) {
+        this.payDate = payDate;
+    }
           
+    
 }

@@ -9,6 +9,7 @@ import CommonEntity.Customer;
 import CommonEntity.Session.StaffManagementSessionBeanLocal;
 import CommonEntity.Staff;
 import CommonEntity.StaffRole;
+import CounterCashEntity.CashServiceRecord;
 import Exception.EmailNotSendException;
 import Exception.ListEmptyException;
 import Exception.NotEnoughAmountException;
@@ -42,8 +43,10 @@ import org.joda.time.DateTime;
 public class WealthManagementSessionBean implements WealthManagementSessionBeanLocal {
  @PersistenceContext
     private EntityManager em;
+    private CashServiceRecord cashServiceRecord;
  @EJB
     StaffManagementSessionBeanLocal smsbl;
+ 
  
  @Override
  public Long topUpAccount(Long staffId,Long accountId,BigDecimal amount){
@@ -51,7 +54,12 @@ public class WealthManagementSessionBean implements WealthManagementSessionBeanL
      discretionaryAccount.setBalance(discretionaryAccount.getBalance().add(amount));
       discretionaryAccount.setTotalBalance(discretionaryAccount.getTotalBalance().add(amount));
      smsbl.recordStaffAction(staffId, "create existing customer discretionary account", discretionaryAccount.getCustomer().getId());
- return accountId;
+         //create cash service record 
+        Date currentTime = Calendar.getInstance().getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(currentTime.getTime());
+        cashServiceRecord = new CashServiceRecord("Fixed Deposit Account Early Withdraw", "customer ID" + discretionaryAccount.getCustomer().getIc(), false, currentTimestamp, amount);
+        em.persist(cashServiceRecord);
+     return accountId;
  }
  
  @Override

@@ -24,7 +24,7 @@
                             <p:panel id="panel" header="Detailed Information of the Card">
 
                                 <div class="Container100 ui-fluid">
-                                <h:panelGrid columns="3" cellpadding="5">
+                                <h:panelGrid columns="4" cellpadding="5">
                                     <p:dataTable  var="card" value="#{searchManagedBean.cardInfos}">
                                         <p:column headerText="Card Holder">
                                             <h:outputText value="#{card.get(0)}" />
@@ -36,6 +36,10 @@
 
                                         <p:column headerText="Card Type">
                                             <h:outputText value="#{card.get(2)}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{card.get(4)}" />
                                         </p:column>
 
                                     </p:dataTable>

@@ -199,6 +199,7 @@ public class staffLogInManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBankBackOffice/StaffSelfManagement/viewActionLog.xhtml");
     }
 
+
     public void staffLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException, ListEmptyException {
         try {
             if (staffIc != null && password != null) {
@@ -265,6 +266,7 @@ public class staffLogInManagedBean implements Serializable {
         }
 
     }
+
 
     public void updateForgetPasswordVerifyDetail(ActionEvent event) throws UserNotExistException, UserNotActivatedException, IOException {
         try {

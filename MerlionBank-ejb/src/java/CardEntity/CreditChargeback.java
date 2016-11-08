@@ -26,12 +26,12 @@ public class CreditChargeback implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String merchantName;
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date transactionDate;
     private BigDecimal transactionAmount;
     private String chargebackDescription;
     //chargeback variables
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date chargebackDate;
     private String status;
     //link to card

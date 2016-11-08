@@ -22,9 +22,7 @@ public class GetPhoneNumberResponse extends Response implements Serializable {
 
     public String phoneNumber;
 
-
     
-
     public GetPhoneNumberResponse() {
         super();
     }
