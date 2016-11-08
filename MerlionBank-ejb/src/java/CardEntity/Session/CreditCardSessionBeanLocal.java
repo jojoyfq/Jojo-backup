@@ -11,6 +11,7 @@ import CardEntity.CreditChargeback;
 import CommonEntity.Customer;
 import Exception.ChargebackException;
 import Exception.CreditCardException;
+import Exception.EmailNotSendException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -42,4 +43,7 @@ public interface CreditCardSessionBeanLocal {
     public void setChargebackStatus(CreditChargeback chargeback, String status);
     public BigDecimal getOutStandAmount(String creditCardString);
     public boolean payBySavingAccount(String savingAccount, String creditCardString, String amount) throws CreditCardException;
+
+// Timer
+    public void creditCardLatePayment() throws EmailNotSendException;
 }
