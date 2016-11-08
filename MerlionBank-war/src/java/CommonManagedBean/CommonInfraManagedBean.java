@@ -122,6 +122,80 @@ public class CommonInfraManagedBean implements Serializable {
         savingAccountTypes.add("MerLion Everyday Saving Account");
     }
 
+    public boolean checkNRIC(String customerIc) {
+        StringBuilder builder = new StringBuilder();
+        char lastCode = customerIc.charAt(8);
+        System.out.println("Last code is " + lastCode);
+        for (int i = 0; i < customerIc.length(); i++) {
+            char c = customerIc.charAt(i);
+            if (Character.isDigit(c)) {
+                builder.append(c);
+            }
+        }
+        int num = Integer.parseInt(builder.toString());
+        System.out.println("****IC in digit is " + num);
+        int digit7 = num % 10;
+        num /= 10;
+        int digit6 = num % 10;
+        num /= 10;
+        int digit5 = num % 10;
+        num /= 10;
+        int digit4 = num % 10;
+        num /= 10;
+        int digit3 = num % 10;
+        num /= 10;
+        int digit2 = num % 10;
+        num /= 10;
+        int digit1 = num % 10;
+
+        int step1 = digit1 * 2 + digit2 * 7 + digit3 * 6 + digit4 * 5
+                + digit5 * 4 + digit6 * 3 + digit7 * 2;
+        int step2 = step1 % 11;
+        int step3 = 11 - step2;
+
+        char code = ' ';
+        switch (step3) {
+            case 1:
+                code = 'A';
+                break;
+            case 2:
+                code = 'B';
+                break;
+            case 3:
+                code = 'C';
+                break;
+            case 4:
+                code = 'D';
+                break;
+            case 5:
+                code = 'E';
+                break;
+            case 6:
+                code = 'F';
+                break;
+            case 7:
+                code = 'G';
+                break;
+            case 8:
+                code = 'H';
+                break;
+            case 9:
+                code = 'I';
+                break;
+            case 10:
+                code = 'Z';
+                break;
+            case 11:
+                code = 'J';
+        }
+        if (code == lastCode) {
+            System.out.println("NRIC is valid!!!");
+            return true;
+        }
+        return false;
+
+    }
+
     public void setAllVariables(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
 
         if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null && savingAccountType != null) {
@@ -149,10 +223,31 @@ public class CommonInfraManagedBean implements Serializable {
 //            customerFinancialAsset = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialAsset") ;
 //            customerFinancialGoal = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("customerFinancialGoal");
                 //   String phoneNumber = Integer.toString(customerPhoneNumber) ;
-                customer = amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);
+                Date todayDate = new Date();
 
-                svcasbl.viewPendingVerificationList().add(amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType));//throws UserExistException;
+                boolean result;
+                result = this.checkNRIC(ic);
 
+                System.out.println("******Check NRIC result is " + result);
+                long diff = todayDate.getTime() - customerDateOfBirth.getTime();
+                long diffDays = diff / (24 * 60 * 60 * 1000);
+                System.out.println("Age check " + (diffDays));
+                if (result == true) {
+                    if (diffDays >= 5840) {
+                        customer = amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);
+
+                        svcasbl.viewPendingVerificationList().add(amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType));//throws UserExistException;
+
+                    } else {
+                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "The minimum age to apply saving account is 16.");
+                        RequestContext.getCurrentInstance().showMessageInDialog(message);
+                        return;
+                    }
+                } else {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "IC is not valid!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                    return;
+                }
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
 //            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", "user1");
@@ -197,27 +292,26 @@ public class CommonInfraManagedBean implements Serializable {
     }
 
     public void fileUploadListener(FileUploadEvent e) throws IOException {
-  
- // Get uploaded file from the FileUploadEvent
-         this.file = e.getFile();
+
+        // Get uploaded file from the FileUploadEvent
+        this.file = e.getFile();
      //    InputStream input = e.getFile().getInputstream();
-         
+
       //   File inputFile = new File(e.getFile().getFileName());
- 
-         // Get uploaded file from the FileUploadEvent
-    //     this.file = e.getFile();
- //                customer.
- //                System.out.println("");
-         // Print out the information of the file
-         System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
- 
-         System.out.println("Uploade file Customer Ic: "+customer.getIc());
-       // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
-        String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" +customer.getIc() +"\\"+file.getFileName();
-       // String savedFileName = path + "/" + uploadedFile.getFileName();
-    //    File fileToSave = new File(savedFileName);
+        // Get uploaded file from the FileUploadEvent
+        //     this.file = e.getFile();
+        //                customer.
+        //                System.out.println("");
+        // Print out the information of the file
+        System.out.println("Uploaded File Name Is :: " + file.getFileName() + " :: Uploaded File Size :: " + file.getSize());
+
+        System.out.println("Uploade file Customer Ic: " + customer.getIc());
+        // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "\\"+ic + "\\"+file.getFileName();
+        String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + customer.getIc() + "\\" + file.getFileName();
+        // String savedFileName = path + "/" + uploadedFile.getFileName();
+        //    File fileToSave = new File(savedFileName);
         File fileToSave = new File(destPath);
-      
+
         fileToSave.getParentFile().mkdirs();
         fileToSave.delete();
         //Generate path file to copy file
@@ -227,18 +321,18 @@ public class CommonInfraManagedBean implements Serializable {
         InputStream input = e.getFile().getInputstream();
         Files.copy(input, fileToSavePath, StandardCopyOption.REPLACE_EXISTING);
 // String destPath = "C:\\Users\\apple\\AppData\\Roaming\\NetBeans\\8.0.2\\config\\GF_4.1\\domain1\\docroot\\" + "Sxiaojing" ;d
- 
+
 //         File destFile = new File(destPath);
 //         FileUtils.forceMkdir(destFile);
 //         FileUtils.copyInputStreamToFile(input, destFile);
         //FileUtils.copyFileToDirectory(inputFile, destFile);
-         System.out.println("File uploaded successfully!");
-                  System.out.println("File path: "+fileToSave.getAbsoluteFile().getName());
-                  System.out.println("File path: "+fileToSave.getCanonicalFile().getName());
+        System.out.println("File uploaded successfully!");
+        System.out.println("File path: " + fileToSave.getAbsoluteFile().getName());
+        System.out.println("File path: " + fileToSave.getCanonicalFile().getName());
 
-         amsbl.setFileDestination(customer.getId(),  fileToSave.getParentFile().getName()+"/"+fileToSave.getAbsoluteFile().getName());
-          FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        amsbl.setFileDestination(customer.getId(), fileToSave.getParentFile().getName() + "/" + fileToSave.getAbsoluteFile().getName());
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "File uploaded successfully!");
+        RequestContext.getCurrentInstance().showMessageInDialog(message);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/customerSuccessPageWOLogIn.xhtml");
 
     }
@@ -246,11 +340,35 @@ public class CommonInfraManagedBean implements Serializable {
     public void createFixedDepositAccount(ActionEvent event) throws UserExistException, EmailNotSendException, IOException {
         try {
             if (ic != null && customerName != null && customerGender != null && customerDateOfBirth != null && customerAddress != null && customerEmail != null && customerPhoneNumber != null && customerOccupation != null && customerFamilyInfo != null) {
+               
+             //check NRIC validation   
+                boolean result;
+                result = this.checkNRIC(ic);
+                System.out.println("******Check NRIC result is " + result);
+            //check age    
+                 Date todayDate = new Date();
+                long diff = todayDate.getTime() - customerDateOfBirth.getTime();
+                long diffDays = diff / (24 * 60 * 60 * 1000);
+                System.out.println("Age check " + (diffDays));
+                if (result == true) {
+                       if (diffDays >= 5840) {
+                        customer = amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType);
 
-                customer = amsbl.createFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
-                svcasbl.viewPendingVerificationList().add(customer);
-                FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
+                        svcasbl.viewPendingVerificationList().add(amsbl.createSavingAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo, savingAccountType));//throws UserExistException;
 
+                    } else {
+                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "The minimum age to apply fixed account is 16.");
+                        RequestContext.getCurrentInstance().showMessageInDialog(message);
+                        return;
+                    }
+                    customer = amsbl.createFixedDepositAccount(ic, customerName, customerGender, customerDateOfBirth, customerAddress, customerEmail, customerPhoneNumber, customerOccupation, customerFamilyInfo);
+                    svcasbl.viewPendingVerificationList().add(customer);
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/CustomerManagement/configureFixedDepositAccount.xhtml");
+                } else {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "IC is not valid!");
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                    return;
+                }
                 //  depositAccountNumber = customer.getFixedDepositeAccounts().get(0).getId();
                 //  amsbl.createFixedAccount(customer, amount, duration);
             } else {

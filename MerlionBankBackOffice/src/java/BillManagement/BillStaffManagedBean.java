@@ -14,7 +14,10 @@ import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -63,6 +66,8 @@ public class BillStaffManagedBean implements Serializable {
     private List<String> boNames;
     private BillingOrganization boSelected;
     private Long boIdSelected;
+    private BigDecimal adhocAmount;
+    private String billReference;
 
     @Inject
     private staffLogInManagedBean staffLogInManagedBean;
@@ -247,6 +252,30 @@ public class BillStaffManagedBean implements Serializable {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", "Please fill in all information");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
 
+        }
+    }
+public void adHocBillCounter(ActionEvent event){
+    System.out.println("Adhoc bill counter--boName "+boName);
+            System.out.println("Adhoc bill counter--billReference "+billReference);
+                System.out.println("Adhoc bill counter--adhocAmount "+adhocAmount);
+
+    boolean result = bsbl.adhocBillCounter(boName,billReference, adhocAmount);
+   ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            ec.redirect("/MerlionBankBackOffice/BillManagement/adhocBillCounterSuccess.xhtml");
+        } catch (IOException ex) {
+             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+
+        }
+}
+ public void dashboardToAdhocOTC(ActionEvent event) throws IOException {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("/MerlionBankBackOffice/TransferManagement/adhocBillCounter.xhtml");
+        } catch (IOException ex) {
+            FacesMessage sysMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "System Message", ex.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(sysMessage);
         }
     }
 
@@ -448,6 +477,22 @@ public class BillStaffManagedBean implements Serializable {
 
     public void setBoUEN(String boUEN) {
         this.boUEN = boUEN;
+    }
+
+    public BigDecimal getAdhocAmount() {
+        return adhocAmount;
+    }
+
+    public void setAdhocAmount(BigDecimal adhocAmount) {
+        this.adhocAmount = adhocAmount;
+    }
+
+    public String getBillReference() {
+        return billReference;
+    }
+
+    public void setBillReference(String billReference) {
+        this.billReference = billReference;
     }
 
 }

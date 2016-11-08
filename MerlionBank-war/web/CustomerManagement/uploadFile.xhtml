@@ -22,23 +22,37 @@ and open the template in the editor.
         </h:head>
 
         <h:body styleClass="BlackBack">
+             <!-- Left Column -->
+        <div class="Container25 NoPadding Responsive100">
 
-         
-                                     
+        </div>
 
-                                            <div class="Container100">
-                                                <div class="Card">
-                                                    <h1 class="CardBigTopic">Upload Documents </h1>
+
+          <div class="Container50 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+                    <div class="CardBigTopic"> Upload File </div>
+                    <div class="Separator"></div>
+
+
+                    <div class="Container100">
                                                     <h:form>
                                                         <p:fileUpload value="#{commonInfraManagedBean.file}"  fileUploadListener="#{commonInfraManagedBean.fileUploadListener}" mode="advanced" dragDropSupport="false"
                                                                       multiple="true" update="messages" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
 
                                                         <p:growl id="messages" showDetail="true" />
                                                     </h:form>
-                                                </div>
-                                            </div>
-                                      
-                                  
+                                                  </div>
+
+
+                </div>
+            </div> 
+          </div>
+              <!-- Right Column -->
+        <div class="Container25 NoPadding Responsive50">
+
+
+        </div>
 
             <h:outputStylesheet name="css/core-layout.css" library="atlas-layout" />
             <h:outputStylesheet name="css/font-awesome.css" library="atlas-layout" />

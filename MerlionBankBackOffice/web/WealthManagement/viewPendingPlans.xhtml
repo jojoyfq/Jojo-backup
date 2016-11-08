@@ -68,7 +68,7 @@
 
                                     <p:column headerText="Term">
                                         <p:cellEditor>
-                                            <f:facet name="output"><h:outputText  /></f:facet>
+                                            <f:facet name="output"><h:outputText value="#{pendingLoan.term}"/></f:facet>
 
                                             <f:facet name="input"><p:inputText id="loanTerm" value="#{staffWealthManagedBean.term}" style="width:100%"/></f:facet>
                                         </p:cellEditor>
@@ -169,7 +169,7 @@
                                         </p:inplace>
 
                                         <p:outputLabel for="eq" value="Equity Proportion"/>
-                                        <p:inplace id="eq">
+                                        <p:inplace id="eq" >
                                             <p:inputText  value="#{staffWealthManagedBean.equity}" style="width:100%"/>
                                         </p:inplace>
 
@@ -179,7 +179,7 @@
                                         </p:inplace>
 
                                         <div class="Card">
-                                            <p:commandButton  update=":form"  value="Submit" actionListener="#{staffWealthManagedBean.staffModifyPortfolioProduct(event)}"  style="width:100px;height:40px" />
+                                            <p:commandButton  update=":form"  value="Submit" actionListener="#{staffWealthManagedBean.staffModifyPortfolioProduct}"  style="width:100px;height:40px" />
 
                                         </div>
                                     </p:panelGrid>

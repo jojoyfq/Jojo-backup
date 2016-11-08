@@ -32,6 +32,9 @@
                                     <div class="Container10"></div>
                                     <div class="Container80">
                                         <h:panelGrid columns="2" id="transferOneTime" cellpadding="7"> 
+                                            <h:outputText value="FAST Transfer " />
+                                            <p:selectBooleanCheckbox id="fade" value="#{transferManagedBean.isFast}" />
+                                            <p:tooltip id="toolTipFade" for="fade" value="Please tick if this is a FAST transfer" position="top"/>
 
                                             <h:outputLabel for="viverAccount" value="Giver Account Number:" />
                                             <p:selectOneMenu value="#{transferManagedBean.giverBankAccountNumString}">

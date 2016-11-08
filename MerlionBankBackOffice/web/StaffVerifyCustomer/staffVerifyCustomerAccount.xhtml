@@ -27,12 +27,13 @@
                             <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
                                 <p:messages id="msgs" />
 
-                                <p:dataTable id="radioDT" var="pendingCustomer" value="#{staffVerifyCustomerManagedBean.pendingCustomers}" selectionMode="single" selection="#{staffVerifyCustomerManagedBean.selectedCustomer}" rowKey="#{pendingCustomer.id}">
+                                <p:dataTable id="radioDT" var="pendingCustomer" value="#{staffVerifyCustomerManagedBean.pendingCustomers}" selectionMode="single" selection="#{staffVerifyCustomerManagedBean.selectedCustomer}" rowKey="#{pendingCustomer.id}" rows="10"  paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" >
+ 
                                     <f:facet name="header">
                                         Pending Customer
                                     </f:facet>
-                                    <p:column selectionMode="single"/>
-                                    <!--                            <p:ajax event="rowSelect" listener="{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}" update=":form" />-->
 
                                     <p:column headerText="Customer ID" >
                                         <h:outputText value="#{pendingCustomer.id}" />
@@ -66,8 +67,11 @@
                                     </p:column>
 
                                     <f:facet name="footer">
-                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}"  />
-                                        <p:commandButton process="radioDT"  update=":form" icon="ui-icon-search" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}"  />
+                                         <div class="Card">
+                                        <p:commandButton  update=":form" icon="ui-icon-search" value="Approve" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccount}"  />
+                                       <p:separator />
+                                        <p:commandButton  update=":form" icon="ui-icon-search" styleClass="RedButton" value="Reject" actionListener="#{staffVerifyCustomerManagedBean.verifyCustomerBankingAccountReject}"  />
+                                         </div>
                                     </f:facet>
                                 </p:dataTable>
 

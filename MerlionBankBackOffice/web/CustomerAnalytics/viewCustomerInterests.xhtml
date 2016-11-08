@@ -1,0 +1,124 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Left Column -->
+        <div class="Container20 NoPadding Responsive100">
+                <div class="Card ui-fluid">
+                    <i class="icon-sports-club Green Fs40 Fleft MarRight10"></i>
+                    <span class="Green Fs20 FontDosisSemiBold">Search Customer </span>
+                    <div class="EmptyBox10"></div>
+                    <span class="BoldLeaden Fs14 FontDosisMedium">Enter customer IC here to view spending segmentation</span>
+                    <div class="EmptyBox10"></div>
+                    <h:form id="form1">
+                      <h:panelGrid id="panelGrid" columns="2" cellpadding="5">
+                          <p:outputLabel value="Customer IC" />
+                          <p:inputText value="#{customerAnalyticsManagedBean.customerIc}"/>
+                          <p:commandButton value="Search" icon="fa fa-search"  onclick="window.open('/MerlionBankBackOffice/CustomerAnalytics/viewCustomerInterests.xhtml')" actionListener="#{customerAnalyticsManagedBean.searchCustomer}"  update=":form1" styleClass="GreenButton Fleft Fs14 White"  >
+                      <f:ajax execute="@this" render="@none" />
+                      </p:commandButton>                      
+                      </h:panelGrid>
+                    </h:form>
+                
+        </div>
+        </div>
+
+        <!-- Center Column -->
+        <div class="Container70 NoPadding Responsive50">
+            <div class="Container100">
+                <div class="Card Flex FlexWrap">
+
+                    <div class="Container100 ui-fluid">
+
+                        <h:form id="form">                            
+                            <h:panelGrid id="panelGrid" columns="7" cellpadding="5">
+                                <p:messages id="msgs" />
+
+                                <p:dataTable var="pendingLoan" rendered="#{customerAnalyticsManagedBean.searchResult eq true}" value="#{customerAnalyticsManagedBean.oneCustomerAllInterest}"  editable="true" selectionMode="single" selection="#{staffWealthManagedBean.selecteWealthToActivate}" rowKey="#{pendingLoan.id}" rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15" tableStyle="width:auto" >
+
+                                    <f:facet name="header">
+                                        View All Customer Spending Segmentations
+                                    </f:facet>
+
+                                    <p:column headerText="Interest ID" style="width:40px" >
+                                        <h:outputText value="#{pendingLoan.id}" />
+                                    </p:column>
+
+
+                                    <p:column headerText="Category Name">
+                                        <h:outputText value="#{pendingLoan.category.name}" />
+                                    </p:column>
+
+                                    <p:column headerText="Spending Amount S($)">
+                                        <h:outputText value="#{pendingLoan.amount}" >
+                                            <f:convertNumber locale="en-US" />
+                                        </h:outputText>
+                                    </p:column>
+
+
+                                    <p:column headerText="View Customer" style="width: 80px;" >
+                                        <center>
+                                            <p:commandButton icon="ui-icon-zoomin" actionListener="#{customerAnalyticsManagedBean.selectCustomer}" oncomplete="PF('carDialog').show()"  update=":form" ajax="true" type="submit"  >
+                                                <f:attribute name="selectedInterest" value="#{pendingLoan}" />
+                                            </p:commandButton>        
+                                        </center>
+                                    </p:column>
+
+
+
+                                </p:dataTable>
+
+                            </h:panelGrid>
+
+                        </h:form>
+                        <p:dialog id="dialogMessage" header="Customer Information" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" responsive="true">
+
+                            <p:outputPanel id="carDetail" style="text-align:center;">
+                                <p:panelGrid  columns="2"  layout="grid" styleClass="ui-panelgrid-blank">
+
+                                    <p:outputLabel value="Customer IC" style="font-weight: bold"/>
+                                    <h:outputText value="#{customerAnalyticsManagedBean.selectedInterest.customer.ic}" />
+
+                                    <p:outputLabel value="Customer Name" style="font-weight: bold"/>
+                                    <h:outputText value="#{customerAnalyticsManagedBean.selectedInterest.customer.name}" />
+
+                                    <p:outputLabel value="Customer Date of Birth" style="font-weight: bold"/>
+                                    <h:outputText value="#{customerAnalyticsManagedBean.selectedInterest.customer.dateOfBirth}" >
+                                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                                    </h:outputText>
+
+                                    <p:outputLabel value="Customer Email" style="font-weight: bold"/>
+                                    <h:outputText value="#{customerAnalyticsManagedBean.selectedInterest.customer.email}" />
+
+                                    <p:outputLabel value="Customer Phone Number" style="font-weight: bold"/>
+                                    <h:outputText value="#{customerAnalyticsManagedBean.selectedInterest.customer.phoneNumber}" />
+
+                                    <p:outputLabel value="Customer Address" style="font-weight: bold"/>
+                                    <h:outputText value="#{customerAnalyticsManagedBean.selectedInterest.customer.address}" />
+                                </p:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Right Column -->
+        <div class="Container20 NoPadding Responsive50">
+        </div>
+
+    </ui:define>
+
+</ui:composition>
