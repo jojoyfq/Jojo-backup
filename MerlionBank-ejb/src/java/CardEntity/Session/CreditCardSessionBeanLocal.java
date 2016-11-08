@@ -9,6 +9,7 @@ import CardEntity.CreditCard;
 import CardEntity.CreditCardApplication;
 import CommonEntity.Customer;
 import Exception.CreditCardException;
+import Exception.EmailNotSendException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -33,4 +34,7 @@ public interface CreditCardSessionBeanLocal {
     public List<String> getCreditCardNumbers(Long customerID);
     public boolean cancelCreditCard(String cardNo) throws CreditCardException;
     public CreditCard getCreditCardForClose(String cardNo);
+    
+    //Timer credit late interest
+    public void creditCardLatePayment() throws EmailNotSendException;
 }

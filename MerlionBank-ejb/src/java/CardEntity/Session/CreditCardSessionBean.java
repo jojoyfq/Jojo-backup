@@ -10,6 +10,9 @@ import CardEntity.CreditCardApplication;
 import CardEntity.CreditCardType;
 import CommonEntity.Customer;
 import Exception.CreditCardException;
+import Exception.EmailNotSendException;
+import LoanEntity.Loan;
+import Other.Session.sendEmail;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -28,9 +31,12 @@ import javax.ejb.LocalBean;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.joda.time.DateTime;
+import org.joda.time.Months;
 
 
 /**
@@ -305,6 +311,77 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
             return creditCard;
         }
     }
+        
+@Override
+   public void creditCardLatePayment() throws EmailNotSendException{
+         System.out.println("********** inside the calculateLatePayment method");
+        Query query = em.createQuery("SELECT a FROM CreditCard a");
+        List<CreditCard> currentCards = new ArrayList(query.getResultList());
+        System.out.println("********** the size of currentloans is " + currentCards.size());
+        
+        List<CreditCard> creditCards = new ArrayList<CreditCard>();
+        BigDecimal temp=new BigDecimal(0);
+        BigDecimal lateRate = new BigDecimal(0.02);
+
+        for (int i = 0; i < currentCards.size(); i++) {
+            System.out.println("********** inside for loop ~");
+            if (currentCards.get(i).getStatus().equals("active") &&currentCards.get(i).getBalance().compareTo(temp)==-1 ) {
+                creditCards.add(currentCards.get(i));
+                System.out.println("********** the size of loans is " + creditCards.size());
+            }
+        }
+
+        CreditCard card = new CreditCard();
+        for (int j = 0; j < creditCards.size(); j++) {
+            System.out.print("********** inside the loans loop");
+            card = creditCards.get(j);
+            
+            Date todayDate = Calendar.getInstance().getTime();
+            DateTime payDate = new DateTime(card.getPayDate());
+            DateTime compareDate = payDate.plusMonths(1);
+            DateTime current2 = new DateTime(todayDate);
+
+            Months inBetween = Months.monthsBetween(compareDate, current2);
+            System.out.println("************ the difference in month is " + inBetween);
+            int numOfMonths = inBetween.getMonths();
+            System.out.println("************ the difference in month is " + numOfMonths);
+            BigDecimal duration = new BigDecimal(numOfMonths);
+
+            if (current2.isAfter(compareDate)) {
+                
+                BigDecimal outstandingBalance = card.getBalance();
+                System.out.println("********** oustanding balance is: " + outstandingBalance);
+
+                outstandingBalance = outstandingBalance.multiply(lateRate);
+
+                em.flush();
+                try {
+                    sendLatePaymentNotificationEmail(card.getCustomer().getName(), card.getCustomer().getEmail(), card.getCardNumber());
+                } catch (MessagingException ex) {
+                    System.out.println("Error sending email.");
+                    throw new EmailNotSendException("Error sending email.");
+                }
+
+            }
+
+        }
     
+    }
+    
+    private void sendLatePaymentNotificationEmail(String name, String email, Long accountNumber) throws MessagingException {
+        String subject = "Merlion Bank - Your loan bill for this month is here";
+        System.out.println("Inside send email");
+
+        String content = "<h2>Dear " + name
+                + ",</h2><br /><h1>  Please make the payment of your monthly credit card payment.</h1><br />"
+                + "<h1>You have 1 month to make the payment.Otherwise late interest 2.0% monthly will be charged to youe pending amount</h1>"
+                + "<h2 align=\"center\">Credit Card Number: " + accountNumber
+                + "<p style=\"color: #ff0000;\">Please noted that that if you have already applied for card GIRO deduction, please ensure you have enough amount in your linked account. Thank you.</p>"
+                + "<br /><p>Note: Please do not reply this email. If you have further questions, please go to the contact form page and submit there.</p>"
+                + "<p>Thank you.</p><br /><br /><p>Regards,</p><p>Merlion Bank User Support</p>";
+        System.out.println(content);
+        sendEmail.run(email, subject, content);
+    }
+ 
     
 }
