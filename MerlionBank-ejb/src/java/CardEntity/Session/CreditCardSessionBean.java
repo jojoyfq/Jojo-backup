@@ -288,7 +288,7 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
 
         Customer customer = em.find(Customer.class, customerID);
         List<CreditCard> creditCard = customer.getCreditCard();
-        if (creditCard == null) {
+        if (creditCard.isEmpty()) {
             return null;
         } else {
             for (int i = 0; i < creditCard.size(); i++) {
