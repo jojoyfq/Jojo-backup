@@ -337,7 +337,7 @@ public class CreditCardSessionBean implements CreditCardSessionBeanLocal {
             card = creditCards.get(j);
             
             Date todayDate = Calendar.getInstance().getTime();
-            DateTime payDate = new DateTime(card.getPayDate());
+            DateTime payDate = new DateTime(card.get);
             DateTime compareDate = payDate.plusMonths(1);
             DateTime current2 = new DateTime(todayDate);
 
