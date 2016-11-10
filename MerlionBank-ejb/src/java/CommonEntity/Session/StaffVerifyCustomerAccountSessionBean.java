@@ -34,7 +34,7 @@ import javax.persistence.Query;
  * @author a0113893
  */
 @Stateless
-public class StaffVerifyCustomerAccountSessionBean implements StaffVerifyCustomerAccountSessionBeanLocal {
+public class StaffVerifyCustomerAccountSessionBean implements StaffVerifyCustomerAccountSessionBeanLocal,StaffVerifyCustomerAccountSessionBeanRemote {
  @PersistenceContext
     private EntityManager em;
     

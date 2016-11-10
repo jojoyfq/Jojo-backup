@@ -45,7 +45,7 @@ import org.joda.time.DateTime;
  * @author a0113893
  */
 @Stateless
-public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLocal {
+public class LoanApplicationSessionBean implements LoanApplicationSessionBeanLocal,LoanApplicationSessionBeanRemote {
 
     @PersistenceContext
     private EntityManager em;

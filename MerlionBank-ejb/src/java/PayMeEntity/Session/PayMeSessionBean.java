@@ -43,7 +43,7 @@ import org.apache.http.message.BasicNameValuePair;
  * @author Bella
  */
 @Stateless
-public class PayMeSessionBean implements PayMeSessionBeanLocal {
+public class PayMeSessionBean implements PayMeSessionBeanLocal,PayMeSessionBeanRemote {
 
     @PersistenceContext
     private EntityManager em;

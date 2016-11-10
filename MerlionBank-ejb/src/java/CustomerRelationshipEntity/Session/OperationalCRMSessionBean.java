@@ -25,7 +25,7 @@ import javax.persistence.Query;
  * @author a0113893
  */
 @Stateless
-public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal {
+public class OperationalCRMSessionBean implements OperationalCRMSessionBeanLocal,OperationalCRMSessionBeanRemote {
     @PersistenceContext
  private EntityManager em;
     // Add business logic below. (Right-click in editor and choose

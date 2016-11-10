@@ -72,7 +72,7 @@ import org.joda.time.Period;
  * @author a0113893
  */
 @Stateless
-public class AccountManagementSessionBean implements AccountManagementSessionBeanLocal {
+public class AccountManagementSessionBean implements AccountManagementSessionBeanLocal,AccountManagementSessionBeanRemote {
 
     private static final Random RANDOM = new SecureRandom();
 
@@ -414,9 +414,9 @@ public class AccountManagementSessionBean implements AccountManagementSessionBea
             throw new UserNotExistException("Username " + ic + "invaid account details");
             //return customer.getName();
 
-        } else if (!dateOfBirth.equals(customer.getDateOfBirth())) {
-            System.out.println(dateOfBirth + "         " + customer.getDateOfBirth());
-            throw new UserNotExistException("Username " + ic + "invaid account details");
+       // } else if (!dateOfBirth.equals(customer.getDateOfBirth())) {
+           // System.out.println(dateOfBirth + "         " + customer.getDateOfBirth());
+           // throw new UserNotExistException("Username " + ic + "invaid account details");
             //return "date";
         } else if (!phoneNumber.equals(customer.getPhoneNumber())) {
             System.out.println(phoneNumber + "         " + customer.getPhoneNumber());

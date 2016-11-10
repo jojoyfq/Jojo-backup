@@ -24,7 +24,7 @@ import javax.persistence.Query;
  * @author a0113893
  */
 @Stateless
-public class SpendingSegmentationManagementSessionBean implements SpendingSegmentationManagementSessionBeanLocal {
+public class SpendingSegmentationManagementSessionBean implements SpendingSegmentationManagementSessionBeanLocal,SpendingSegmentationManagementSessionBeanRemote {
 
     @PersistenceContext
     private EntityManager em;

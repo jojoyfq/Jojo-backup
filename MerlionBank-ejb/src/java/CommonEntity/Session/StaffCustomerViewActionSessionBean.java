@@ -20,7 +20,7 @@ import javax.persistence.PersistenceContext;
  * @author a0113893
  */
 @Stateless
-public class StaffCustomerViewActionSessionBean implements StaffCustomerViewActionSessionBeanLocal {
+public class StaffCustomerViewActionSessionBean implements StaffCustomerViewActionSessionBeanLocal,StaffCustomerViewActionSessionBeanRemote {
 
     @PersistenceContext
     private EntityManager em;
