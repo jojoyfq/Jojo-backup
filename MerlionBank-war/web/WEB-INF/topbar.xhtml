@@ -4,26 +4,33 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui">
-    
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
 
-        <!-- LAYOUT TOPBAR COVER -->
-        <div id="layout-topbar-cover">
 
-            <div id="layout-topbar">
-                <a href="dashboard.xhtml" id="logo"><h:graphicImage name="images/merlion_logo-01.svg" library="atlas-layout" /></a>
-                <a id="menu-button"><i class="icon-menu"></i></a>
+    <!-- LAYOUT TOPBAR COVER -->
+    <div id="layout-topbar-cover">
 
-                <a id="topmenu-button"><i class="icon-dots-three-horizontal"></i></a>
+        <div id="layout-topbar">
+            <a href="dashboard.xhtml" id="logo"><h:graphicImage name="images/merlion_logo-01.svg" library="atlas-layout" /></a>
+            <a id="menu-button"><i class="icon-menu"></i></a>
 
-                <ul id="topbar-menu">
-                    
-                    <li><a href="#"><i class="icon-message"></i><span class="tb-menu-text"> Message </span><span class="bubble animated rubberBand">5</span></a></li>
-                    <li><a href="#"><i class="icon-bell"></i><span class="tb-menu-text"> Notifications </span><span class="bubble animated rubberBand">13</span></a></li>
+            <a id="topmenu-button"><i class="icon-dots-three-horizontal"></i></a>
+
+            <ul id="topbar-menu">
+
                 
-                </ul>
-            </div>
+                <li>
+                    <h:form>
+                        <a jsf:id="link1" jsf:actionListener="#{messageManagedBean.customerViewAllMessages}" ><i class="icon-message"></i><span class="tb-menu-text"> Message </span><span class="bubble animated rubberBand"> #{messageManagedBean.countCusotmerUnreadEmail()} </span></a>              
+                    </h:form>
+                </li> 
+                
+                <li><a href="#"><i class="icon-bell"></i><span class="tb-menu-text"> Notifications </span><span class="bubble animated rubberBand">13</span></a></li>
 
+            </ul>
         </div>
-    
+
+    </div>
+
 </ui:composition>

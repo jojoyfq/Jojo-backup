@@ -104,6 +104,7 @@ public class LogInManagedBean implements Serializable {
 //            accountTypes.add("Loan Account");
 //            accountTypes.add("Wealth Managment Account");
             this.viewOneCustomer();
+            System.out.println("Go into init");
             //    System.out.println("Account Type chosen is " + accountType);
         } catch (Exception ex) {
             System.out.println(ex);
@@ -159,7 +160,7 @@ public class LogInManagedBean implements Serializable {
 //
 //    }
 //
-    public void customerLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException {
+    public void customerLogIn(ActionEvent event) throws UserNotExistException, PasswordNotMatchException, UserNotActivatedException, IOException {
         try {
             if (ic != null && customerPassword != null) {
                 customerId = amsbl.checkLogin(ic, customerPassword);
@@ -187,7 +188,7 @@ public class LogInManagedBean implements Serializable {
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("ic", ic);
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("name", selectedCustomer.getName());
 
-                    //  FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/MessageManagement/staffInputMessage.xhtml");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/MerlionBank-war/dashboard.xhtml");
                 }
             } else {
                 System.out.println("Please dont leave blanks!");
